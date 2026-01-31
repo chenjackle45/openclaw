@@ -865,11 +865,7 @@
           },
           {
             "group": "Help",
-            "pages": [
-              "help/index",
-              "help/troubleshooting",
-              "help/faq"
-            ]
+            "pages": ["help/index", "help/troubleshooting", "help/faq"]
           },
           {
             "group": "Install & Updates",
@@ -1216,7 +1212,9 @@
               "zh-Hant/install/ansible",
               "zh-Hant/install/nix",
               "zh-Hant/install/docker",
-              "zh-Hant/install/bun"
+              "zh-Hant/install/bun",
+              "zh-Hant/install/migrating",
+              "zh-Hant/install/node"
             ]
           },
           {
@@ -1257,7 +1255,12 @@
               "zh-Hant/cli/pairing",
               "zh-Hant/cli/security",
               "zh-Hant/cli/update",
-              "zh-Hant/cli/sandbox"
+              "zh-Hant/cli/sandbox",
+              "zh-Hant/cli/acp",
+              "zh-Hant/cli/config",
+              "zh-Hant/cli/devices",
+              "zh-Hant/cli/node",
+              "zh-Hant/cli/webhooks"
             ]
           },
           {
@@ -1293,7 +1296,9 @@
               "zh-Hant/concepts/model-failover",
               "zh-Hant/concepts/usage-tracking",
               "zh-Hant/concepts/timezone",
-              "zh-Hant/concepts/typebox"
+              "zh-Hant/concepts/typebox",
+              "zh-Hant/date-time",
+              "zh-Hant/prose"
             ]
           },
           {
@@ -1310,6 +1315,7 @@
               "zh-Hant/gateway/configuration-examples",
               "zh-Hant/gateway/authentication",
               "zh-Hant/gateway/openai-http-api",
+              "zh-Hant/gateway/openresponses-http-api",
               "zh-Hant/gateway/tools-invoke-http-api",
               "zh-Hant/gateway/cli-backends",
               "zh-Hant/gateway/local-models",
@@ -1319,6 +1325,7 @@
               "zh-Hant/gateway/doctor",
               "zh-Hant/gateway/logging",
               "zh-Hant/gateway/security/index",
+              "zh-Hant/gateway/security/formal-verification",
               "zh-Hant/security/formal-verification",
               "zh-Hant/gateway/sandbox-vs-tool-policy-vs-elevated",
               "zh-Hant/gateway/sandboxing",
@@ -1328,7 +1335,9 @@
               "zh-Hant/gateway/remote-gateway-readme",
               "zh-Hant/gateway/discovery",
               "zh-Hant/gateway/bonjour",
-              "zh-Hant/gateway/tailscale"
+              "zh-Hant/gateway/tailscale",
+              "zh-Hant/logging",
+              "zh-Hant/network"
             ]
           },
           {
@@ -1354,9 +1363,14 @@
               "zh-Hant/channels/mattermost",
               "zh-Hant/channels/signal",
               "zh-Hant/channels/imessage",
+              "zh-Hant/channels/bluebubbles",
               "zh-Hant/channels/msteams",
               "zh-Hant/channels/line",
               "zh-Hant/channels/matrix",
+              "zh-Hant/channels/nextcloud-talk",
+              "zh-Hant/channels/nostr",
+              "zh-Hant/channels/tlon",
+              "zh-Hant/channels/twitch",
               "zh-Hant/channels/zalo",
               "zh-Hant/channels/zalouser",
               "zh-Hant/broadcast-groups",
@@ -1379,7 +1393,14 @@
               "zh-Hant/providers/synthetic",
               "zh-Hant/providers/opencode",
               "zh-Hant/providers/glm",
-              "zh-Hant/providers/zai"
+              "zh-Hant/providers/zai",
+              "zh-Hant/providers/claude-max-api-proxy",
+              "zh-Hant/providers/deepgram",
+              "zh-Hant/providers/github-copilot",
+              "zh-Hant/providers/ollama",
+              "zh-Hant/providers/qwen",
+              "zh-Hant/providers/venice",
+              "zh-Hant/providers/xiaomi"
             ]
           },
           {
@@ -1404,7 +1425,10 @@
               "zh-Hant/plugin",
               "zh-Hant/plugins/voice-call",
               "zh-Hant/plugins/zalouser",
+              "zh-Hant/plugins/agent-tools",
+              "zh-Hant/plugins/manifest",
               "zh-Hant/tools/exec",
+              "zh-Hant/tools/exec-approvals",
               "zh-Hant/tools/web",
               "zh-Hant/tools/apply-patch",
               "zh-Hant/tools/elevated",
@@ -1420,7 +1444,11 @@
               "zh-Hant/tools/reactions",
               "zh-Hant/tools/skills",
               "zh-Hant/tools/skills-config",
-              "zh-Hant/tools/clawdhub"
+              "zh-Hant/tools/creating-skills",
+              "zh-Hant/tools/clawdhub",
+              "zh-Hant/tools/firecrawl",
+              "zh-Hant/brave-search",
+              "zh-Hant/perplexity"
             ]
           },
           {
@@ -1432,7 +1460,9 @@
               "zh-Hant/nodes/audio",
               "zh-Hant/nodes/location-command",
               "zh-Hant/nodes/voicewake",
-              "zh-Hant/nodes/talk"
+              "zh-Hant/nodes/talk",
+              "zh-Hant/nodes/media-understanding",
+              "zh-Hant/tts"
             ]
           },
           {
@@ -1448,7 +1478,11 @@
               "zh-Hant/platforms/fly",
               "zh-Hant/platforms/hetzner",
               "zh-Hant/platforms/gcp",
-              "zh-Hant/platforms/exe-dev"
+              "zh-Hant/platforms/exe-dev",
+              "zh-Hant/platforms/digitalocean",
+              "zh-Hant/platforms/oracle",
+              "zh-Hant/platforms/raspberry-pi",
+              "zh-Hant/vps"
             ]
           },
           {
@@ -1485,15 +1519,47 @@
               "zh-Hant/reference/test",
               "zh-Hant/reference/RELEASING",
               "zh-Hant/reference/AGENTS.default",
+              "zh-Hant/reference/api-usage-costs",
+              "zh-Hant/reference/transcript-hygiene",
               "zh-Hant/reference/templates/AGENTS",
+              "zh-Hant/reference/templates/AGENTS.dev",
               "zh-Hant/reference/templates/BOOT",
               "zh-Hant/reference/templates/BOOTSTRAP",
               "zh-Hant/reference/templates/HEARTBEAT",
               "zh-Hant/reference/templates/IDENTITY",
+              "zh-Hant/reference/templates/IDENTITY.dev",
               "zh-Hant/reference/templates/SOUL",
+              "zh-Hant/reference/templates/SOUL.dev",
               "zh-Hant/reference/templates/TOOLS",
-              "zh-Hant/reference/templates/USER"
+              "zh-Hant/reference/templates/TOOLS.dev",
+              "zh-Hant/reference/templates/USER",
+              "zh-Hant/reference/templates/USER.dev"
             ]
+          },
+          {
+            "group": "實驗功能",
+            "pages": [
+              "zh-Hant/experiments/onboarding-config-protocol",
+              "zh-Hant/experiments/plans/cron-add-hardening",
+              "zh-Hant/experiments/plans/group-policy-hardening",
+              "zh-Hant/experiments/plans/openresponses-gateway",
+              "zh-Hant/experiments/proposals/model-config",
+              "zh-Hant/experiments/research/memory"
+            ]
+          },
+          {
+            "group": "重構計劃",
+            "pages": [
+              "zh-Hant/refactor/clawnet",
+              "zh-Hant/refactor/exec-host",
+              "zh-Hant/refactor/outbound-session-mirroring",
+              "zh-Hant/refactor/plugin-sdk",
+              "zh-Hant/refactor/strict-config"
+            ]
+          },
+          {
+            "group": "除錯與診斷",
+            "pages": ["zh-Hant/debug/node-issue", "zh-Hant/diagnostics/flags"]
           }
         ]
       }
