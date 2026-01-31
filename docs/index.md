@@ -73,7 +73,7 @@ WhatsApp / Telegram / Discord / iMessage（+ 插件）
   ┌───────────────────────────┐
   │          Gateway          │  ws://127.0.0.1:18789（僅限本機）
   │       （單一來源）         │
-  │                           │  http://<gateway-host>:18793
+  │                           │  http://[gateway-host]:18793
   │                           │    /__openclaw__/canvas/（Canvas 主機）
   └───────────┬───────────────┘
               │
