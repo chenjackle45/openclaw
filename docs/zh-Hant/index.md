@@ -4,9 +4,10 @@ summary: "OpenClaw 頂層概覽、功能與目的"
 read_when:
   - 向新用戶介紹 OpenClaw
 ---
+
 # OpenClaw 🦞
 
-> *「EXFOLIATE! EXFOLIATE!」* — 某隻太空龍蝦
+> _「EXFOLIATE! EXFOLIATE!」_ — 某隻太空龍蝦
 
 <p align="center">
     <picture>
@@ -27,6 +28,12 @@ read_when:
   <a href="/">文件</a> ·
   <a href="/start/openclaw">OpenClaw 助理設定</a>
 </p>
+
+<Warning>
+**非官方翻譯聲明**
+
+這個中文網站是由 **[陳泰呈（Jackle）](https://www.facebook.com/jackle45/)** 因為自己要研究而順手翻譯的。未來不一定會即時更新，也不保證翻譯內容的正確性，純粹就是分享。如需最新且正確的資訊，請參考 [官方英文文件](https://docs.openclaw.ai)。
+</Warning>
 
 OpenClaw 將 WhatsApp（透過 WhatsApp Web / Baileys）、Telegram（Bot API / grammY）、Discord（Bot API / discord.js）和 iMessage（imsg CLI）橋接到程式碼代理如 [Pi](https://github.com/badlogic/pi-mono)。插件還支援 Mattermost（Bot API + WebSocket）等更多平台。
 OpenClaw 同時也驅動著 OpenClaw 助理。
@@ -165,10 +172,10 @@ openclaw message send --target +15555550123 --message "來自 OpenClaw 的問候
   channels: {
     whatsapp: {
       allowFrom: ["+15555550123"],
-      groups: { "*": { requireMention: true } }
-    }
+      groups: { "*": { requireMention: true } },
+    },
   },
-  messages: { groupChat: { mentionPatterns: ["@openclaw"] } }
+  messages: { groupChat: { mentionPatterns: ["@openclaw"] } },
 }
 ```
 
@@ -176,7 +183,7 @@ openclaw message send --target +15555550123 --message "來自 OpenClaw 的問候
 
 - 從這裡開始：
   - [文件中心（所有頁面連結）](/start/hubs)
-  - [幫助](/help) ← *常見修復 + 疑難排解*
+  - [幫助](/help) ← _常見修復 + 疑難排解_
   - [設定](/gateway/configuration)
   - [設定範例](/gateway/configuration-examples)
   - [斜線命令](/tools/slash-commands)
@@ -225,7 +232,7 @@ openclaw message send --target +15555550123 --message "來自 OpenClaw 的問候
 
 ---
 
-*「我們都只是在玩弄自己的提示詞。」* — 某個可能 token 過量的 AI
+_「我們都只是在玩弄自己的提示詞。」_ — 某個可能 token 過量的 AI
 
 ## 致謝
 
@@ -244,4 +251,4 @@ MIT — 像海洋中的龍蝦一樣自由 🦞
 
 ---
 
-*「我們都只是在玩弄自己的提示詞。」* — 某個可能 token 過量的 AI
+_「我們都只是在玩弄自己的提示詞。」_ — 某個可能 token 過量的 AI
