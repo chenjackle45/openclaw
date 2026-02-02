@@ -1,8 +1,8 @@
 ---
-title: "voicewake(Voice Wake & PTT)"
 summary: "macOS 應用程式中的語音喚醒與按鍵通話模式及路由細節"
 read_when:
   - 開發語音喚醒或 PTT 路徑時
+title: "語音喚醒與按鍵通話"
 ---
 
 # 語音喚醒與按鍵通話

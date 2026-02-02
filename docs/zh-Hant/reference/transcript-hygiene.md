@@ -1,10 +1,10 @@
 ---
-title: "Transcript hygiene(Transcript 衛生)"
-summary: "參考：Provider-specific Transcript 清理和修復規則"
+title: "轉錄衛生"
+summary: "參考：提供者特定的轉錄清理和修復規則"
 read_when:
-  - 您正在除錯與 Transcript 形狀相關的 Provider 請求拒絕
-  - 您正在變更 Transcript 清理或 Tool-call 修復邏輯
-  - 您正在調查跨 Providers 的 Tool-call ID 不符
+  - 除錯與轉錄形狀相關的提供者請求拒絕時
+  - 變更轉錄清理或工具呼叫修復邏輯時
+  - 調查跨提供者的工具呼叫 ID 不符時
 ---
 # Transcript 衛生（Provider 修正）
 

@@ -1,5 +1,5 @@
 ---
-title: "pairing(Gateway-owned pairing (Option B))"
+title: "Gateway 所有的配對 (Option B)"
 summary: "適用於 iOS 與其他遠端 Nodes 的 Gateway-owned 配對機制 (Option B)"
 read_when:
   - 實作無 macOS UI 的 Node 配對核准時

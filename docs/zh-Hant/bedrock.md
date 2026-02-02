@@ -1,5 +1,5 @@
 ---
-title: "bedrock(Amazon Bedrock)"
+title: "Amazon Bedrock"
 summary: "在 OpenClaw 中使用 Amazon Bedrock (Converse API) 模型"
 read_when:
   - 想要在 OpenClaw 中使用 Amazon Bedrock 模型時

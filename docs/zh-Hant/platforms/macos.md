@@ -1,9 +1,9 @@
 ---
-title: "macos(macOS)"
 summary: "OpenClaw macOS 配套應用程式 (選單列 + Gateway Broker)"
 read_when:
   - 實作 macOS 應用程式功能時
   - 變更 macOS 上的 Gateway 生命週期或節點橋接時
+title: "macOS 應用程式"
 ---
 
 # OpenClaw macOS 配套應用程式 (選單列 + Gateway Broker)

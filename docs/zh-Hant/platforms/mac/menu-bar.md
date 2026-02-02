@@ -1,8 +1,8 @@
 ---
-title: "menu-bar(Menu Bar Status Logic)"
 summary: "選單列狀態邏輯與呈現給使用者的資訊"
 read_when:
-  - 調整 mac 選單 UI 或狀態邏輯時
+  - 調整 Mac 選單 UI 或狀態邏輯時
+title: "選單列狀態邏輯"
 ---
 
 # 選單列狀態邏輯

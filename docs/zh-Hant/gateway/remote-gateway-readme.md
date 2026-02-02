@@ -1,5 +1,5 @@
 ---
-title: "remote-gateway-readme(Running OpenClaw.app with a Remote Gateway)"
+title: "使用遠端 Gateway 執行 OpenClaw.app"
 summary: "OpenClaw.app 連線至 Remote Gateway 的 SSH Tunnel 設定"
 read_when: "透過 SSH 將 macOS App 連線至 Remote Gateway 時"
 ---

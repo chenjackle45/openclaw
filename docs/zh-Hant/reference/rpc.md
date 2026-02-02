@@ -1,9 +1,9 @@
 ---
-title: "Rpc(RPC 適配器)"
-summary: "外部 CLIs（signal-cli、imsg）和 Gateway 模式的 RPC 適配器"
+title: "RPC 適配器"
+summary: "外部 CLI（signal-cli、imsg）和 Gateway 模式的 RPC 適配器"
 read_when:
-  - 新增或變更外部 CLI 整合
-  - 除錯 RPC 適配器（signal-cli、imsg）
+  - 新增或變更外部 CLI 整合時
+  - 除錯 RPC 適配器（signal-cli、imsg）時
 ---
 # RPC 適配器
 

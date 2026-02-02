@@ -1,9 +1,9 @@
 ---
-title: "index(模型服務供應商總覽)"
 summary: "OpenClaw 支援的模型服務供應商 (LLMs)"
 read_when:
   - 想要選擇模型服務供應商時
   - 需要快速瀏覽支援的 LLM 後端時
+title: "Model Providers"
 ---
 
 # 模型服務供應商 (Model Providers)
@@ -12,12 +12,12 @@ OpenClaw 支援多種 LLM 服務供應商。請挑選一個供應商，完成認
 
 正在尋找聊天頻道文件（WhatsApp/Telegram/Discord/Slack/Mattermost/等）？請參閱 [聊天頻道 (Channels)](/channels)。
 
-## 重點推薦：Venius (Venice AI)
+## 重點推薦：Venice (Venice AI)
 
-Venius 是我們推薦的 Venice AI 配置，專注於隱私優先的推論服務，並提供選用 Opus 處理最困難任務的選項。
+Venice 是我們推薦的 Venice AI 設置，提供隱私優先推論與選用 Opus 處理最困難任務的選項。
 
 - **預設**：`venice/llama-3.3-70b`
-- **最佳效能**：`venice/claude-opus-45` (Opus 依然是最強大的模型)
+- **最佳效能**：`venice/claude-opus-45`（Opus 依然是最強大的）
 
 詳情請見 [Venice AI](/providers/venice)。
 
@@ -39,14 +39,14 @@ Venius 是我們推薦的 Venice AI 配置，專注於隱私優先的推論服�
 - [Qwen (OAuth)](/providers/qwen)
 - [OpenRouter](/providers/openrouter)
 - [Vercel AI Gateway](/providers/vercel-ai-gateway)
-- [Moonshot AI (Kimi + Kimi Code)](/providers/moonshot)
+- [Moonshot AI (Kimi + Kimi Coding)](/providers/moonshot)
 - [OpenCode Zen](/providers/opencode)
 - [Amazon Bedrock](/bedrock)
 - [Z.AI](/providers/zai)
 - [Xiaomi](/providers/xiaomi)
 - [GLM models](/providers/glm)
 - [MiniMax](/providers/minimax)
-- [Venius (Venice AI, 隱私優先)](/providers/venice)
+- [Venice (Venice AI, 隱私優先)](/providers/venice)
 - [Ollama (本地模型)](/providers/ollama)
 
 ## 語音轉錄供應商

@@ -1,9 +1,9 @@
 ---
-title: "Api usage costs(API 使用與成本)"
-summary: "稽核什麼可以花費金錢、使用哪些 Keys，以及如何查看使用量"
+title: "API 使用與成本"
+summary: "稽核什麼可以花費金錢、使用哪些金鑰及如何檢視使用量"
 read_when:
-  - 您想了解哪些功能可能呼叫付費 APIs
-  - 您需要稽核 Keys、成本和使用量可見性
+  - 您想了解哪些功能可能呼叫付費 API
+  - 您需要稽核金鑰、成本和使用量可見性
   - 您正在說明 /status 或 /usage 成本報告
 ---
 # API 使用與成本

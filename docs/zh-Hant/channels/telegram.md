@@ -1,52 +1,59 @@
 ---
-title: "Telegram(Telegram Bot API)"
+title: "Telegram"
 summary: "Telegram 機器人支援狀態、功能和設定"
 read_when:
-  - 處理 Telegram 功能或 webhooks
+  - 處理 Telegram 功能或 webhook
 ---
+
 # Telegram（Bot API）
 
-
-狀態：透過 grammY 的機器人私訊 + 群組已達生產就緒狀態。預設使用長輪詢；webhook 為可選。
+狀態：透過 grammY 的機器人 DM + 群組已達生產就緒狀態。預設使用長輪詢；webhook 為可選。
 
 ## 快速設定（初學者）
-1) 使用 **@BotFather** 建立機器人並複製令牌。
-2) 設定令牌：
+
+1. 使用 **@BotFather**（[直接連結](https://t.me/BotFather)）建立機器人。確認 handle 恰好是 `@BotFather`，然後複製令牌。
+2. 設定令牌：
    - 環境變數：`TELEGRAM_BOT_TOKEN=...`
    - 或設定：`channels.telegram.botToken: "..."`。
    - 如果兩者都設定，設定優先（環境變數備選僅用於預設帳戶）。
-3) 啟動 Gateway。
-4) 私訊存取預設為配對；首次聯繫時批准配對碼。
+3. 啟動 gateway。
+4. DM 存取預設為配對；首次聯繫時批准配對碼。
 
 最小設定：
+
 ```json5
 {
   channels: {
     telegram: {
       enabled: true,
       botToken: "123:abc",
-      dmPolicy: "pairing"
-    }
-  }
+      dmPolicy: "pairing",
+    },
+  },
 }
 ```
 
 ## 這是什麼
-- 由 Gateway 擁有的 Telegram Bot API 頻道。
+
+- 由 gateway 擁有的 Telegram Bot API 頻道。
 - 確定性路由：回覆返回 Telegram；模型永遠不選擇頻道。
-- 私訊共享代理的主會話；群組保持隔離（`agent:<agentId>:telegram:group:<chatId>`）。
+- DM 共享代理的主會話；群組保持隔離（`agent:<agentId>:telegram:group:<chatId>`）。
 
 ## 設定（快速路徑）
+
 ### 1) 建立機器人令牌（BotFather）
-1) 開啟 Telegram 並與 **@BotFather** 聊天。
-2) 執行 `/newbot`，然後按照提示操作（名稱 + 以 `bot` 結尾的用戶名）。
-3) 複製令牌並安全儲存。
+
+1. 開啟 Telegram 並與 **@BotFather**（[直接連結](https://t.me/BotFather)）聊天。確認 handle 恰好是 `@BotFather`。
+2. 執行 `/newbot`，然後按照提示操作（名稱 + 以 `bot` 結尾的用戶名）。
+3. 複製令牌並安全地儲存。
 
 可選的 BotFather 設定：
+
 - `/setjoingroups` — 允許/拒絕將機器人新增到群組。
 - `/setprivacy` — 控制機器人是否看到所有群組訊息。
 
 ### 2) 設定令牌（環境變數或設定）
+
 範例：
 
 ```json5

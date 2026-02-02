@@ -1,5 +1,5 @@
 ---
-title: "Testing(測試)"
+title: "測試"
 summary: "測試套件：unit/e2e/live 套件、Docker runners 以及每個測試涵蓋的內容"
 read_when:
   - 在本地或 CI 中執行測試
@@ -7,7 +7,7 @@ read_when:
   - 除錯 gateway + agent 行為
 ---
 
-# Testing(測試)
+# 測試
 
 OpenClaw 有三個 Vitest 套件（unit/integration、e2e、live）和一小組 Docker runners。
 

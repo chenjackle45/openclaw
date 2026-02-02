@@ -1,70 +1,92 @@
 ---
-title: "Nix(Nix 安裝指南)"
-summary: "使用 Nix 進行宣告式安裝 OpenClaw"
+title: "Nix"
+summary: "使用 Nix 宣告式安裝 OpenClaw"
 read_when:
-  - 您想要可重現、可回滾的安裝方式時
-  - 您已經在使用 Nix/NixOS/Home Manager 時
-  - 您希望所有內容都由宣告式管理並固定版本時
+  - 您想可重現、可回滾的安裝
+  - 您已使用 Nix/NixOS/Home Manager
+  - 您想一切宣告式管理且版本固定
 ---
 
-# Nix 安裝指南
+# Nix 安裝
 
-在 Nix 環境中執行 OpenClaw 的推薦方式是透過 **[nix-openclaw](https://github.com/openclaw/nix-openclaw)** —— 這是一個功能齊全的 Home Manager 模組。
+在 Nix 推薦執行 OpenClaw 的方式是透過 **[nix-openclaw](https://github.com/openclaw/nix-openclaw)** — 一個功能完整的 Home Manager 模組。
 
 ## 快速開始
 
-將以下內容貼給您的 AI 助手（Claude, Cursor 等）：
+貼此文到您的 AI 代理（Claude、Cursor 等）：
 
 ```text
 我想在我的 Mac 上設定 nix-openclaw。
 儲存庫：github:openclaw/nix-openclaw
 
-我需要你做的事：
-1. 檢查是否已安裝 Determinate Nix（若無則安裝）。
-2. 使用 templates/agent-first/flake.nix 在 ~/code/openclaw-local 建立一個本地 Flake。
-3. 協助我透過 @BotFather 建立一個 Telegram 機器人，並獲取我的 Chat ID (@userinfobot)。
-4. 設定秘密資訊（Bot Token、Anthropic Key）—— 存放在 ~/.secrets/ 的純文字檔即可。
-5. 填寫模板佔位符並執行 home-manager switch。
-6. 驗證：launchd 正在執行，且機器人能回覆訊息。
+您需要做的：
+1. 檢查 Determinate Nix 是否已安裝（若無請安裝）
+2. 使用 templates/agent-first/flake.nix 在 ~/code/openclaw-local 建立本地 flake
+3. 幫我透過 @BotFather 建立 Telegram bot 並取得我的 chat ID（@userinfobot）
+4. 設定秘密（bot token、Anthropic key）— ~/.secrets/ 純文字檔案可以
+5. 填入模板佔位符並執行 home-manager switch
+6. 驗證：launchd 執行中、bot 回應訊息
 
-參考 nix-openclaw 的 README 以獲取模組選項細節。
+參考 nix-openclaw README 瞭解模組選項。
 ```
 
 > **📦 完整指南：[github.com/openclaw/nix-openclaw](https://github.com/openclaw/nix-openclaw)**
 >
-> `nix-openclaw` 儲存庫是 Nix 安裝的最終權威來源。本頁僅提供簡要總覽。
+> nix-openclaw 儲存庫是 Nix 安裝的真實來源。本頁只是快速概覽。
 
-## 使用 Nix 的優勢
+## 您將獲得
 
-- Gateway + macOS App + 工具（Whisper, Spotify, 相機）—— 全部固定版本。
-- 自動重啟後仍能存活的 Launchd 服務。
-- 具備宣告式配置的插件系統。
-- 即時回滾：`home-manager switch --rollback`。
+- Gateway + macOS app + 工具（whisper、spotify、cameras）— 全部版本固定
+- Launchd 服務在重啟後存活
+- 宣告式配置的插件系統
+- 即時回滾：`home-manager switch --rollback`
 
 ---
 
-## Nix 模式下的執行期行為
+## Nix 模式執行期行為
 
-當設定 `OPENCLAW_NIX_MODE=1` 時（nix-openclaw 會自動設定）：
+設定 `OPENCLAW_NIX_MODE=1` 時（nix-openclaw 自動設定）：
 
-OpenClaw 支援 **Nix 模式**，這會使配置具有確定性，並停用自動安裝流程。
+OpenClaw 支援 **Nix 模式**，使配置確定性且停用自動安裝流程。
+透過匯出啟用：
 
-在 macOS 上，GUI 應用程式不會自動繼承 Shell 環境變數。您也可以透過 defaults 啟用：
+```bash
+OPENCLAW_NIX_MODE=1
+```
+
+在 macOS 上，GUI app 不自動繼承 shell 環境變數。也可透過 defaults 啟用：
 
 ```bash
 defaults write bot.molt.mac openclaw.nixMode -bool true
 ```
 
-### 配置與狀態路徑
+### 配置 + 狀態路徑
 
-OpenClaw 從 `OPENCLAW_CONFIG_PATH` 讀取 JSON5 配置，並在 `OPENCLAW_STATE_DIR` 中存儲可變數據。
+OpenClaw 從 `OPENCLAW_CONFIG_PATH` 讀 JSON5 配置，儲存可變資料在 `OPENCLAW_STATE_DIR`。
 
-- `OPENCLAW_STATE_DIR` (預設：`~/.openclaw`)
-- `OPENCLAW_CONFIG_PATH` (預設：`$OPENCLAW_STATE_DIR/openclaw.json`)
+- `OPENCLAW_STATE_DIR`（預設：`~/.openclaw`）
+- `OPENCLAW_CONFIG_PATH`（預設：`$OPENCLAW_STATE_DIR/openclaw.json`）
 
-在 Nix 下執行時，請明確將這些路徑設定為由 Nix 管理的位置。
+Nix 下執行時，明確設為 Nix 管理的位置，讓執行期狀態和配置保持在不可變儲存之外。
 
-### Nix 模式下的執行行為
-- 停用自動安裝與自我變更流程。
-- 若缺漏依賴項，會顯示 Nix 專屬的修補建議訊息。
-- UI 會在適當位置顯示唯讀的「Nix 模式」橫幅。
+### Nix 模式下的執行期行為
+
+- 自動安裝和自我變更流程停用
+- 遺漏依賴浮出 Nix 特定修復訊息
+- UI 出現唯讀 Nix 模式橫幅
+
+## 封裝備註（macOS）
+
+macOS 封裝流程在以下位置需要穩定的 Info.plist 樣板：
+
+```
+apps/macos/Sources/OpenClaw/Resources/Info.plist
+```
+
+[`scripts/package-mac-app.sh`](https://github.com/openclaw/openclaw/blob/main/scripts/package-mac-app.sh) 複製此樣板到 app 套件並修補動態欄位（bundle ID、版本/建置、Git SHA、Sparkle 金鑰）。保持 plist 確定性用於 SwiftPM 封裝和 Nix 建置（不依賴完整 Xcode 工具鏈）。
+
+## 相關
+
+- [nix-openclaw](https://github.com/openclaw/nix-openclaw) — 完整設定指南
+- [嚮導](/start/wizard) — 非 Nix CLI 設定
+- [Docker](/install/docker) — 容器化設定

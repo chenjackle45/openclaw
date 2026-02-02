@@ -1,5 +1,5 @@
 ---
-title: "Whatsapp(WhatsApp 網頁頻道)"
+title: "WhatsApp"
 summary: "WhatsApp（網頁頻道）整合：登入、收件匣、回覆、媒體和操作"
 read_when:
   - 處理 WhatsApp/網頁頻道行為或收件匣路由

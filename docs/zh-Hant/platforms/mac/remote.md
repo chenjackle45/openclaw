@@ -1,8 +1,8 @@
 ---
-title: "remote(Remote over SSH)"
 summary: "透過 SSH 控制遠端 OpenClaw Gateway 的 macOS 應用程式流程"
 read_when:
   - 設定或除錯遠端 macOS 控制時
+title: "遠端 SSH 存取"
 ---
 
 # 遠端 OpenClaw (macOS ⇄ 遠端主機)

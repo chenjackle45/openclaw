@@ -1,9 +1,9 @@
 ---
-title: "exe-dev(exe.dev)"
 summary: "在 exe.dev (VM + HTTPS proxy) 上運行 OpenClaw Gateway 以進行遠端存取"
 read_when:
   - 想要便宜的永遠在線 Linux 主機運行 Gateway
   - 想要無需運行自己 VPS 的遠端 Control UI 存取
+title: "exe.dev"
 ---
 
 # exe.dev

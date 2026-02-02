@@ -1,5 +1,5 @@
 ---
-title: "heartbeat(Heartbeat)"
+title: "Heartbeat"
 summary: "Heartbeat 輪詢訊息與通知規則"
 read_when:
   - 調整 Heartbeat 節奏或訊息時

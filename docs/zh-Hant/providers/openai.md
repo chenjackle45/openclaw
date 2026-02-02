@@ -1,9 +1,9 @@
 ---
-title: "openai(OpenAI)"
-summary: "在 OpenClaw 中使用 OpenAI API金鑰或 Codex 訂閱"
+summary: "在 OpenClaw 中使用 OpenAI API 金鑰或 Codex 訂閱"
 read_when:
   - 想要在 OpenClaw 中使用 OpenAI 模型時
   - 想要使用 Codex 訂閱認證而非 API 金鑰時
+title: "OpenAI"
 ---
 
 # OpenAI

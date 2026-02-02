@@ -1,9 +1,9 @@
 ---
-title: "opencode(OpenCode Zen)"
-summary: "在 OpenClaw 中使用 OpenCode Zen (精選模型)"
+summary: "在 OpenClaw 中使用 OpenCode Zen（精選模型）"
 read_when:
   - 想要使用 OpenCode Zen 進行模型存取時
   - 想要獲得一份適合編碼任務的精選模型清單時
+title: "OpenCode Zen"
 ---
 
 # OpenCode Zen

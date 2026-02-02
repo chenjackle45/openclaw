@@ -1,10 +1,10 @@
 ---
-title: "cli-backends(CLI Backends)"
 summary: "CLI backends: 透過本地 AI CLI 進行純文字回退 (fallback)"
 read_when:
   - 當 API 供應商失敗時需要可靠的回退方案
   - 運行 Claude Code CLI 或其他本地 AI CLI 並希望重複使用它們
   - 需要一個支援 Session 與 Image 但不使用 Tool 的純文字路徑
+title: "CLI Backends"
 ---
 
 # CLI Backends (Fallback Runtime)

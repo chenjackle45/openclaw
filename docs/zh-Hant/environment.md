@@ -1,5 +1,5 @@
 ---
-title: "Environment(環境變數)"
+title: "環境變數"
 summary: "OpenClaw 載入環境變數的位置與優先順序"
 read_when:
   - 您需要知道哪些環境變數被載入，以及順序為何

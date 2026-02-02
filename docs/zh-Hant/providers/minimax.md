@@ -1,9 +1,9 @@
 ---
-title: "minimax(MiniMax)"
 summary: "在 OpenClaw 中使用 MiniMax M2.1"
 read_when:
   - 想要在 OpenClaw 中使用 MiniMax 模型時
   - 需要 MiniMax 設定指南時
+title: "MiniMax"
 ---
 
 # MiniMax
@@ -31,7 +31,26 @@ MiniMax 強調 M2.1 的以下改進：
 
 ## 選擇設定方式
 
-### MiniMax M2.1 — 推薦
+### MiniMax OAuth (Coding Plan) — 推薦
+
+**適用於：** 透過 OAuth 快速設定 MiniMax Coding Plan，無需 API 金鑰。
+
+啟用整合 OAuth 外掛並進行認證：
+
+```bash
+openclaw plugins enable minimax-portal-auth  # 如已載入，請跳過
+openclaw gateway restart  # 如 Gateway 已在運行，請重啟
+openclaw onboard --auth-choice minimax-portal
+```
+
+系統會提示您選擇端點：
+
+- **Global** - 國際使用者 (`api.minimax.io`)
+- **CN** - 中國使用者 (`api.minimaxi.com`)
+
+詳情請參閱 [MiniMax OAuth 外掛 README](https://github.com/openclaw/openclaw/tree/main/extensions/minimax-portal-auth)。
+
+### MiniMax M2.1 (API 金鑰)
 
 **適用於：** 使用 Anthropic 相容 API 的託管 MiniMax 服務。
 

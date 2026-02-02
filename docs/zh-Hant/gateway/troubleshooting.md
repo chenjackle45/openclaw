@@ -1,5 +1,5 @@
 ---
-title: "troubleshooting(Troubleshooting 🔧)"
+title: "疑難排解"
 summary: "OpenClaw 常見故障的快速排除指南"
 read_when:
   - 調查執行時期問題或失敗時

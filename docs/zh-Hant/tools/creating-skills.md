@@ -1,5 +1,5 @@
 ---
-title: "Creating skills(建立自訂 Skills)"
+title: "建立自訂 Skills"
 ---
 # 建立自訂 Skills 🛠
 
@@ -41,4 +41,4 @@ When the user asks for a greeting, use the `echo` tool to say "Hello from your c
 - **本地測試**：使用 `openclaw agent --message "use my new skill"` 進行測試。
 
 ## 分享的 Skills
-您也可以在 [ClawdHub](https://clawdhub.com) 瀏覽和貢獻 Skills。
+您也可以在 [ClawHub](https://clawhub.com) 瀏覽和貢獻 Skills。

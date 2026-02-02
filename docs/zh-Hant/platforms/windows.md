@@ -1,9 +1,9 @@
 ---
-title: "windows(Windows (WSL2))"
 summary: "Windows (WSL2) 支援 + 配套應用程式狀態"
 read_when:
   - 在 Windows 上安裝 OpenClaw 時
   - 尋找 Windows 配套應用程式狀態時
+title: "Windows (WSL2)"
 ---
 
 # Windows (WSL2)

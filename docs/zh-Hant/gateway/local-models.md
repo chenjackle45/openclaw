@@ -1,5 +1,5 @@
 ---
-title: "local-models(Local models)"
+title: "本地模型"
 summary: "在本地 LLMs (LM Studio, vLLM, LiteLLM, custom OpenAI endpoints) 上運行 OpenClaw"
 read_when:
   - 想要從自己的 GPU 機器服務模型時

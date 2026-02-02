@@ -1,5 +1,5 @@
 ---
-title: "Text-to-speech(文字轉語音)"
+title: "文字轉語音"
 summary: "出站回覆的文字轉語音（TTS）"
 read_when:
   - 為回覆啟用文字轉語音

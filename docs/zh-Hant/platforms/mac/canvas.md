@@ -1,10 +1,10 @@
 ---
-title: "canvas(Canvas)"
 summary: "透過 WKWebView + 自訂 URL Scheme 嵌入的 Agent 控制 Canvas 面板"
 read_when:
   - 實作 macOS Canvas 面板時
   - 為視覺工作區新增 Agent 控制項時
-  - Debug WKWebView Canvas 載入問題時
+  - 除錯 WKWebView Canvas 載入問題時
+title: "Canvas"
 ---
 
 # Canvas (macOS 應用程式)

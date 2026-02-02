@@ -1,72 +1,113 @@
 ---
-title: "Location command(位置指令)"
-summary: "節點的位置指令 (location.get)、權限模式以及背景執行行為說明"
+title: "位置指令"
+summary: "節點的位置指令（location.get）、權限模式及背景行為"
 read_when:
   - 新增位置節點支援或權限 UI 時
-  - 設計背景位置追蹤與推送流程時
+  - 設計背景位置及推送流程時
 ---
 
-# 位置指令 (Location Command)
+# 位置指令（節點）
 
-## 核心重點 (TL;DR)
-- `location.get` 是一個節點指令（透由 `node.invoke` 呼叫）。
-- 預設為**關閉**。
-- 設定選項包含：關閉 (Off) / 使用期間 (While Using) / 始終允許 (Always)。
-- 提供獨立的「精確位置 (Precise Location)」開關。
+## TL;DR
 
-## 權限選擇機制
-作業系統的權限具備多個層級。雖然我們在 App 內提供選擇器，但最終決定權仍在作業系統手中。
-- **iOS/macOS**：使用者可在系統彈出視窗或「設定」中選擇「使用期間」或「始終」。
-- **Android**：背景位置是一項獨立權限；在 Android 10+ 版本通常需要引導使用者進入「設定」頁面手動開啟。
-- **精確位置**：這是一項額外授權（iOS 稱為「精確」，Android 則區分為「精確 (fine)」與「概略 (coarse)」）。
+- `location.get` 是節點指令（透由 `node.invoke`）。
+- 預設關閉。
+- 設定使用選擇器：Off / While Using / Always。
+- 獨立開關：精確位置。
+
+## 為什麼使用選擇器（非僅開關）
+
+OS 權限多層級。我們可在 App 中公開選擇器，但 OS 仍決定實際授予。
+
+- iOS/macOS：使用者可在系統提示/設定中選擇 **While Using** 或 **Always**。App 可請求升級，但 OS 可能需要設定。
+- Android：背景位置是單獨權限；在 Android 10+ 上經常需要設定流程。
+- 精確位置是單獨授予（iOS 14+ 「Precise」，Android 「fine」 vs 「coarse」）。
+
+UI 中的選擇器驅動我們的請求模式；實際授予位於 OS 設定中。
 
 ## 設定模型
-每個節點裝置具備：
+
+各節點裝置：
+
 - `location.enabledMode`：`off | whileUsing | always`
-- `location.preciseEnabled`：布林值
+- `location.preciseEnabled`：bool
 
-**UI 行為設計**：
-- 選擇 `whileUsing` 會請求前台權限。
-- 選擇 `always` 會先確認已取得 `whileUsing` 權限，接著請求背景權限（或導向系統設定）。
-- 若作業系統駁回請求，則自動回退至已獲得的最高層級並顯示狀態。
+UI 行為：
 
-## 指令格式：`location.get`
+- 選擇 `whileUsing` 請求前台權限。
+- 選擇 `always` 先確保 `whileUsing`，接著請求背景（或在需要時將使用者發送至設定）。
+- 若 OS 拒絕請求的級別，回退到最高授予級別並顯示狀態。
 
-**請求參數範例**：
+## 權限對應（node.permissions）
+
+選用。macOS 節點透由權限對應報告 `location`；iOS/Android 可能省略。
+
+## 指令：`location.get`
+
+透由 `node.invoke` 呼叫。
+
+參數（建議）：
+
 ```json
 {
-  "timeoutMs": 10000,         // 逾時時間
-  "maxAgeMs": 15000,          // 最大資料年齡（快取）
-  "desiredAccuracy": "precise" // 期望精確度
+  "timeoutMs": 10000,
+  "maxAgeMs": 15000,
+  "desiredAccuracy": "coarse|balanced|precise"
 }
 ```
 
-**回應酬載範例**：
+回應酬載：
+
 ```json
 {
-  "lat": 48.20849,            // 緯度
-  "lon": 16.37208,            // 經度
-  "accuracyMeters": 12.5,     // 精確度（公尺）
+  "lat": 48.20849,
+  "lon": 16.37208,
+  "accuracyMeters": 12.5,
+  "altitudeMeters": 182.0,
+  "speedMps": 0.0,
+  "headingDeg": 270.0,
   "timestamp": "2026-01-03T12:34:56.000Z",
-  "isPrecise": true,          // 是否為精確位置
-  "source": "gps"             // 來源：gps|wifi|cell|unknown
+  "isPrecise": true,
+  "source": "gps|wifi|cell|unknown"
 }
 ```
 
-## 錯誤代碼
-- `LOCATION_DISABLED`：使用者已在設定中關閉此功能。
-- `LOCATION_PERMISSION_REQUIRED`：缺少所選模式對應的系統權限。
-- `LOCATION_BACKGROUND_UNAVAILABLE`：App 處於背景，但僅獲得「使用期間」權限。
-- `LOCATION_TIMEOUT`：無法在指定時間內獲取位置定點。
+錯誤（穩定代碼）：
 
-## 背景執行行為
-目標：即使節點處於背景狀態，模型仍能請求位置。需符合以下條件：
-- 使用者選擇了 **始終 (Always)**。
-- 作業系統授權了背景位置存取。
-- App 獲准在背景執行位置服務（iOS 的背景模式或 Android 的前台服務）。
+- `LOCATION_DISABLED`：選擇器關閉。
+- `LOCATION_PERMISSION_REQUIRED`：請求模式缺少權限。
+- `LOCATION_BACKGROUND_UNAVAILABLE`：App 背景但僅允許 While Using。
+- `LOCATION_TIMEOUT`：未在時間內修復。
+- `LOCATION_UNAVAILABLE`：系統故障 / 無提供者。
 
-## 介面文字建議 (UX Copy)
-- **關閉**：「位置共享已停用。」
-- **使用期間**：「僅在 OpenClaw 開啟時分享。」
-- **始終**：「允許背景位置共享。需要系統權限。」
-- **精確**：「使用精確 GPS 位置。關閉則分享概略位置。」
+## 背景行為（未來）
+
+目標：模型可請求位置即使節點背景，但僅在：
+
+- 使用者選擇 **Always**。
+- OS 授予背景位置。
+- App 獲准在背景執行位置（iOS 背景模式 / Android 前台服務或特殊允許）。
+
+推送觸發流程（未來）：
+
+1. Gateway 傳送推送至節點（靜默推送或 FCM 資料）。
+2. 節點短暫喚醒並從裝置請求位置。
+3. 節點轉發酬載至 Gateway。
+
+注意：
+
+- iOS：Always 權限 + 背景位置模式需。靜默推送可能被限制；預期間歇式失敗。
+- Android：背景位置可能需要前台服務；否則，預期拒絕。
+
+## 模型/工具整合
+
+- 工具介面：`nodes` 工具新增 `location_get` 動作（需要節點）。
+- CLI：`openclaw nodes location get --node <id>`。
+- Agent 指導：僅在使用者啟用位置且理解範圍時呼叫。
+
+## UX 複製（建議）
+
+- Off：「位置共享已停用。」
+- While Using：「僅當 OpenClaw 開啟時。」
+- Always：「允許背景位置。需要系統權限。」
+- Precise：「使用精確 GPS 位置。關閉以分享近似位置。」

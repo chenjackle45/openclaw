@@ -1,12 +1,12 @@
 ---
-title: "github-copilot(Github Copilot)"
-summary: "在 OpenClaw 中使用 GitHub Copilot (裝置登入流程)"
+summary: "在 OpenClaw 中使用 GitHub Copilot（裝置登入流程）"
 read_when:
   - 想要使用 GitHub Copilot 作為模型服務供應商時
   - 需要 `openclaw models auth login-github-copilot` 流程說明時
+title: "GitHub Copilot"
 ---
 
-# Github Copilot
+# GitHub Copilot
 
 ## 什麼是 GitHub Copilot?
 

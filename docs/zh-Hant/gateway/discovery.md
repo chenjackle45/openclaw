@@ -1,5 +1,5 @@
 ---
-title: "discovery(Discovery & Transports)"
+title: "發現與傳輸"
 summary: "Node 發現與傳輸機制 (Bonjour, Tailscale, SSH) 以尋找 Gateway"
 read_when:
   - 實作或變更 Bonjour 發現/廣播時

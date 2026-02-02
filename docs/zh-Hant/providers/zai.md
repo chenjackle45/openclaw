@@ -1,9 +1,9 @@
 ---
-title: "zai(Z.AI)"
-summary: "在 OpenClaw 中使用 Z.AI (GLM 模型)"
+summary: "在 OpenClaw 中使用 Z.AI（GLM 模型）"
 read_when:
   - 想要在 OpenClaw 中使用 Z.AI / GLM 模型時
   - 需要簡單的 ZAI_API_KEY 設定教學時
+title: "Z.AI"
 ---
 
 # Z.AI

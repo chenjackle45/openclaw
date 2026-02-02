@@ -1,9 +1,9 @@
 ---
-title: "background-process(Background Exec & Process)"
 summary: "背景執行與程序管理"
 read_when:
   - 新增或修改背景執行行為時
   - 除錯長執行的 exec 任務時
+title: "背景執行與程序工具"
 ---
 
 # Background Exec + Process Tool

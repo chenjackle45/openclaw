@@ -1,5 +1,5 @@
 ---
-title: "openai-http-api(OpenAI Chat Completions (HTTP))"
+title: "OpenAI Chat Completions (HTTP)"
 summary: "從 Gateway 暴露 OpenAI 相容的 /v1/chat/completions HTTP Endpoint"
 read_when:
   - 整合預期 OpenAI Chat Completions 格式的工具時

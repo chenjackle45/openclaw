@@ -1,9 +1,9 @@
 ---
-title: "synthetic(Synthetic)"
 summary: "在 OpenClaw 中使用 Synthetic 的 Anthropic 相容 API"
 read_when:
   - 想要使用 Synthetic 作為模型服務供應商時
   - 需要 Synthetic API 金鑰或 Base URL 設定時
+title: "Synthetic"
 ---
 
 # Synthetic
@@ -12,8 +12,8 @@ Synthetic 提供了與 Anthropic 相容的端點。OpenClaw 將其註冊為 `syn
 
 ## 快速設定
 
-1) 設定 `SYNTHETIC_API_KEY`（或執行下方的嚮導）。
-2) 執行 Onboarding：
+1. 設定 `SYNTHETIC_API_KEY`（或執行下方的嚮導）。
+2. 執行 Onboarding：
 
 ```bash
 openclaw onboard --auth-choice synthetic-api-key

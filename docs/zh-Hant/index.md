@@ -1,5 +1,5 @@
 ---
-title: "Index(首頁)"
+title: "首頁"
 summary: "OpenClaw 頂層概覽、功能與目的"
 read_when:
   - 向新用戶介紹 OpenClaw

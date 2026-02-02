@@ -1,9 +1,9 @@
 ---
-title: "ollama(Ollama)"
-summary: "在 OpenClaw 中使用 Ollama (本地 LLM 運行環境)"
+summary: "在 OpenClaw 中使用 Ollama（本地 LLM 運行環境）"
 read_when:
   - 想要透過 Ollama 在本地運行 OpenClaw 時
   - 需要 Ollama 安裝與配置指南時
+title: "Ollama"
 ---
 
 # Ollama
@@ -12,9 +12,9 @@ Ollama 是一個本地 LLM 運行環境，讓您可以輕鬆地在機器上運�
 
 ## 快速開始
 
-1) 安裝 Ollama：https://ollama.ai
+1. 安裝 Ollama：https://ollama.ai
 
-2) 拉取模型：
+2. 拉取模型：
 
 ```bash
 ollama pull llama3.3
@@ -24,7 +24,7 @@ ollama pull qwen2.5-coder:32b
 ollama pull deepseek-r1:32b
 ```
 
-3) 為 OpenClaw 啟用 Ollama（任意值皆可；Ollama 不需要真實的金鑰）：
+3. 為 OpenClaw 啟用 Ollama（任意值皆可；Ollama 不需要真實的金鑰）：
 
 ```bash
 # 設定環境變數
@@ -34,7 +34,7 @@ export OLLAMA_API_KEY="ollama-local"
 openclaw config set models.providers.ollama.apiKey "ollama-local"
 ```
 
-4) 使用 Ollama 模型：
+4. 使用 Ollama 模型：
 
 ```json5
 {
@@ -88,10 +88,11 @@ export OLLAMA_API_KEY="ollama-local"
 
 ### 顯式設定（手動定義模型）
 
-請在以下情況使用顯式配置：
-- Ollama 運行在另一台主機/埠口。
-- 您想要強制設定特定的上下文視窗或模型清單。
-- 您想要包含未報告工具支援的模型。
+在以下情況時使用顯式配置：
+
+- Ollama 運行在另一台主機/埠口
+- 您想要強制設定特定的上下文視窗或模型清單
+- 您想要包含未報告工具支援的模型
 
 ```json5
 {
@@ -195,7 +196,7 @@ OpenClaw 僅會自動探索報告具有工具支援的模型。若您的模型�
 - 拉取一個支援工具的模型，或
 - 在 `models.providers.ollama` 中明確定義該模型。
 
-新增模型：
+若要新增模型：
 
 ```bash
 ollama list  # 查看已安裝模型

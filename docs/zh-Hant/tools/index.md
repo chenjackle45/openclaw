@@ -1,9 +1,9 @@
 ---
-title: "Index(Tools 總覽)"
-summary: "OpenClaw 的 Agent Tool 表面（browser、canvas、nodes、message、cron）取代舊版 `openclaw-*` Skills"
+summary: "Agent tool surface for OpenClaw (browser, canvas, nodes, message, cron) replacing legacy `openclaw-*` skills"
 read_when:
-  - 新增或修改 Agent Tools
-  - 淘汰或變更 `openclaw-*` Skills
+  - Adding or modifying agent tools
+  - Retiring or changing `openclaw-*` skills
+title: "Tools"
 ---
 
 # Tools (OpenClaw)

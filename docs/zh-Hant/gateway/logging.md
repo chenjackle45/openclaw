@@ -1,5 +1,5 @@
 ---
-title: "logging(Logging)"
+title: "日誌"
 summary: "Logging surfaces, file logs, WS log styles, 與 console formatting"
 read_when:
   - 變更 Log 輸出或格式時

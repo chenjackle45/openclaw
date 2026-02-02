@@ -1,55 +1,178 @@
 ---
-title: "Chrome extension(Chrome 擴充功能)"
-summary: "Chrome 擴充功能：讓 OpenClaw 控制您現有的 Chrome 分頁"
+summary: "Chrome extension: let OpenClaw drive your existing Chrome tab"
 read_when:
-  - 想要讓 Agent 控制現有的 Chrome 分頁時
-  - 需要透過 Tailscale 實作遠端 Gateway 與本地瀏覽器自動化時
-  - 想要瞭解「接管瀏覽器」的安全影響時
+  - You want the agent to drive an existing Chrome tab (toolbar button)
+  - You need remote Gateway + local browser automation via Tailscale
+  - You want to understand the security implications of browser takeover
+title: "Chrome Extension"
 ---
 
-# Chrome 擴充功能 (瀏覽器轉發器)
+# Chrome extension (browser relay)
 
-OpenClaw Chrome 擴充功能允許 Agent 控制您**現有的 Chrome 分頁**（即您日常使用的 Chrome 視窗），而非啟動一個獨立受管的 `openclaw` 設定檔。
+The OpenClaw Chrome extension lets the agent control your **existing Chrome tabs** (your normal Chrome window) instead of launching a separate openclaw-managed Chrome profile.
 
-手動附加與分離操作僅需透過一個 **Chrome 工具列按鈕**即可完成。
+Attach/detach happens via a **single Chrome toolbar button**.
 
-## 運作架構
-系統由三部分組成：
-- **瀏覽器控制服務**：Agent 呼叫的 API（位於 Gateway 或 Node）。
-- **本地轉發伺服器 (Relay)**：連接控制伺服器與擴充功能的橋樑（預設為 `18792` 埠）。
-- **Chrome MV3 擴充功能**：透由 `chrome.debugger` API 將 CDP 訊息傳遞至轉發器。
+## What it is (concept)
 
-## 安裝與載入 (未封裝套件)
+There are three parts:
 
-1. **安裝至本地路徑**：
-   ```bash
-   openclaw browser extension install
-   ```
-2. **獲取安裝路徑**：
-   ```bash
-   openclaw browser extension path
-   ```
-3. **在 Chrome 中載入**：
-   - 前往 `chrome://extensions`。
-   - 開啟「開發者模式」。
-   - 點擊「載入未封裝項目」並選擇上述路徑。
-4. **釘選擴充功能**。
+- **Browser control service** (Gateway or node): the API the agent/tool calls (via the Gateway)
+- **Local relay server** (loopback CDP): bridges between the control server and the extension (`http://127.0.0.1:18792` by default)
+- **Chrome MV3 extension**: attaches to the active tab using `chrome.debugger` and pipes CDP messages to the relay
 
-## 使用方式
-OpenClaw 內建了一個名為 `chrome` 的瀏覽器設定檔，預設指向該轉發器。
-- **CLI**：`openclaw browser --browser-profile chrome tabs`
-- **Agent 工具**：呼叫 `browser` 工具時指定 `profile="chrome"`。
+OpenClaw then controls the attached tab through the normal `browser` tool surface (selecting the right profile).
 
-## 附加與分離 (工具列按鈕)
-- 開啟您想要交給 OpenClaw 控制的分頁。
-- 點擊擴充功能圖示。圖示顯示 `ON` 表示已連線。
-- 再次點擊即可中斷連線。
+## Install / load (unpacked)
 
-## 遠端 Gateway (搭配 Node Host)
-若您的 Gateway 執行於遠端伺服器，請在執行 Chrome 的本地電腦開啟一個 **Node Host**。Gateway 會將指令路由至該節點，而擴充功能則與本地節點進行通訊。
+1. Install the extension to a stable local path:
 
-## 安全性警告 (必讀)
-這是一個強大但也具備風險的功能。請將其視為「把手放在模型面前讓它操作您的瀏覽器」。
-- **無隔離性**：如果您附加了日常使用的分頁，模型將獲得該帳號登入狀態的完整存取權限。
-- **建議做法**：建議為轉發器使用一個專屬的 Chrome 設定檔，與個人分頁區隔。
-- **網路安全**：確保 Gateway 與 Node 端點僅限於 Tailscale 私有網路存取。
+```bash
+openclaw browser extension install
+```
+
+2. Print the installed extension directory path:
+
+```bash
+openclaw browser extension path
+```
+
+3. Chrome → `chrome://extensions`
+
+- Enable "Developer mode"
+- "Load unpacked" → select the directory printed above
+
+4. Pin the extension.
+
+## Updates (no build step)
+
+The extension ships inside the OpenClaw release (npm package) as static files. There is no separate "build" step.
+
+After upgrading OpenClaw:
+
+- Re-run `openclaw browser extension install` to refresh the installed files under your OpenClaw state directory.
+- Chrome → `chrome://extensions` → click "Reload" on the extension.
+
+## Use it (no extra config)
+
+OpenClaw ships with a built-in browser profile named `chrome` that targets the extension relay on the default port.
+
+Use it:
+
+- CLI: `openclaw browser --browser-profile chrome tabs`
+- Agent tool: `browser` with `profile="chrome"`
+
+If you want a different name or a different relay port, create your own profile:
+
+```bash
+openclaw browser create-profile \
+  --name my-chrome \
+  --driver extension \
+  --cdp-url http://127.0.0.1:18792 \
+  --color "#00AA00"
+```
+
+## Attach / detach (toolbar button)
+
+- Open the tab you want OpenClaw to control.
+- Click the extension icon.
+  - Badge shows `ON` when attached.
+- Click again to detach.
+
+## Which tab does it control?
+
+- It does **not** automatically control "whatever tab you're looking at".
+- It controls **only the tab(s) you explicitly attached** by clicking the toolbar button.
+- To switch: open the other tab and click the extension icon there.
+
+## Badge + common errors
+
+- `ON`: attached; OpenClaw can drive that tab.
+- `…`: connecting to the local relay.
+- `!`: relay not reachable (most common: browser relay server isn't running on this machine).
+
+If you see `!`:
+
+- Make sure the Gateway is running locally (default setup), or run a node host on this machine if the Gateway runs elsewhere.
+- Open the extension Options page; it shows whether the relay is reachable.
+
+## Remote Gateway (use a node host)
+
+### Local Gateway (same machine as Chrome) — usually **no extra steps**
+
+If the Gateway runs on the same machine as Chrome, it starts the browser control service on loopback
+and auto-starts the relay server. The extension talks to the local relay; the CLI/tool calls go to the Gateway.
+
+### Remote Gateway (Gateway runs elsewhere) — **run a node host**
+
+If your Gateway runs on another machine, start a node host on the machine that runs Chrome.
+The Gateway will proxy browser actions to that node; the extension + relay stay local to the browser machine.
+
+If multiple nodes are connected, pin one with `gateway.nodes.browser.node` or set `gateway.nodes.browser.mode`.
+
+## Sandboxing (tool containers)
+
+If your agent session is sandboxed (`agents.defaults.sandbox.mode != "off"`), the `browser` tool can be restricted:
+
+- By default, sandboxed sessions often target the **sandbox browser** (`target="sandbox"`), not your host Chrome.
+- Chrome extension relay takeover requires controlling the **host** browser control server.
+
+Options:
+
+- Easiest: use the extension from a **non-sandboxed** session/agent.
+- Or allow host browser control for sandboxed sessions:
+
+```json5
+{
+  agents: {
+    defaults: {
+      sandbox: {
+        browser: {
+          allowHostControl: true,
+        },
+      },
+    },
+  },
+}
+```
+
+Then ensure the tool isn't denied by tool policy, and (if needed) call `browser` with `target="host"`.
+
+Debugging: `openclaw sandbox explain`
+
+## Remote access tips
+
+- Keep the Gateway and node host on the same tailnet; avoid exposing relay ports to LAN or public Internet.
+- Pair nodes intentionally; disable browser proxy routing if you don't want remote control (`gateway.nodes.browser.mode="off"`).
+
+## How "extension path" works
+
+`openclaw browser extension path` prints the **installed** on-disk directory containing the extension files.
+
+The CLI intentionally does **not** print a `node_modules` path. Always run `openclaw browser extension install` first to copy the extension to a stable location under your OpenClaw state directory.
+
+If you move or delete that install directory, Chrome will mark the extension as broken until you reload it from a valid path.
+
+## Security implications (read this)
+
+This is powerful and risky. Treat it like giving the model "hands on your browser".
+
+- The extension uses Chrome's debugger API (`chrome.debugger`). When attached, the model can:
+  - click/type/navigate in that tab
+  - read page content
+  - access whatever the tab's logged-in session can access
+- **This is not isolated** like the dedicated openclaw-managed profile.
+  - If you attach to your daily-driver profile/tab, you're granting access to that account state.
+
+Recommendations:
+
+- Prefer a dedicated Chrome profile (separate from your personal browsing) for extension relay usage.
+- Keep the Gateway and any node hosts tailnet-only; rely on Gateway auth + node pairing.
+- Avoid exposing relay ports over LAN (`0.0.0.0`) and avoid Funnel (public).
+- The relay blocks non-extension origins and requires an internal auth token for CDP clients.
+
+Related:
+
+- Browser tool overview: [Browser](/tools/browser)
+- Security audit: [Security](/gateway/security)
+- Tailscale setup: [Tailscale](/gateway/tailscale)

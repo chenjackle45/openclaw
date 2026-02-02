@@ -1,5 +1,5 @@
 ---
-title: "Network(網路中心)"
+title: "網路中心"
 summary: "網路中心：gateway 介面、配對、發現與安全性"
 read_when:
   - 您需要網路架構 + 安全性概覽

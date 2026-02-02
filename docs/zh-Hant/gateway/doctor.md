@@ -1,5 +1,5 @@
 ---
-title: "doctor(Doctor)"
+title: "Doctor"
 summary: "Doctor 指令: 健康檢查、設定遷移與修復步驟"
 read_when:
   - 新增或修改 Doctor Migrations 時

@@ -1,9 +1,9 @@
 ---
-title: "bonjour(Bonjour / mDNS)"
 summary: "Bonjour/mDNS 發現機制 + 除錯 (Gateway beacons, clients, 與常見失敗模式)"
 read_when:
   - 除錯 macOS/iOS 上的 Bonjour 發現問題時
   - 變更 mDNS service types, TXT records, 或 discovery UX 時
+title: "Bonjour 發現機制"
 ---
 
 # Bonjour / mDNS 發現機制

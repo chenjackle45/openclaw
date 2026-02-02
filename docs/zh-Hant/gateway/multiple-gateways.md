@@ -1,5 +1,5 @@
 ---
-title: "multiple-gateways(Multiple Gateways)"
+title: "多重 Gateway"
 summary: "在單一主機上運行多個 OpenClaw Gateways (Isolation, Ports, 與 Profiles)"
 read_when:
   - 在同一台機器上運行超過一個 Gateway 時

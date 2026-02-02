@@ -1,5 +1,5 @@
 ---
-title: "Vps(VPS 主機)"
+title: "VPS 主機"
 summary: "OpenClaw 的 VPS 主機中心 (Oracle/Fly/Hetzner/GCP/exe.dev)"
 read_when:
   - 您想在雲端運行 Gateway

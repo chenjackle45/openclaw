@@ -1,9 +1,9 @@
 ---
-title: "release(Release Workflow)"
 summary: "OpenClaw macOS 發佈檢查清單 (Sparkle feed, 打包, 簽署)"
 read_when:
   - 建立或驗證 OpenClaw macOS 發佈版本時
   - 更新 Sparkle Appcast 或 Feed 資產時
+title: "發佈工作流程"
 ---
 
 # OpenClaw macOS 發佈 (Sparkle)

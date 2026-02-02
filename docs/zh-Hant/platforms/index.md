@@ -1,9 +1,9 @@
 ---
-title: "index(平台)"
 summary: "平台支援總覽 (Gateway + 配套應用程式)"
 read_when:
   - 尋找作業系統支援或安裝路徑時
   - 決定由何處運行 Gateway 時
+title: "平台"
 ---
 
 # 平台

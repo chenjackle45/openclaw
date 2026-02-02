@@ -1,98 +1,192 @@
 ---
-title: "Migrating(遷移指南)"
-summary: "將 OpenClaw 安裝從一台機器遷移（搬家）到另一台機器"
+title: "遷移"
+summary: "將 OpenClaw 安裝從一台機器遷移至另一台"
 read_when:
-  - 您正準備將 OpenClaw 搬移到新的筆電或伺服器時
-  - 您希望保留會話紀錄、認證資訊以及頻道登入狀態 (WhatsApp 等) 時
+  - 您正將 OpenClaw 移至新筆電/伺服器
+  - 您想保留會話、認證與頻道登入（WhatsApp 等）
 ---
 
-# 遷移 OpenClaw 到新機器
+# 遷移 OpenClaw 至新機器
 
-本指南將引導您如何將 OpenClaw Gateway 遷移到新機器，且**不需重新執行入門引導流程**。
+本指南在**無需重做引導**的情況下將 OpenClaw Gateway 從一台機器遷移至另一台。
 
-遷移的概念非常簡單：
-- 複製 **狀態目錄** (`$OPENCLAW_STATE_DIR`，預設為 `~/.openclaw/`) —— 這包含配置、認證、會話紀錄與頻道狀態。
-- 複製您的 **工作區**（預設為 `~/.openclaw/workspace/`）—— 這包含您的 Agent 檔案（記憶、提示詞等）。
+遷移概念上很簡單：
 
-但在處理**設定檔 (Profiles)**、**權限**以及**部分複製**時，有一些常見的陷阱需要注意。
+- 複製**狀態目錄**（`$OPENCLAW_STATE_DIR`、預設：`~/.openclaw/`）— 包括配置、認證、會話與頻道狀態。
+- 複製您的**工作區**（預設 `~/.openclaw/workspace/`）— 包括代理檔案（記憶體、提示等）。
 
-## 開始之前（遷移內容清單）
+但存在常見陷阱圍繞**設定檔**、**權限**與**部分複製**。
 
-### 1) 確定您的狀態目錄
-大多數安裝使用預設值：`~/.openclaw/`。
+## 開始前（您要遷移什麼）
 
-如果您不確定，請在**舊**機器執行：
+### 1) 識別狀態目錄
+
+大多安裝使用預設：
+
+- **狀態目錄：** `~/.openclaw/`
+
+但若使用以下可能不同：
+
+- `--profile <name>`（通常變成 `~/.openclaw-<profile>/`）
+- `OPENCLAW_STATE_DIR=/some/path`
+
+不確定時，在**舊**機器執行：
+
 ```bash
 openclaw status
 ```
-在輸出中查找 `OPENCLAW_STATE_DIR` 或設定檔名稱。如果您執行多個 Gateway，請針對每個設定檔重複此步驟。
 
-### 2) 確定您的工作區
-常見預設值：`~/.openclaw/workspace/`。
-這是存放 `MEMORY.md`, `USER.md` 以及 `memory/*.md` 等檔案的地方。
+查找輸出中 `OPENCLAW_STATE_DIR` / 設定檔的提及。若執行多個 Gateway，每個設定檔重複。
 
-### 3) 瞭解保留的內容
-如果您複製了**狀態目錄**與**工作區**，您將保留：
-- Gateway 配置 (`openclaw.json`)
-- 認證設定檔 / API Key / OAuth 令牌
-- 會話歷史與 Agent 狀態
-- 頻道狀態（例如 WhatsApp 登入狀態）
-- 您的工作區檔案（記憶、技能筆記等）
+### 2) 識別工作區
 
-如果您**僅**複製工作區，則**不會**保留會話、憑證或頻道登入資訊。
+常見預設：
 
-## 遷移步驟 (推薦 path)
+- `~/.openclaw/workspace/`（建議工作區）
+- 您建立的自訂資料夾
 
-### 步驟 0 —— 製作備份（舊機器）
-在舊機器上先停止 Gateway，確保檔案在複製過程中不會變動：
+您的工作區是 `MEMORY.md`、`USER.md` 和 `memory/*.md` 等檔案的位置。
+
+### 3) 理解您將保留什麼
+
+複製**兩者** —— 狀態目錄和工作區，您保留：
+
+- Gateway 配置（`openclaw.json`）
+- 認證設定檔 / API 金鑰 / OAuth 令牌
+- 會話歷史 + 代理狀態
+- 頻道狀態（例如 WhatsApp 登入/會話）
+- 工作區檔案（記憶體、技能備註等）
+
+複製**僅**工作區（例如透過 Git），您**不**保留：
+
+- 會話
+- 認證
+- 頻道登入
+
+這些位於 `$OPENCLAW_STATE_DIR`。
+
+## 遷移步驟（建議）
+
+### 步驟 0 — 備份（舊機器）
+
+在**舊**機器上，先停止 Gateway 讓檔案在複製中間不變更：
+
 ```bash
 openclaw gateway stop
 ```
 
-（建議做法）將狀態目錄與工作區打包：
+（可選但建議）封存狀態目錄和工作區：
+
 ```bash
+# 調整路徑若使用設定檔或自訂位置
 cd ~
 tar -czf openclaw-state.tgz .openclaw
+
 tar -czf openclaw-workspace.tgz .openclaw/workspace
 ```
 
-### 步驟 1 —— 在新機器安裝 OpenClaw
-在**新**機器上安裝 CLI（視需要安裝 Node）：詳見 [安裝指南](/install)。
-在此階段，如果入門引導建立了新的 `~/.openclaw/` 也是沒關係的，我們將在下個步驟覆蓋它。
+若有多個設定檔/狀態目錄（例如 `~/.openclaw-main`、`~/.openclaw-work`），封存每個。
 
-### 步驟 2 —— 將狀態目錄與工作區複製到新機器
+### 步驟 1 — 在新機器安裝 OpenClaw
+
+在**新**機器上，安裝 CLI（必要時安裝 Node）：
+
+- 詳見：[安裝](/install)
+
+此階段，引導建立新鮮 `~/.openclaw/` 可以 — 您將在下一步覆蓋。
+
+### 步驟 2 — 複製狀態目錄 + 工作區至新機器
+
 複製**兩者**：
-- `$OPENCLAW_STATE_DIR` (預設為 `~/.openclaw/`)
-- 您的工作區 (預設為 `~/.openclaw/workspace/`)
 
-常用方法：`scp`、`rsync` 或行動硬碟。
-複製後請確保：
-- 隱藏目錄（如 `.openclaw/`）已被包含。
-- 檔案擁有者權限對於執行 Gateway 的使用者是正確的。
+- `$OPENCLAW_STATE_DIR`（預設 `~/.openclaw/`）
+- 您的工作區（預設 `~/.openclaw/workspace/`）
 
-### 步驟 3 —— 執行 Doctor（遷移與服務修復）
-在**新**機器執行：
+常見方式：
+
+- `scp` tarball 並解壓
+- `rsync -a` 透過 SSH
+- 外部磁碟
+
+複製後，確保：
+
+- 隱藏目錄被包括（例如 `.openclaw/`）
+- 執行 Gateway 的使用者檔案所有權正確
+
+### 步驟 3 — 執行 Doctor（遷移 + 服務修復）
+
+在**新**機器上：
+
 ```bash
 openclaw doctor
 ```
-`doctor` 會修復服務、套用配置遷移，並針對不相符之處發出警告。
+
+Doctor 是「安全無聊」的指令。修復服務、套用配置遷移與警告不匹配。
 
 接著：
+
 ```bash
 openclaw gateway restart
 openclaw status
 ```
 
-## 常見陷阱（以及如何避開）
+## 常見陷阱（與避免方式）
 
-- **陷阱：設定檔 / 狀態目錄不相符**：如果舊 Gateway 使用特定設定檔，新機器也必須使用相同的設定檔執行，否則會出現頻道消失或會話空白等症狀。
-- **陷阱：僅複製 `openclaw.json`**：這是不夠的。許多供應商狀態存放在 `credentials/` 與 `agents/` 子目錄下。請務必遷移**整個**狀態目錄。
-- **陷阱：權限與擁有者問題**：如果您是以 root 權限複製或更換了使用者，Gateway 可能會無法讀取憑證。請確保檔案擁有權正確。
-- **陷阱：備份中的機密資訊**：狀態目錄包含 API Key 與 Token 等機密資訊。請務必加密存儲備份。
+### 陷阱：設定檔 / 狀態目錄不匹配
 
-## 驗證檢查清單
-在新機器上確認：
-- `openclaw status` 顯示 Gateway 正在執行。
-- 您的頻道仍處於連線狀態（例如 WhatsApp 不需要重新配對）。
-- 儀表板能正常開啟並顯示現有的會話紀錄。
-- 您的工作區檔案（記憶、配置）皆已到位。
+若舊 Gateway 用設定檔（或 `OPENCLAW_STATE_DIR`）而新 Gateway 用不同的，您將見症狀如：
+
+- 配置變更無效
+- 頻道遺漏 / 登出
+- 空會話歷史
+
+修復：用遷移的**相同**設定檔/狀態目錄執行 Gateway/服務，再執行：
+
+```bash
+openclaw doctor
+```
+
+### 陷阱：僅複製 `openclaw.json`
+
+`openclaw.json` 不足。許多供應商儲存狀態於：
+
+- `$OPENCLAW_STATE_DIR/credentials/`
+- `$OPENCLAW_STATE_DIR/agents/<agentId>/...`
+
+始終遷移整個 `$OPENCLAW_STATE_DIR` 資料夾。
+
+### 陷阱：權限 / 所有權
+
+複製為 root 或變更使用者，Gateway 可能無法讀認證/會話。
+
+修復：確保狀態目錄 + 工作區由執行 Gateway 的使用者擁有。
+
+### 陷阱：遠端/本機模式間遷移
+
+- UI（WebUI/TUI）指向**遠端** Gateway，遠端主機擁有會話儲存 + 工作區。
+- 遷移筆電不會移遠端 Gateway 狀態。
+
+遠端模式，遷移**Gateway 主機**。
+
+### 陷阱：備份中的秘密
+
+`$OPENCLAW_STATE_DIR` 含秘密（API 金鑰、OAuth 令牌、WhatsApp 認證）。如生產秘密對待備份：
+
+- 存儲加密
+- 避免透過不安全頻道共享
+- 若懷疑暴露則輪轉金鑰
+
+## 驗證檢清單
+
+新機器上確認：
+
+- `openclaw status` 顯示 Gateway 執行中
+- 您的頻道仍連接（例如 WhatsApp 無需重新配對）
+- 儀表板開啟並顯示現有會話
+- 工作區檔案（記憶體、配置）存在
+
+## 相關
+
+- [Doctor](/gateway/doctor)
+- [Gateway 故障排除](/gateway/troubleshooting)
+- [OpenClaw 儲存資料在哪？](/help/faq#where-does-openclaw-store-its-data)

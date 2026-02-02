@@ -1,10 +1,10 @@
 ---
-title: "configuration-examples(Configuration Examples)"
 summary: "符合 Schema 的 OpenClaw 常見設定範例"
 read_when:
   - 學習如何設定 OpenClaw 時
   - 尋找設定範例時
   - 首次設定 OpenClaw 時
+title: "設定範例"
 ---
 
 # 設定範例 (Configuration Examples)

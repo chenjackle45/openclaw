@@ -1,5 +1,5 @@
 ---
-title: "index(Security 🔒)"
+title: "安全性"
 summary: "運行具有 Shell 存取權限的 AI Gateway 的安全性考量與威脅模型"
 read_when:
   - 新增擴大存取權限或自動化的功能時

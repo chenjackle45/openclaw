@@ -1,12 +1,12 @@
 ---
-title: "Agent(Agent Runtime 代理執行時)"
-summary: "代理執行時（嵌入式 p-mono）、工作區契約和會話啟動"
+title: "Agent Runtime(代理執行時)"
+summary: "代理執行時（嵌入式 pi-mono）、工作區契約和會話啟動"
 read_when:
   - 更改代理執行時、工作區啟動或會話行為
 ---
 # Agent Runtime（代理執行時） 🤖
 
-OpenClaw 運行一個從 **p-mono** 衍生的單一嵌入式代理執行時。
+OpenClaw 運行一個從 **pi-mono** 衍生的單一嵌入式代理執行時。
 
 ## 工作區（必需）
 
@@ -55,11 +55,11 @@ OpenClaw 從三個位置載入技能（工作區在名稱衝突時優先）：
 
 技能可以透過設定/env 控制（請參閱 [Gateway 設定](/gateway/configuration) 中的 `skills`）。
 
-## p-mono 整合
+## pi-mono 整合
 
-OpenClaw 重用 p-mono 程式碼庫的部分（models/tools），但 **會話管理、發現和工具連接由 OpenClaw 擁有**。
+OpenClaw 重用 pi-mono 程式碼庫的部分（models/tools），但 **會話管理、發現和工具連接由 OpenClaw 擁有**。
 
-- 沒有 p-coding 代理執行時。
+- 沒有 pi-coding 代理執行時。
 - 不會查閱 `~/.pi/agent` 或 `<workspace>/.pi` 設定。
 
 ## 會話

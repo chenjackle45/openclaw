@@ -1,9 +1,9 @@
 ---
-title: "Device models(裝置型號)"
-summary: "OpenClaw 如何為 macOS App 中的友善名稱 Vendor Apple 裝置型號識別碼。"
+title: "裝置型號資料庫"
+summary: "OpenClaw 如何為 macOS App 的友善名稱 Vendor Apple 裝置型號識別碼"
 read_when:
-  - 更新裝置型號識別碼 Mappings 或 NOTICE/License 檔案
-  - 變更 Instances UI 如何顯示裝置名稱
+  - 更新裝置型號識別碼對應或 NOTICE/License 檔案時
+  - 變更 Instances UI 如何顯示裝置名稱時
 ---
 
 # 裝置型號資料庫（友善名稱）

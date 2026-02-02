@@ -1,98 +1,148 @@
 ---
-title: "Setup(系統設定)"
-summary: "設定指南：在保持 OpenClaw 更新的同時，維護您專屬的個人化設定"
+summary: "設定指南：保持 OpenClaw 設定客製化同時保持最新"
 read_when:
-  - 在新機器上進行設定時
-  - 您想要同步最新版本但不希望破壞個人化設定時
+  - 在新機器上設定時
+  - 您想要「最新 + 最棒」但不破壞您的個人設定時
+title: "設定"
 ---
 
-# 系統設定 (Setup)
+# 設定
 
-最後更新日期：2026-01-01
+最後更新：2026-01-01
 
-## 核心重點 (TL;DR)
-- **自訂內容應放在倉庫之外**：工作區位於 `~/.openclaw/workspace`，配置文件位於 `~/.openclaw/openclaw.json`。
-- **穩定版工作流**：安裝 macOS App，並執行其內建的 Gateway。
-- **開發者版 (Bleeding edge) 工作流**：透過 `pnpm gateway:watch` 自行執行 Gateway，然後讓 macOS App 以「本地模式 (Local mode)」連接。
+## 快速總結
 
-## 前置需求（從原始碼建置）
-- Node >= 22
+- **客製化在儲存庫外：** `~/.openclaw/workspace`（工作區）+ `~/.openclaw/openclaw.json`（配置）。
+- **穩定工作流：**安裝 macOS 應用程式；讓它執行內建 Gateway。
+- **前沿工作流：**自己透過 `pnpm gateway:watch` 執行 Gateway，然後讓 macOS 應用程式在本地模式附加。
+
+## 先決條件（從原始碼）
+
+- Node `>=22`
 - `pnpm`
-- Docker（選用，僅用於容器化設定或端到端測試 —— 詳見 [Docker](/install/docker)）
+- Docker（選用；僅用於容器化設定/e2e — 見 [Docker](/install/docker)）
 
-## 自訂策略（確保更新不受影響）
+## 客製化策略（所以更新不會傷害）
 
-如果您希望擁有「100% 個人化」且「易於更新」的體驗，請將您的自訂內容保留在：
+若您想要「100% 為我客製化」_且_簡單更新，將您的客製化保留在：
 
-- **配置**：`~/.openclaw/openclaw.json` (JSON 或 JSON5 格式)。
-- **工作區**：`~/.openclaw/workspace`（存放技能、提示詞、記憶；建議將其設為私有 Git 倉庫）。
+- **配置：** `~/.openclaw/openclaw.json`（JSON/JSON5-ish）
+- **工作區：** `~/.openclaw/workspace`（技能、提示、記憶；使其成為私有 git 儲存庫）
 
-初次建立環境：
+一次引導：
 
 ```bash
 openclaw setup
 ```
 
-## 穩定版工作流 (以 macOS App 為主)
+從此儲存庫內，使用本地 CLI 入口：
 
-1) 安裝並啟動 **OpenClaw.app** (位於選單列)。
-2) 完成入門/權限檢查清單 (TCC 權限提示)。
-3) 確保 Gateway 設為 **本地 (Local)** 且正在執行（由 App 管理）。
-4) 連結通訊頻道（例如 WhatsApp）：
+```bash
+openclaw setup
+```
+
+若您還沒有全域安裝，透過 `pnpm openclaw setup` 執行它。
+
+## 穩定工作流（macOS 應用程式優先）
+
+1. 安裝 + 啟動 **OpenClaw.app**（選單列）。
+2. 完成入門/權限檢核清單（TCC 提示）。
+3. 確保 Gateway 是**本地**且執行中（應用程式管理它）。
+4. 連結介面（示例：WhatsApp）：
 
 ```bash
 openclaw channels login
 ```
 
-5) 基本檢查：
+5. 健智檢查：
 
 ```bash
 openclaw health
 ```
 
-## 開發者版工作流 (在終端機執行 Gateway)
+若入門在您的構建中不可用：
 
-目標：開發 TypeScript Gateway 代碼、獲得熱重載 (Hot reload) 功能，同時保持 macOS App 的介面連線。
+- 執行 `openclaw setup`，然後 `openclaw channels login`，然後手動啟動 Gateway（`openclaw gateway`）。
 
-### 1) 啟動開發版 Gateway
+## 前沿工作流（終端中的 Gateway）
+
+目標：在 TypeScript Gateway 上工作、取得熱重載、保持 macOS 應用程式 UI 附加。
+
+### 0)（選用）也從原始碼執行 macOS 應用程式
+
+若您也想要前沿的 macOS 應用程式：
+
+```bash
+./scripts/restart-mac.sh
+```
+
+### 1) 啟動開發 Gateway
 
 ```bash
 pnpm install
 pnpm gateway:watch
 ```
 
-`gateway:watch` 會以檢視模式執行 Gateway，並在 TypeScript 代碼變動時自動重載。
+`gateway:watch` 在監視模式中執行 Gateway，在 TypeScript 變更時重載。
 
-### 2) 將 macOS App 指向執行中的 Gateway
+### 2) 將 macOS 應用程式指向您執行中的 Gateway
 
 在 **OpenClaw.app** 中：
-- 連線模式 (Connection Mode)：**本地 (Local)**
-App 會自動附加到已在配置連接埠執行中的 Gateway 上。
+
+- 連線模式：**本地**
+  應用程式將附加到配置埠上執行的 Gateway。
 
 ### 3) 驗證
-- App 內的 Gateway 狀態應顯示為：**「Using existing gateway ...（正在使用現有的 Gateway...）」**
-- 也可以透過 CLI 驗證：`openclaw health`
 
-## 常見陷阱
-- **連接埠錯誤**：Gateway WebSocket 預設為 `ws://127.0.0.1:18789`；請確保 App 與 CLI 使用相同的連接埠。
-- **狀態存儲位置**：
-  - 憑證：`~/.openclaw/credentials/`
+- 應用程式 Gateway 狀態應讀取**「使用現有 Gateway ...」**
+- 或透過 CLI：
+
+```bash
+openclaw health
+```
+
+### 常見陷阱
+
+- **錯誤連接埠：** Gateway WS 預設為 `ws://127.0.0.1:18789`；保持應用程式 + CLI 在同一連接埠。
+- **狀態位置：**
+  - 認證：`~/.openclaw/credentials/`
   - 會話：`~/.openclaw/agents/<agentId>/sessions/`
   - 日誌：`/tmp/openclaw/`
 
-## 憑證存儲地圖 (Credential storage map)
+## 認證儲存對應
 
-在進行認證偵錯或決定備份內容時，可參考以下路徑：
-- **WhatsApp**: `~/.openclaw/credentials/whatsapp/<accountId>/creds.json`
-- **配對允許清單**: `~/.openclaw/credentials/<channel>-allowFrom.json`
-- **模型認證設定檔**: `~/.openclaw/agents/<agentId>/agent/auth-profiles.json`
+調試認證或決定要備份什麼時使用：
 
-## Linux (systemd 使用者服務)
+- **WhatsApp**：`~/.openclaw/credentials/whatsapp/<accountId>/creds.json`
+- **Telegram bot 令牌**：配置/環境或 `channels.telegram.tokenFile`
+- **Discord bot 令牌**：配置/環境（令牌檔案尚未支援）
+- **Slack 令牌**：配置/環境（`channels.slack.*`）
+- **配對允許清單**：`~/.openclaw/credentials/<channel>-allowFrom.json`
+- **模型認證設定檔**：`~/.openclaw/agents/<agentId>/agent/auth-profiles.json`
+- **舊版 OAuth 匯入**：`~/.openclaw/credentials/oauth.json`
+  更多詳情：[安全性](/gateway/security#credential-storage-map)。
 
-Linux 安裝會使用 systemd 的「使用者 (User)」服務。預設情況下，登出或主機閒置時 systemd 會停止使用者服務，這會導致 Gateway 被終止。入門精靈會嘗試為您啟用 **Lingering**（可能會要求 sudo 權限）。如果仍未開啟，請執行：
+## 更新（不破壞您的設定）
+
+- 保持 `~/.openclaw/workspace` 和 `~/.openclaw/` 為「您的東西」；不要將個人提示/配置放入 `openclaw` 儲存庫。
+- 更新原始碼：`git pull` + `pnpm install`（當鎖定檔案變更時）+ 繼續使用 `pnpm gateway:watch`。
+
+## Linux（systemd 使用者服務）
+
+Linux 安裝使用 systemd **使用者**服務。根據預設，systemd 在登出/閒置時停止使用者
+服務，這會終止 Gateway。入門嘗試為您啟用徘徊（可能提示 sudo）。若仍未開啟，執行：
 
 ```bash
 sudo loginctl enable-linger $USER
 ```
 
-詳情請參閱 [Gateway 操作手冊](/gateway)。
+對於全天候或多使用者伺服器，考慮**系統**服務而非
+使用者服務（無需徘徊）。詳見 [Gateway 操作手冊](/gateway)的 systemd 備註。
+
+## 相關文件
+
+- [Gateway 操作手冊](/gateway)（旗標、監督、連接埠）
+- [Gateway 配置](/gateway/configuration)（配置綱要 + 範例）
+- [Discord](/channels/discord) 和 [Telegram](/channels/telegram)（回覆標籤 + replyToMode 設定）
+- [OpenClaw 助理設定](/start/openclaw)
+- [macOS 應用程式](/platforms/macos)（Gateway 生命週期）

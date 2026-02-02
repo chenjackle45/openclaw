@@ -1,68 +1,177 @@
 ---
-title: "Line(LINE 插件)"
-summary: "LINE Messaging API 插件設定、配置與使用指南"
+summary: "LINE Messaging API plugin setup, config, and usage"
 read_when:
-  - 您想將 OpenClaw 連接至 LINE 時
-  - 您需要設定 LINE Webhook 與認證資訊時
+  - You want to connect OpenClaw to LINE
+  - You need LINE webhook + credential setup
+  - You want LINE-specific message options
+title: LINE
 ---
-# LINE (插件)
 
-OpenClaw 透過 LINE Messaging API 與 LINE 連接。此插件在 Gateway 上作為 Webhook 接收器運行，並使用您的頻道存取令牌 (Channel Access Token) 與頻道密鑰 (Channel Secret) 進行驗證。
+# LINE (plugin)
 
-狀態：透過插件支援。支援私訊、群組對話、媒體、位置、Flex 訊息、範本訊息與快速回覆。目前不支援表情符號反應與執行緒。
+LINE 透過 LINE Messaging API 連接至 OpenClaw。此外掛在 Gateway 上作為 Webhook 接收器執行，並使用您的頻道存取令牌 + 頻道密鑰進行驗證。
 
-## 安裝插件
+狀態：透過外掛支援。支援直接訊息、群組聊天、媒體、位置、Flex 訊息、範本訊息和快速回覆。不支援反應和執行緒。
+
+## 需要外掛
+
+安裝 LINE 外掛：
+
 ```bash
 openclaw plugins install @openclaw/line
 ```
 
-## 設定流程
-1. 建立 LINE Developers 帳號並進入控制台。
-2. 建立一個 **Messaging API** 頻道。
-3. 複製 **Channel access token** 與 **Channel secret**。
-4. 在 Messaging API 設定中啟用 **Use webhook**。
-5. 將 Webhook URL 設定為您的 Gateway 端點（必須為 HTTPS）：
-   `https://您的主機網址/line/webhook`
+本地簽出（從 git repo 執行時）：
 
-## 基本設定
+```bash
+openclaw plugins install ./extensions/line
+```
+
+## 設定
+
+1. 建立 LINE 開發人員帳號並開啟主控台：
+   https://developers.line.biz/console/
+2. 建立（或選擇）提供商並新增 **Messaging API** 頻道。
+3. 從頻道設定複製 **Channel access token** 和 **Channel secret**。
+4. 在 Messaging API 設定中啟用 **Use webhook**。
+5. 將 Webhook URL 設定為您的 Gateway 端點（需要 HTTPS）：
+
+```
+https://gateway-host/line/webhook
+```
+
+Gateway 回應 LINE 的 Webhook 驗證 (GET) 和入站事件 (POST)。
+如果您需要自訂路徑，設定 `channels.line.webhookPath` 或
+`channels.line.accounts.<id>.webhookPath` 並相應更新 URL。
+
+## 設定
+
+最小設定：
+
 ```json5
 {
   channels: {
     line: {
       enabled: true,
-      channelAccessToken: "您的存取令牌",
-      channelSecret: "您的頻道密鑰",
-      dmPolicy: "pairing"
-    }
-  }
+      channelAccessToken: "LINE_CHANNEL_ACCESS_TOKEN",
+      channelSecret: "LINE_CHANNEL_SECRET",
+      dmPolicy: "pairing",
+    },
+  },
+}
+```
+
+環境變數（僅限預設帳號）：
+
+- `LINE_CHANNEL_ACCESS_TOKEN`
+- `LINE_CHANNEL_SECRET`
+
+令牌/密鑰檔案：
+
+```json5
+{
+  channels: {
+    line: {
+      tokenFile: "/path/to/line-token.txt",
+      secretFile: "/path/to/line-secret.txt",
+    },
+  },
+}
+```
+
+多個帳號：
+
+```json5
+{
+  channels: {
+    line: {
+      accounts: {
+        marketing: {
+          channelAccessToken: "...",
+          channelSecret: "...",
+          webhookPath: "/line/marketing",
+        },
+      },
+    },
+  },
 }
 ```
 
 ## 存取控制
-私訊預設使用配對模式。未知發送者會收到配對碼，其訊息在核准前會被忽略。
-- 核准指令：`openclaw pairing approve line <代碼>`
-- 允許清單：可在 `channels.line.allowFrom` 中設定允許的 LINE 使用者 ID。
+
+直接訊息預設使用配對。未知發送者獲得配對碼，其訊息在批准前被忽略。
+
+```bash
+openclaw pairing list line
+openclaw pairing approve line <CODE>
+```
+
+允許清單和政策：
+
+- `channels.line.dmPolicy`：`pairing | allowlist | open | disabled`
+- `channels.line.allowFrom`：DM 的允許清單 LINE 使用者 ID
+- `channels.line.groupPolicy`：`allowlist | open | disabled`
+- `channels.line.groupAllowFrom`：群組的允許清單 LINE 使用者 ID
+- 每群組覆蓋：`channels.line.groups.<groupId>.allowFrom`
+
+LINE ID 區分大小寫。有效 ID 看起來像：
+
+- 使用者：`U` + 32 個十六進位字元
+- 群組：`C` + 32 個十六進位字元
+- 聊天室：`R` + 32 個十六進位字元
 
 ## 訊息行為
-- 文字會在超過 5000 字時分塊。
-- 串流回應會被緩衝處理；LINE 會在代理運算時顯示「讀取中」動畫。
 
-## 頻道數據（富文本訊息）
-您可以使用 `channelData.line` 來發送快速回覆、位置、Flex 訊息或範本訊息。
+- 文字在 5000 字元處分塊。
+- Markdown 格式被去除；程式碼區塊和表格在可能時轉換為 Flex 卡片。
+- 串流回應被緩衝；LINE 在代理工作時接收完整分塊，帶有載入動畫。
+- 媒體下載由 `channels.line.mediaMaxMb`（預設 10）上限。
+
+## 頻道資料（豐富訊息）
+
+使用 `channelData.line` 傳送快速回覆、位置、Flex 卡片或範本訊息。
+
 ```json5
 {
-  text: "這是您的圖卡",
+  text: "Here you go",
   channelData: {
     line: {
+      quickReplies: ["Status", "Help"],
+      location: {
+        title: "Office",
+        address: "123 Main St",
+        latitude: 35.681236,
+        longitude: 139.767125,
+      },
       flexMessage: {
-        altText: "狀態圖卡",
-        contents: { /* Flex 負載 */ }
-      }
-    }
-  }
+        altText: "Status card",
+        contents: {
+          /* Flex payload */
+        },
+      },
+      templateMessage: {
+        type: "confirm",
+        text: "Proceed?",
+        confirmLabel: "Yes",
+        confirmData: "yes",
+        cancelLabel: "No",
+        cancelData: "no",
+      },
+    },
+  },
 }
 ```
 
+LINE 外掛也附帶了 `/card` 命令用於 Flex 訊息預設：
+
+```
+/card info "Welcome" "Thanks for joining!"
+```
+
 ## 故障排除
-- **Webhook 驗證失敗**：請確保網址為 HTTPS 且 `channelSecret` 與控制台一致。
-- **無法收到事件**：確認 Webhook 路徑與 `channels.line.webhookPath` 是否匹配。
+
+- **Webhook 驗證失敗：** 確保 Webhook URL 是 HTTPS 且
+  `channelSecret` 與 LINE 主控台相符。
+- **無入站事件：** 確認 Webhook 路徑與 `channels.line.webhookPath` 相符
+  且 Gateway 可從 LINE 到達。
+- **媒體下載錯誤：** 如果媒體超過預設限制，提高 `channels.line.mediaMaxMb`。

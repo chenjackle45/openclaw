@@ -1,5 +1,5 @@
 ---
-title: "tailscale(Tailscale (Gateway dashboard))"
+title: "Tailscale (Gateway dashboard)"
 summary: "為 Gateway Dashboard 整合 Tailscale Serve/Funnel"
 read_when:
   - 在 Localhost 之外暴露 Gateway Control UI 時

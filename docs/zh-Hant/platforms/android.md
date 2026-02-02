@@ -1,10 +1,10 @@
 ---
-title: "android(Android)"
 summary: "Android 應用程式 (Node): 連線操作手冊 + Canvas/聊天/相機功能"
 read_when:
   - 配對或重新連接 Android 節點時
   - 除錯 Android Gateway 探索或認證時
   - 驗證跨客戶端的聊天記錄一致性時
+title: "Android 應用程式"
 ---
 
 # Android 應用程式 (Node)

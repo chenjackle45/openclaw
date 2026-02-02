@@ -1,9 +1,9 @@
 ---
-title: "logging(macOS Logging)"
 summary: "OpenClaw 日誌: 輪替診斷檔案日誌 + 統一日誌隱私旗標"
 read_when:
   - 擷取 macOS 日誌或調查私人資料日誌時
   - 除錯語音喚醒/會話生命週期問題時
+title: "macOS 日誌"
 ---
 
 # 日誌 (macOS)

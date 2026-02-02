@@ -1,10 +1,10 @@
 ---
-title: "permissions(macOS Permissions)"
 summary: "macOS 權限持久性 (TCC) 與簽署需求"
 read_when:
   - 除錯遺失或卡住的 macOS 權限提示時
   - 打包或簽署 macOS 應用程式時
   - 變更 Bundle ID 或應用程式安裝路徑時
+title: "macOS 權限"
 ---
 
 # macOS 權限 (TCC)
