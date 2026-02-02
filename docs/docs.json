@@ -12,10 +12,6 @@
   },
   "topbarLinks": [
     {
-      "name": "中文",
-      "url": "/zh-CN"
-    },
-    {
       "name": "GitHub",
       "url": "https://github.com/openclaw/openclaw"
     },
@@ -843,724 +839,391 @@
     }
   ],
   "navigation": {
-    "languages": [
+    "groups": [
       {
-        "language": "en",
-        "default": true,
-        "groups": [
-          {
-            "group": "Start Here",
-            "pages": [
-              "index",
-              "start/getting-started",
-              "start/wizard",
-              "start/setup",
-              "start/pairing",
-              "start/openclaw",
-              "start/showcase",
-              "start/hubs",
-              "start/onboarding",
-              "start/lore"
-            ]
-          },
-          {
-            "group": "Help",
-            "pages": ["help/index", "help/troubleshooting", "help/faq"]
-          },
-          {
-            "group": "Install & Updates",
-            "pages": [
-              "install/index",
-              "install/installer",
-              "install/updating",
-              "install/development-channels",
-              "install/uninstall",
-              "install/ansible",
-              "install/nix",
-              "install/docker",
-              "railway",
-              "render",
-              "northflank",
-              "install/bun"
-            ]
-          },
-          {
-            "group": "CLI",
-            "pages": [
-              "cli/index",
-              "cli/setup",
-              "cli/onboard",
-              "cli/configure",
-              "cli/doctor",
-              "cli/dashboard",
-              "cli/reset",
-              "cli/uninstall",
-              "cli/browser",
-              "cli/message",
-              "cli/agent",
-              "cli/agents",
-              "cli/status",
-              "cli/health",
-              "cli/sessions",
-              "cli/channels",
-              "cli/directory",
-              "cli/skills",
-              "cli/plugins",
-              "cli/memory",
-              "cli/models",
-              "cli/logs",
-              "cli/system",
-              "cli/nodes",
-              "cli/approvals",
-              "cli/gateway",
-              "cli/tui",
-              "cli/voicecall",
-              "cli/cron",
-              "cli/dns",
-              "cli/docs",
-              "cli/hooks",
-              "cli/pairing",
-              "cli/security",
-              "cli/update",
-              "cli/sandbox"
-            ]
-          },
-          {
-            "group": "Core Concepts",
-            "pages": [
-              "concepts/architecture",
-              "concepts/agent",
-              "concepts/agent-loop",
-              "concepts/system-prompt",
-              "concepts/context",
-              "token-use",
-              "concepts/oauth",
-              "concepts/agent-workspace",
-              "concepts/memory",
-              "concepts/multi-agent",
-              "concepts/compaction",
-              "concepts/session",
-              "concepts/session-pruning",
-              "concepts/sessions",
-              "concepts/session-tool",
-              "concepts/presence",
-              "concepts/channel-routing",
-              "concepts/messages",
-              "concepts/streaming",
-              "concepts/markdown-formatting",
-              "concepts/groups",
-              "concepts/group-messages",
-              "concepts/typing-indicators",
-              "concepts/queue",
-              "concepts/retry",
-              "concepts/model-providers",
-              "concepts/models",
-              "concepts/model-failover",
-              "concepts/usage-tracking",
-              "concepts/timezone",
-              "concepts/typebox"
-            ]
-          },
-          {
-            "group": "Gateway & Ops",
-            "pages": [
-              "gateway/index",
-              "gateway/protocol",
-              "gateway/bridge-protocol",
-              "gateway/pairing",
-              "gateway/gateway-lock",
-              "environment",
-              "gateway/configuration",
-              "gateway/multiple-gateways",
-              "gateway/configuration-examples",
-              "gateway/authentication",
-              "gateway/openai-http-api",
-              "gateway/tools-invoke-http-api",
-              "gateway/cli-backends",
-              "gateway/local-models",
-              "gateway/background-process",
-              "gateway/health",
-              "gateway/heartbeat",
-              "gateway/doctor",
-              "gateway/logging",
-              "gateway/security/index",
-              "security/formal-verification",
-              "gateway/sandbox-vs-tool-policy-vs-elevated",
-              "gateway/sandboxing",
-              "gateway/troubleshooting",
-              "debugging",
-              "gateway/remote",
-              "gateway/remote-gateway-readme",
-              "gateway/discovery",
-              "gateway/bonjour",
-              "gateway/tailscale"
-            ]
-          },
-          {
-            "group": "Web & Interfaces",
-            "pages": [
-              "web/index",
-              "web/control-ui",
-              "web/dashboard",
-              "web/webchat",
-              "tui"
-            ]
-          },
-          {
-            "group": "Channels",
-            "pages": [
-              "channels/index",
-              "channels/whatsapp",
-              "channels/telegram",
-              "channels/grammy",
-              "channels/discord",
-              "channels/slack",
-              "channels/googlechat",
-              "channels/mattermost",
-              "channels/signal",
-              "channels/imessage",
-              "channels/msteams",
-              "channels/line",
-              "channels/matrix",
-              "channels/zalo",
-              "channels/zalouser",
-              "broadcast-groups",
-              "channels/troubleshooting",
-              "channels/location"
-            ]
-          },
-          {
-            "group": "Providers",
-            "pages": [
-              "providers/index",
-              "providers/models",
-              "providers/openai",
-              "providers/anthropic",
-              "bedrock",
-              "providers/moonshot",
-              "providers/minimax",
-              "providers/vercel-ai-gateway",
-              "providers/openrouter",
-              "providers/synthetic",
-              "providers/opencode",
-              "providers/glm",
-              "providers/zai"
-            ]
-          },
-          {
-            "group": "Automation & Hooks",
-            "pages": [
-              "hooks",
-              "hooks/soul-evil",
-              "automation/auth-monitoring",
-              "automation/webhook",
-              "automation/gmail-pubsub",
-              "automation/cron-jobs",
-              "automation/cron-vs-heartbeat",
-              "automation/poll"
-            ]
-          },
-          {
-            "group": "Tools & Skills",
-            "pages": [
-              "tools/index",
-              "tools/lobster",
-              "tools/llm-task",
-              "plugin",
-              "plugins/voice-call",
-              "plugins/zalouser",
-              "tools/exec",
-              "tools/web",
-              "tools/apply-patch",
-              "tools/elevated",
-              "tools/browser",
-              "tools/browser-login",
-              "tools/chrome-extension",
-              "tools/browser-linux-troubleshooting",
-              "tools/slash-commands",
-              "tools/thinking",
-              "tools/agent-send",
-              "tools/subagents",
-              "multi-agent-sandbox-tools",
-              "tools/reactions",
-              "tools/skills",
-              "tools/skills-config",
-              "tools/clawhub"
-            ]
-          },
-          {
-            "group": "Nodes & Media",
-            "pages": [
-              "nodes/index",
-              "nodes/camera",
-              "nodes/images",
-              "nodes/audio",
-              "nodes/location-command",
-              "nodes/voicewake",
-              "nodes/talk"
-            ]
-          },
-          {
-            "group": "Platforms",
-            "pages": [
-              "platforms/index",
-              "platforms/macos",
-              "platforms/macos-vm",
-              "platforms/ios",
-              "platforms/android",
-              "platforms/windows",
-              "platforms/linux",
-              "platforms/fly",
-              "platforms/hetzner",
-              "platforms/gcp",
-              "platforms/exe-dev"
-            ]
-          },
-          {
-            "group": "macOS Companion App",
-            "pages": [
-              "platforms/mac/dev-setup",
-              "platforms/mac/menu-bar",
-              "platforms/mac/voicewake",
-              "platforms/mac/voice-overlay",
-              "platforms/mac/webchat",
-              "platforms/mac/canvas",
-              "platforms/mac/child-process",
-              "platforms/mac/health",
-              "platforms/mac/icon",
-              "platforms/mac/logging",
-              "platforms/mac/permissions",
-              "platforms/mac/remote",
-              "platforms/mac/signing",
-              "platforms/mac/release",
-              "platforms/mac/bundled-gateway",
-              "platforms/mac/xpc",
-              "platforms/mac/skills",
-              "platforms/mac/peekaboo"
-            ]
-          },
-          {
-            "group": "Reference & Templates",
-            "pages": [
-              "testing",
-              "scripts",
-              "reference/session-management-compaction",
-              "reference/rpc",
-              "reference/device-models",
-              "reference/test",
-              "reference/RELEASING",
-              "reference/AGENTS.default",
-              "reference/templates/AGENTS",
-              "reference/templates/BOOT",
-              "reference/templates/BOOTSTRAP",
-              "reference/templates/HEARTBEAT",
-              "reference/templates/IDENTITY",
-              "reference/templates/SOUL",
-              "reference/templates/TOOLS",
-              "reference/templates/USER"
-            ]
-          }
+        "group": "開始使用",
+        "pages": [
+          "zh-Hant/index",
+          "zh-Hant/start/getting-started",
+          "zh-Hant/start/wizard",
+          "zh-Hant/start/setup",
+          "zh-Hant/start/pairing",
+          "zh-Hant/start/openclaw",
+          "zh-Hant/start/showcase",
+          "zh-Hant/start/hubs",
+          "zh-Hant/start/onboarding",
+          "zh-Hant/start/lore"
         ]
       },
       {
-        "language": "zh-Hans",
-        "groups": [
-          {
-            "group": "开始",
-            "pages": [
-              "zh-CN/index",
-              "zh-CN/start/getting-started",
-              "zh-CN/start/wizard"
-            ]
-          }
+        "group": "幫助中心",
+        "pages": [
+          "zh-Hant/help/index",
+          "zh-Hant/help/troubleshooting",
+          "zh-Hant/help/faq"
         ]
       },
       {
-        "language": "zh-Hant",
-        "groups": [
-          {
-            "group": "開始使用",
-            "pages": [
-              "zh-Hant/index",
-              "zh-Hant/start/getting-started",
-              "zh-Hant/start/wizard",
-              "zh-Hant/start/setup",
-              "zh-Hant/start/pairing",
-              "zh-Hant/start/openclaw",
-              "zh-Hant/start/showcase",
-              "zh-Hant/start/hubs",
-              "zh-Hant/start/onboarding",
-              "zh-Hant/start/lore"
-            ]
-          },
-          {
-            "group": "幫助中心",
-            "pages": [
-              "zh-Hant/help/index",
-              "zh-Hant/help/troubleshooting",
-              "zh-Hant/help/faq"
-            ]
-          },
-          {
-            "group": "安裝與更新",
-            "pages": [
-              "zh-Hant/install/index",
-              "zh-Hant/install/installer",
-              "zh-Hant/install/updating",
-              "zh-Hant/install/development-channels",
-              "zh-Hant/install/uninstall",
-              "zh-Hant/install/ansible",
-              "zh-Hant/install/nix",
-              "zh-Hant/install/docker",
-              "zh-Hant/install/bun",
-              "zh-Hant/install/migrating",
-              "zh-Hant/install/node"
-            ]
-          },
-          {
-            "group": "CLI 指令",
-            "pages": [
-              "zh-Hant/cli/index",
-              "zh-Hant/cli/setup",
-              "zh-Hant/cli/onboard",
-              "zh-Hant/cli/configure",
-              "zh-Hant/cli/doctor",
-              "zh-Hant/cli/dashboard",
-              "zh-Hant/cli/reset",
-              "zh-Hant/cli/uninstall",
-              "zh-Hant/cli/browser",
-              "zh-Hant/cli/message",
-              "zh-Hant/cli/agent",
-              "zh-Hant/cli/agents",
-              "zh-Hant/cli/status",
-              "zh-Hant/cli/health",
-              "zh-Hant/cli/sessions",
-              "zh-Hant/cli/channels",
-              "zh-Hant/cli/directory",
-              "zh-Hant/cli/skills",
-              "zh-Hant/cli/plugins",
-              "zh-Hant/cli/memory",
-              "zh-Hant/cli/models",
-              "zh-Hant/cli/logs",
-              "zh-Hant/cli/system",
-              "zh-Hant/cli/nodes",
-              "zh-Hant/cli/approvals",
-              "zh-Hant/cli/gateway",
-              "zh-Hant/cli/tui",
-              "zh-Hant/cli/voicecall",
-              "zh-Hant/cli/cron",
-              "zh-Hant/cli/dns",
-              "zh-Hant/cli/docs",
-              "zh-Hant/cli/hooks",
-              "zh-Hant/cli/pairing",
-              "zh-Hant/cli/security",
-              "zh-Hant/cli/update",
-              "zh-Hant/cli/sandbox",
-              "zh-Hant/cli/acp",
-              "zh-Hant/cli/config",
-              "zh-Hant/cli/devices",
-              "zh-Hant/cli/node",
-              "zh-Hant/cli/webhooks"
-            ]
-          },
-          {
-            "group": "核心概念",
-            "pages": [
-              "zh-Hant/concepts/architecture",
-              "zh-Hant/concepts/agent",
-              "zh-Hant/concepts/agent-loop",
-              "zh-Hant/concepts/system-prompt",
-              "zh-Hant/concepts/context",
-              "zh-Hant/token-use",
-              "zh-Hant/concepts/oauth",
-              "zh-Hant/concepts/agent-workspace",
-              "zh-Hant/concepts/memory",
-              "zh-Hant/concepts/multi-agent",
-              "zh-Hant/concepts/compaction",
-              "zh-Hant/concepts/session",
-              "zh-Hant/concepts/session-pruning",
-              "zh-Hant/concepts/sessions",
-              "zh-Hant/concepts/session-tool",
-              "zh-Hant/concepts/presence",
-              "zh-Hant/concepts/channel-routing",
-              "zh-Hant/concepts/messages",
-              "zh-Hant/concepts/streaming",
-              "zh-Hant/concepts/markdown-formatting",
-              "zh-Hant/concepts/groups",
-              "zh-Hant/concepts/group-messages",
-              "zh-Hant/concepts/typing-indicators",
-              "zh-Hant/concepts/queue",
-              "zh-Hant/concepts/retry",
-              "zh-Hant/concepts/model-providers",
-              "zh-Hant/concepts/models",
-              "zh-Hant/concepts/model-failover",
-              "zh-Hant/concepts/usage-tracking",
-              "zh-Hant/concepts/timezone",
-              "zh-Hant/concepts/typebox",
-              "zh-Hant/date-time",
-              "zh-Hant/prose"
-            ]
-          },
-          {
-            "group": "Gateway 服務",
-            "pages": [
-              "zh-Hant/gateway/index",
-              "zh-Hant/gateway/protocol",
-              "zh-Hant/gateway/bridge-protocol",
-              "zh-Hant/gateway/pairing",
-              "zh-Hant/gateway/gateway-lock",
-              "zh-Hant/environment",
-              "zh-Hant/gateway/configuration",
-              "zh-Hant/gateway/multiple-gateways",
-              "zh-Hant/gateway/configuration-examples",
-              "zh-Hant/gateway/authentication",
-              "zh-Hant/gateway/openai-http-api",
-              "zh-Hant/gateway/openresponses-http-api",
-              "zh-Hant/gateway/tools-invoke-http-api",
-              "zh-Hant/gateway/cli-backends",
-              "zh-Hant/gateway/local-models",
-              "zh-Hant/gateway/background-process",
-              "zh-Hant/gateway/health",
-              "zh-Hant/gateway/heartbeat",
-              "zh-Hant/gateway/doctor",
-              "zh-Hant/gateway/logging",
-              "zh-Hant/gateway/security/index",
-              "zh-Hant/gateway/security/formal-verification",
-              "zh-Hant/security/formal-verification",
-              "zh-Hant/gateway/sandbox-vs-tool-policy-vs-elevated",
-              "zh-Hant/gateway/sandboxing",
-              "zh-Hant/gateway/troubleshooting",
-              "zh-Hant/debugging",
-              "zh-Hant/gateway/remote",
-              "zh-Hant/gateway/remote-gateway-readme",
-              "zh-Hant/gateway/discovery",
-              "zh-Hant/gateway/bonjour",
-              "zh-Hant/gateway/tailscale",
-              "zh-Hant/logging",
-              "zh-Hant/network"
-            ]
-          },
-          {
-            "group": "網頁介面",
-            "pages": [
-              "zh-Hant/web/index",
-              "zh-Hant/web/control-ui",
-              "zh-Hant/web/dashboard",
-              "zh-Hant/web/webchat",
-              "zh-Hant/tui"
-            ]
-          },
-          {
-            "group": "聊天頻道",
-            "pages": [
-              "zh-Hant/channels/index",
-              "zh-Hant/channels/whatsapp",
-              "zh-Hant/channels/telegram",
-              "zh-Hant/channels/grammy",
-              "zh-Hant/channels/discord",
-              "zh-Hant/channels/slack",
-              "zh-Hant/channels/googlechat",
-              "zh-Hant/channels/mattermost",
-              "zh-Hant/channels/signal",
-              "zh-Hant/channels/imessage",
-              "zh-Hant/channels/bluebubbles",
-              "zh-Hant/channels/msteams",
-              "zh-Hant/channels/line",
-              "zh-Hant/channels/matrix",
-              "zh-Hant/channels/nextcloud-talk",
-              "zh-Hant/channels/nostr",
-              "zh-Hant/channels/tlon",
-              "zh-Hant/channels/twitch",
-              "zh-Hant/channels/zalo",
-              "zh-Hant/channels/zalouser",
-              "zh-Hant/broadcast-groups",
-              "zh-Hant/channels/troubleshooting",
-              "zh-Hant/channels/location"
-            ]
-          },
-          {
-            "group": "模型供應商",
-            "pages": [
-              "zh-Hant/providers/index",
-              "zh-Hant/providers/models",
-              "zh-Hant/providers/openai",
-              "zh-Hant/providers/anthropic",
-              "zh-Hant/bedrock",
-              "zh-Hant/providers/moonshot",
-              "zh-Hant/providers/minimax",
-              "zh-Hant/providers/vercel-ai-gateway",
-              "zh-Hant/providers/openrouter",
-              "zh-Hant/providers/synthetic",
-              "zh-Hant/providers/opencode",
-              "zh-Hant/providers/glm",
-              "zh-Hant/providers/zai",
-              "zh-Hant/providers/claude-max-api-proxy",
-              "zh-Hant/providers/deepgram",
-              "zh-Hant/providers/github-copilot",
-              "zh-Hant/providers/ollama",
-              "zh-Hant/providers/qwen",
-              "zh-Hant/providers/venice",
-              "zh-Hant/providers/xiaomi"
-            ]
-          },
-          {
-            "group": "自動化與 Hooks",
-            "pages": [
-              "zh-Hant/hooks",
-              "zh-Hant/hooks/soul-evil",
-              "zh-Hant/automation/auth-monitoring",
-              "zh-Hant/automation/webhook",
-              "zh-Hant/automation/gmail-pubsub",
-              "zh-Hant/automation/cron-jobs",
-              "zh-Hant/automation/cron-vs-heartbeat",
-              "zh-Hant/automation/poll"
-            ]
-          },
-          {
-            "group": "工具與技能",
-            "pages": [
-              "zh-Hant/tools/index",
-              "zh-Hant/tools/lobster",
-              "zh-Hant/tools/llm-task",
-              "zh-Hant/plugin",
-              "zh-Hant/plugins/voice-call",
-              "zh-Hant/plugins/zalouser",
-              "zh-Hant/plugins/agent-tools",
-              "zh-Hant/plugins/manifest",
-              "zh-Hant/tools/exec",
-              "zh-Hant/tools/exec-approvals",
-              "zh-Hant/tools/web",
-              "zh-Hant/tools/apply-patch",
-              "zh-Hant/tools/elevated",
-              "zh-Hant/tools/browser",
-              "zh-Hant/tools/browser-login",
-              "zh-Hant/tools/chrome-extension",
-              "zh-Hant/tools/browser-linux-troubleshooting",
-              "zh-Hant/tools/slash-commands",
-              "zh-Hant/tools/thinking",
-              "zh-Hant/tools/agent-send",
-              "zh-Hant/tools/subagents",
-              "zh-Hant/multi-agent-sandbox-tools",
-              "zh-Hant/tools/reactions",
-              "zh-Hant/tools/skills",
-              "zh-Hant/tools/skills-config",
-              "zh-Hant/tools/creating-skills",
-              "zh-Hant/tools/clawdhub",
-              "zh-Hant/tools/firecrawl",
-              "zh-Hant/brave-search",
-              "zh-Hant/perplexity"
-            ]
-          },
-          {
-            "group": "節點與媒體",
-            "pages": [
-              "zh-Hant/nodes/index",
-              "zh-Hant/nodes/camera",
-              "zh-Hant/nodes/images",
-              "zh-Hant/nodes/audio",
-              "zh-Hant/nodes/location-command",
-              "zh-Hant/nodes/voicewake",
-              "zh-Hant/nodes/talk",
-              "zh-Hant/nodes/media-understanding",
-              "zh-Hant/tts"
-            ]
-          },
-          {
-            "group": "平台部署",
-            "pages": [
-              "zh-Hant/platforms/index",
-              "zh-Hant/platforms/macos",
-              "zh-Hant/platforms/macos-vm",
-              "zh-Hant/platforms/ios",
-              "zh-Hant/platforms/android",
-              "zh-Hant/platforms/windows",
-              "zh-Hant/platforms/linux",
-              "zh-Hant/platforms/fly",
-              "zh-Hant/platforms/hetzner",
-              "zh-Hant/platforms/gcp",
-              "zh-Hant/platforms/exe-dev",
-              "zh-Hant/platforms/digitalocean",
-              "zh-Hant/platforms/oracle",
-              "zh-Hant/platforms/raspberry-pi",
-              "zh-Hant/vps"
-            ]
-          },
-          {
-            "group": "macOS 應用程式",
-            "pages": [
-              "zh-Hant/platforms/mac/dev-setup",
-              "zh-Hant/platforms/mac/menu-bar",
-              "zh-Hant/platforms/mac/voicewake",
-              "zh-Hant/platforms/mac/voice-overlay",
-              "zh-Hant/platforms/mac/webchat",
-              "zh-Hant/platforms/mac/canvas",
-              "zh-Hant/platforms/mac/child-process",
-              "zh-Hant/platforms/mac/health",
-              "zh-Hant/platforms/mac/icon",
-              "zh-Hant/platforms/mac/logging",
-              "zh-Hant/platforms/mac/permissions",
-              "zh-Hant/platforms/mac/remote",
-              "zh-Hant/platforms/mac/signing",
-              "zh-Hant/platforms/mac/release",
-              "zh-Hant/platforms/mac/bundled-gateway",
-              "zh-Hant/platforms/mac/xpc",
-              "zh-Hant/platforms/mac/skills",
-              "zh-Hant/platforms/mac/peekaboo"
-            ]
-          },
-          {
-            "group": "參考文件與範本",
-            "pages": [
-              "zh-Hant/testing",
-              "zh-Hant/scripts",
-              "zh-Hant/reference/session-management-compaction",
-              "zh-Hant/reference/rpc",
-              "zh-Hant/reference/device-models",
-              "zh-Hant/reference/test",
-              "zh-Hant/reference/RELEASING",
-              "zh-Hant/reference/AGENTS.default",
-              "zh-Hant/reference/api-usage-costs",
-              "zh-Hant/reference/transcript-hygiene",
-              "zh-Hant/reference/templates/AGENTS",
-              "zh-Hant/reference/templates/AGENTS.dev",
-              "zh-Hant/reference/templates/BOOT",
-              "zh-Hant/reference/templates/BOOTSTRAP",
-              "zh-Hant/reference/templates/HEARTBEAT",
-              "zh-Hant/reference/templates/IDENTITY",
-              "zh-Hant/reference/templates/IDENTITY.dev",
-              "zh-Hant/reference/templates/SOUL",
-              "zh-Hant/reference/templates/SOUL.dev",
-              "zh-Hant/reference/templates/TOOLS",
-              "zh-Hant/reference/templates/TOOLS.dev",
-              "zh-Hant/reference/templates/USER",
-              "zh-Hant/reference/templates/USER.dev"
-            ]
-          },
-          {
-            "group": "實驗功能",
-            "pages": [
-              "zh-Hant/experiments/onboarding-config-protocol",
-              "zh-Hant/experiments/plans/cron-add-hardening",
-              "zh-Hant/experiments/plans/group-policy-hardening",
-              "zh-Hant/experiments/plans/openresponses-gateway",
-              "zh-Hant/experiments/proposals/model-config",
-              "zh-Hant/experiments/research/memory"
-            ]
-          },
-          {
-            "group": "重構計劃",
-            "pages": [
-              "zh-Hant/refactor/clawnet",
-              "zh-Hant/refactor/exec-host",
-              "zh-Hant/refactor/outbound-session-mirroring",
-              "zh-Hant/refactor/plugin-sdk",
-              "zh-Hant/refactor/strict-config"
-            ]
-          },
-          {
-            "group": "除錯與診斷",
-            "pages": ["zh-Hant/debug/node-issue", "zh-Hant/diagnostics/flags"]
-          }
+        "group": "安裝與更新",
+        "pages": [
+          "zh-Hant/install/index",
+          "zh-Hant/install/installer",
+          "zh-Hant/install/updating",
+          "zh-Hant/install/development-channels",
+          "zh-Hant/install/uninstall",
+          "zh-Hant/install/ansible",
+          "zh-Hant/install/nix",
+          "zh-Hant/install/docker",
+          "zh-Hant/install/bun",
+          "zh-Hant/install/migrating",
+          "zh-Hant/install/node"
+        ]
+      },
+      {
+        "group": "CLI 指令",
+        "pages": [
+          "zh-Hant/cli/index",
+          "zh-Hant/cli/setup",
+          "zh-Hant/cli/onboard",
+          "zh-Hant/cli/configure",
+          "zh-Hant/cli/doctor",
+          "zh-Hant/cli/dashboard",
+          "zh-Hant/cli/reset",
+          "zh-Hant/cli/uninstall",
+          "zh-Hant/cli/browser",
+          "zh-Hant/cli/message",
+          "zh-Hant/cli/agent",
+          "zh-Hant/cli/agents",
+          "zh-Hant/cli/status",
+          "zh-Hant/cli/health",
+          "zh-Hant/cli/sessions",
+          "zh-Hant/cli/channels",
+          "zh-Hant/cli/directory",
+          "zh-Hant/cli/skills",
+          "zh-Hant/cli/plugins",
+          "zh-Hant/cli/memory",
+          "zh-Hant/cli/models",
+          "zh-Hant/cli/logs",
+          "zh-Hant/cli/system",
+          "zh-Hant/cli/nodes",
+          "zh-Hant/cli/approvals",
+          "zh-Hant/cli/gateway",
+          "zh-Hant/cli/tui",
+          "zh-Hant/cli/voicecall",
+          "zh-Hant/cli/cron",
+          "zh-Hant/cli/dns",
+          "zh-Hant/cli/docs",
+          "zh-Hant/cli/hooks",
+          "zh-Hant/cli/pairing",
+          "zh-Hant/cli/security",
+          "zh-Hant/cli/update",
+          "zh-Hant/cli/sandbox",
+          "zh-Hant/cli/acp",
+          "zh-Hant/cli/config",
+          "zh-Hant/cli/devices",
+          "zh-Hant/cli/node",
+          "zh-Hant/cli/webhooks"
+        ]
+      },
+      {
+        "group": "核心概念",
+        "pages": [
+          "zh-Hant/concepts/architecture",
+          "zh-Hant/concepts/agent",
+          "zh-Hant/concepts/agent-loop",
+          "zh-Hant/concepts/system-prompt",
+          "zh-Hant/concepts/context",
+          "zh-Hant/token-use",
+          "zh-Hant/concepts/oauth",
+          "zh-Hant/concepts/agent-workspace",
+          "zh-Hant/concepts/memory",
+          "zh-Hant/concepts/multi-agent",
+          "zh-Hant/concepts/compaction",
+          "zh-Hant/concepts/session",
+          "zh-Hant/concepts/session-pruning",
+          "zh-Hant/concepts/sessions",
+          "zh-Hant/concepts/session-tool",
+          "zh-Hant/concepts/presence",
+          "zh-Hant/concepts/channel-routing",
+          "zh-Hant/concepts/messages",
+          "zh-Hant/concepts/streaming",
+          "zh-Hant/concepts/markdown-formatting",
+          "zh-Hant/concepts/groups",
+          "zh-Hant/concepts/group-messages",
+          "zh-Hant/concepts/typing-indicators",
+          "zh-Hant/concepts/queue",
+          "zh-Hant/concepts/retry",
+          "zh-Hant/concepts/model-providers",
+          "zh-Hant/concepts/models",
+          "zh-Hant/concepts/model-failover",
+          "zh-Hant/concepts/usage-tracking",
+          "zh-Hant/concepts/timezone",
+          "zh-Hant/concepts/typebox",
+          "zh-Hant/date-time",
+          "zh-Hant/prose"
+        ]
+      },
+      {
+        "group": "Gateway 服務",
+        "pages": [
+          "zh-Hant/gateway/index",
+          "zh-Hant/gateway/protocol",
+          "zh-Hant/gateway/bridge-protocol",
+          "zh-Hant/gateway/pairing",
+          "zh-Hant/gateway/gateway-lock",
+          "zh-Hant/environment",
+          "zh-Hant/gateway/configuration",
+          "zh-Hant/gateway/multiple-gateways",
+          "zh-Hant/gateway/configuration-examples",
+          "zh-Hant/gateway/authentication",
+          "zh-Hant/gateway/openai-http-api",
+          "zh-Hant/gateway/openresponses-http-api",
+          "zh-Hant/gateway/tools-invoke-http-api",
+          "zh-Hant/gateway/cli-backends",
+          "zh-Hant/gateway/local-models",
+          "zh-Hant/gateway/background-process",
+          "zh-Hant/gateway/health",
+          "zh-Hant/gateway/heartbeat",
+          "zh-Hant/gateway/doctor",
+          "zh-Hant/gateway/logging",
+          "zh-Hant/gateway/security/index",
+          "zh-Hant/gateway/security/formal-verification",
+          "zh-Hant/security/formal-verification",
+          "zh-Hant/gateway/sandbox-vs-tool-policy-vs-elevated",
+          "zh-Hant/gateway/sandboxing",
+          "zh-Hant/gateway/troubleshooting",
+          "zh-Hant/debugging",
+          "zh-Hant/gateway/remote",
+          "zh-Hant/gateway/remote-gateway-readme",
+          "zh-Hant/gateway/discovery",
+          "zh-Hant/gateway/bonjour",
+          "zh-Hant/gateway/tailscale",
+          "zh-Hant/logging",
+          "zh-Hant/network"
+        ]
+      },
+      {
+        "group": "網頁介面",
+        "pages": [
+          "zh-Hant/web/index",
+          "zh-Hant/web/control-ui",
+          "zh-Hant/web/dashboard",
+          "zh-Hant/web/webchat",
+          "zh-Hant/tui"
+        ]
+      },
+      {
+        "group": "聊天頻道",
+        "pages": [
+          "zh-Hant/channels/index",
+          "zh-Hant/channels/whatsapp",
+          "zh-Hant/channels/telegram",
+          "zh-Hant/channels/grammy",
+          "zh-Hant/channels/discord",
+          "zh-Hant/channels/slack",
+          "zh-Hant/channels/googlechat",
+          "zh-Hant/channels/mattermost",
+          "zh-Hant/channels/signal",
+          "zh-Hant/channels/imessage",
+          "zh-Hant/channels/bluebubbles",
+          "zh-Hant/channels/msteams",
+          "zh-Hant/channels/line",
+          "zh-Hant/channels/matrix",
+          "zh-Hant/channels/nextcloud-talk",
+          "zh-Hant/channels/nostr",
+          "zh-Hant/channels/tlon",
+          "zh-Hant/channels/twitch",
+          "zh-Hant/channels/zalo",
+          "zh-Hant/channels/zalouser",
+          "zh-Hant/broadcast-groups",
+          "zh-Hant/channels/troubleshooting",
+          "zh-Hant/channels/location"
+        ]
+      },
+      {
+        "group": "模型供應商",
+        "pages": [
+          "zh-Hant/providers/index",
+          "zh-Hant/providers/models",
+          "zh-Hant/providers/openai",
+          "zh-Hant/providers/anthropic",
+          "zh-Hant/bedrock",
+          "zh-Hant/providers/moonshot",
+          "zh-Hant/providers/minimax",
+          "zh-Hant/providers/vercel-ai-gateway",
+          "zh-Hant/providers/openrouter",
+          "zh-Hant/providers/synthetic",
+          "zh-Hant/providers/opencode",
+          "zh-Hant/providers/glm",
+          "zh-Hant/providers/zai",
+          "zh-Hant/providers/claude-max-api-proxy",
+          "zh-Hant/providers/deepgram",
+          "zh-Hant/providers/github-copilot",
+          "zh-Hant/providers/ollama",
+          "zh-Hant/providers/qwen",
+          "zh-Hant/providers/venice",
+          "zh-Hant/providers/xiaomi"
+        ]
+      },
+      {
+        "group": "自動化與 Hooks",
+        "pages": [
+          "zh-Hant/hooks",
+          "zh-Hant/hooks/soul-evil",
+          "zh-Hant/automation/auth-monitoring",
+          "zh-Hant/automation/webhook",
+          "zh-Hant/automation/gmail-pubsub",
+          "zh-Hant/automation/cron-jobs",
+          "zh-Hant/automation/cron-vs-heartbeat",
+          "zh-Hant/automation/poll"
+        ]
+      },
+      {
+        "group": "工具與技能",
+        "pages": [
+          "zh-Hant/tools/index",
+          "zh-Hant/tools/lobster",
+          "zh-Hant/tools/llm-task",
+          "zh-Hant/plugin",
+          "zh-Hant/plugins/voice-call",
+          "zh-Hant/plugins/zalouser",
+          "zh-Hant/plugins/agent-tools",
+          "zh-Hant/plugins/manifest",
+          "zh-Hant/tools/exec",
+          "zh-Hant/tools/exec-approvals",
+          "zh-Hant/tools/web",
+          "zh-Hant/tools/apply-patch",
+          "zh-Hant/tools/elevated",
+          "zh-Hant/tools/browser",
+          "zh-Hant/tools/browser-login",
+          "zh-Hant/tools/chrome-extension",
+          "zh-Hant/tools/browser-linux-troubleshooting",
+          "zh-Hant/tools/slash-commands",
+          "zh-Hant/tools/thinking",
+          "zh-Hant/tools/agent-send",
+          "zh-Hant/tools/subagents",
+          "zh-Hant/multi-agent-sandbox-tools",
+          "zh-Hant/tools/reactions",
+          "zh-Hant/tools/skills",
+          "zh-Hant/tools/skills-config",
+          "zh-Hant/tools/creating-skills",
+          "zh-Hant/tools/clawdhub",
+          "zh-Hant/tools/firecrawl",
+          "zh-Hant/brave-search",
+          "zh-Hant/perplexity"
+        ]
+      },
+      {
+        "group": "節點與媒體",
+        "pages": [
+          "zh-Hant/nodes/index",
+          "zh-Hant/nodes/camera",
+          "zh-Hant/nodes/images",
+          "zh-Hant/nodes/audio",
+          "zh-Hant/nodes/location-command",
+          "zh-Hant/nodes/voicewake",
+          "zh-Hant/nodes/talk",
+          "zh-Hant/nodes/media-understanding",
+          "zh-Hant/tts"
+        ]
+      },
+      {
+        "group": "平台部署",
+        "pages": [
+          "zh-Hant/platforms/index",
+          "zh-Hant/platforms/macos",
+          "zh-Hant/platforms/macos-vm",
+          "zh-Hant/platforms/ios",
+          "zh-Hant/platforms/android",
+          "zh-Hant/platforms/windows",
+          "zh-Hant/platforms/linux",
+          "zh-Hant/platforms/fly",
+          "zh-Hant/platforms/hetzner",
+          "zh-Hant/platforms/gcp",
+          "zh-Hant/platforms/exe-dev",
+          "zh-Hant/platforms/digitalocean",
+          "zh-Hant/platforms/oracle",
+          "zh-Hant/platforms/raspberry-pi",
+          "zh-Hant/vps"
+        ]
+      },
+      {
+        "group": "macOS 應用程式",
+        "pages": [
+          "zh-Hant/platforms/mac/dev-setup",
+          "zh-Hant/platforms/mac/menu-bar",
+          "zh-Hant/platforms/mac/voicewake",
+          "zh-Hant/platforms/mac/voice-overlay",
+          "zh-Hant/platforms/mac/webchat",
+          "zh-Hant/platforms/mac/canvas",
+          "zh-Hant/platforms/mac/child-process",
+          "zh-Hant/platforms/mac/health",
+          "zh-Hant/platforms/mac/icon",
+          "zh-Hant/platforms/mac/logging",
+          "zh-Hant/platforms/mac/permissions",
+          "zh-Hant/platforms/mac/remote",
+          "zh-Hant/platforms/mac/signing",
+          "zh-Hant/platforms/mac/release",
+          "zh-Hant/platforms/mac/bundled-gateway",
+          "zh-Hant/platforms/mac/xpc",
+          "zh-Hant/platforms/mac/skills",
+          "zh-Hant/platforms/mac/peekaboo"
+        ]
+      },
+      {
+        "group": "參考文件與範本",
+        "pages": [
+          "zh-Hant/testing",
+          "zh-Hant/scripts",
+          "zh-Hant/reference/session-management-compaction",
+          "zh-Hant/reference/rpc",
+          "zh-Hant/reference/device-models",
+          "zh-Hant/reference/test",
+          "zh-Hant/reference/RELEASING",
+          "zh-Hant/reference/AGENTS.default",
+          "zh-Hant/reference/api-usage-costs",
+          "zh-Hant/reference/transcript-hygiene",
+          "zh-Hant/reference/templates/AGENTS",
+          "zh-Hant/reference/templates/AGENTS.dev",
+          "zh-Hant/reference/templates/BOOT",
+          "zh-Hant/reference/templates/BOOTSTRAP",
+          "zh-Hant/reference/templates/HEARTBEAT",
+          "zh-Hant/reference/templates/IDENTITY",
+          "zh-Hant/reference/templates/IDENTITY.dev",
+          "zh-Hant/reference/templates/SOUL",
+          "zh-Hant/reference/templates/SOUL.dev",
+          "zh-Hant/reference/templates/TOOLS",
+          "zh-Hant/reference/templates/TOOLS.dev",
+          "zh-Hant/reference/templates/USER",
+          "zh-Hant/reference/templates/USER.dev"
+        ]
+      },
+      {
+        "group": "實驗功能",
+        "pages": [
+          "zh-Hant/experiments/onboarding-config-protocol",
+          "zh-Hant/experiments/plans/cron-add-hardening",
+          "zh-Hant/experiments/plans/group-policy-hardening",
+          "zh-Hant/experiments/plans/openresponses-gateway",
+          "zh-Hant/experiments/proposals/model-config",
+          "zh-Hant/experiments/research/memory"
+        ]
+      },
+      {
+        "group": "重構計劃",
+        "pages": [
+          "zh-Hant/refactor/clawnet",
+          "zh-Hant/refactor/exec-host",
+          "zh-Hant/refactor/outbound-session-mirroring",
+          "zh-Hant/refactor/plugin-sdk",
+          "zh-Hant/refactor/strict-config"
+        ]
+      },
+      {
+        "group": "除錯與診斷",
+        "pages": [
+          "zh-Hant/debug/node-issue",
+          "zh-Hant/diagnostics/flags"
         ]
       }
     ]

@@ -1,5 +1,5 @@
 ---
-title: "OpenClaw"
+title: "Index(首頁)"
 summary: "OpenClaw 頂層概覽、功能與目的"
 read_when:
   - 向新用戶介紹 OpenClaw
@@ -9,20 +9,9 @@ read_when:
 
 > _「EXFOLIATE! EXFOLIATE!」_ — 某隻太空龍蝦
 
-<p align="center">
-    <img
-        src="/assets/openclaw-logo-text-dark.png"
-        alt="OpenClaw"
-        width="500"
-        class="dark:hidden"
-    />
-    <img
-        src="/assets/openclaw-logo-text.png"
-        alt="OpenClaw"
-        width="500"
-        class="hidden dark:block"
-    />
-</p>
+<Frame>
+  <img src="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/openclaw-logo-text.png" alt="OpenClaw" width="500" />
+</Frame>
 
 <p align="center">
   <strong>跨平台 + WhatsApp/Telegram/Discord/iMessage 的 AI 代理 Gateway。</strong><br />
@@ -244,8 +233,8 @@ _「我們都只是在玩弄自己的提示詞。」_ — 某個可能 token 過
 
 ## 致謝
 
-- **Peter Steinberger**（[@steipete](https://x.com/steipete)）— 創作者，龍蝦語者
-- **Mario Zechner**（[@badlogicc](https://x.com/badlogicgames)）— Pi 創作者，安全滲透測試員
+- **Peter Steinberger**（[@steipete](https://twitter.com/steipete)）— 創作者，龍蝦語者
+- **Mario Zechner**（[@badlogicc](https://twitter.com/badlogicgames)）— Pi 創作者，安全滲透測試員
 - **Clawd** — 要求更好名字的太空龍蝦
 
 ## 核心貢獻者
