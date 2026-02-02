@@ -1,12 +1,13 @@
 ---
-title: "Msteams(Microsoft Teams 插件)"
-summary: "Microsoft Teams 機器人支援狀態、功能與設定"
+summary: "Microsoft Teams bot support status, capabilities, and configuration"
 read_when:
-  - 處理 MS Teams 頻道功能時
+  - Working on MS Teams channel features
+title: "Microsoft Teams"
 ---
-# Microsoft Teams (插件)
 
-> 「入此門者，放棄一切希望。」(Abandon all hope, ye who enter here.)
+# Microsoft Teams (plugin)
+
+> "Abandon all hope, ye who enter here."
 
 更新日期：2026-01-21
 

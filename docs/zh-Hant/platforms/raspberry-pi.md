@@ -1,10 +1,10 @@
 ---
-title: "raspberry-pi(Raspberry Pi)"
 summary: "在 Raspberry Pi 上執行 OpenClaw (經濟實惠的自託管方案)"
 read_when:
   - 在 Raspberry Pi 上設定 OpenClaw 時
   - 在 ARM 裝置上執行 OpenClaw 時
   - 打造廉價的全天候個人 AI 時
+title: "Raspberry Pi"
 ---
 
 # OpenClaw on Raspberry Pi

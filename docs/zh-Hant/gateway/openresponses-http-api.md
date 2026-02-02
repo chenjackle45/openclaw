@@ -1,5 +1,5 @@
 ---
-title: "openresponses-http-api(OpenResponses API (HTTP))"
+title: "OpenResponses API (HTTP)"
 summary: "從 Gateway 暴露 OpenResponses 相容的 /v1/responses HTTP Endpoint"
 read_when:
   - 整合使用 OpenResponses API 的 Clients 時

@@ -1,5 +1,5 @@
 ---
-title: "gateway-lock(Gateway Lock)"
+title: "Gateway Lock"
 summary: "使用 WebSocket Listener Bind 的 Gateway 單例防護 (Singleton Guard)"
 read_when:
   - 運行或除錯 Gateway 程序時

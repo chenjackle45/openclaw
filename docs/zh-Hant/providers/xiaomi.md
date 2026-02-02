@@ -1,9 +1,9 @@
 ---
-title: "xiaomi(Xiaomi MiMo)"
-summary: "在 OpenClaw 中使用 Xiaomi MiMo (mimo-v2-flash)"
+summary: "在 OpenClaw 中使用 Xiaomi MiMo（mimo-v2-flash）"
 read_when:
   - 想要在 OpenClaw 中使用 Xiaomi MiMo 模型時
   - 需要 XIAOMI_API_KEY 設定教學時
+title: "Xiaomi MiMo"
 ---
 
 # Xiaomi MiMo

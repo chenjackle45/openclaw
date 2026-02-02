@@ -1,10 +1,10 @@
 ---
-title: "peekaboo(Peekaboo Bridge)"
 summary: "用於 macOS UI 自動化的 PeekabooBridge 整合"
 read_when:
   - 在 OpenClaw.app 中託管 PeekabooBridge 時
   - 透過 Swift Package Manager 整合 Peekaboo 時
   - 變更 PeekabooBridge 協定/路徑時
+title: "Peekaboo Bridge"
 ---
 
 # Peekaboo Bridge (macOS UI 自動化)

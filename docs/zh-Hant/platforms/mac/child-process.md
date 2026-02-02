@@ -1,8 +1,8 @@
 ---
-title: "child-process(Gateway Lifecycle)"
 summary: "macOS 上 Gateway 的生命週期 (launchd)"
 read_when:
   - 整合 macOS 應用程式與 Gateway 生命週期時
+title: "Gateway 生命週期"
 ---
 
 # macOS 上 Gateway 的生命週期

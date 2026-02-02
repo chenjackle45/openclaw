@@ -1,5 +1,5 @@
 ---
-title: "protocol(Gateway protocol (WebSocket))"
+title: "Gateway 協定 (WebSocket)"
 summary: "Gateway WebSocket 協定: Handshake, Frames, Versioning"
 read_when:
   - 實作或更新 Gateway WS Clients 時

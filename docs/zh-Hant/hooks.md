@@ -1,5 +1,5 @@
 ---
-title: "Hooks(Hooks)"
+title: "Hooks"
 summary: "Hooks：指令和生命週期事件的事件驅動自動化"
 read_when:
   - 您想要 /new、/reset、/stop 和 agent 生命週期事件的事件驅動自動化

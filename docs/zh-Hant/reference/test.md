@@ -1,8 +1,8 @@
 ---
-title: "Test(測試)"
-summary: "如何在本機執行測試（Vitest）以及何時使用 Force/Coverage 模式"
+title: "測試"
+summary: "如何在本機執行測試（Vitest）及何時使用 Force/Coverage 模式"
 read_when:
-  - 執行或修復測試
+  - 執行或修復測試時
 ---
 # 測試
 

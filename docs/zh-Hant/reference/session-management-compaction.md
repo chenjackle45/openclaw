@@ -1,10 +1,10 @@
 ---
-title: "Session management compaction(Session 管理與壓縮)"
-summary: "深入探討：Session Store + Transcripts、Lifecycle 和 (Auto)Compaction 內部"
+title: "工作階段管理與壓縮"
+summary: "深入探討：工作階段儲存 + 轉錄、生命週期及（自動）壓縮內部"
 read_when:
-  - 您需要除錯 Session IDs、Transcript JSONL 或 sessions.json 欄位
-  - 您正在變更 Auto-compaction 行為或新增「Pre-compaction」Housekeeping
-  - 您想實作 Memory Flushes 或 Silent System Turns
+  - 需要除錯工作階段 ID、轉錄 JSONL 或 sessions.json 欄位時
+  - 變更自動壓縮行為或新增「壓縮前」清理時
+  - 想實作記憶體清除或無聲系統轉時
 ---
 # Session 管理與壓縮（深入探討）
 

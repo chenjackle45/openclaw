@@ -1,8 +1,8 @@
 ---
-title: "Lore(OpenClaw 傳說)"
 summary: "OpenClaw 的背景故事與傳說，旨在提供語境與語氣參考"
 read_when:
   - 撰寫涉及專案背景的文件或 UX 副本時
+title: "OpenClaw 傳說"
 ---
 # OpenClaw 傳說 🦞📖
 

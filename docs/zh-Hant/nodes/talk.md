@@ -1,57 +1,90 @@
 ---
-title: "Talk(對話模式)"
-summary: "對話模式：使用 ElevenLabs TTS 進行連續語音通訊"
+title: "對話模式"
+summary: "對話模式：使用 ElevenLabs TTS 進行連續語音對話"
 read_when:
   - 在 macOS/iOS/Android 上實作對話模式時
   - 變更聲音/TTS/中斷行為時
 ---
 
-# 對話模式 (Talk Mode)
+# 對話模式
 
-對話模式是一個連續的語音對話循環：
-1. **聆聽**：捕捉使用者語音。
-2. **處理**：將轉錄內容發送至模型（使用主會話 `chat.send`）。
-3. **回傳**：等待模型回應。
-4. **朗讀**：透由 ElevenLabs 進行語音合成（串流播放）。
+對話模式是連續語音對話循環：
 
-## 行為與特性 (macOS)
-- **懸浮視窗**：啟用後會顯示一個「始終在上」的懸浮介面。
-- **狀態切換**：包含「正在聆聽 → 思考中 → 正在說話」三個階段。
-- **自動發送**：使用者發言後的短暫停頓（靜音視窗）會觸發傳送。
-- **語音中斷 (Interrupt on speech)**：預設啟動。若助理說話時使用者開始發言，系統會立即停止播放，並記錄中斷的時間點以在下一次 Prompt 中給模型參考。
+1. 聆聽語音
+2. 將轉錄傳至模型（主要工作階段，chat.send）
+3. 等待回應
+4. 透由 ElevenLabs 發言（串流播放）
+
+## 行為（macOS）
+
+- **始終在上覆蓋層**：對話模式啟用時。
+- **聆聽 → 思考 → 說話**階段轉換。
+- 在**短暫停頓**（靜音視窗）時，目前轉錄被發送。
+- 回應被**寫至 WebChat**（同打字）。
+- **在語音上中斷**（預設開啟）：若使用者在助理說話時開始說話，我們停止播放並記錄中斷時間戳記供下次提示。
 
 ## 回應中的語音指令
-模型可以在回覆的第一行加入一段 **JSON 指令**來控制語音輸出：
+
+助理可能以**單一 JSON 行**前綴其回應來控制聲音：
 
 ```json
-{"voice":"語音ID","once":true}
+{ "voice": "<voice-id>", "once": true }
 ```
 
-規則說明：
-- 僅限第一行非空行。
-- 未識別的鍵值將被忽略。
-- `once: true` 表示該設定僅套用於本次回覆。
-- 若無 `once` 標記，該聲音將成為對話模式的新預設值。
+規則：
 
-## 配置說明 (`~/.openclaw/openclaw.json`)
+- 僅第一個非空行。
+- 未知金鑰被忽略。
+- `once: true` 僅適用於目前回應。
+- 不帶 `once`，聲音成為對話模式的新預設。
+- JSON 行在 TTS 播放前被移除。
+
+支援的金鑰：
+
+- `voice` / `voice_id` / `voiceId`
+- `model` / `model_id` / `modelId`
+- `speed`、`rate`（WPM）、`stability`、`similarity`、`style`、`speakerBoost`
+- `seed`、`normalize`、`lang`、`output_format`、`latency_tier`
+- `once`
+
+## 配置（`~/.openclaw/openclaw.json`）
+
 ```json5
 {
-  "talk": {
-    "voiceId": "elevenlabs_voice_id",
-    "modelId": "eleven_v3",
-    "apiKey": "您的金鑰",
-    "interruptOnSpeech": true // 是否允許使用者中斷
-  }
+  talk: {
+    voiceId: "elevenlabs_voice_id",
+    modelId: "eleven_v3",
+    outputFormat: "mp3_44100_128",
+    apiKey: "elevenlabs_api_key",
+    interruptOnSpeech: true,
+  },
 }
 ```
 
-## macOS 介面說明
-- **正在聆聽**：雲朵圖示會隨麥克風音量脈動。
-- **思考中**：雲朵呈現下沉動畫。
-- **正在說話**：雲朵會產生向外擴散的圓圈。
-- **操作快捷**：點擊雲朵可停止說話；點擊 X 退出對話模式。
+預設值：
 
-## 注意事項
-- 需要系統的「語音辨識」與「麥克風」權限。
-- TTS 使用 ElevenLabs 的串流 API，並在各平台上使用漸進式播放技術以降低延遲。
-- Android 支援多種 PCM 輸出格式（如 `pcm_24000`），以支援低延遲的 AudioTrack 串流。
+- `interruptOnSpeech`：true
+- `voiceId`：回退至 `ELEVENLABS_VOICE_ID` / `SAG_VOICE_ID`（或 API 金鑰可用時第一個 ElevenLabs 聲音）
+- `modelId`：未設定時預設 `eleven_v3`
+- `apiKey`：回退至 `ELEVENLABS_API_KEY`（或 Gateway shell 設定若可用）
+- `outputFormat`：macOS/iOS 上預設 `pcm_44100`，Android 上 `pcm_24000`（設定 `mp3_*` 強制 MP3 串流）
+
+## macOS UI
+
+- 選單列開關：**Talk**
+- 配置分頁：**Talk Mode** 群組（聲音 id + 中斷開關）
+- 覆蓋層：
+  - **Listening**：雲朵以麥克風電平脈動
+  - **Thinking**：下沉動畫
+  - **Speaking**：輻射圓環
+  - 點擊雲朵：停止說話
+  - 點擊 X：結束對話模式
+
+## 注意
+
+- 需要語音 + 麥克風權限。
+- 使用 `chat.send`對著工作階段金鑰 `main`。
+- TTS 使用 ElevenLabs 串流 API 搭配 `ELEVENLABS_API_KEY` 和漸進式播放在 macOS/iOS/Android 上以獲得更低延遲。
+- `eleven_v3` 的 `stability` 驗證至 `0.0`、`0.5` 或 `1.0`；其他模型接受 `0..1`。
+- `latency_tier` 設定時驗證至 `0..4`。
+- Android 支援 `pcm_16000`、`pcm_22050`、`pcm_24000` 和 `pcm_44100` 輸出格式用於低延遲 AudioTrack 串流。

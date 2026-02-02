@@ -1,5 +1,5 @@
 ---
-title: "Debugging(除錯)"
+title: "除錯"
 summary: "除錯工具：監視模式、原始模型串流以及推理洩漏追蹤"
 read_when:
   - 您需要檢查原始模型輸出以查看推理洩漏

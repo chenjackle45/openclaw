@@ -1,10 +1,10 @@
 ---
-title: "bundled-gateway(Gateway on macOS)"
 summary: "macOS 上的 Gateway 運行時 (外部 launchd 服務)"
 read_when:
   - 打包 OpenClaw.app 時
-  - Debug macOS Gateway launchd 服務時
+  - 除錯 macOS Gateway launchd 服務時
   - 為 macOS 安裝 Gateway CLI 時
+title: "macOS 上的 Gateway"
 ---
 
 # macOS 上的 Gateway (外部 launchd)

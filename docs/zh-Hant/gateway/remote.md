@@ -1,5 +1,5 @@
 ---
-title: "remote(Remote access (SSH, tunnels, and tailnets))"
+title: "遠端存取 (SSH、tunnels 與 tailnets)"
 summary: "使用 SSH Tunnels (Gateway WS) 與 Tailnets 進行遠端存取"
 read_when:
   - 運行或疑難排解遠端 Gateway 設定時

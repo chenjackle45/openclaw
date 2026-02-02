@@ -1,5 +1,5 @@
 ---
-title: "Broadcast groups(廣播群組)"
+title: "廣播群組"
 summary: "向多個代理廣播 WhatsApp 訊息"
 read_when:
   - 設定廣播群組

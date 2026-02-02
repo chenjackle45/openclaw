@@ -1,10 +1,10 @@
 ---
-title: "gcp(GCP Compute Engine)"
 summary: "在 GCP Compute Engine VM (Docker) 上全天候運行 OpenClaw Gateway 並具備持久狀態"
 read_when:
   - 想要在 GCP 上全天候運行 OpenClaw
   - 想要在自己的 VM 上運行生產級、永遠在線的 Gateway
   - 想要完全控制持久性、二進位檔與重啟行為
+title: "GCP Compute Engine"
 ---
 
 # OpenClaw on GCP Compute Engine (Docker, Production VPS Guide)

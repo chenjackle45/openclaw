@@ -1,8 +1,9 @@
 ---
-title: "FAQ(常見問題)"
-summary: "OpenClaw 設定、配置和使用的常見問題"
+title: "常見問題"
+summary: "關於 OpenClaw 設定、配置和使用的常見問題"
 ---
-# FAQ(常見問題)
+
+# 常見問題
 
 快速解答以及針對實際設定（本機開發、VPS、多 Agent、OAuth/API 金鑰、模型故障轉移）的深入疑難排解。運行時診斷請參閱 [疑難排解](/zh-Hant/gateway/troubleshooting)。完整設定參考請參閱 [配置](/zh-Hant/gateway/configuration)。
 

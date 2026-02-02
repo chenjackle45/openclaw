@@ -1,5 +1,5 @@
 ---
-title: "Prose(OpenProse)"
+title: "OpenProse"
 summary: "OpenProse：.prose 工作流程、斜線指令以及 OpenClaw 中的狀態"
 read_when:
   - 您想要執行或編寫 .prose 工作流程

@@ -1,5 +1,5 @@
 ---
-title: "Brave search(Brave 搜尋 API)"
+title: "Brave 搜尋 API"
 summary: "為 web_search 設定 Brave Search API"
 read_when:
   - 您想要使用 Brave Search 進行 web_search

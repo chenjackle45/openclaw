@@ -1,8 +1,8 @@
 ---
-title: "webchat(macOS WebChat)"
 summary: "macOS 應用程式如何嵌入 Gateway WebChat 以及如何進行除錯"
 read_when:
-  - 除錯 mac WebChat 視圖或 loopback 通訊埠時
+  - 除錯 Mac WebChat 視圖或 loopback 通訊埠時
+title: "macOS WebChat"
 ---
 
 # WebChat (macOS 應用程式)

@@ -1,5 +1,5 @@
 ---
-title: "Date time(日期與時間)"
+title: "日期與時間"
 summary: "跨 envelopes、prompts、tools 和 connectors 的日期和時間處理"
 read_when:
   - 您正在變更時間戳記如何顯示給模型或使用者

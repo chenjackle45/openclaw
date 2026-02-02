@@ -1,8 +1,8 @@
 ---
-title: "configuration(Configuration 🔧)"
 summary: "~/.openclaw/openclaw.json 的所有設定選項與範例"
 read_when:
   - 新增或修改 Config 欄位時
+title: "組態設定"
 ---
 
 # 組態設定 (Configuration 🔧)

@@ -1,11 +1,11 @@
 ---
-title: "macos-vm(macOS VMs)"
 summary: "在沙盒 macOS VM (本地或託管) 中運行 OpenClaw，適用於隔離或 iMessage 需求"
 read_when:
   - 想要將 OpenClaw 與主要的 macOS 環境隔離時
   - 想要在沙盒中整合 iMessage (BlueBubbles) 時
   - 想要一個可重置且可複製的 macOS 環境時
   - 想要比較本地與託管 macOS VM 選項時
+title: "macOS VM"
 ---
 
 # 在 macOS VM 上運行 OpenClaw (沙盒化)

@@ -1,10 +1,10 @@
 ---
-title: "oracle(Oracle Cloud)"
 summary: "在 Oracle Cloud (Always Free ARM) 上運行 OpenClaw"
 read_when:
   - 在 Oracle Cloud 上設定 OpenClaw 時
   - 尋找 OpenClaw 的低成本 VPS 託管時
   - 想要在小型伺服器上全天候運行 OpenClaw 時
+title: "Oracle Cloud"
 ---
 
 # OpenClaw on Oracle Cloud (OCI)

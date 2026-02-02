@@ -1,14 +1,14 @@
 ---
-title: "venice(Venice AI)"
-summary: "在 OpenClaw 中使用 Venice AI (隱私優先模型)"
+summary: "在 OpenClaw 中使用 Venice AI（隱私優先模型）"
 read_when:
   - 想要在 OpenClaw 中進行重視隱私的推論時
   - 想要 Venice AI 設定指南時
+title: "Venice AI"
 ---
 
-# Venice AI (Venice 重點介紹)
+# Venice AI (Venice Highlight)
 
-**Venice** 是我們推薦的隱私優先推論設置，並提供對專有模型的匿名存取選項。
+**Venice** 是我們推薦的 Venice AI 設置，提供隱私優先推論與選用匿名存取專有模型的選項。
 
 Venice AI 提供注重隱私的 AI 推論服務，支援無審查模型，並透過其匿名代理存取主要的專有模型。所有推論預設皆為私密的——不會使用您的資料進行訓練，也不會記錄日誌。
 

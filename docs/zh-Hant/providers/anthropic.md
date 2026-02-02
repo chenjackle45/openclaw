@@ -1,9 +1,9 @@
 ---
-title: "anthropic(Anthropic)"
 summary: "在 OpenClaw 中使用 Anthropic Claude API 金鑰或 Setup-token"
 read_when:
   - 想要在 OpenClaw 中使用 Anthropic 模型時
   - 想要使用 Setup-token 而非 API 金鑰時
+title: "Anthropic"
 ---
 
 # Anthropic (Claude)
@@ -35,12 +35,19 @@ openclaw onboard --anthropic-api-key "$ANTHROPIC_API_KEY"
 }
 ```
 
-## 提示快取 (Prompt Caching) - Anthropic API
+## 提示快取 (Anthropic API)
 
-除非您明確設定，否則 OpenClaw **不會**覆寫 Anthropic 的預設快取 TTL。
-此功能**僅適用於 API**；訂閱制認證不支援 TTL 設定。
+OpenClaw 支援 Anthropic 的提示快取功能。此功能**僅適用於 API**；訂閱制認證不支援快取設定。
 
-若要針對個別模型設定 TTL，請在模型 `params` 中使用 `cacheControlTtl`：
+### 配置
+
+使用模型配置中的 `cacheRetention` 參數：
+
+| 值      | 快取時間   | 說明                                |
+| ------- | ---------- | ----------------------------------- |
+| `none`  | 不快取     | 停用提示快取                        |
+| `short` | 5 分鐘     | API 金鑰認證的預設值                |
+| `long`  | 1 小時     | 延長快取（需要 Beta 旗標）          |
 
 ```json5
 {
@@ -48,13 +55,26 @@ openclaw onboard --anthropic-api-key "$ANTHROPIC_API_KEY"
     defaults: {
       models: {
         "anthropic/claude-opus-4-5": {
-          params: { cacheControlTtl: "5m" } // 或 "1h"
-        }
-      }
-    }
-  }
+          params: { cacheRetention: "long" },
+        },
+      },
+    },
+  },
 }
 ```
+
+### 預設值
+
+使用 Anthropic API 金鑰認證時，OpenClaw 會自動為所有 Anthropic 模型套用 `cacheRetention: "short"`（5 分鐘快取）。您可以在配置中明確設定 `cacheRetention` 來覆寫此設定。
+
+### 舊版參數
+
+舊版的 `cacheControlTtl` 參數仍然支援向後相容性：
+
+- `"5m"` 對應 `short`
+- `"1h"` 對應 `long`
+
+建議您遷移至新的 `cacheRetention` 參數。
 
 OpenClaw 包含針對 Anthropic API 請求的 `extended-cache-ttl-2025-04-11` Beta 旗標；若您有覆寫供應商標頭設定，請保留此旗標（請參閱 [/gateway/configuration](/gateway/configuration)）。
 

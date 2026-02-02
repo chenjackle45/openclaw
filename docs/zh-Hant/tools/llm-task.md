@@ -1,9 +1,9 @@
 ---
-title: "LLM task(LLM 任務)"
-summary: "工作流程中的純 JSON LLM 任務（選用 Plugin Tool）"
+summary: "JSON-only LLM tasks for workflows (optional plugin tool)"
 read_when:
-  - 您想在工作流程中加入純 JSON 的 LLM 步驟
-  - 您需要 Schema 驗證的 LLM 輸出以進行自動化
+  - You want a JSON-only LLM step inside workflows
+  - You need schema-validated LLM output for automation
+title: "LLM Task"
 ---
 
 # LLM 任務

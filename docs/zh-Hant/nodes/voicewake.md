@@ -1,57 +1,65 @@
 ---
-title: "Voicewake(語音喚醒詞)"
-summary: "全域語音喚醒詞（由 Gateway 掌控）以及如何在節點間進行同步"
+title: "語音喚醒"
+summary: "全域語音喚醒詞（Gateway 所有）及其如何跨節點同步"
 read_when:
   - 變更語音喚醒詞行為或預設值時
-  - 新增需要同步喚醒詞的節點平台時
+  - 新增需要喚醒詞同步的新節點平台時
 ---
 
-# 語音喚醒詞 (Voice Wake)
+# 語音喚醒（全域喚醒詞）
 
-OpenClaw 將**喚醒詞設定視為一個全域列表**，並由 **Gateway** 統一管理。
+OpenClaw 將**喚醒詞作為單一全域列表**由 **Gateway** 所有。
 
-- **不支援個別節點的自訂喚醒詞**：所有節點使用同一組清單。
-- **隨處編輯，全域同步**：任何節點或 App 介面都可以編輯清單；變更後由 Gateway 持久化儲存，並廣播給所有連線中的節點。
-- **個別開關**：每個裝置仍可獨立控制是否開啟「語音喚醒」功能（基於各自的系統權限與使用者偏好）。
+- **無各節點自訂喚醒詞**。
+- **任何節點/App UI 可編輯**清單；變更由 Gateway 持久化並廣播給所有人。
+- 各裝置仍保持自己的**語音喚醒啟用/停用**開關（本地 UX + 權限不同）。
 
-## 儲存路徑 (Gateway 主機)
+## 儲存（Gateway 主機）
 
-喚醒詞儲存在 Gateway 機器上的以下位置：
+喚醒詞儲存在 Gateway 機器上：
+
 - `~/.openclaw/settings/voicewake.json`
 
-資料格式範例：
+形狀：
+
 ```json
-{ 
-  "triggers": ["openclaw", "claude", "computer"], 
-  "updatedAtMs": 1730000000000 
-}
+{ "triggers": ["openclaw", "claude", "computer"], "updatedAtMs": 1730000000000 }
 ```
 
-## 通訊協定 (Protocol)
+## 協定
 
-### 呼叫方法
-- `voicewake.get`：獲取目前的觸發詞列表。
-- `voicewake.set { triggers: string[] }`：更新觸發詞列表。
+### 方法
 
-注意：觸發詞會進行標準化處理（修剪空白、移除空項目）。若列表為空則會自動回退至系統預設值。
+- `voicewake.get` → `{ triggers: string[] }`
+- `voicewake.set` 搭配參數 `{ triggers: string[] }` → `{ triggers: string[] }`
 
-### 事件通知
-- `voicewake.changed`：當列表變更時發送。
+注意：
 
-接收對象：
-- 所有 WebSocket 客戶端（macOS App、網頁聊天室等）。
-- 所有連線中的節點（iOS/Android），此外節點在初次連線時也會收到一份目前的狀態快照。
+- 觸發器被正規化（修剪、空白被丟棄）。空列表回退到預設值。
+- 限制為安全強制執行（計數/長度上限）。
 
-## 各平台行為
+### 事件
 
-### macOS 應用程式
-- 使用全域清單來過濾 `VoiceWakeRuntime` 的觸發行為。
-- 在設定中編輯「觸發詞」會呼叫 `voicewake.set`。
+- `voicewake.changed` 酬載 `{ triggers: string[] }`
+
+誰接收它：
+
+- 所有 WebSocket 用戶端（macOS App、WebChat 等）
+- 所有連線節點（iOS/Android），也在節點連線時作為初始「目前狀態」推送。
+
+## 用戶端行為
+
+### macOS App
+
+- 使用全域列表限制 `VoiceWakeRuntime` 觸發器。
+- 編輯聲音喚醒設定中的「觸發詞」呼叫 `voicewake.set`，接著依賴廣播保持其他用戶端同步。
 
 ### iOS 節點
-- 使用全域清單進行 `VoiceWakeManager` 的觸發偵測。
-- 在設定中編輯喚醒詞會透過 Gateway WebSocket 呼叫 `voicewake.set`，並同步更新本地偵測邏輯。
+
+- 使用全域列表用於 `VoiceWakeManager` 觸發偵測。
+- 編輯設定中的喚醒詞呼叫 `voicewake.set`（透由 Gateway WS）並也保持本地喚醒詞偵測反應。
 
 ### Android 節點
-- 在設定頁面中提供喚醒詞編輯器。
-- 同樣透過 Gateway WebSocket 存取 `voicewake.set`，確保編輯內容能同步至各處。
+
+- 在設定中公開喚醒詞編輯器。
+- 透由 Gateway WS 呼叫 `voicewake.set` 以便編輯於所處同步。

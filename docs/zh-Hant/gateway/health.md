@@ -1,5 +1,5 @@
 ---
-title: "health(Health Checks (CLI))"
+title: "健康檢查"
 summary: "Channel 連線的健康檢查步驟"
 read_when:
   - 診斷 WhatsApp Channel 健康狀況時

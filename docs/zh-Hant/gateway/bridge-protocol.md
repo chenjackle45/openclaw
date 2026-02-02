@@ -1,10 +1,10 @@
 ---
-title: "bridge-protocol(Bridge Protocol)"
 summary: "Bridge protocol (legacy nodes): TCP JSONL, pairing, scoped RPC"
 read_when:
   - 建置或除錯 Node Users (iOS/Android/macOS node mode)
   - 調查配對或 Bridge Auth 失敗時
   - 稽核 Gateway 暴露的 Node Surface 時
+title: "Bridge 協定"
 ---
 
 # Bridge Protocol (Legacy Node Transport)

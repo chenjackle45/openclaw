@@ -1,32 +1,32 @@
 ---
-title: "Bun(實驗性支援)"
-summary: "Bun 工作流程：安裝指南與相容性注意事項（相對於 pnpm）"
+title: "Bun (實驗性)"
+summary: "Bun 工作流程（實驗性）：安裝與相比 pnpm 之相關須知"
 read_when:
-  - 您想要最快的本地開發循環 (bun + watch) 時
-  - 您遇到 Bun 安裝、補丁 (patch) 或生命週期腳本問題時
+  - 您想要最快的本地開發迴圈 (bun + watch)
+  - 您遇到 Bun 安裝/patch/生命週期腳本問題
 ---
 
-# Bun (實驗性支援)
+# Bun (實驗性)
 
-目標：在不偏離 pnpm 工作流程的前提下，使用 **Bun** 執行此倉庫（選用，不建議用於 WhatsApp/Telegram）。
+目標：在不偏離 pnpm 工作流程的前提下，用 **Bun** 執行此儲存庫（選用，不建議用於 WhatsApp/Telegram）。
 
-⚠️ **不建議將 Bun 用於 Gateway 生產環境**（已知 WhatsApp/Telegram 存在相應 Bug）。生產環境請使用 Node。
+⚠️ **不建議用於 Gateway 生產環境**（WhatsApp/Telegram bug）。生產環境請使用 Node。
 
-## 現狀
+## 狀態
 
-- Bun 是用於直接執行 TypeScript 的選用本地執行期 (Local Runtime)（如 `bun run ...`, `bun --watch ...`）。
-- `pnpm` 仍是預設的建置工具，並獲得完整支援（部分文件工具組亦使用 pnpm）。
-- Bun 無法讀取 `pnpm-lock.yaml` 且會將其忽略。
+- Bun 是可選的本地執行環境，用於直接執行 TypeScript（`bun run …`、`bun --watch …`）。
+- `pnpm` 是建置預設，保持完整支援（部分文件工具組亦使用）。
+- Bun 無法使用 `pnpm-lock.yaml` 且將其忽略。
 
 ## 安裝
 
-預設指令：
+預設：
 
 ```sh
 bun install
 ```
 
-注意：`bun.lock`/`bun.lockb` 已被加入 gitignore，因此不會產生額外的 Git 變動。如果您不想產生鎖定檔 (lockfile)：
+注意：`bun.lock`/`bun.lockb` 已加入 gitignore，因此無論如何都不會產生 repo 變動。若不想寫入鎖定檔：
 
 ```sh
 bun install --no-save
@@ -36,18 +36,18 @@ bun install --no-save
 
 ```sh
 bun run build
-- bun run vitest run
+bun run vitest run
 ```
 
-## Bun 生命週期腳本（預設被阻擋）
+## Bun 生命週期腳本（預設阻止）
 
-Bun 可能會阻擋依賴項的生命週期腳本 (Lifecycle scripts)，除非明確信任它們（`bun pm untrusted` / `bun pm trust`）。
-對於本專案，通常被阻擋的腳本並非必要：
+Bun 可能會阻止依賴的生命週期腳本，除非明確信任（`bun pm untrusted` / `bun pm trust`）。
+此儲存庫中通常被阻止的腳本並非必須：
 
-- `@whiskeysockets/baileys` `preinstall`: 檢查 Node 版本是否 >= 20（我們使用 Node 22+）。
-- `protobufjs` `postinstall`: 發出版本不相容的警告（無建置產出）。
+- `@whiskeysockets/baileys` `preinstall`：檢查 Node major >= 20（我們執行 Node 22+）。
+- `protobufjs` `postinstall`：發出版本不相容警告（無建置產出物）。
 
-如果您遇到確實需要執行這些腳本的執行期問題，請明確信任它們：
+若遇到真正的執行期問題需要這些腳本，明確信任它們：
 
 ```sh
 bun pm trust @whiskeysockets/baileys protobufjs
@@ -55,4 +55,4 @@ bun pm trust @whiskeysockets/baileys protobufjs
 
 ## 注意事項
 
-- 部分腳本仍硬編碼使用 pnpm（例如 `docs:build`, `ui:*`, `protocol:check`）。目前請透過 pnpm 執行這些指令。
+- 部分腳本仍硬編碼 pnpm（例如 `docs:build`、`ui:*`、`protocol:check`）。目前請透過 pnpm 執行。

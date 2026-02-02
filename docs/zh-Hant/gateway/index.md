@@ -1,5 +1,5 @@
 ---
-title: "index(Gateway Service)"
+title: "Gateway 服務"
 summary: "Gateway 服務的運行手冊、生命週期與操作"
 read_when:
   - 運行或除錯 Gateway 程序時

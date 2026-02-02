@@ -1,8 +1,8 @@
 ---
-title: "voice-overlay(Voice Overlay Lifecycle)"
 summary: "當喚醒詞與按鍵通話重疊時的語音覆蓋生命週期"
 read_when:
   - 調整語音覆蓋行為時
+title: "語音覆蓋生命週期"
 ---
 
 # 語音覆蓋生命週期 (macOS)

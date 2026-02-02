@@ -1,8 +1,8 @@
 ---
-title: "xpc(IPC Architecture)"
 summary: "OpenClaw 應用程式、Gateway 節點傳輸與 PeekabooBridge 的 macOS IPC 架構"
 read_when:
   - 編輯 IPC 合約或選單列應用程式 IPC 時
+title: "IPC 架構"
 ---
 
 # OpenClaw macOS IPC 架構

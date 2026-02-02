@@ -1,9 +1,9 @@
 ---
-title: "authentication(Authentication)"
 summary: "模型認證: OAuth, API keys, 與 setup-token"
 read_when:
   - 除錯模型認證或 OAuth 過期問題時
   - 記錄認證或憑證儲存方式時
+title: "認證"
 ---
 
 # 認證 (Authentication)

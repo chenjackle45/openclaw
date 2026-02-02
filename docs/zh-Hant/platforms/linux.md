@@ -1,9 +1,9 @@
 ---
-title: "linux(Linux App)"
 summary: "Linux 支援 + 配套應用程式狀態"
 read_when:
   - 尋找 Linux 配套應用程式狀態時
   - 規劃平台覆蓋範圍或貢獻時
+title: "Linux 應用程式"
 ---
 
 # Linux 應用程式

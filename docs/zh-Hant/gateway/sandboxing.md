@@ -1,5 +1,5 @@
 ---
-title: "sandboxing(Sandboxing)"
+title: "沙盒化"
 summary: "OpenClaw Sandboxing 如何運作: Modes, Scopes, Workspace Access, 與 Images"
 read_when: "您想要 Sandboxing 的專門解釋或需要調整 agents.defaults.sandbox 時。"
 status: active

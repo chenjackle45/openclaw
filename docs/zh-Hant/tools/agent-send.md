@@ -1,29 +1,32 @@
 ---
-title: "Agent send(Agent 指令)"
-summary: "直接 `openclaw agent` CLI 執行（含選用傳遞）"
+summary: "Direct `openclaw agent` CLI runs (with optional delivery)"
 read_when:
-  - 新增或修改 Agent CLI 進入點
+  - Adding or modifying the agent CLI entrypoint
+title: "Agent Send"
 ---
-# `openclaw agent`（直接 Agent 執行）
 
-`openclaw agent` 可在不需要 Inbound Chat 訊息的情況下執行單一 Agent Turn。預設情況下會**透過 Gateway**；新增 `--local` 可強制使用目前機器上的 Embedded Runtime。
+# `openclaw agent` (direct agent runs)
+
+`openclaw agent` 執行單一 Agent turn，無需內進 chat 訊息。
+預設會**透過 Gateway**；新增 `--local` 以強制目前機器上的嵌入式
+執行時間。
 
 ## 行為
 
 - 必填：`--message <text>`
 - Session 選擇：
-  - `--to <dest>` 衍生 Session Key（Group/Channel 目標保持隔離；Direct Chat 折疊為 `main`），**或**
-  - `--session-id <id>` 透過 ID 重用現有 Session，**或**
-  - `--agent <id>` 直接指定目標 Agent（使用該 Agent 的 `main` Session Key）
-- 執行與正常 Inbound 回覆相同的 Embedded Agent Runtime。
-- Thinking/Verbose Flags 會持續儲存至 Session Store。
+  - `--to <dest>` 衍生 session key（group/channel 目標保持隔離；direct chat 折疊為 `main`），**或**
+  - `--session-id <id>` 透過 id 重用現有 session，**或**
+  - `--agent <id>` 直接指定目標 agent（使用該 agent 的 `main` session key）
+- 執行與一般內進回覆相同的嵌入式 agent 執行時間。
+- Thinking/verbose flags 持續進入 session store。
 - 輸出：
   - 預設：列印回覆文字（加上 `MEDIA:<url>` 行）
-  - `--json`：列印結構化 Payload + Metadata
-- 選用透過 `--deliver` + `--channel` 將回覆傳遞回 Channel（目標格式與 `openclaw message --target` 相符）。
-- 使用 `--reply-channel`/`--reply-to`/`--reply-account` 可覆寫傳遞設定而不改變 Session。
+  - `--json`：列印結構化裝載 + 中繼資料
+- 選用透過 `--deliver` + `--channel` 傳遞回 channel（目標格式符合 `openclaw message --target`）。
+- 使用 `--reply-channel`/`--reply-to`/`--reply-account` 覆寫傳遞而不變更 session。
 
-如果無法連接 Gateway，CLI 會**回退**至 Embedded 本機執行。
+如果 Gateway 無法連線，CLI **回退**到嵌入式本機執行。
 
 ## 範例
 
@@ -38,13 +41,13 @@ openclaw agent --agent ops --message "Generate report" --deliver --reply-channel
 
 ## Flags
 
-- `--local`：本機執行（需要 Shell 中有 Model Provider API Keys）
-- `--deliver`：將回覆傳送至選定的 Channel
-- `--channel`：傳遞 Channel（`whatsapp|telegram|discord|googlechat|slack|signal|imessage`，預設：`whatsapp`）
+- `--local`：本機執行（需要 shell 中的 model provider API 金鑰）
+- `--deliver`：將回覆傳送到所選 channel
+- `--channel`：傳遞 channel（`whatsapp|telegram|discord|googlechat|slack|signal|imessage`，預設：`whatsapp`）
 - `--reply-to`：傳遞目標覆寫
-- `--reply-channel`：傳遞 Channel 覆寫
-- `--reply-account`：傳遞 Account ID 覆寫
-- `--thinking <off|minimal|low|medium|high|xhigh>`：持續 Thinking 層級（僅限 GPT-5.2 + Codex 模型）
-- `--verbose <on|full|off>`：持續 Verbose 層級
-- `--timeout <seconds>`：覆寫 Agent Timeout
+- `--reply-channel`：傳遞 channel 覆寫
+- `--reply-account`：傳遞 account id 覆寫
+- `--thinking <off|minimal|low|medium|high|xhigh>`：持續 thinking 層級（僅 GPT-5.2 + Codex 模型）
+- `--verbose <on|full|off>`：持續 verbose 層級
+- `--timeout <seconds>`：覆寫 agent 逾時
 - `--json`：輸出結構化 JSON

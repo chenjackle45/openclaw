@@ -1,9 +1,9 @@
 ---
-title: "qwen(Qwen)"
-summary: "在 OpenClaw 中使用 Qwen OAuth (免費層級)"
+summary: "在 OpenClaw 中使用 Qwen OAuth（免費層級）"
 read_when:
   - 想要在 OpenClaw 中使用 Qwen 時
   - 想要使用 Qwen Coder 的免費層級 OAuth 權限時
+title: "Qwen"
 ---
 
 # Qwen

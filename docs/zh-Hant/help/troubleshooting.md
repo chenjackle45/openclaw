@@ -1,12 +1,12 @@
 ---
-title: "Troubleshooting(疑難排解)"
+title: "疑難排解"
 summary: "疑難排解中心：症狀 → 檢查 → 修復"
 read_when:
   - 您看到錯誤並想要修復路徑時
   - 安裝程式顯示「成功」但 CLI 無法運作時
 ---
 
-# Troubleshooting(疑難排解)
+# 疑難排解
 
 ## 前 60 秒
 

@@ -1,5 +1,5 @@
 ---
-title: "Tui(終端介面)"
+title: "終端介面"
 summary: "終端介面 (TUI)：從任何機器連接到 Gateway"
 read_when:
   - 您想要 TUI 的初學者友善指南

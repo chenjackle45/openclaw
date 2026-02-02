@@ -1,5 +1,5 @@
 ---
-title: "Perplexity(Perplexity Sonar)"
+title: "Perplexity Sonar"
 summary: "為 web_search 設定 Perplexity Sonar"
 read_when:
   - 您想要使用 Perplexity Sonar 進行網頁搜尋

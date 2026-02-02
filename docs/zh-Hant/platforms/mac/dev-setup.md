@@ -1,8 +1,8 @@
 ---
-title: "dev-setup(macOS Dev Setup)"
 summary: "OpenClaw macOS 應用程式開發者設定指南"
 read_when:
   - 設定 macOS 開發環境時
+title: "macOS 開發者設定"
 ---
 
 # macOS 開發者設定

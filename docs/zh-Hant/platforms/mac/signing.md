@@ -1,8 +1,8 @@
 ---
-title: "signing(macOS Signing)"
 summary: "由打包腳本產生的 macOS 除錯建置簽署步驟"
 read_when:
-  - 建置或簽署 mac 除錯建置時
+  - 建置或簽署 Mac 除錯建置時
+title: "macOS 簽署"
 ---
 
 # mac 簽署 (除錯建置)

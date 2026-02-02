@@ -1,136 +1,150 @@
 ---
-title: "Subagents(Sub-agents)"
-summary: "Sub-agents：生成隔離的 Agent Run 並將結果公告回請求者 Chat"
+summary: "Sub-agents: spawning isolated agent runs that announce results back to the requester chat"
 read_when:
-  - 您想透過 Agent 進行背景/平行工作
-  - 您正在變更 sessions_spawn 或 Sub-agent Tool Policy
+  - You want background/parallel work via the agent
+  - You are changing sessions_spawn or sub-agent tool policy
+title: "Sub-Agents"
 ---
 
 # Sub-agents
 
-Sub-agents 是從現有 Agent Run 生成的背景 Agent Run。它們在自己的 Session（`agent:<agentId>:subagent:<uuid>`）中執行，完成後會將結果**公告**回請求者 Chat Channel。
+Sub-agents are background agent runs spawned from an existing agent run. They run in their own session (`agent:<agentId>:subagent:<uuid>`) and, when finished, **announce** their result back to the requester chat channel.
 
-## Slash 指令
+## Slash command
 
-使用 `/subagents` 可檢視或控制**目前 Session** 的 Sub-agent Run：
+Use `/subagents` to inspect or control sub-agent runs for the **current session**:
+
 - `/subagents list`
 - `/subagents stop <id|#|all>`
 - `/subagents log <id|#> [limit] [tools]`
 - `/subagents info <id|#>`
 - `/subagents send <id|#> <message>`
 
-`/subagents info` 會顯示 Run Metadata（狀態、時間戳記、Session ID、Transcript 路徑、Cleanup）。
+`/subagents info` shows run metadata (status, timestamps, session id, transcript path, cleanup).
 
-主要目標：
-- 平行化「研究/長時間任務/慢速 Tool」工作，而不阻塞主要 Run。
-- 預設保持 Sub-agents 隔離（Session 分離 + 選用 Sandboxing）。
-- 保持 Tool 表面難以誤用：Sub-agents 預設**不**取得 Session Tools。
-- 避免巢狀擴散：Sub-agents 無法生成 Sub-agents。
+Primary goals:
 
-成本注意：每個 Sub-agent 有其**專屬** Context 和 Token 使用量。對於繁重或重複的任務，可為 Sub-agents 設定較便宜的模型，主要 Agent 使用較高品質的模型。可透過 `agents.defaults.subagents.model` 或 Per-agent 覆寫進行設定。
+- Parallelize "research / long task / slow tool" work without blocking the main run.
+- Keep sub-agents isolated by default (session separation + optional sandboxing).
+- Keep the tool surface hard to misuse: sub-agents do **not** get session tools by default.
+- Avoid nested fan-out: sub-agents cannot spawn sub-agents.
+
+Cost note: each sub-agent has its **own** context and token usage. For heavy or repetitive
+tasks, set a cheaper model for sub-agents and keep your main agent on a higher-quality model.
+You can configure this via `agents.defaults.subagents.model` or per-agent overrides.
 
 ## Tool
 
-使用 `sessions_spawn`：
-- 啟動 Sub-agent Run（`deliver: false`，Global Lane：`subagent`）
-- 然後執行公告步驟，並將公告回覆張貼至請求者 Chat Channel
-- 預設模型：繼承呼叫者，除非設定 `agents.defaults.subagents.model`（或 Per-agent `agents.list[].subagents.model`）；明確的 `sessions_spawn.model` 仍優先。
+Use `sessions_spawn`:
 
-Tool 參數：
-- `task`（必填）
-- `label?`（選填）
-- `agentId?`（選填；如允許則在另一個 Agent ID 下生成）
-- `model?`（選填；覆寫 Sub-agent 模型；無效值會被略過，Sub-agent 會以預設模型執行並在 Tool Result 中顯示警告）
-- `thinking?`（選填；覆寫 Sub-agent Run 的 Thinking 層級）
-- `runTimeoutSeconds?`（預設 `0`；設定後，Sub-agent Run 會在 N 秒後中止）
-- `cleanup?`（`delete|keep`，預設 `keep`）
+- Starts a sub-agent run (`deliver: false`, global lane: `subagent`)
+- Then runs an announce step and posts the announce reply to the requester chat channel
+- Default model: inherits the caller unless you set `agents.defaults.subagents.model` (or per-agent `agents.list[].subagents.model`); an explicit `sessions_spawn.model` still wins.
 
-Allowlist：
-- `agents.list[].subagents.allowAgents`：可透過 `agentId` 指定的 Agent ID 清單（`["*"]` 允許任何）。預設：僅請求者 Agent。
+Tool params:
 
-探索：
-- 使用 `agents_list` 查看目前 `sessions_spawn` 允許的 Agent ID。
+- `task` (required)
+- `label?` (optional)
+- `agentId?` (optional; spawn under another agent id if allowed)
+- `model?` (optional; overrides the sub-agent model; invalid values are skipped and the sub-agent runs on the default model with a warning in the tool result)
+- `thinking?` (optional; overrides thinking level for the sub-agent run)
+- `runTimeoutSeconds?` (default `0`; when set, the sub-agent run is aborted after N seconds)
+- `cleanup?` (`delete|keep`, default `keep`)
 
-自動封存：
-- Sub-agent Sessions 會在 `agents.defaults.subagents.archiveAfterMinutes` 後自動封存（預設：60）。
-- 封存使用 `sessions.delete` 並將 Transcript 重新命名為 `*.deleted.<timestamp>`（相同資料夾）。
-- `cleanup: "delete"` 會在公告後立即封存（仍透過重新命名保留 Transcript）。
-- 自動封存是盡力而為；如果 Gateway 重新啟動，待處理的計時器會遺失。
-- `runTimeoutSeconds` **不會**自動封存；它只會停止 Run。Session 會保留直到自動封存。
+Allowlist:
 
-## 身份驗證
+- `agents.list[].subagents.allowAgents`: list of agent ids that can be targeted via `agentId` (`["*"]` to allow any). Default: only the requester agent.
 
-Sub-agent Auth 是依 **Agent ID** 解析，而非 Session 類型：
-- Sub-agent Session Key 是 `agent:<agentId>:subagent:<uuid>`。
-- Auth Store 從該 Agent 的 `agentDir` 載入。
-- 主要 Agent 的 Auth Profiles 會作為 **Fallback** 合併；Agent Profiles 在衝突時覆寫主要 Profiles。
+Discovery:
 
-注意：合併是加性的，所以主要 Profiles 始終作為 Fallbacks 可用。尚不支援完全隔離的 Per-agent Auth。
+- Use `agents_list` to see which agent ids are currently allowed for `sessions_spawn`.
 
-## 公告
+Auto-archive:
 
-Sub-agents 透過公告步驟回報：
-- 公告步驟在 Sub-agent Session 內執行（非請求者 Session）。
-- 如果 Sub-agent 回覆正好是 `ANNOUNCE_SKIP`，則不會張貼任何內容。
-- 否則公告回覆會透過後續 `agent` 呼叫（`deliver=true`）張貼至請求者 Chat Channel。
-- 公告回覆會保留 Thread/Topic 路由（如有：Slack Threads、Telegram Topics、Matrix Threads）。
-- 公告訊息會正規化為穩定模板：
-  - `Status:` 衍生自 Run 結果（`success`、`error`、`timeout` 或 `unknown`）。
-  - `Result:` 公告步驟的摘要內容（如缺少則為 `(not available)`）。
-  - `Notes:` 錯誤詳情及其他有用上下文。
-- `Status` 不是從模型輸出推斷的；它來自 Runtime 結果訊號。
+- Sub-agent sessions are automatically archived after `agents.defaults.subagents.archiveAfterMinutes` (default: 60).
+- Archive uses `sessions.delete` and renames the transcript to `*.deleted.<timestamp>` (same folder).
+- `cleanup: "delete"` archives immediately after announce (still keeps the transcript via rename).
+- Auto-archive is best-effort; pending timers are lost if the gateway restarts.
+- `runTimeoutSeconds` does **not** auto-archive; it only stops the run. The session remains until auto-archive.
 
-公告 Payloads 在結尾包含統計行（即使 Wrapped）：
-- Runtime（例如 `runtime 5m12s`）
-- Token 使用量（Input/Output/Total）
-- 設定模型定價時的預估成本（`models.providers.*.models[].cost`）
-- `sessionKey`、`sessionId` 和 Transcript 路徑（讓主要 Agent 可透過 `sessions_history` 取得歷史或檢查磁碟上的檔案）
+## Authentication
 
-## Tool Policy（Sub-agent Tools）
+Sub-agent auth is resolved by **agent id**, not by session type:
 
-預設情況下，Sub-agents 取得**除 Session Tools 以外的所有 Tools**：
+- The sub-agent session key is `agent:<agentId>:subagent:<uuid>`.
+- The auth store is loaded from that agent's `agentDir`.
+- The main agent's auth profiles are merged in as a **fallback**; agent profiles override main profiles on conflicts.
+
+Note: the merge is additive, so main profiles are always available as fallbacks. Fully isolated auth per agent is not supported yet.
+
+## Announce
+
+Sub-agents report back via an announce step:
+
+- The announce step runs inside the sub-agent session (not the requester session).
+- If the sub-agent replies exactly `ANNOUNCE_SKIP`, nothing is posted.
+- Otherwise the announce reply is posted to the requester chat channel via a follow-up `agent` call (`deliver=true`).
+- Announce replies preserve thread/topic routing when available (Slack threads, Telegram topics, Matrix threads).
+- Announce messages are normalized to a stable template:
+  - `Status:` derived from the run outcome (`success`, `error`, `timeout`, or `unknown`).
+  - `Result:` the summary content from the announce step (or `(not available)` if missing).
+  - `Notes:` error details and other useful context.
+- `Status` is not inferred from model output; it comes from runtime outcome signals.
+
+Announce payloads include a stats line at the end (even when wrapped):
+
+- Runtime (e.g., `runtime 5m12s`)
+- Token usage (input/output/total)
+- Estimated cost when model pricing is configured (`models.providers.*.models[].cost`)
+- `sessionKey`, `sessionId`, and transcript path (so the main agent can fetch history via `sessions_history` or inspect the file on disk)
+
+## Tool Policy (sub-agent tools)
+
+By default, sub-agents get **all tools except session tools**:
+
 - `sessions_list`
 - `sessions_history`
 - `sessions_send`
 - `sessions_spawn`
 
-透過 Config 覆寫：
+Override via config:
 
 ```json5
 {
   agents: {
     defaults: {
       subagents: {
-        maxConcurrent: 1
-      }
-    }
+        maxConcurrent: 1,
+      },
+    },
   },
   tools: {
     subagents: {
       tools: {
-        // deny 優先
+        // deny wins
         deny: ["gateway", "cron"],
-        // 如果設定 allow，則變為 allow-only（deny 仍優先）
+        // if allow is set, it becomes allow-only (deny still wins)
         // allow: ["read", "exec", "process"]
-      }
-    }
-  }
+      },
+    },
+  },
 }
 ```
 
-## 並行
+## Concurrency
 
-Sub-agents 使用專用的 In-process Queue Lane：
-- Lane 名稱：`subagent`
-- 並行數：`agents.defaults.subagents.maxConcurrent`（預設 `8`）
+Sub-agents use a dedicated in-process queue lane:
 
-## 停止
+- Lane name: `subagent`
+- Concurrency: `agents.defaults.subagents.maxConcurrent` (default `8`)
 
-- 在請求者 Chat 中傳送 `/stop` 會中止請求者 Session 並停止從其生成的任何活躍 Sub-agent Run。
+## Stopping
 
-## 限制
+- Sending `/stop` in the requester chat aborts the requester session and stops any active sub-agent runs spawned from it.
 
-- Sub-agent 公告是**盡力而為**。如果 Gateway 重新啟動，待處理的「公告回報」工作會遺失。
-- Sub-agents 仍共享相同的 Gateway Process 資源；將 `maxConcurrent` 視為安全閥。
-- `sessions_spawn` 始終是非阻塞的：它會立即回傳 `{ status: "accepted", runId, childSessionKey }`。
-- Sub-agent Context 僅注入 `AGENTS.md` + `TOOLS.md`（無 `SOUL.md`、`IDENTITY.md`、`USER.md`、`HEARTBEAT.md` 或 `BOOTSTRAP.md`）。
+## Limitations
+
+- Sub-agent announce is **best-effort**. If the gateway restarts, pending "announce back" work is lost.
+- Sub-agents still share the same gateway process resources; treat `maxConcurrent` as a safety valve.
+- `sessions_spawn` is always non-blocking: it returns `{ status: "accepted", runId, childSessionKey }` immediately.
+- Sub-agent context only injects `AGENTS.md` + `TOOLS.md` (no `SOUL.md`, `IDENTITY.md`, `USER.md`, `HEARTBEAT.md`, or `BOOTSTRAP.md`).

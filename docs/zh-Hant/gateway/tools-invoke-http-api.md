@@ -1,5 +1,5 @@
 ---
-title: "tools-invoke-http-api(Tools Invoke (HTTP))"
+title: "Tools Invoke (HTTP)"
 summary: "直接透過 Gateway HTTP Endpoint 呼叫單一工具"
 read_when:
   - 無需運行完整 Agent Turn 即可呼叫工具時

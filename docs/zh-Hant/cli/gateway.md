@@ -82,22 +82,108 @@ openclaw gateway status
 openclaw gateway status --json
 ```
 
-- `--no-probe`：僅查看服務狀態，不執行 RPC 探針。
-- `--deep`：同時掃描系統層級的其它服務。
+- `--url <url>`：覆寫探針 URL。
+- `--token <token>`：探針的權杖認證。
+- `--password <password>`：探針的密碼認證。
+- `--timeout <ms>`：探針超時（預設 `10000`）。
+- `--no-probe`：跳過 RPC 探針（僅查看服務）。
+- `--deep`：同時掃描系統層級的服務。
 
 ### `gateway probe` (偵錯探針)
 
-用於調試所有可存取的 Gateway。它會同時掃描：
-1. 您配置的遠端 Gateway（若有）。
-2. 本地的 localhost（回環位址）。
+`gateway probe` 是「調試所有內容」指令。它始終探針：
+
+- 您配置的遠端 Gateway（若有），以及
+- localhost (loopback) **即使遠端已配置**。
+
+若多個 Gateway 可達，它將列印所有。當您使用隔離的設定檔/埠位時支援多個 Gateway（例如救援機器人），但大多數安裝仍執行單個 Gateway。
 
 ```bash
 openclaw gateway probe
+openclaw gateway probe --json
 ```
 
-#### 透過 SSH 進行遠端存取 (SSH Tunnel)
+#### 遠端 SSH 存取 (與 macOS App 對等)
 
-類似於 macOS App 的「Remote over SSH」模式，這會建立本地埠位轉發。
+macOS App 的「遠端 SSH」模式使用本地埠位轉發，使遠端 Gateway（可能只綁定至 loopback）在 `ws://127.0.0.1:<port>` 上可達。
+
+CLI 等效用法：
+
+```bash
+openclaw gateway probe --ssh user@gateway-host
+```
+
+選項：
+
+- `--ssh <target>`：`user@host` 或 `user@host:port` (埠位預設 `22`)。
+- `--ssh-identity <path>`：身份檔案。
+- `--ssh-auto`：選擇第一個發現的 Gateway 主機作為 SSH 目標（僅 LAN/WAB）。
+
+配置（選用，用作預設值）：
+
+- `gateway.remote.sshTarget`
+- `gateway.remote.sshIdentity`
+
+### `gateway call <method>`
+
+低級 RPC 助手。
+
+```bash
+openclaw gateway call status
+openclaw gateway call logs.tail --params '{"sinceMs": 60000}'
+```
+
+## 管理 Gateway 服務
+
+```bash
+openclaw gateway install
+openclaw gateway start
+openclaw gateway stop
+openclaw gateway restart
+openclaw gateway uninstall
+```
+
+注意：
+
+- `gateway install` 支援 `--port`、`--runtime`、`--token`、`--force`、`--json`。
+- 生命週期指令接受 `--json` 用於指令化。
+
+## 發現 Gateway (Bonjour)
+
+`gateway discover` 掃描 Gateway 信號 (`_openclaw-gw._tcp`)。
+
+- 多播 DNS-SD：`local.`
+- 單播 DNS-SD（廣域 Bonjour）：選擇一個網域（例如 `openclaw.internal.`）並設定分割 DNS + DNS 伺服器；詳見 [/gateway/bonjour](/gateway/bonjour)
+
+只有啟用 Bonjour 發現（預設）的 Gateway 才會廣告信號。
+
+廣域發現記錄包括 (TXT)：
+
+- `role` (Gateway 角色提示)
+- `transport` (傳輸提示，例如 `gateway`)
+- `gatewayPort` (WebSocket 埠位，通常 `18789`)
+- `sshPort` (SSH 埠位；若不存在預設 `22`)
+- `tailnetDns` (MagicDNS 主機名稱，若可用)
+- `gatewayTls` / `gatewayTlsSha256` (TLS 啟用 + 憑證指紋)
+- `cliPath` (遠端安裝的選用提示)
+
+### `gateway discover`
+
+```bash
+openclaw gateway discover
+```
+
+選項：
+
+- `--timeout <ms>`：每個指令超時（瀏覽/解析）；預設 `2000`。
+- `--json`：機器可讀輸出（亦停用樣式/動畫）。
+
+範例：
+
+```bash
+openclaw gateway discover --timeout 4000
+openclaw gateway discover --json | jq '.beacons[].wsUrl'
+```
 
 ```bash
 openclaw gateway probe --ssh 使用者@主機名

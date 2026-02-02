@@ -5,7 +5,7 @@ read_when:
   - 新增或修改 plugins/extensions
   - 記錄外掛安裝或載入規則
 ---
-# Plugins (Extensions)(外掛（擴充功能）)
+# 外掛（擴充功能）
 
 ## 快速入門（對外掛不熟悉？）
 

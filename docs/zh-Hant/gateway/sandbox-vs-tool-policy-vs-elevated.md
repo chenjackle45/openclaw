@@ -1,5 +1,5 @@
 ---
-title: "sandbox-vs-tool-policy-vs-elevated(Sandbox vs Tool Policy vs Elevated)"
+title: "Sandbox vs Tool Policy vs Elevated"
 summary: "為何工具被阻擋: Sandbox Runtime, Tool Allow/Deny Policy, 與 Elevated Exec Gates"
 read_when: "當您遇到 'Sandbox Jail' 或看到 Tool/Elevated 拒絕，並想要知道確切需要更改的 Config Key 時。"
 status: active

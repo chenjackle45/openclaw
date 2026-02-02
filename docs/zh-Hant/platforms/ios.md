@@ -1,10 +1,10 @@
 ---
-title: "ios(iOS)"
-summary: "iOS 節點應用程式: 連接至 Gateway、配對、Canvas 與故障排除"
+summary: "iOS 節點應用程式：連接至 Gateway、配對、Canvas 與故障排除"
 read_when:
   - 配對或重新連接 iOS 節點時
   - 從原始碼運行 iOS 應用程式時
-  - Debug Gateway 探索或 Canvas 指令時
+  - 除錯 Gateway 探索或 Canvas 指令時
+title: "iOS 應用程式"
 ---
 
 # iOS 應用程式 (Node)

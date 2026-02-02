@@ -1,5 +1,5 @@
 ---
-title: "Logging(日誌)"
+title: "日誌"
 summary: "日誌概覽：檔案日誌、控制台輸出、CLI 追蹤和 Control UI"
 read_when:
   - 您需要日誌的初學者友善概覽
@@ -7,7 +7,7 @@ read_when:
   - 您正在疑難排解並需要快速找到日誌
 ---
 
-# Logging(日誌)
+# 日誌
 
 OpenClaw 在兩個地方記錄日誌：
 
