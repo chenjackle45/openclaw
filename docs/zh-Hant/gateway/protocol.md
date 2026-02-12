@@ -1,5 +1,5 @@
 ---
-title: "Gateway 協定 (WebSocket)"
+title: "Gateway Protocol（Gateway 協定）"
 summary: "Gateway WebSocket 協定: Handshake, Frames, Versioning"
 read_when:
   - 實作或更新 Gateway WS Clients 時
@@ -132,11 +132,14 @@ Gateway → Client:
 ## Roles + Scopes
 
 ### Roles
+
 - `operator` = Control Plane Client (CLI/UI/Automation)。
 - `node` = Capability Host (Camera/Screen/Canvas/System.run)。
 
 ### Scopes (Operator)
+
 常見 Scopes:
+
 - `operator.read`
 - `operator.write`
 - `operator.admin`
@@ -144,7 +147,9 @@ Gateway → Client:
 - `operator.pairing`
 
 ### Caps/Commands/Permissions (Node)
+
 Nodes 在 Connect 時宣告 Capability Claims：
+
 - `caps`: 高階 Capability 類別。
 - `commands`: Invoke 的指令 Allowlist。
 - `permissions`: 細粒度開關 (例如 `screen.record`, `camera.capture`)。

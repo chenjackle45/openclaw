@@ -1,5 +1,5 @@
 ---
-title: "tui(終端機介面)"
+title: "tui（終端機介面）"
 summary: "`openclaw tui` CLI 參考（連線至 Gateway 的終端機 UI）"
 read_when:
   - 想要使用 Gateway 的終端機介面（對遠端連線友善）時
@@ -11,7 +11,8 @@ read_when:
 開啟連線至 Gateway 的終端機 UI (TUI)。
 
 相關資訊：
-- TUI 概念手冊：[TUI 指南](/tui)
+
+- TUI 概念手冊：[TUI 指南](/zh-Hant/tui)
 
 ## 指令範例
 

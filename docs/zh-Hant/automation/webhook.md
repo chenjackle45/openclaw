@@ -105,7 +105,7 @@ Payload：
 - `allowUnsafeExternalContent: true` 對該 Hook 禁用外部內容安全包裝紙
   (危險；僅用於信任的內部來源)。
 - `openclaw webhooks gmail setup` 寫入 `hooks.gmail` 設定供 `openclaw webhooks gmail run` 使用。
-  見 [Gmail Pub/Sub](/automation/gmail-pubsub) 查看完整的 Gmail 監看流程。
+  見 [Gmail Pub/Sub](/zh-Hant/automation/gmail-pubsub) 查看完整的 Gmail 監看流程。
 
 ## 回應
 

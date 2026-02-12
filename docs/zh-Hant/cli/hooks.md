@@ -1,5 +1,5 @@
 ---
-title: "hooks(鉤子管理)"
+title: "hooks（鉤子管理）"
 summary: "`openclaw hooks` CLI 參考（Agent 鉤子管理）"
 read_when:
   - 想要管理 Agent 鉤子時
@@ -11,8 +11,9 @@ read_when:
 管理 Agent 鉤子 (Agent hooks)。這些是針對 `/new`、`/reset` 指令以及 Gateway 啟動等事件觸發的自動化功能。
 
 相關資訊：
-- 鉤子概念導覽：[鉤子 (Hooks)](/hooks)
-- 外掛中的鉤子：[外掛系統](/plugin#plugin-hooks)
+
+- 鉤子概念導覽：[鉤子 (Hooks)](/zh-Hant/hooks)
+- 外掛中的鉤子：[外掛系統](/zh-Hant/plugin#plugin-hooks)
 
 ## 列出所有鉤子
 
@@ -23,6 +24,7 @@ openclaw hooks list
 列出從工作區、受管目錄及內建目錄中發現的所有鉤子。
 
 **參數選項**：
+
 - `--eligible`：僅顯示符合執行條件（依賴項已滿足）的鉤子。
 - `--json`：以 JSON 格式輸出。
 - `-v, --verbose`：顯示詳細資訊，包含缺少的配置或依賴需求。
@@ -78,11 +80,13 @@ openclaw hooks enable session-memory
 ```
 
 **執行動作**：
+
 - 檢查鉤子是否存在且符合執行條件。
 - 將配置中的 `hooks.internal.entries.<名稱>.enabled` 設定為 `true`。
 - 儲存配置至磁碟。
 
 **啟用後**：
+
 - **必須重啟 Gateway** 才能使變更生效（macOS 上請由選單列選單點選重啟，或在開發環境重新啟動 Gateway 進程）。
 
 ## 停用鉤子
@@ -102,6 +106,7 @@ openclaw hooks install <路徑或規格>
 從本地資料夾、壓縮檔或 npm 安裝鉤子包 (Hook pack)。
 
 **參數選項**：
+
 - `-l, --link`：連結本地目錄而非複製檔案（這會將該路徑加入 `hooks.internal.load.extraDirs`）。
 
 **支援格式**：`.zip`, `.tgz`, `.tar.gz`, `.tar`
@@ -131,21 +136,29 @@ openclaw hooks update --all
 ## 內建鉤子說明
 
 ### session-memory
+
 當您執行 `/new` 時，將會話上下文儲存至記憶體。
+
 - **輸出路徑**：`~/.openclaw/workspace/memory/YYYY-MM-DD-標題.md`
-- **文件連結**：[session-memory 說明](/hooks#session-memory)
+- **文件連結**：[session-memory 說明](/zh-Hant/hooks#session-memory)
 
 ### command-logger
+
 將所有指令事件記錄至集中式的審查檔案。
+
 - **輸出路徑**：`~/.openclaw/logs/commands.log`
 - **查看日誌範例**：`tail -n 20 ~/.openclaw/logs/commands.log`
-- **文件連結**：[command-logger 說明](/hooks#command-logger)
+- **文件連結**：[command-logger 說明](/zh-Hant/hooks#command-logger)
 
 ### soul-evil
+
 在特定視窗期間或隨機機會下，將注入的 `SOUL.md` 內容替換為 `SOUL_EVIL.md`。
-- **文件連結**：[SOUL Evil 鉤子](/hooks/soul-evil)
+
+- **文件連結**：[SOUL Evil 鉤子](/zh-Hant/hooks/soul-evil)
 
 ### boot-md
+
 在 Gateway 啟動（且頻道啟動後）時執行 `BOOT.md`。
+
 - **事件觸發點**：`gateway:startup`
-- **文件連結**：[boot-md 說明](/hooks#boot-md)
+- **文件連結**：[boot-md 說明](/zh-Hant/hooks#boot-md)

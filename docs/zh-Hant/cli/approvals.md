@@ -1,5 +1,5 @@
 ---
-title: "approvals(核准管理)"
+title: "approvals（核准管理）"
 summary: "`openclaw approvals` CLI 參考（Gateway 或節點主機的執行核准）"
 read_when:
   - 想要透過 CLI 編輯執行核准項目時
@@ -12,8 +12,9 @@ read_when:
 預設情況下，指令會針對磁碟上的本地核准檔案進行操作。使用 `--gateway` 可針對 Gateway 主機，使用 `--node` 則可針對特定的節點。
 
 相關資訊：
-- 執行核准：[執行核准 (Exec approvals)](/tools/exec-approvals)
-- 節點管理：[節點 (Nodes)](/nodes)
+
+- 執行核准：[執行核准 (Exec approvals)](/zh-Hant/tools/exec-approvals)
+- 節點管理：[節點 (Nodes)](/zh-Hant/nodes)
 
 ## 常見指令
 

@@ -1,0 +1,99 @@
+---
+title: "Deploy on Railway（在 Railway 上部署）"
+---
+
+使用一鍵範本在 Railway 上部署 OpenClaw 並在瀏覽器中完成設定。
+這是最簡單的「伺服器上無終端」路徑：Railway 為你執行 Gateway，
+並且你透過 `/setup` 網路精靈配置所有內容。
+
+## 快速檢查清單（新使用者）
+
+1. 點選**在 Railway 上部署**（下面）。
+2. 新增掛載在 `/data` 的**磁區**。
+3. 設定必需**變數**（至少 `SETUP_PASSWORD`）。
+4. 在連接埠 `8080` 上啟用 **HTTP Proxy**。
+5. 開啟 `https://<your-railway-domain>/setup` 並完成精靈。
+
+## 一鍵部署
+
+<a href="https://railway.com/deploy/clawdbot-railway-template" target="_blank" rel="noreferrer">
+  在 Railway 上部署
+</a>
+
+部署後，在 **Railway → 你的服務 → 設定 → 網域** 中找到你的公開 URL。
+
+Railway 會：
+
+- 提供產生的網域（通常 `https://<something>.up.railway.app`），或
+- 使用你連接的自訂網域。
+
+然後開啟：
+
+- `https://<your-railway-domain>/setup` — 設定精靈（受密碼保護）
+- `https://<your-railway-domain>/openclaw` — 控制 UI
+
+## 你獲得什麼
+
+- 託管的 OpenClaw Gateway + 控制 UI
+- 在 `/setup` 的網路設定精靈（無終端指令）
+- 透過 Railway Volume 的持久存儲（`/data`），所以配置/認證/工作區在重新部署後倖存
+- 在 `/setup/export` 進行備份匯出，以便稍後遷移出 Railway
+
+## 必需的 Railway 設定
+
+### 公開網路
+
+啟用服務的 **HTTP Proxy**。
+
+- 連接埠：`8080`
+
+### 磁區（必需）
+
+連接掛載在以下位置的磁區：
+
+- `/data`
+
+### 變數
+
+在服務上設定這些變數：
+
+- `SETUP_PASSWORD`（必需）
+- `PORT=8080`（必需 — 必須符合「公開網路」中的連接埠）
+- `OPENCLAW_STATE_DIR=/data/.openclaw`（推薦）
+- `OPENCLAW_WORKSPACE_DIR=/data/workspace`（推薦）
+- `OPENCLAW_GATEWAY_TOKEN`（推薦；視為管理員機密）
+
+## 設定流程
+
+1. 瀏覽至 `https://<your-railway-domain>/setup` 並輸入你的 `SETUP_PASSWORD`。
+2. 選擇模型/驗證提供者並貼上你的金鑰。
+3. （選用）新增 Telegram/Discord/Slack 權杖。
+4. 點選**執行設定**。
+
+如果 Telegram DMs 設定為配對，設定精靈可批准配對碼。
+
+## 取得聊天權杖
+
+### Telegram 機器人權杖
+
+1. 在 Telegram 中訊息 `@BotFather`
+2. 執行 `/newbot`
+3. 複製權杖（看起來像 `123456789:AA...`）
+4. 貼到 `/setup`
+
+### Discord 機器人權杖
+
+1. 前往 [https://discord.com/developers/applications](https://discord.com/developers/applications)
+2. **新應用程式** → 選擇名稱
+3. **機器人** → **新增機器人**
+4. 在機器人 → 特殊 Gateway 意圖下**啟用訊息內容意圖**（必需，否則機器人會在啟動時當機）
+5. 複製**機器人權杖**並貼到 `/setup`
+6. 邀請機器人到你的伺服器（OAuth2 URL 產生器；範圍：`bot`、`applications.commands`）
+
+## 備份和遷移
+
+下載備份於：
+
+- `https://<your-railway-domain>/setup/export`
+
+此匯出你的 OpenClaw 狀態 + 工作區，讓你無需遺失配置或記憶就能遷移到另一個主機。

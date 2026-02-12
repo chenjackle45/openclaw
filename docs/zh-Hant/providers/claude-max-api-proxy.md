@@ -1,5 +1,5 @@
 ---
-title: "claude-max-api-proxy(Claude Max API Proxy)"
+title: "Claude Max API Proxy（Claude Max API 代理）"
 summary: "使用 Claude Max/Pro 訂閱作為 OpenAI 相容 API 端點"
 read_when:
   - 想要在支援 OpenAI 相容工具中使用 Claude Max 訂閱時
@@ -13,10 +13,10 @@ read_when:
 
 ## 為何使用此工具？
 
-| 方式 | 成本 | 適用於 |
-|----------|------|----------|
-| Anthropic API | 按 Token 付費 (Opus 約 $15/M 輸入, $75/M 輸出) | 生產環境應用程式，高用量 |
-| Claude Max 訂閱 | $200/月 固定費率 | 個人使用，開發，無限使用量 |
+| 方式            | 成本                                           | 適用於                     |
+| --------------- | ---------------------------------------------- | -------------------------- |
+| Anthropic API   | 按 Token 付費 (Opus 約 $15/M 輸入, $75/M 輸出) | 生產環境應用程式，高用量   |
+| Claude Max 訂閱 | $200/月 固定費率                               | 個人使用，開發，無限使用量 |
 
 若您擁有 Claude Max 訂閱並希望在 OpenAI 相容工具中使用它，此代理可以為您節省大量費用。
 
@@ -28,6 +28,7 @@ read_when:
 ```
 
 代理程式會：
+
 1. 接收位於 `http://localhost:3456/v1/chat/completions` 的 OpenAI 格式請求
 2. 將其轉換為 Claude Code CLI 指令
 3. 以 OpenAI 格式回傳回應（支援串流）
@@ -77,23 +78,23 @@ curl http://localhost:3456/v1/chat/completions \
 {
   env: {
     OPENAI_API_KEY: "not-needed",
-    OPENAI_BASE_URL: "http://localhost:3456/v1"
+    OPENAI_BASE_URL: "http://localhost:3456/v1",
   },
   agents: {
     defaults: {
-      model: { primary: "openai/claude-opus-4" }
-    }
-  }
+      model: { primary: "openai/claude-opus-4" },
+    },
+  },
 }
 ```
 
 ## 可用模型
 
-| 模型 ID | 對應至 |
-|----------|---------|
-| `claude-opus-4` | Claude Opus 4 |
+| 模型 ID           | 對應至          |
+| ----------------- | --------------- |
+| `claude-opus-4`   | Claude Opus 4   |
 | `claude-sonnet-4` | Claude Sonnet 4 |
-| `claude-haiku-4` | Claude Haiku 4 |
+| `claude-haiku-4`  | Claude Haiku 4  |
 
 ## macOS 自動啟動
 
@@ -143,5 +144,5 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.claude-max-api.plist
 
 ## 參見
 
-- [Anthropic 供應商](/providers/anthropic) - OpenClaw 原生整合，使用 Claude setup-token 或 API 金鑰
-- [OpenAI 供應商](/providers/openai) - 用於 OpenAI/Codex 訂閱
+- [Anthropic 供應商](/zh-Hant/providers/anthropic) - OpenClaw 原生整合，使用 Claude setup-token 或 API 金鑰
+- [OpenAI 供應商](/zh-Hant/providers/openai) - 用於 OpenAI/Codex 訂閱

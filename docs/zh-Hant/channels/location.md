@@ -3,7 +3,7 @@ summary: "Inbound channel location parsing (Telegram + WhatsApp) and context fie
 read_when:
   - Adding or modifying channel location parsing
   - Using location context fields in agent prompts or tools
-title: "Channel Location Parsing"
+title: "Channel Location Parsing（頻道位置解析）"
 ---
 
 # 頻道位置解析

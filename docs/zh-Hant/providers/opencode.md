@@ -1,9 +1,9 @@
 ---
-summary: "在 OpenClaw 中使用 OpenCode Zen（精選模型）"
+summary: "使用 OpenCode Zen（策劃模型）與 OpenClaw"
 read_when:
   - 想要使用 OpenCode Zen 進行模型存取時
   - 想要獲得一份適合編碼任務的精選模型清單時
-title: "OpenCode Zen"
+title: "OpenCode Zen（OpenCode Zen 模型）"
 ---
 
 # OpenCode Zen
@@ -25,7 +25,7 @@ openclaw onboard --opencode-zen-api-key "$OPENCODE_API_KEY"
 ```json5
 {
   env: { OPENCODE_API_KEY: "sk-..." },
-  agents: { defaults: { model: { primary: "opencode/claude-opus-4-5" } } }
+  agents: { defaults: { model: { primary: "opencode/claude-opus-4-5" } } },
 }
 ```
 

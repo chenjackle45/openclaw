@@ -3,7 +3,7 @@ summary: "OpenClaw macOS 應用程式的首次執行入門流程"
 read_when:
   - 設計 macOS 入門助理時
   - 實作認證或身份設定時
-title: "入門流程"
+title: "Onboarding (macOS App)（入門流程）"
 ---
 
 # 入門流程（macOS 應用程式）
@@ -88,7 +88,7 @@ Gmail Pub/Sub 設定目前是手動步驟。使用：
 openclaw webhooks gmail setup --account you@gmail.com
 ```
 
-詳見 [/automation/gmail-pubsub](/automation/gmail-pubsub)。
+詳見 [/automation/gmail-pubsub](/zh-Hant/automation/gmail-pubsub)。
 
 ## 遠端模式備註
 

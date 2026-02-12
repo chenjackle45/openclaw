@@ -1,5 +1,5 @@
 ---
-title: "卸載"
+title: "Uninstall（卸載）"
 summary: "完全卸載 OpenClaw（CLI、服務、狀態、工作區）"
 read_when:
   - 您想從機器移除 OpenClaw

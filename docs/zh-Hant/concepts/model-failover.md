@@ -1,13 +1,15 @@
 ---
-title: "Model failover(模型容錯移轉)"
+title: "Model Failover（模型容錯移轉）"
 summary: "OpenClaw 如何輪換認證設定檔並在模型間進行回退"
 read_when:
   - 診斷認證設定檔輪換、冷卻或模型回退行為
   - 更新認證設定檔或模型的故障轉移規則
 ---
+
 # Model failover（模型故障轉移）
 
 OpenClaw 分兩個階段處理失敗：
+
 1. **認證設定檔輪換 (Auth profile rotation)**：在當前供應商內切換帳號。
 2. **模型回退 (Model fallback)**：回退到 `agents.defaults.model.fallbacks` 中定義的下一個模型。
 
@@ -21,15 +23,17 @@ OpenClaw 將 API 金鑰和 OAuth 權仗都視為**認證設定檔 (auth profiles
 - 設定中的 `auth.profiles` / `auth.order` 僅為**元資料與路由**（不含秘密資訊）。
 - 舊版僅供匯入使用的 OAuth 檔案：`~/.openclaw/credentials/oauth.json`（在首次使用時匯入 `auth-profiles.json`）。
 
-詳情請參閱：[/concepts/oauth](/concepts/oauth)
+詳情請參閱：[/concepts/oauth](/zh-Hant/concepts/oauth)
 
 憑證類型：
+
 - `type: "api_key"` → `{ provider, key }`
 - `type: "oauth"` → `{ provider, access, refresh, expires, email? }`
 
 ## 設定檔 ID (Profile IDs)
 
 OAuth 登入會建立獨特的設定檔，以便多個帳戶共存。
+
 - 預設值：當無法取得電子郵件時使用 `provider:default`。
 - 有電子郵件的 OAuth：`provider:<email>`（例如 `google-antigravity:user@gmail.com`）。
 
@@ -44,6 +48,7 @@ OAuth 登入會建立獨特的設定檔，以便多個帳戶共存。
 3. **儲存的設定檔**：`auth-profiles.json` 中該供應商的條目。
 
 如果未設定明確順序，OpenClaw 使用輪詢 (round‑robin) 順序：
+
 - **主要依據**：設定檔類型（**OAuth 優先於 API 金鑰**）。
 - **次要依據**：`usageStats.lastUsed`（最久未使用的優先）。
 - **冷卻中/停用的設定檔**會被移到最後，並按到期時間排序。
@@ -51,6 +56,7 @@ OAuth 登入會建立獨特的設定檔，以便多個帳戶共存。
 ### 會話黏性 (Session stickiness)
 
 OpenClaw 會為**每個會話固定所選的認證設定檔**，以保持供應商快取的熱度。它**不會**在每次請求時輪換。固定的設定檔會一直重複使用，直到：
+
 - 會話被重置 (`/new` / `/reset`)
 - 壓縮 (compaction) 完成（壓縮計數增加）
 - 該設定檔進入冷卻或被停用
@@ -64,6 +70,7 @@ OpenClaw 會為**每個會話固定所選的認證設定檔**，以保持供應�
 當設定檔因認證/速率限制錯誤（或看起來像速率限制的超時）失敗時，OpenClaw 將其標記為冷卻中，並移至下一個設定檔。格式/無效請求錯誤也會觸發同樣的冷卻機制。
 
 冷卻使用指數退避 (exponential backoff)：
+
 - 1 分鐘
 - 5 分鐘
 - 25 分鐘
@@ -76,6 +83,7 @@ OpenClaw 會為**每個會話固定所選的認證設定檔**，以保持供應�
 帳單/餘額失敗（例如「額度不足」/「餘額過低」）會觸發故障轉移，但通常不是暫時性的。OpenClaw 不會使用短暫的冷卻，而是將設定檔標記為**停用 (disabled)**（退避時間較長），並輪換到下一個設定檔/供應商。
 
 預設值：
+
 - 帳單退避從 **5 小時**開始，每次失敗翻倍，上限 **24 小時**。
 - 如果設定檔在 **24 小時**內未發生失敗，則退避計數器會重置。
 
@@ -87,10 +95,11 @@ OpenClaw 會為**每個會話固定所選的認證設定檔**，以保持供應�
 
 ## 相關設定
 
-請參閱 [Gateway 設定](/gateway/configuration) 了解：
+請參閱 [Gateway 設定](/zh-Hant/gateway/configuration) 了解：
+
 - `auth.profiles` / `auth.order`
 - `auth.cooldowns.*`
 - `agents.defaults.model.primary` / `fallbacks`
 - `agents.defaults.imageModel` 路由
 
-請參閱 [Models](/concepts/models) 了解更廣泛的模型選擇和回退概覽。
+請參閱 [Models](/zh-Hant/concepts/models) 了解更廣泛的模型選擇和回退概覽。

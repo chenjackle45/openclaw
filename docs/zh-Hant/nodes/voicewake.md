@@ -1,5 +1,5 @@
 ---
-title: "語音喚醒"
+title: "Voice Wake（語音喚醒）"
 summary: "全域語音喚醒詞（Gateway 所有）及其如何跨節點同步"
 read_when:
   - 變更語音喚醒詞行為或預設值時

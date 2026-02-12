@@ -4,7 +4,7 @@ read_when:
   - 在 OpenClaw.app 中託管 PeekabooBridge 時
   - 透過 Swift Package Manager 整合 Peekaboo 時
   - 變更 PeekabooBridge 協定/路徑時
-title: "Peekaboo Bridge"
+title: "Peekaboo Bridge（Peekaboo Bridge 橋接）"
 ---
 
 # Peekaboo Bridge (macOS UI 自動化)
@@ -20,6 +20,7 @@ OpenClaw 可以託管 **PeekabooBridge**，作為一個本地的、具備權限�
 ## 啟用 Bridge
 
 在 macOS 應用程式中：
+
 - Settings → **Enable Peekaboo Bridge**
 
 啟用時，OpenClaw 會啟動一個本地 UNIX socket 伺服器。若停用，主機將停止，`peekaboo` 將回退至其他可用的主機。

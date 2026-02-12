@@ -2,7 +2,7 @@
 summary: "Reaction semantics shared across channels"
 read_when:
   - Working on reactions in any channel
-title: "Reactions"
+title: "Reactions（Reactions 回應）"
 ---
 
 # Reaction tooling

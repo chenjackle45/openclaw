@@ -1,5 +1,5 @@
 ---
-title: "Workspace Memory(工作區記憶體研究)"
+title: "Workspace Memory Research（工作區記憶體研究）"
 summary: "研究注意事項：Clawd 工作區的離線記憶體系統（Markdown 來源真相 + 衍生索引）"
 read_when:
   - 設計超越每日 Markdown 日誌的工作區記憶體（~/.openclaw/workspace）
@@ -16,12 +16,14 @@ read_when:
 ## 為什麼要改變？
 
 當前設定（每天一個檔案）非常適合：
+
 - 「僅追加」日誌
 - 人工編輯
 - git 支援的持久性 + 可審計性
 - 低摩擦捕獲（「只需寫下來」）
 
 它的弱點在於：
+
 - 高召回檢索（「我們對 X 做了什麼決定？」、「我們上次嘗試 Y 時發生了什麼？」）
 - 以實體為中心的答案（「告訴我關於 Alice / The Castle / warelay」）而不重新閱讀許多檔案
 - 意見/偏好穩定性（以及它何時改變的證據）
@@ -39,12 +41,14 @@ read_when:
 
 要混合的兩個部分：
 
-1) **Letta/MemGPT 風格的控制迴圈**
+1. **Letta/MemGPT 風格的控制迴圈**
+
 - 保持一個小「核心」始終在上下文中（persona + 關鍵使用者事實）
 - 其他一切都是上下文外的，透過工具檢索
 - 記憶體寫入是明確的工具呼叫（append/replace/insert），持久化，然後下一輪重新注入
 
-2) **Hindsight 風格的記憶體基板**
+2. **Hindsight 風格的記憶體基板**
+
 - 分離觀察到的 vs 相信的 vs 總結的
 - 支援 retain/recall/reflect
 - 具有信心的意見可以隨證據演變
@@ -75,6 +79,7 @@ read_when:
 ```
 
 注意事項：
+
 - **每日日誌保持每日日誌**。無需將其轉換為 JSON。
 - `bank/` 檔案是**策劃的**，由反思作業產生，仍然可以手工編輯。
 - `memory.md` 保持「小 + 核心ish」：您希望 Clawd 每次會話看到的東西。
@@ -88,6 +93,7 @@ read_when:
 ```
 
 支援它：
+
 - 用於事實 + 實體連結 + 意見 metadata 的 SQLite schema
 - 用於詞彙召回的 SQLite **FTS5**（快速、小、離線）
 - 用於語意召回的可選 embeddings 表（仍然離線）
@@ -101,6 +107,7 @@ read_when:
 Hindsight 在這裡重要的關鍵洞察：儲存**敘事、自包含的事實**，而不是微小片段。
 
 `memory/YYYY-MM-DD.md` 的實用規則：
+
 - 在一天結束時（或期間），新增一個 `## Retain` 區段，其中包含 2-5 個要點，這些要點是：
   - 敘事（跨輪上下文保留）
   - 自包含（獨立稍後有意義）
@@ -116,6 +123,7 @@ Hindsight 在這裡重要的關鍵洞察：儲存**敘事、自包含的事實**
 ```
 
 最小解析：
+
 - 類型前綴：`W`（世界）、`B`（經驗/傳記）、`O`（意見）、`S`（觀察/摘要；通常生成）
 - 實體：`@Peter`、`@warelay` 等（slugs 對應到 `bank/entities/*.md`）
 - 意見信心：`O(c=0.0..1.0)` 可選
@@ -125,12 +133,14 @@ Hindsight 在這裡重要的關鍵洞察：儲存**敘事、自包含的事實**
 ### Recall：對衍生索引的查詢
 
 召回應該支援：
+
 - **詞彙**：「找到精確術語/名稱/指令」（FTS5）
 - **實體**：「告訴我關於 X」（實體頁面 + 實體連結事實）
 - **時間**：「11 月 27 日左右發生了什麼」/「自上週以來」
 - **意見**：「Peter 更喜歡什麼？」（具有信心 + 證據）
 
 返回格式應該是代理友善的並引用來源：
+
 - `kind`（`world|experience|opinion|observation`）
 - `timestamp`（來源日，或提取的時間範圍如果存在）
 - `entities`（`["Peter","warelay"]`）
@@ -140,11 +150,13 @@ Hindsight 在這裡重要的關鍵洞察：儲存**敘事、自包含的事實**
 ### Reflect：產生穩定頁面 + 更新信念
 
 反思是一個排程作業（每日或 heartbeat `ultrathink`），它：
+
 - 從最近的事實更新 `bank/entities/*.md`（實體摘要）
 - 基於強化/矛盾更新 `bank/opinions.md` 信心
 - 可選地提議對 `memory.md` 的編輯（「核心ish」持久事實）
 
 意見演變（簡單、可解釋）：
+
 - 每個意見有：
   - 陳述
   - 信心 `c ∈ [0,1]`
@@ -159,6 +171,7 @@ Hindsight 在這裡重要的關鍵洞察：儲存**敘事、自包含的事實**
 建議：**深度整合到 OpenClaw**，但保持可分離的核心程式庫。
 
 ### 為什麼整合到 OpenClaw？
+
 - OpenClaw 已經知道：
   - 工作區路徑（`agents.defaults.workspace`）
   - 會話模型 + heartbeats
@@ -168,6 +181,7 @@ Hindsight 在這裡重要的關鍵洞察：儲存**敘事、自包含的事實**
   - `openclaw memory reflect --since 7d`
 
 ### 為什麼仍然拆分程式庫？
+
 - 保持記憶體邏輯可測試，無需 gateway/runtime
 - 從其他上下文重複使用（本地腳本、未來桌面 app 等）
 
@@ -179,6 +193,7 @@ Hindsight 在這裡重要的關鍵洞察：儲存**敘事、自包含的事實**
 如果「S-Collide」指的是 **SuCo（Subspace Collision）**：它是一種 ANN 檢索方法，透過在子空間中使用學習的/結構化的碰撞來定位強大的召回/延遲權衡（論文：arXiv 2411.14754，2024）。
 
 對於 `~/.openclaw/workspace` 的務實看法：
+
 - **不要開始**使用 SuCo。
 - 從 SQLite FTS +（可選）簡單 embeddings 開始；您將立即獲得大部分 UX 勝利。
 - 僅在以下情況下考慮 SuCo/HNSW/ScaNN 類解決方案：
@@ -187,12 +202,14 @@ Hindsight 在這裡重要的關鍵洞察：儲存**敘事、自包含的事實**
   - 召回品質明顯受詞彙搜尋瓶頸
 
 離線友善的替代方案（複雜度遞增）：
+
 - SQLite FTS5 + metadata 過濾器（零 ML）
 - Embeddings + 暴力（如果 chunk 計數低，效果驚人）
 - HNSW 索引（常見、穩健；需要程式庫綁定）
 - SuCo（研究級；如果有您可以嵌入的可靠實作，則有吸引力）
 
 開放問題：
+
 - 在您的機器（筆電 + 桌面）上，什麼是用於「個人助理記憶體」的**最佳**離線 embedding 模型？
   - 如果您已經有 Ollama：使用本地模型嵌入；否則在工具鏈中提供一個小的 embedding 模型。
 

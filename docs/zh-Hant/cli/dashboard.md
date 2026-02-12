@@ -1,5 +1,5 @@
 ---
-title: "dashboard(控制儀表板)"
+title: "dashboard（控制儀表板）"
 summary: "`openclaw dashboard` CLI 參考（開啟控制介面）"
 read_when:
   - 想要使用目前的權杖 (Token) 開啟控制介面 (Control UI) 時

@@ -1,5 +1,5 @@
 ---
-title: "Timezone(時區處理)"
+title: "Timezones（時區處理）"
 summary: "代理、封裝與提示詞的時區處理"
 read_when:
   - 您需要了解時間戳記如何為模型進行標準化
@@ -28,9 +28,9 @@ OpenClaw 將時間戳記標準化，以便模型看到一個**統一的基準時
     defaults: {
       envelopeTimezone: "local", // "utc" | "local" | "user" | IANA 時區
       envelopeTimestamp: "on", // "on" | "off"
-      envelopeElapsed: "on" // "on" | "off"
-    }
-  }
+      envelopeElapsed: "on", // "on" | "off"
+    },
+  },
 }
 ```
 
@@ -76,14 +76,15 @@ OpenClaw 將時間戳記標準化，以便模型看到一個**統一的基準時
 
 ```json5
 {
-  agents: { defaults: { userTimezone: "Asia/Taipei" } }
+  agents: { defaults: { userTimezone: "Asia/Taipei" } },
 }
 ```
 
 系統提示詞將包含：
+
 - `Current Date & Time` 區塊，包含當地時間與時區。
 - 時間格式：12 小時制或 24 小時制。
 
 您可以透過 `agents.defaults.timeFormat` 控制提示詞格式（`auto` | `12` | `24`）。
 
-詳情請參閱 [Date & Time（日期與時間）](/date-time) 以了解完整行為與範例。
+詳情請參閱 [Date & Time（日期與時間）](/zh-Hant/date-time) 以了解完整行為與範例。

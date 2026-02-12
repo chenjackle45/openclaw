@@ -1,5 +1,5 @@
 ---
-title: "廣播群組"
+title: "Broadcast Groups（廣播群組）"
 summary: "向多個代理廣播 WhatsApp 訊息"
 read_when:
   - 設定廣播群組
@@ -14,7 +14,7 @@ status: experimental
 
 ## 概覽
 
-廣播群組使多個代理能夠同時處理並回應相同訊息。這允許您建立專門的代理團隊，在單一 WhatsApp 群組或 DM 中協同工作 —  全部使用一個電話號碼。
+廣播群組使多個代理能夠同時處理並回應相同訊息。這允許您建立專門的代理團隊，在單一 WhatsApp 群組或 DM 中協同工作 — 全部使用一個電話號碼。
 
 當前範圍：**僅限 WhatsApp**（web 頻道）。
 
@@ -23,7 +23,9 @@ status: experimental
 ## 使用案例
 
 ### 1. 專門代理團隊
+
 部署具有原子、集中職責的多個代理：
+
 ```
 群組：「Development Team」
 代理：
@@ -36,6 +38,7 @@ status: experimental
 每個代理處理相同訊息並提供其專業視角。
 
 ### 2. 多語言支援
+
 ```
 群組：「International Support」
 代理：
@@ -45,6 +48,7 @@ status: experimental
 ```
 
 ### 3. 品質保證工作流程
+
 ```
 群組：「Customer Support」
 代理：
@@ -53,6 +57,7 @@ status: experimental
 ```
 
 ### 4. 任務自動化
+
 ```
 群組：「Project Management」
 代理：
@@ -66,6 +71,7 @@ status: experimental
 ### 基本設定
 
 新增頂層 `broadcast` 區段（在 `bindings` 旁邊）。鍵是 WhatsApp peer ids：
+
 - 群組聊天：group JID（例如 `120363403215116621@g.us`）
 - DM：E.164 電話號碼（例如 `+15551234567`）
 
@@ -84,7 +90,9 @@ status: experimental
 控制代理如何處理訊息：
 
 #### Parallel（預設）
+
 所有代理同時處理：
+
 ```json
 {
   "broadcast": {
@@ -95,7 +103,9 @@ status: experimental
 ```
 
 #### Sequential
+
 代理依序處理（一個等待前一個完成）：
+
 ```json
 {
   "broadcast": {
@@ -167,6 +177,7 @@ status: experimental
 - **群組上下文緩衝區**（用於上下文的最近群組訊息）按 peer 共享，因此所有廣播代理在觸發時看到相同的上下文
 
 這允許每個代理擁有：
+
 - 不同的個性
 - 不同的工具存取（例如：唯讀 vs. 讀寫）
 - 不同的模型（例如：opus vs. sonnet）
@@ -177,6 +188,7 @@ status: experimental
 在具有代理 `["alfred", "baerbel"]` 的群組 `120363403215116621@g.us` 中：
 
 **Alfred 的上下文：**
+
 ```
 會話：agent:alfred:whatsapp:group:120363403215116621@g.us
 歷史：[使用者訊息，alfred 的先前回應]
@@ -185,8 +197,9 @@ status: experimental
 ```
 
 **Bärbel 的上下文：**
+
 ```
-會話：agent:baerbel:whatsapp:group:120363403215116621@g.us  
+會話：agent:baerbel:whatsapp:group:120363403215116621@g.us
 歷史：[使用者訊息，baerbel 的先前回應]
 工作區：/Users/pascal/openclaw-baerbel/
 工具：僅 read
@@ -231,10 +244,10 @@ status: experimental
 {
   "agents": {
     "reviewer": {
-      "tools": { "allow": ["read", "exec"] }  // 唯讀
+      "tools": { "allow": ["read", "exec"] } // 唯讀
     },
     "fixer": {
-      "tools": { "allow": ["read", "write", "edit", "exec"] }  // 讀寫
+      "tools": { "allow": ["read", "write", "edit", "exec"] } // 讀寫
     }
   }
 }
@@ -243,6 +256,7 @@ status: experimental
 ### 4. 監控效能
 
 使用多個代理時，考慮：
+
 - 使用 `"strategy": "parallel"`（預設）以提高速度
 - 將廣播群組限制為 5-10 個代理
 - 對較簡單的代理使用更快的模型
@@ -261,6 +275,7 @@ status: experimental
 ### 供應商
 
 廣播群組目前適用於：
+
 - ✅ WhatsApp（已實作）
 - 🚧 Telegram（計畫中）
 - 🚧 Discord（計畫中）
@@ -273,7 +288,10 @@ status: experimental
 ```json
 {
   "bindings": [
-    { "match": { "channel": "whatsapp", "peer": { "kind": "group", "id": "GROUP_A" } }, "agentId": "alfred" }
+    {
+      "match": { "channel": "whatsapp", "peer": { "kind": "group", "id": "GROUP_A" } },
+      "agentId": "alfred"
+    }
   ],
   "broadcast": {
     "GROUP_B": ["agent1", "agent2"]
@@ -291,11 +309,13 @@ status: experimental
 ### 代理未回應
 
 **檢查：**
+
 1. Agent ID 存在於 `agents.list` 中
 2. Peer ID 格式正確（例如 `120363403215116621@g.us`）
 3. 代理不在拒絕清單中
 
 **除錯：**
+
 ```bash
 tail -f ~/.openclaw/logs/gateway.log | grep broadcast
 ```
@@ -309,6 +329,7 @@ tail -f ~/.openclaw/logs/gateway.log | grep broadcast
 ### 效能問題
 
 **如果使用多個代理很慢：**
+
 - 減少每組的代理數量
 - 使用較輕的模型（sonnet 而非 opus）
 - 檢查沙盒啟動時間
@@ -330,9 +351,21 @@ tail -f ~/.openclaw/logs/gateway.log | grep broadcast
   },
   "agents": {
     "list": [
-      { "id": "code-formatter", "workspace": "~/agents/formatter", "tools": { "allow": ["read", "write"] } },
-      { "id": "security-scanner", "workspace": "~/agents/security", "tools": { "allow": ["read", "exec"] } },
-      { "id": "test-coverage", "workspace": "~/agents/testing", "tools": { "allow": ["read", "exec"] } },
+      {
+        "id": "code-formatter",
+        "workspace": "~/agents/formatter",
+        "tools": { "allow": ["read", "write"] }
+      },
+      {
+        "id": "security-scanner",
+        "workspace": "~/agents/security",
+        "tools": { "allow": ["read", "exec"] }
+      },
+      {
+        "id": "test-coverage",
+        "workspace": "~/agents/testing",
+        "tools": { "allow": ["read", "exec"] }
+      },
       { "id": "docs-checker", "workspace": "~/agents/docs", "tools": { "allow": ["read"] } }
     ]
   }
@@ -341,6 +374,7 @@ tail -f ~/.openclaw/logs/gateway.log | grep broadcast
 
 **使用者發送：**程式碼片段  
 **回應：**
+
 - code-formatter：「Fixed indentation and added type hints」
 - security-scanner：「⚠️ SQL injection vulnerability in line 12」
 - test-coverage：「Coverage is 45%, missing tests for error cases」
@@ -382,7 +416,6 @@ interface OpenClawConfig {
 - `strategy`（選用）：如何處理代理
   - `"parallel"`（預設）：所有代理同時處理
   - `"sequential"`：代理按陣列順序處理
-  
 - `[peerId]`：WhatsApp group JID、E.164 號碼或其他 peer ID
   - 值：應處理訊息的代理 ID 陣列
 
@@ -396,6 +429,7 @@ interface OpenClawConfig {
 ## 未來增強
 
 計畫中的功能：
+
 - [ ] 共享上下文模式（代理看到彼此的回應）
 - [ ] 代理協調（代理可以互相發出訊號）
 - [ ] 動態代理選擇（基於訊息內容選擇代理）
@@ -403,6 +437,6 @@ interface OpenClawConfig {
 
 ## 另請參閱
 
-- [Multi-Agent Configuration](/multi-agent-sandbox-tools)
-- [Routing Configuration](/concepts/channel-routing)
-- [Session Management](/concepts/sessions)
+- [Multi-Agent Configuration](/zh-Hant/multi-agent-sandbox-tools)
+- [Routing Configuration](/zh-Hant/concepts/channel-routing)
+- [Session Management](/zh-Hant/concepts/sessions)

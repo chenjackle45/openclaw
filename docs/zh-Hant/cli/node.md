@@ -1,5 +1,5 @@
 ---
-title: "node(節點主機)"
+title: "node（節點主機）"
 summary: "`openclaw node` CLI 參考（無頭節點主機）"
 read_when:
   - 運行無頭 (Headless) 節點主機時
@@ -15,6 +15,7 @@ read_when:
 當您希望 Agent 在網路中的**其它機器上執行指令**，但又不希望在該機器上安裝完整的 macOS 隨附應用程式時，請使用節點主機。
 
 常見情境：
+
 - 在遠端的 Linux/Windows 機器（編譯伺服器、實驗室機器、NAS）上執行指令。
 - 讓執行過程在 Gateway 上保持**沙盒化**，但將經過核准的任務委派給其它主機執行。
 - 為自動化流程或 CI 節點提供輕量級、無介面的執行目標。
@@ -31,9 +32,9 @@ read_when:
 {
   nodeHost: {
     browserProxy: {
-      enabled: false
-    }
-  }
+      enabled: false,
+    },
+  },
 }
 ```
 
@@ -44,6 +45,7 @@ openclaw node run --host <gateway主機位址> --port 18789
 ```
 
 **參數選項**：
+
 - `--host <host>`：Gateway WebSocket 主機（預設：`127.0.0.1`）。
 - `--port <port>`：Gateway WebSocket 埠位（預設：`18789`）。
 - `--tls`：連線至 Gateway 時使用 TLS。
@@ -87,6 +89,7 @@ openclaw nodes approve <請求ID>
 ## 執行核准 (Exec Approvals)
 
 `system.run` 的權限由本地的執行核准機制控管：
+
 - 修改位置：`~/.openclaw/exec-approvals.json`
-- 詳細說明：[執行核准](/tools/exec-approvals)
+- 詳細說明：[執行核准](/zh-Hant/tools/exec-approvals)
 - 遠端編輯：`openclaw approvals --node <ID|名稱|IP>` (從 Gateway 端編輯)

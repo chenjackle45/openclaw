@@ -2,12 +2,12 @@
 summary: "透過 SSH 控制遠端 OpenClaw Gateway 的 macOS 應用程式流程"
 read_when:
   - 設定或除錯遠端 macOS 控制時
-title: "遠端 SSH 存取"
+title: "Remote Control（遠端 SSH 存取）"
 ---
 
 # 遠端 OpenClaw (macOS ⇄ 遠端主機)
 
-此流程讓 macOS 應用程式成為運行於另一台主機（桌面/伺服器）上的 OpenClaw Gateway 的完整遙控器。這就是應用程式的 **Remote over SSH**（遠端執行）功能。所有功能——健康檢查、語音喚醒轉發與 Web Chat——皆重複使用 *Settings → General* 中的相同遠端 SSH 設定。
+此流程讓 macOS 應用程式成為運行於另一台主機（桌面/伺服器）上的 OpenClaw Gateway 的完整遙控器。這就是應用程式的 **Remote over SSH**（遠端執行）功能。所有功能——健康檢查、語音喚醒轉發與 Web Chat——皆重複使用 _Settings → General_ 中的相同遠端 SSH 設定。
 
 ## 模式
 
@@ -18,19 +18,20 @@ title: "遠端 SSH 存取"
 ## 遠端傳輸 (Remote Transports)
 
 Remote 模式支援兩種傳輸方式：
+
 - **SSH tunnel** (預設): 使用 `ssh -N -L ...` 將 Gateway 通訊埠轉發至 localhost。Gateway 會看到節點 IP 為 `127.0.0.1`，因為通道是 loopback。
 - **Direct (ws/wss)**: 直接連接至 Gateway URL。Gateway 會看到真實的客戶端 IP。
 
 ## 遠端主機先決條件
 
-1) 安裝 Node + pnpm 並建置/安裝 OpenClaw CLI (`pnpm install && pnpm build && pnpm link --global`)。
-2) 確保 `openclaw` 在非互動式 Shell 的 PATH 中（若需要，建立 symlink 至 `/usr/local/bin` 或 `/opt/homebrew/bin`）。
-3) 開啟 SSH 金鑰認證。我們推薦使用 **Tailscale** IP 以獲得穩定的非 LAN 可達性。
+1. 安裝 Node + pnpm 並建置/安裝 OpenClaw CLI (`pnpm install && pnpm build && pnpm link --global`)。
+2. 確保 `openclaw` 在非互動式 Shell 的 PATH 中（若需要，建立 symlink 至 `/usr/local/bin` 或 `/opt/homebrew/bin`）。
+3. 開啟 SSH 金鑰認證。我們推薦使用 **Tailscale** IP 以獲得穩定的非 LAN 可達性。
 
 ## macOS 應用程式設定
 
-1) 開啟 *Settings → General*。
-2) 在 **OpenClaw runs** 下，選擇 **Remote over SSH** 並設定：
+1. 開啟 _Settings → General_。
+2. 在 **OpenClaw runs** 下，選擇 **Remote over SSH** 並設定：
    - **Transport**: **SSH tunnel** 或 **Direct (ws/wss)**。
    - **SSH target**: `user@host` (可選 `:port`)。
      - 若 Gateway 位於同一 LAN 並廣播 Bonjour，從發現列表中選擇它以自動填寫此欄位。
@@ -38,8 +39,8 @@ Remote 模式支援兩種傳輸方式：
    - **Identity file** (進階): 您的金鑰路徑。
    - **Project root** (進階): 用於指令的遠端 Checkout 路徑。
    - **CLI path** (進階): 可選的可執行 `openclaw` 入口點/二進位檔路徑（廣播時自動填寫）。
-3) 點擊 **Test remote**。成功表示遠端 `openclaw status --json` 執行正確。失敗通常表示 PATH/CLI 問題；exit 127 表示遠端找不到 CLI。
-4) 健康檢查與 Web Chat 現在會自動通過此 SSH 通道運行。
+3. 點擊 **Test remote**。成功表示遠端 `openclaw status --json` 執行正確。失敗通常表示 PATH/CLI 問題；exit 127 表示遠端找不到 CLI。
+4. 健康檢查與 Web Chat 現在會自動通過此 SSH 通道運行。
 
 ## Web Chat
 
@@ -56,7 +57,7 @@ Remote 模式支援兩種傳輸方式：
 
 - 遠端主機優先使用 loopback bind，並透過 SSH 或 Tailscale 連接。
 - 若將 Gateway 綁定至非 loopback 介面，請要求 token/密碼認證。
-- 參閱 [Security](/gateway/security) 與 [Tailscale](/gateway/tailscale)。
+- 參閱 [Security](/zh-Hant/gateway/security) 與 [Tailscale](/zh-Hant/gateway/tailscale)。
 
 ## WhatsApp 登入流程 (遠端)
 

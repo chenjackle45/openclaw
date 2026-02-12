@@ -3,28 +3,28 @@ summary: "模型認證: OAuth, API keys, 與 setup-token"
 read_when:
   - 除錯模型認證或 OAuth 過期問題時
   - 記錄認證或憑證儲存方式時
-title: "認證"
+title: "Authentication（認證）"
 ---
 
 # 認證 (Authentication)
 
 OpenClaw 支援模型供應商的 OAuth 與 API Keys。對於 Anthropic 帳號，我們建議使用 **API key**。對於 Claude 訂閱存取，請使用由 `claude setup-token` 建立的長效 Token。
 
-請參閱 [/concepts/oauth](/concepts/oauth) 了解完整的 OAuth 流程與儲存佈局。
+請參閱 [/concepts/oauth](/zh-Hant/concepts/oauth) 了解完整的 OAuth 流程與儲存佈局。
 
 ## 推薦的 Anthropic 設定 (API key)
 
 若您直接使用 Anthropic，請使用 API key。
 
-1) 在 Anthropic Console 建立一組 API key。
-2) 將其放在 **gateway host** (運行 `openclaw gateway` 的機器) 上。
+1. 在 Anthropic Console 建立一組 API key。
+2. 將其放在 **gateway host** (運行 `openclaw gateway` 的機器) 上。
 
 ```bash
 export ANTHROPIC_API_KEY="..."
 openclaw models status
 ```
 
-3) 若 Gateway 在 systemd/launchd 下運行，建議將 Key 放在 `~/.openclaw/.env` 中讓 Daemon 讀取：
+3. 若 Gateway 在 systemd/launchd 下運行，建議將 Key 放在 `~/.openclaw/.env` 中讓 Daemon 讀取：
 
 ```bash
 cat >> ~/.openclaw/.env <<'EOF'
@@ -41,7 +41,7 @@ openclaw doctor
 
 若您不想自行管理環境變數，Onboarding 精靈可以為 Daemon 儲存 API keys：`openclaw onboard`。
 
-詳情請參閱 [Help](/help) 關於環境變數繼承 (`env.shellEnv`, `~/.openclaw/.env`, systemd/launchd) 的說明。
+詳情請參閱 [Help](/zh-Hant/help) 關於環境變數繼承 (`env.shellEnv`, `~/.openclaw/.env`, systemd/launchd) 的說明。
 
 ## Anthropic: setup-token (訂閱驗證)
 
@@ -85,7 +85,7 @@ openclaw models status --check
 ```
 
 選用的維運腳本 (systemd/Termux) 記錄於此：
-[/automation/auth-monitoring](/automation/auth-monitoring)
+[/automation/auth-monitoring](/zh-Hant/automation/auth-monitoring)
 
 > `claude setup-token` 需要互動式 TTY。
 

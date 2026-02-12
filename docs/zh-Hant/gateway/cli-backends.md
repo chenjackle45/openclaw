@@ -4,7 +4,7 @@ read_when:
   - 當 API 供應商失敗時需要可靠的回退方案
   - 運行 Claude Code CLI 或其他本地 AI CLI 並希望重複使用它們
   - 需要一個支援 Session 與 Image 但不使用 Tool 的純文字路徑
-title: "CLI Backends"
+title: "CLI Backends（CLI 後端）"
 ---
 
 # CLI Backends (Fallback Runtime)
@@ -40,11 +40,11 @@ openclaw agent --message "hi" --model codex-cli/gpt-5.2-codex
     defaults: {
       cliBackends: {
         "claude-cli": {
-          command: "/opt/homebrew/bin/claude"
-        }
-      }
-    }
-  }
+          command: "/opt/homebrew/bin/claude",
+        },
+      },
+    },
+  },
 }
 ```
 
@@ -60,20 +60,19 @@ openclaw agent --message "hi" --model codex-cli/gpt-5.2-codex
     defaults: {
       model: {
         primary: "anthropic/claude-opus-4-5",
-        fallbacks: [
-          "claude-cli/opus-4.5"
-        ]
+        fallbacks: ["claude-cli/opus-4.5"],
       },
       models: {
         "anthropic/claude-opus-4-5": { alias: "Opus" },
-        "claude-cli/opus-4.5": {}
-      }
-    }
-  }
+        "claude-cli/opus-4.5": {},
+      },
+    },
+  },
 }
 ```
 
 備註:
+
 - 若您使用 `agents.defaults.models` (allowlist)，必須包含 `claude-cli/...`。
 - 若主要供應商失敗 (Auth, Rate limits, Timeouts)，OpenClaw 接著會嘗試 CLI Backend。
 
@@ -100,7 +99,7 @@ Provider ID 成為您 Model Ref 的左側：
     defaults: {
       cliBackends: {
         "claude-cli": {
-          command: "/opt/homebrew/bin/claude"
+          command: "/opt/homebrew/bin/claude",
         },
         "my-cli": {
           command: "my-cli",
@@ -110,7 +109,7 @@ Provider ID 成為您 Model Ref 的左側：
           modelArg: "--model",
           modelAliases: {
             "claude-opus-4-5": "opus",
-            "claude-sonnet-4-5": "sonnet"
+            "claude-sonnet-4-5": "sonnet",
           },
           sessionArg: "--session",
           sessionMode: "existing",
@@ -119,21 +118,21 @@ Provider ID 成為您 Model Ref 的左側：
           systemPromptWhen: "first",
           imageArg: "--image",
           imageMode: "repeat",
-          serialize: true
-        }
-      }
-    }
-  }
+          serialize: true,
+        },
+      },
+    },
+  },
 }
 ```
 
 ## 運作原理
 
-1) 根據 Provider 前綴 (`claude-cli/...`) **選擇 Backend**。
-2) 使用相同的 OpenClaw Prompt + Workspace Context **建置 System Prompt**。
-3) 使用 Session ID (若支援) **執行 CLI** 以保持歷史記錄一致。
-4) **解析輸出** (JSON 或純文字) 並回傳最終文字。
-5) 每個 Backend **持久化 Session IDs**，因此後續對話重複使用相同的 CLI Session。
+1. 根據 Provider 前綴 (`claude-cli/...`) **選擇 Backend**。
+2. 使用相同的 OpenClaw Prompt + Workspace Context **建置 System Prompt**。
+3. 使用 Session ID (若支援) **執行 CLI** 以保持歷史記錄一致。
+4. **解析輸出** (JSON 或純文字) 並回傳最終文字。
+5. 每個 Backend **持久化 Session IDs**，因此後續對話重複使用相同的 CLI Session。
 
 ## Sessions
 
@@ -162,6 +161,7 @@ OpenClaw 會將 Base64 圖片寫入暫存檔。若設定了 `imageArg`，這些�
 - `output: "text"` 將 stdout 視為最終回應。
 
 輸入模式:
+
 - `input: "arg"` (預設) 將 Prompt 作為最後一個 CLI Arg 傳遞。
 - `input: "stdin"` 透過 stdin 發送 Prompt。
 - 若 Prompt 非常長且設定了 `maxPromptArgChars`，則使用 stdin。

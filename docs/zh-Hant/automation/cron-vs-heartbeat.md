@@ -1,5 +1,5 @@
 ---
-title: "Cron vs Heartbeat"
+title: "Cron vs Heartbeat（Cron 與 Heartbeat 比較）"
 summary: "為自動化選擇心跳和 Cron 任務的指引"
 read_when:
   - 決定如何排程定期任務時
@@ -13,14 +13,14 @@ read_when:
 
 ## 快速決策指南
 
-| 使用案例 | 推薦 | 原因 |
-| ---- | ---- | ---- |
-| 每 30 分鐘檢查收件匣 | Heartbeat | 與其他檢查批次化，具備語境意識 |
-| 每天早上 9 點準時發送報告 | Cron (隔離) | 需要精確時間 |
-| 監控日曆中的即將到來事件 | Heartbeat | 週期性覺察的自然適配 |
-| 執行每週深度分析 | Cron (隔離) | 獨立任務，可使用不同模型 |
-| 20 分鐘後提醒我 | Cron (main, `--at`) | 一次性精確時間 |
-| 背景專案健康檢查 | Heartbeat | 依附於現有週期 |
+| 使用案例                  | 推薦                | 原因                           |
+| ------------------------- | ------------------- | ------------------------------ |
+| 每 30 分鐘檢查收件匣      | Heartbeat           | 與其他檢查批次化，具備語境意識 |
+| 每天早上 9 點準時發送報告 | Cron (隔離)         | 需要精確時間                   |
+| 監控日曆中的即將到來事件  | Heartbeat           | 週期性覺察的自然適配           |
+| 執行每週深度分析          | Cron (隔離)         | 獨立任務，可使用不同模型       |
+| 20 分鐘後提醒我           | Cron (main, `--at`) | 一次性精確時間                 |
+| 背景專案健康檢查          | Heartbeat           | 依附於現有週期                 |
 
 ## Heartbeat：週期性覺察
 
@@ -70,7 +70,7 @@ Agent 在每次 Heartbeat 時讀取此內容並在一個輪次中處理所有項
 }
 ```
 
-見 [Heartbeat](/gateway/heartbeat) 瞭解完整配置。
+見 [Heartbeat](/zh-Hant/gateway/heartbeat) 瞭解完整配置。
 
 ## Cron：精確排程
 
@@ -123,7 +123,7 @@ openclaw cron add \
   --delete-after-run
 ```
 
-見 [Cron jobs](/automation/cron-jobs) 瞭解完整 CLI 參考。
+見 [Cron jobs](/zh-Hant/automation/cron-jobs) 瞭解完整 CLI 參考。
 
 ## 決策流程圖
 
@@ -206,19 +206,19 @@ Lobster 是**多步工具管道**的工作流執行時，需要決定性執行�
 - 工具是**選用外掛**；透過 `tools.alsoAllow: ["lobster"]` 附加啟用（推薦）。
 - 若您傳送 `lobsterPath`，它必須是**絕對路徑**。
 
-見 [Lobster](/tools/lobster) 瞭解完整用法和範例。
+見 [Lobster](/zh-Hant/tools/lobster) 瞭解完整用法和範例。
 
 ## 主會話 vs 隔離會話
 
 Heartbeat 和 Cron 都可與主會話互動，但方式不同：
 
-| | Heartbeat | Cron (main) | Cron (隔離) |
-| -- | -- | -- | -- |
-| 會話 | Main | Main (via system event) | `cron:<jobId>` |
-| 歷史 | 共享 | 共享 | 每次執行新 |
-| 語境 | 完整 | 完整 | 無（乾淨啟動） |
-| 模型 | 主會話模型 | 主會話模型 | 可覆寫 |
-| 輸出 | 若非 `HEARTBEAT_OK` 則投遞 | Heartbeat prompt + 事件 | 摘要發佈至主 |
+|      | Heartbeat                  | Cron (main)             | Cron (隔離)    |
+| ---- | -------------------------- | ----------------------- | -------------- |
+| 會話 | Main                       | Main (via system event) | `cron:<jobId>` |
+| 歷史 | 共享                       | 共享                    | 每次執行新     |
+| 語境 | 完整                       | 完整                    | 無（乾淨啟動） |
+| 模型 | 主會話模型                 | 主會話模型              | 可覆寫         |
+| 輸出 | 若非 `HEARTBEAT_OK` 則投遞 | Heartbeat prompt + 事件 | 摘要發佈至主   |
 
 ### 何時使用主會話 Cron
 
@@ -259,11 +259,11 @@ openclaw cron add \
 
 ## 成本考量
 
-| 機制 | 成本表現 |
-| -- | -- |
-| Heartbeat | 每 N 分鐘一個輪次；隨 HEARTBEAT.md 大小擴展 |
-| Cron (main) | 新增事件至下次心跳（無隔離輪次） |
-| Cron (隔離) | 每項任務完整 Agent 輪次；可使用更便宜模型 |
+| 機制        | 成本表現                                    |
+| ----------- | ------------------------------------------- |
+| Heartbeat   | 每 N 分鐘一個輪次；隨 HEARTBEAT.md 大小擴展 |
+| Cron (main) | 新增事件至下次心跳（無隔離輪次）            |
+| Cron (隔離) | 每項任務完整 Agent 輪次；可使用更便宜模型   |
 
 **提示**：
 
@@ -274,6 +274,6 @@ openclaw cron add \
 
 ## 相關
 
-- [Heartbeat](/gateway/heartbeat) - 完整 Heartbeat 配置
-- [Cron jobs](/automation/cron-jobs) - 完整 Cron CLI 和 API 參考
-- [System](/cli/system) - 系統事件 + Heartbeat 控制
+- [Heartbeat](/zh-Hant/gateway/heartbeat) - 完整 Heartbeat 配置
+- [Cron jobs](/zh-Hant/automation/cron-jobs) - 完整 Cron CLI 和 API 參考
+- [System](/zh-Hant/cli/system) - 系統事件 + Heartbeat 控制

@@ -1,10 +1,11 @@
 ---
-title: "腳本"
+title: "Scripts（腳本）"
 summary: "儲存庫腳本：目的、範圍與安全注意事項"
 read_when:
   - 從儲存庫執行腳本時
   - 在 ./scripts 下新增或更改腳本時
 ---
+
 # 腳本
 
 `scripts/` 目錄包含用於本地工作流程和營運任務的輔助腳本。
@@ -24,7 +25,7 @@ read_when:
 ## 認證監控腳本
 
 認證監控腳本在此處記錄：
-[/automation/auth-monitoring](/automation/auth-monitoring)
+[/automation/auth-monitoring](/zh-Hant/automation/auth-monitoring)
 
 ## 新增腳本時
 

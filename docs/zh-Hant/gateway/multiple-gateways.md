@@ -1,5 +1,5 @@
 ---
-title: "多重 Gateway"
+title: "Multiple Gateways（多重 Gateway）"
 summary: "在單一主機上運行多個 OpenClaw Gateways (Isolation, Ports, 與 Profiles)"
 read_when:
   - 在同一台機器上運行超過一個 Gateway 時
@@ -11,6 +11,7 @@ read_when:
 大多數設定應使用單一 Gateway，因為單一 Gateway 即可處理多個訊息連線與 Agents。若您需要更強的隔離或冗餘 (例如：救援機器人 Rescue Bot)，請使用隔離的 Profiles/Ports 運行分開的 Gateways。
 
 ## 隔離檢查清單 (必要)
+
 - `OPENCLAW_CONFIG_PATH` — Per-instance 設定檔
 - `OPENCLAW_STATE_DIR` — Per-instance Sessions, Creds, Caches
 - `agents.defaults.workspace` — Per-instance Workspace Root
@@ -34,6 +35,7 @@ openclaw --profile rescue gateway --port 19001
 ```
 
 Per-profile 服務:
+
 ```bash
 openclaw --profile main gateway install
 openclaw --profile rescue gateway install
@@ -42,6 +44,7 @@ openclaw --profile rescue gateway install
 ## Rescue-bot 指南
 
 在同一台主機上運行第二個 Gateway，擁有其自己的：
+
 - Profile/Config
 - State Dir
 - Workspace
@@ -55,15 +58,15 @@ Port 間距 (Spacing): 在 Base Ports 之間至少保留 20 個 Ports，以免�
 
 ```bash
 # Main bot (既有或全新，不帶 --profile 參數)
-# 運行在 Port 18789 + Chrome CDC/Canvas/... Ports 
+# 運行在 Port 18789 + Chrome CDC/Canvas/... Ports
 openclaw onboard
 openclaw gateway install
 
 # Rescue bot (隔離的 Profile + Ports)
 openclaw --profile rescue onboard
-# 註: 
+# 註:
 # - Workspace 名稱預設會加上 -rescue 後綴
-# - Port 應至少為 18789 + 20 Ports, 
+# - Port 應至少為 18789 + 20 Ports,
 #   最好選擇完全不同的 Base Port, 例如 19789,
 # - 剩餘的 Onboarding 與正常相同
 

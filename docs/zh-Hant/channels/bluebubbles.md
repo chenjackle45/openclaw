@@ -73,7 +73,7 @@ DMs：
 - 透過以下方式批准：
   - `openclaw pairing list bluebubbles`
   - `openclaw pairing approve bluebubbles <CODE>`
-- 配對是預設的令牌交換。詳情：[配對](/start/pairing)
+- 配對是預設的令牌交換。詳情：[配對](/zh-Hant/start/pairing)
 
 群組：
 
@@ -170,7 +170,7 @@ BlueBubbles 在設定中啟用時支援進階訊息動作：
 
 ### 訊息 ID（短 vs 完整）
 
-OpenClaw 可能會呈現_短_訊息 ID（例如 `1`、`2`）以節省令牌。
+OpenClaw 可能會呈現*短*訊息 ID（例如 `1`、`2`）以節省令牌。
 
 - `MessageSid` / `ReplyToId` 可以是短 ID。
 - `MessageSidFull` / `ReplyToIdFull` 包含供應商完整 ID。
@@ -182,7 +182,7 @@ OpenClaw 可能會呈現_短_訊息 ID（例如 `1`、`2`）以節省令牌。
 - 範本：`{{MessageSidFull}}`、`{{ReplyToIdFull}}`
 - 上下文：入站負載中的 `MessageSidFull` / `ReplyToIdFull`
 
-請參閱[設定](/gateway/configuration)了解範本變數。
+請參閱[設定](/zh-Hant/gateway/configuration)了解範本變數。
 
 ## 區塊串流
 
@@ -206,7 +206,7 @@ OpenClaw 可能會呈現_短_訊息 ID（例如 `1`、`2`）以節省令牌。
 
 ## 設定參考
 
-完整設定：[設定](/gateway/configuration)
+完整設定：[設定](/zh-Hant/gateway/configuration)
 
 供應商選項：
 
@@ -248,7 +248,7 @@ OpenClaw 可能會呈現_短_訊息 ID（例如 `1`、`2`）以節省令牌。
 
 - Webhook 請求透過比較 `guid`/`password` 查詢參數或標頭與 `channels.bluebubbles.password` 進行認證。來自 `localhost` 的請求也被接受。
 - 保持 API 密碼和 webhook 端點保密（像憑證一樣對待它們）。
-- Localhost 信任意味著同主機反向代理可能無意中繞過密碼。如果您代理 gateway，請在代理處要求認證並設定 `gateway.trustedProxies`。請參閱[Gateway 安全](/gateway/security#reverse-proxy-configuration)。
+- Localhost 信任意味著同主機反向代理可能無意中繞過密碼。如果您代理 gateway，請在代理處要求認證並設定 `gateway.trustedProxies`。請參閱[Gateway 安全](/zh-Hant/gateway/security#reverse-proxy-configuration)。
 - 如果在區域網路外公開 BlueBubbles 伺服器，請啟用 HTTPS + 防火牆規則。
 
 ## 疑難排解
@@ -261,4 +261,4 @@ OpenClaw 可能會呈現_短_訊息 ID（例如 `1`、`2`）以節省令牌。
 - OpenClaw 根據 BlueBubbles 伺服器的 macOS 版本自動隱藏已知有問題的動作。如果編輯仍在 macOS 26（Tahoe）上出現，請使用 `channels.bluebubbles.actions.edit=false` 手動停用它。
 - 對於狀態/健康資訊：`openclaw status --all` 或 `openclaw status --deep`。
 
-對於一般頻道工作流程參考，請參閱[頻道](/channels)和[插件](/plugins)指南。
+對於一般頻道工作流程參考，請參閱[頻道](/zh-Hant/channels)和[插件](/zh-Hant/plugins)指南。

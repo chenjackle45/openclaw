@@ -4,7 +4,7 @@ read_when:
   - 設定 DM 存取控制時
   - 配對新的 iOS/Android 節點時
   - 檢視 OpenClaw 安全態勢時
-title: "配對"
+title: "Pairing（配對）"
 ---
 
 # 配對
@@ -15,13 +15,13 @@ title: "配對"
 1. **DM 配對**（誰可以與機器人通話）
 2. **節點配對**（哪些裝置/節點可以加入 Gateway 網路）
 
-安全語境：[安全性](/gateway/security)
+安全語境：[安全性](/zh-Hant/gateway/security)
 
 ## 1) DM 配對（入站聊天存取）
 
 當頻道配置為 DM 政策 `pairing` 時，未知的傳送者會取得短碼，其訊息在您核准前**不會被處理**。
 
-預設 DM 政策記載於：[安全性](/gateway/security)
+預設 DM 政策記載於：[安全性](/zh-Hant/gateway/security)
 
 配對碼：
 
@@ -74,12 +74,12 @@ openclaw devices reject <requestId>
 
 ## 相關文件
 
-- 安全模型 + 提示注入：[安全性](/gateway/security)
-- 安全更新（執行 doctor）：[更新](/install/updating)
+- 安全模型 + 提示注入：[安全性](/zh-Hant/gateway/security)
+- 安全更新（執行 doctor）：[更新](/zh-Hant/install/updating)
 - 頻道配置：
-  - Telegram：[Telegram](/channels/telegram)
-  - WhatsApp：[WhatsApp](/channels/whatsapp)
-  - Signal：[Signal](/channels/signal)
-  - iMessage：[iMessage](/channels/imessage)
-  - Discord：[Discord](/channels/discord)
-  - Slack：[Slack](/channels/slack)
+  - Telegram：[Telegram](/zh-Hant/channels/telegram)
+  - WhatsApp：[WhatsApp](/zh-Hant/channels/whatsapp)
+  - Signal：[Signal](/zh-Hant/channels/signal)
+  - iMessage：[iMessage](/zh-Hant/channels/imessage)
+  - Discord：[Discord](/zh-Hant/channels/discord)
+  - Slack：[Slack](/zh-Hant/channels/slack)

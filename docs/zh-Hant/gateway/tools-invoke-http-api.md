@@ -1,5 +1,5 @@
 ---
-title: "Tools Invoke (HTTP)"
+title: "Tools Invoke API（工具調用 API）"
 summary: "直接透過 Gateway HTTP Endpoint 呼叫單一工具"
 read_when:
   - 無需運行完整 Agent Turn 即可呼叫工具時
@@ -22,6 +22,7 @@ OpenClaw 的 Gateway 暴露一個簡單的 HTTP Endpoint 用於直接呼叫單�
 - `Authorization: Bearer <token>`
 
 註記：
+
 - 當 `gateway.auth.mode="token"`，使用 `gateway.auth.token` (或 `OPENCLAW_GATEWAY_TOKEN`)。
 - 當 `gateway.auth.mode="password"`，使用 `gateway.auth.password` (或 `OPENCLAW_GATEWAY_PASSWORD`)。
 
@@ -38,6 +39,7 @@ OpenClaw 的 Gateway 暴露一個簡單的 HTTP Endpoint 用於直接呼叫單�
 ```
 
 欄位:
+
 - `tool` (string, required): 要呼叫的工具名稱。
 - `action` (string, optional): 若 Tool Schema 支援 `action` 且 Args Payload 省略它，則映射至 Args。
 - `args` (object, optional): 工具特定參數。
@@ -47,6 +49,7 @@ OpenClaw 的 Gateway 暴露一個簡單的 HTTP Endpoint 用於直接呼叫單�
 ## Policy + Routing 行為
 
 工具可用性透過與 Gateway Agents 相同的 Policy Chain 進行過濾：
+
 - `tools.profile` / `tools.byProvider.profile`
 - `tools.allow` / `tools.byProvider.allow`
 - `agents.<id>.tools.allow` / `agents.<id>.tools.byProvider.allow`
@@ -56,6 +59,7 @@ OpenClaw 的 Gateway 暴露一個簡單的 HTTP Endpoint 用於直接呼叫單�
 若工具未被 Policy 允許，Endpoint 回傳 **404**。
 
 為了協助 Group Policies 解析 Context，您可以選擇性地設定：
+
 - `x-openclaw-message-channel: <channel>` (例如: `slack`, `telegram`)
 - `x-openclaw-account-id: <accountId>` (當存在多個 Accounts 時)
 

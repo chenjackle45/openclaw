@@ -1,5 +1,5 @@
 ---
-title: "docs(文件連結)"
+title: "docs（文件連結）"
 summary: "`openclaw docs` CLI 參考（搜尋即時文件索引）"
 read_when:
   - 想要直接從終端機搜尋 OpenClaw 文件時

@@ -1,5 +1,5 @@
 ---
-title: "setup(環境初始化)"
+title: "setup（環境初始化）"
 summary: "`openclaw setup` CLI 參考（初始化配置與工作區）"
 read_when:
   - 在不使用完整的新手導覽嚮導時執行首次設定
@@ -11,8 +11,9 @@ read_when:
 初始化 `~/.openclaw/openclaw.json` 配置檔案與 Agent 工作區。
 
 相關資訊：
-- 新手引導：[馬上開始 (Getting started)](/start/getting-started)
-- 配置嚮導：[新手導覽 (Onboarding)](/start/onboarding)
+
+- 新手引導：[馬上開始 (Getting started)](/zh-Hant/start/getting-started)
+- 配置嚮導：[新手導覽 (Onboarding)](/zh-Hant/start/onboarding)
 
 ## 指令範例
 

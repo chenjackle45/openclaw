@@ -1,5 +1,5 @@
 ---
-title: "位置指令"
+title: "Location Command（位置指令）"
 summary: "節點的位置指令（location.get）、權限模式及背景行為"
 read_when:
   - 新增位置節點支援或權限 UI 時

@@ -3,7 +3,7 @@ summary: "設定指南：保持 OpenClaw 設定客製化同時保持最新"
 read_when:
   - 在新機器上設定時
   - 您想要「最新 + 最棒」但不破壞您的個人設定時
-title: "設定"
+title: "Setup（設定）"
 ---
 
 # 設定
@@ -20,11 +20,11 @@ title: "設定"
 
 - Node `>=22`
 - `pnpm`
-- Docker（選用；僅用於容器化設定/e2e — 見 [Docker](/install/docker)）
+- Docker（選用；僅用於容器化設定/e2e — 見 [Docker](/zh-Hant/install/docker)）
 
 ## 客製化策略（所以更新不會傷害）
 
-若您想要「100% 為我客製化」_且_簡單更新，將您的客製化保留在：
+若您想要「100% 為我客製化」*且*簡單更新，將您的客製化保留在：
 
 - **配置：** `~/.openclaw/openclaw.json`（JSON/JSON5-ish）
 - **工作區：** `~/.openclaw/workspace`（技能、提示、記憶；使其成為私有 git 儲存庫）
@@ -120,7 +120,7 @@ openclaw health
 - **配對允許清單**：`~/.openclaw/credentials/<channel>-allowFrom.json`
 - **模型認證設定檔**：`~/.openclaw/agents/<agentId>/agent/auth-profiles.json`
 - **舊版 OAuth 匯入**：`~/.openclaw/credentials/oauth.json`
-  更多詳情：[安全性](/gateway/security#credential-storage-map)。
+  更多詳情：[安全性](/zh-Hant/gateway/security#credential-storage-map)。
 
 ## 更新（不破壞您的設定）
 
@@ -137,12 +137,12 @@ sudo loginctl enable-linger $USER
 ```
 
 對於全天候或多使用者伺服器，考慮**系統**服務而非
-使用者服務（無需徘徊）。詳見 [Gateway 操作手冊](/gateway)的 systemd 備註。
+使用者服務（無需徘徊）。詳見 [Gateway 操作手冊](/zh-Hant/gateway)的 systemd 備註。
 
 ## 相關文件
 
-- [Gateway 操作手冊](/gateway)（旗標、監督、連接埠）
-- [Gateway 配置](/gateway/configuration)（配置綱要 + 範例）
-- [Discord](/channels/discord) 和 [Telegram](/channels/telegram)（回覆標籤 + replyToMode 設定）
-- [OpenClaw 助理設定](/start/openclaw)
-- [macOS 應用程式](/platforms/macos)（Gateway 生命週期）
+- [Gateway 操作手冊](/zh-Hant/gateway)（旗標、監督、連接埠）
+- [Gateway 配置](/zh-Hant/gateway/configuration)（配置綱要 + 範例）
+- [Discord](/zh-Hant/channels/discord) 和 [Telegram](/zh-Hant/channels/telegram)（回覆標籤 + replyToMode 設定）
+- [OpenClaw 助理設定](/zh-Hant/start/openclaw)
+- [macOS 應用程式](/zh-Hant/platforms/macos)（Gateway 生命週期）

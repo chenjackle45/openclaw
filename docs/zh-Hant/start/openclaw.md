@@ -3,7 +3,7 @@ summary: "建立 OpenClaw 作為個人助理的完整指南，包含安全警告
 read_when:
   - 入門新的助理實例時
   - 檢視安全/權限含義時
-title: "個人助理設定"
+title: "Personal Assistant Setup（個人助理設定）"
 ---
 
 # 使用 OpenClaw 建立個人助理
@@ -105,8 +105,8 @@ OpenClaw 從工作區目錄讀取操作指令和「記憶」。
 openclaw setup
 ```
 
-完整工作區佈局 + 備份指南：[Agent 工作區](/concepts/agent-workspace)
-記憶工作流：[記憶](/concepts/memory)
+完整工作區佈局 + 備份指南：[Agent 工作區](/zh-Hant/concepts/agent-workspace)
+記憶工作流：[記憶](/zh-Hant/concepts/memory)
 
 選用：使用 `agents.defaults.workspace` 選擇不同工作區（支援 `~`）。
 
@@ -230,12 +230,12 @@ openclaw health --json   # Gateway 健康快照（WS）
 
 ## 後續步驟
 
-- WebChat：[WebChat](/web/webchat)
-- Gateway 操作：[Gateway 操作手冊](/gateway)
-- Cron + 喚醒：[Cron 工作](/automation/cron-jobs)
-- macOS 菜單列伴侶：[OpenClaw macOS 應用程式](/platforms/macos)
-- iOS 節點應用程式：[iOS 應用程式](/platforms/ios)
-- Android 節點應用程式：[Android 應用程式](/platforms/android)
-- Windows 狀態：[Windows（WSL2）](/platforms/windows)
-- Linux 狀態：[Linux 應用程式](/platforms/linux)
-- 安全性：[安全性](/gateway/security)
+- WebChat：[WebChat](/zh-Hant/web/webchat)
+- Gateway 操作：[Gateway 操作手冊](/zh-Hant/gateway)
+- Cron + 喚醒：[Cron 工作](/zh-Hant/automation/cron-jobs)
+- macOS 菜單列伴侶：[OpenClaw macOS 應用程式](/zh-Hant/platforms/macos)
+- iOS 節點應用程式：[iOS 應用程式](/zh-Hant/platforms/ios)
+- Android 節點應用程式：[Android 應用程式](/zh-Hant/platforms/android)
+- Windows 狀態：[Windows（WSL2）](/zh-Hant/platforms/windows)
+- Linux 狀態：[Linux 應用程式](/zh-Hant/platforms/linux)
+- 安全性：[安全性](/zh-Hant/gateway/security)

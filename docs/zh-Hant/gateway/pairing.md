@@ -1,5 +1,5 @@
 ---
-title: "Gateway 所有的配對 (Option B)"
+title: "Gateway-Owned Pairing（Gateway 所有的配對）"
 summary: "適用於 iOS 與其他遠端 Nodes 的 Gateway-owned 配對機制 (Option B)"
 read_when:
   - 實作無 macOS UI 的 Node 配對核准時
@@ -44,10 +44,12 @@ openclaw nodes rename --node <id|name|ip> --name "Living Room iPad"
 ## API Surface (Gateway Protocol)
 
 Events:
+
 - `node.pair.requested` — 當新的 Pending Request 建立時發出。
 - `node.pair.resolved` — 當 Request 被 Approve/Reject/Expire 時發出。
 
 Methods:
+
 - `node.pair.request` — 建立或重複使用 Pending Request。
 - `node.pair.list` — 列出 Pending + Paired Nodes。
 - `node.pair.approve` — 核准 Pending Request (發行 Token)。
@@ -55,6 +57,7 @@ Methods:
 - `node.pair.verify` — 驗證 `{ nodeId, token }`。
 
 註記:
+
 - `node.pair.request` 對每個 Node 是冪等的 (Idempotent)：重複呼叫回傳相同的 Pending Request。
 - 核准 **總是** 產生全新的 Token；`node.pair.request` 從不回傳 Token。
 - Requests 可包含 `silent: true` 作為自動核准流程的提示。
@@ -62,6 +65,7 @@ Methods:
 ## 自動核准 (macOS App)
 
 macOS App 可選用性地嘗試 **Silent Approval**，當：
+
 - 請求被標記為 `silent`，且
 - App 能使用相同的使用者驗證對 Gateway Host 的 SSH 連線。
 
@@ -77,6 +81,7 @@ Pairing State 儲存於 Gateway State Directory 下 (預設 `~/.openclaw`):
 若您覆蓋 `OPENCLAW_STATE_DIR`，`nodes/` 資料夾會隨之移動。
 
 安全性註記:
+
 - Tokens 是機密；將 `paired.json` 視為敏感資料。
 - 輪替 Token 需要重新核准 (或刪除該 Node 項目)。
 

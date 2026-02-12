@@ -4,6 +4,7 @@ summary: "Nextcloud Talk 支援狀態、功能與設定"
 read_when:
   - 處理 Nextcloud Talk 頻道功能時
 ---
+
 # Nextcloud Talk (插件)
 
 狀態：透過插件（Webhook 機器人）支援。支援私訊、聊天室、表情回饋與 Markdown 訊息。
@@ -26,7 +27,7 @@ openclaw plugins install ./extensions/nextcloud-talk
 
 如果在設定/入門期間選擇 Nextcloud Talk 並偵測到 git 簽出，OpenClaw 會自動提供本地安裝路徑。
 
-詳情：[插件](/plugin)
+詳情：[插件](/zh-Hant/plugin)
 
 ## 快速設定（初學者）
 
@@ -92,18 +93,18 @@ openclaw plugins install ./extensions/nextcloud-talk
 
 ## 功能
 
-| 特性         | 狀態          |
-| --------------- | ------------- |
-| 私訊 | 支援     |
-| 聊天室           | 支援     |
-| 執行緒         | 不支援 |
-| 媒體           | 僅 URL      |
-| 表情回饋       | 支援     |
+| 特性     | 狀態   |
+| -------- | ------ |
+| 私訊     | 支援   |
+| 聊天室   | 支援   |
+| 執行緒   | 不支援 |
+| 媒體     | 僅 URL |
+| 表情回饋 | 支援   |
 | 原生指令 | 不支援 |
 
 ## 設定參考（Nextcloud Talk）
 
-完整設定：[設定](/gateway/configuration)
+完整設定：[設定](/zh-Hant/gateway/configuration)
 
 供應商選項：
 

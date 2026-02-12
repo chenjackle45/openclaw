@@ -3,7 +3,7 @@ summary: "Bonjour/mDNS 發現機制 + 除錯 (Gateway beacons, clients, 與常�
 read_when:
   - 除錯 macOS/iOS 上的 Bonjour 發現問題時
   - 變更 mDNS service types, TXT records, 或 discovery UX 時
-title: "Bonjour 發現機制"
+title: "Bonjour Discovery（Bonjour 發現機制）"
 ---
 
 # Bonjour / mDNS 發現機制
@@ -16,9 +16,9 @@ OpenClaw 使用 Bonjour (mDNS / DNS‑SD) 作為 **僅限 LAN 的便利功能** 
 
 高層次步驟:
 
-1) 在 Gateway Host 上運行 DNS Server (透過 Tailnet 可達)。
-2) 在專用區域 (Dedicated Zone) 下發布 `_openclaw-gw._tcp` 的 DNS‑SD 記錄 (範例: `openclaw.internal.`)。
-3) 設定 Tailscale **Split DNS**，讓用戶端 (包含 iOS) 透過該 DNS Server 解析您選擇的網域。
+1. 在 Gateway Host 上運行 DNS Server (透過 Tailnet 可達)。
+2. 在專用區域 (Dedicated Zone) 下發布 `_openclaw-gw._tcp` 的 DNS‑SD 記錄 (範例: `openclaw.internal.`)。
+3. 設定 Tailscale **Split DNS**，讓用戶端 (包含 iOS) 透過該 DNS Server 解析您選擇的網域。
 
 OpenClaw 支援任何發現網域；`openclaw.internal.` 僅為範例。iOS/Android Nodes 會同時瀏覽 `local.` 與您設定的廣域網域。
 
@@ -27,7 +27,7 @@ OpenClaw 支援任何發現網域；`openclaw.internal.` 僅為範例。iOS/Andr
 ```json5
 {
   gateway: { bind: "tailnet" }, // 僅限 tailnet (推薦)
-  discovery: { wideArea: { enabled: true } } // 啟用廣域 DNS-SD 發布
+  discovery: { wideArea: { enabled: true } }, // 啟用廣域 DNS-SD 發布
 }
 ```
 
@@ -38,6 +38,7 @@ openclaw dns setup --apply
 ```
 
 這會安裝 CoreDNS 並設定它：
+
 - 僅在 Gateway 的 Tailscale 介面上聆聽 Port 53
 - 從 `~/.openclaw/dns/<domain>.db` 服務您選擇的網域 (範例: `openclaw.internal.`)
 
@@ -62,6 +63,7 @@ dig @<TAILNET_IPV4> -p 53 _openclaw-gw._tcp.openclaw.internal PTR +short
 Gateway WS Port (預設 `18789`) 預設綁定至 Loopback。為了 LAN/Tailnet 存取，請明確綁定並保持 Auth 啟用。
 
 對於僅限 Tailnet 的設定：
+
 - 在 `~/.openclaw/openclaw.json` 中設定 `gateway.bind: "tailnet"`。
 - 重啟 Gateway (或重啟 macOS Menubar App)。
 
@@ -117,6 +119,7 @@ Gateway 寫入滾動日誌檔 (啟動時印出 `gateway log file: ...`)。尋找
 iOS Node 使用 `NWBrowser` 發現 `_openclaw-gw._tcp`。
 
 擷取日誌：
+
 - Settings → Gateway → Advanced → **Discovery Debug Logs**
 - Settings → Gateway → Advanced → **Discovery Logs** → 重現問題 → **Copy**
 
@@ -146,5 +149,5 @@ Bonjour/DNS‑SD 常將服務實例名稱中的 Byte 跳脫為十進位 `\DDD` �
 
 ## 相關文件
 
-- 發現策略與傳輸選擇: [Discovery](/gateway/discovery)
-- Node 配對 + 核准: [Gateway pairing](/gateway/pairing)
+- 發現策略與傳輸選擇: [Discovery](/zh-Hant/gateway/discovery)
+- Node 配對 + 核准: [Gateway pairing](/zh-Hant/gateway/pairing)

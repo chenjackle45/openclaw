@@ -1,36 +1,43 @@
 ---
-summary: "macOS 應用程式如何嵌入 Gateway WebChat 以及如何進行除錯"
+summary: "macOS app 如何嵌入 Gateway WebChat 以及如何除錯"
 read_when:
-  - 除錯 Mac WebChat 視圖或 loopback 通訊埠時
-title: "macOS WebChat"
+  - Debugging mac WebChat view or loopback port
+title: "WebChat（WebChat）"
 ---
 
-# WebChat (macOS 應用程式)
+# WebChat (macOS app)
 
-macOS 選單列應用程式將 WebChat UI 嵌入為原生的 SwiftUI 視圖。它連接至 Gateway，並預設使用所選 Agent 的 **Main Session**（附帶切換其他工作階段的選擇器）。
+The macOS menu bar app embeds the WebChat UI as a native SwiftUI view. It
+connects to the Gateway and defaults to the **main session** for the selected
+agent (with a session switcher for other sessions).
 
-- **Local 模式**: 直接連接至本地 Gateway WebSocket。
-- **Remote 模式**: 透過 SSH 轉發 Gateway 控制通訊埠，並使用該通道作為資料平面。
+- **Local mode**: connects directly to the local Gateway WebSocket.
+- **Remote mode**: forwards the Gateway control port over SSH and uses that
+  tunnel as the data plane.
 
-## 啟動與除錯
+## Launch & debugging
 
-- 手動: 龍蝦選單 (Lobster menu) → “Open Chat”。
-- 測試用自動開啟:
+- Manual: Lobster menu → “Open Chat”.
+- Auto‑open for testing:
+
   ```bash
   dist/OpenClaw.app/Contents/MacOS/OpenClaw --webchat
   ```
-- 日誌: `./scripts/clawlog.sh` (子系統 `bot.molt`,  類別 `WebChatSwiftUI`)。
 
-## 接線方式
+- Logs: `./scripts/clawlog.sh` (subsystem `bot.molt`, category `WebChatSwiftUI`).
 
-- 資料平面: Gateway WS 方法 `chat.history`, `chat.send`, `chat.abort`, `chat.inject` 以及事件 `chat`, `agent`, `presence`, `tick`, `health`。
-- 工作階段: 預設為主要工作階段 (`main`，或當範圍為全域時為 `global`)。UI 可以在工作階段間切換。
-- Onboarding 使用專用工作階段以將首次執行設定分開。
+## How it’s wired
 
-## 安全性介面
+- Data plane: Gateway WS methods `chat.history`, `chat.send`, `chat.abort`,
+  `chat.inject` and events `chat`, `agent`, `presence`, `tick`, `health`.
+- Session: defaults to the primary session (`main`, or `global` when scope is
+  global). The UI can switch between sessions.
+- Onboarding uses a dedicated session to keep first‑run setup separate.
 
-- Remote 模式僅透過 SSH 轉發 Gateway WebSocket 控制通訊埠。
+## Security surface
 
-## 已知限制
+- Remote mode forwards only the Gateway WebSocket control port over SSH.
 
-- 此 UI 針對聊天會話進行了最佳化（非完整的瀏覽器沙盒）。
+## Known limitations
+
+- The UI is optimized for chat sessions (not a full browser sandbox).

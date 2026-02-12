@@ -1,5 +1,5 @@
 ---
-title: "常見問題"
+title: "FAQ（常見問題）"
 summary: "關於 OpenClaw 設定、配置和使用的常見問題"
 ---
 
@@ -84,47 +84,61 @@ summary: "關於 OpenClaw 設定、配置和使用的常見問題"
 
 ## 出問題時的前 60 秒
 
-1) **快速狀態（第一步檢查）**
+1. **快速狀態（第一步檢查）**
+
    ```bash
    openclaw status
    ```
+
    快速本地摘要：作業系統 + 更新、gateway/服務可達性、agents/sessions、供應商設定 + 執行時問題（當 gateway 可達時）。
 
-2) **可貼上報告（可安全分享）**
+2. **可貼上報告（可安全分享）**
+
    ```bash
    openclaw status --all
    ```
+
    唯讀診斷與日誌尾端（token 已遮蔽）。
 
-3) **Daemon + 連接埠狀態**
+3. **Daemon + 連接埠狀態**
+
    ```bash
    openclaw gateway status
    ```
+
    顯示 supervisor 執行狀態 vs RPC 可達性、探測目標 URL，以及服務可能使用的設定。
 
-4) **深度探測**
+4. **深度探測**
+
    ```bash
    openclaw status --deep
    ```
+
    執行 gateway 健康檢查 + 供應商探測（需要可達的 gateway）。參閱 [Health](/zh-Hant/gateway/health)。
 
-5) **追蹤最新日誌**
+5. **追蹤最新日誌**
+
    ```bash
    openclaw logs --follow
    ```
+
    如果 RPC 無法使用，改用：
+
    ```bash
    tail -f "$(ls -t /tmp/openclaw/openclaw-*.log | head -1)"
    ```
+
    檔案日誌與服務日誌是分開的；參閱 [Logging](/zh-Hant/logging) 和 [疑難排解](/zh-Hant/gateway/troubleshooting)。
 
-6) **執行 doctor（修復）**
+6. **執行 doctor（修復）**
+
    ```bash
    openclaw doctor
    ```
+
    修復/遷移設定/狀態 + 執行健康檢查。參閱 [Doctor](/zh-Hant/gateway/doctor)。
 
-7) **Gateway 快照**
+7. **Gateway 快照**
    ```bash
    openclaw health --json
    openclaw health --verbose   # 錯誤時顯示目標 URL + 設定路徑
@@ -163,6 +177,7 @@ openclaw doctor
 ```
 
 它們做什麼：
+
 - `openclaw status`：gateway/agent 健康狀態 + 基本設定的快速快照。
 - `openclaw models status`：檢查供應商驗證 + 模型可用性。
 - `openclaw doctor`：驗證並修復常見設定/狀態問題。
@@ -203,11 +218,13 @@ openclaw onboard
 ### 如何在-localhost-與遠端驗證儀表板-token
 
 **Localhost（同一台機器）：**
+
 - 開啟 `http://127.0.0.1:18789/`。
 - 如果要求驗證，執行 `openclaw dashboard` 並使用帶 token 的連結（`?token=...`）。
 - Token 值與 `gateway.auth.token`（或 `OPENCLAW_GATEWAY_TOKEN`）相同，UI 在首次載入後會儲存它。
 
 **非 localhost：**
+
 - **Tailscale Serve**（建議）：保持 bind loopback，執行 `openclaw gateway --tailscale serve`，開啟 `https://<magicdns>/`。如果 `gateway.auth.allowTailscale` 為 `true`，身份標頭滿足驗證（不需要 token）。
 - **Tailnet bind**：執行 `openclaw gateway --bind tailnet --token "<token>"`，開啟 `http://<tailscale-ip>:18789/`，在儀表板設定中貼上 token。
 - **SSH tunnel**：`ssh -N -L 18789:127.0.0.1:18789 user@host` 然後從 `openclaw dashboard` 開啟 `http://127.0.0.1:18789/?token=...`。
@@ -241,17 +258,22 @@ Node **>= 22** 是必需的。建議使用 `pnpm`。**不建議**用 Bun 執行 
 
 該畫面依賴 Gateway 可達且已驗證。TUI 也會在首次孵化時自動發送「Wake up, my friend!」。如果你看到該行**沒有回覆**且 token 保持為 0，表示 agent 從未執行。
 
-1) 重啟 Gateway：
+1. 重啟 Gateway：
+
 ```bash
 openclaw gateway restart
 ```
-2) 檢查狀態 + 驗證：
+
+2. 檢查狀態 + 驗證：
+
 ```bash
 openclaw status
 openclaw models status
 openclaw logs --follow
 ```
-3) 如果仍然卡住，執行：
+
+3. 如果仍然卡住，執行：
+
 ```bash
 openclaw doctor
 ```
@@ -262,10 +284,10 @@ openclaw doctor
 
 可以。複製**狀態目錄**和**工作區**，然後執行一次 Doctor。只要複製**兩個**位置，這會讓你的 bot「完全一樣」（記憶、session 歷史、驗證和 channel 狀態）：
 
-1) 在新機器上安裝 OpenClaw。
-2) 從舊機器複製 `$OPENCLAW_STATE_DIR`（預設：`~/.openclaw`）。
-3) 複製你的工作區（預設：`~/.openclaw/workspace`）。
-4) 執行 `openclaw doctor` 並重啟 Gateway 服務。
+1. 在新機器上安裝 OpenClaw。
+2. 從舊機器複製 `$OPENCLAW_STATE_DIR`（預設：`~/.openclaw`）。
+3. 複製你的工作區（預設：`~/.openclaw/workspace`）。
+4. 執行 `openclaw doctor` 並重啟 Gateway 服務。
 
 這會保留設定、驗證設定檔、WhatsApp 憑證、sessions 和記憶。如果你在遠端模式，記住 gateway 主機擁有 session 儲存和工作區。
 
@@ -291,6 +313,7 @@ https://github.com/openclaw/openclaw/tree/main/docs
 ### stable-和-beta-有什麼區別
 
 **Stable** 和 **beta** 是 **npm dist‑tags**，不是獨立的程式碼線：
+
 - `latest` = stable
 - `beta` = 用於測試的早期建置
 
@@ -323,19 +346,24 @@ https://openclaw.ai/install.ps1
 
 兩個選項：
 
-1) **Dev 頻道（git checkout）：**
+1. **Dev 頻道（git checkout）：**
+
 ```bash
 openclaw update --channel dev
 ```
+
 這會切換到 `main` 分支並從原始碼更新。
 
-2) **Hackable 安裝（從安裝程式網站）：**
+2. **Hackable 安裝（從安裝程式網站）：**
+
 ```bash
 curl -fsSL https://openclaw.bot/install.sh | bash -s -- --install-method git
 ```
+
 這會給你一個可以編輯的本地 repo，然後透過 git 更新。
 
 如果你偏好手動乾淨 clone：
+
 ```bash
 git clone https://github.com/openclaw/openclaw.git
 cd openclaw
@@ -348,6 +376,7 @@ pnpm build
 ### 安裝和引導通常需要多長時間
 
 大致指南：
+
 - **安裝：** 2-5 分鐘
 - **引導：** 5-15 分鐘，取決於你設定多少 channels/models
 
@@ -380,10 +409,12 @@ curl -fsSL https://openclaw.bot/install.sh | bash -s -- --install-method git --v
 兩個常見的 Windows 問題：
 
 **1) npm error spawn git / git not found**
+
 - 安裝 **Git for Windows** 並確保 `git` 在你的 PATH 中。
 - 關閉並重新開啟 PowerShell，然後重新執行安裝程式。
 
 **2) openclaw is not recognized after install**
+
 - 你的 npm 全域 bin 資料夾不在 PATH 中。
 - 檢查路徑：
   ```powershell
@@ -530,8 +561,9 @@ OpenClaw 透過 OAuth（ChatGPT 登入）支援 **OpenAI Code (Codex)**。精靈
 Gemini CLI 使用**插件驗證流程**，不是 `openclaw.json` 中的 client id 或 secret。
 
 步驟：
-1) 啟用插件：`openclaw plugins enable google-gemini-cli-auth`
-2) 登入：`openclaw models auth login --provider google-gemini-cli --set-default`
+
+1. 啟用插件：`openclaw plugins enable google-gemini-cli-auth`
+2. 登入：`openclaw models auth login --provider google-gemini-cli --set-default`
 
 這會在 gateway 主機的驗證設定檔中儲存 OAuth token。詳情：[模型供應商](/zh-Hant/concepts/model-providers)。
 
@@ -556,6 +588,7 @@ Gemini CLI 使用**插件驗證流程**，不是 `openclaw.json` 中的 client i
 你需要**某個 macOS 裝置**登入 Messages。它**不必**是 Mac mini——任何 Mac 都可以。OpenClaw 的 iMessage 整合在 macOS 上執行（BlueBubbles 或 `imsg`），而 Gateway 可以在其他地方執行。
 
 常見設定：
+
 - 在 Linux/VPS 上執行 Gateway，並將 `channels.imessage.cliPath` 指向在 Mac 上執行 `imsg` 的 SSH wrapper。
 - 如果你想要最簡單的單機設定，在 Mac 上執行所有東西。
 
@@ -566,6 +599,7 @@ Gemini CLI 使用**插件驗證流程**，不是 `openclaw.json` 中的 client i
 可以。**Mac mini 可以執行 Gateway**，你的 MacBook Pro 可以作為 **node**（配套裝置）連接。Nodes 不執行 Gateway——它們提供額外功能，如該裝置上的螢幕/相機/canvas 和 `system.run`。
 
 常見模式：
+
 - Gateway 在 Mac mini 上（始終開機）。
 - MacBook Pro 執行 macOS app 或 node host 並配對到 Gateway。
 - 使用 `openclaw nodes status` / `openclaw nodes list` 查看它。
@@ -583,12 +617,15 @@ Gemini CLI 使用**插件驗證流程**，不是 `openclaw.json` 中的 client i
 `channels.telegram.allowFrom` 是**發送者的 Telegram 用戶 ID**（數字，建議）或 `@username`。它不是 bot username。
 
 更安全（不需要第三方 bot）：
+
 - 私訊你的 bot，然後執行 `openclaw logs --follow` 並讀取 `from.id`。
 
 官方 Bot API：
+
 - 私訊你的 bot，然後呼叫 `https://api.telegram.org/bot<bot_token>/getUpdates` 並讀取 `message.from.id`。
 
 第三方（較不私密）：
+
 - 私訊 `@userinfobot` 或 `@getidsbot`。
 
 參閱 [/channels/telegram](/zh-Hant/channels/telegram#access-control-dms--groups)。
@@ -654,10 +691,12 @@ Doctor 檢測到 gateway 服務入口點不匹配時會提議重寫服務設定�
 簡短回答：**如果你想要 24/7 可靠性，使用 VPS**。如果你想要最低摩擦且可以接受睡眠/重啟，在本地執行。
 
 **筆電（本地 Gateway）**
+
 - **優點：** 無伺服器成本，直接存取本地檔案，可見瀏覽器視窗。
 - **缺點：** 睡眠/網路中斷 = 斷線，OS 更新/重啟會中斷，必須保持喚醒。
 
 **VPS / 雲端**
+
 - **優點：** 始終開機，穩定網路，無筆電睡眠問題，更容易保持運行。
 - **缺點：** 通常無頭運行（使用螢幕截圖），僅遠端檔案存取，更新需要 SSH。
 
@@ -691,6 +730,7 @@ OpenClaw 很輕量。對於基本 Gateway + 一個聊天頻道：
 可以。將 VM 視為與 VPS 相同：它需要始終開機、可達，並有足夠的 RAM 用於 Gateway 和你啟用的任何頻道。
 
 基準指南：
+
 - **絕對最低：** 1 vCPU、1GB RAM。
 - **建議：** 2GB RAM 或更多，如果你執行多個頻道、瀏覽器自動化或媒體工具。
 - **作業系統：** Ubuntu LTS 或其他現代 Debian/Ubuntu。
@@ -709,6 +749,7 @@ OpenClaw 是一個你在自己裝置上執行的個人 AI 助理。它在你已�
 OpenClaw 不只是「Claude wrapper」。它是一個**本地優先的控制平面**，讓你在**自己的硬體**上執行一個能幹的助理，可從你已經使用的聊天 app 存取，具有狀態 sessions、記憶和工具——無需將工作流程的控制權交給託管 SaaS。
 
 亮點：
+
 - **你的裝置，你的資料：** 在任何你想要的地方執行 Gateway（Mac、Linux、VPS）並保持工作區 + session 歷史在本地。
 - **真正的頻道，不是網頁沙箱：** WhatsApp/Telegram/Slack/Discord/Signal/iMessage/等，加上支援平台上的行動語音和 Canvas。
 - **模型不可知：** 使用 Anthropic、OpenAI、MiniMax、OpenRouter 等，支援每 agent 路由和故障轉移。
@@ -721,6 +762,7 @@ OpenClaw 不只是「Claude wrapper」。它是一個**本地優先的控制平�
 ### 剛設定好應該先做什麼
 
 好的第一個專案：
+
 - 建立網站（WordPress、Shopify 或簡單的靜態網站）。
 - 製作行動 app 原型（大綱、畫面、API 計劃）。
 - 整理檔案和資料夾（清理、命名、標記）。
@@ -731,6 +773,7 @@ OpenClaw 不只是「Claude wrapper」。它是一個**本地優先的控制平�
 ### openclaw-的前五大日常使用案例是什麼
 
 日常收益通常看起來像：
+
 - **個人簡報：** 收件匣、行事曆和你關心的新聞的摘要。
 - **研究和草稿：** 快速研究、摘要和電子郵件或文件的初稿。
 - **提醒和跟進：** cron 或 heartbeat 驅動的提醒和清單。
@@ -750,6 +793,7 @@ OpenClaw 不只是「Claude wrapper」。它是一個**本地優先的控制平�
 OpenClaw 是**個人助理**和協調層，不是 IDE 替代品。使用 Claude Code 或 Codex 在 repo 內進行最快的直接編碼循環。當你想要持久記憶、跨裝置存取和工具編排時使用 OpenClaw。
 
 優勢：
+
 - **跨 sessions 的持久記憶 + 工作區**
 - **多平台存取**（WhatsApp、Telegram、TUI、WebChat）
 - **工具編排**（瀏覽器、檔案、排程、hooks）
@@ -771,6 +815,7 @@ OpenClaw 是**個人助理**和協調層，不是 IDE 替代品。使用 Claude 
 ### 如何針對不同任務使用不同模型
 
 目前支援的模式是：
+
 - **Cron jobs**：隔離的 jobs 可以針對每個 job 設定 `model` 覆蓋。
 - **Sub-agents**：將任務路由到具有不同預設模型的獨立 agents。
 - **按需切換**：使用 `/model` 隨時切換當前 session 模型。
@@ -793,11 +838,13 @@ Token 提示：長任務和 sub-agents 都消耗 token。如果成本是考量�
 Cron 在 Gateway 程序內執行。如果 Gateway 沒有持續運行，排程的 jobs 不會執行。
 
 檢查清單：
+
 - 確認 cron 已啟用（`cron.enabled`）且 `OPENCLAW_SKIP_CRON` 未設定。
 - 檢查 Gateway 是否 24/7 運行（無睡眠/重啟）。
 - 驗證 job 的時區設定（`--tz` vs 主機時區）。
 
 除錯：
+
 ```bash
 openclaw cron run <jobId> --force
 openclaw cron runs --id <jobId> --limit 50
@@ -843,6 +890,7 @@ pnpm add -g clawdhub
 ### 記憶如何運作
 
 OpenClaw 記憶只是 agent 工作區中的 Markdown 檔案：
+
 - 每日筆記在 `memory/YYYY-MM-DD.md`
 - 策展的長期筆記在 `MEMORY.md`（僅限主/私人 sessions）
 
@@ -886,16 +934,16 @@ OpenClaw 也執行**靜默預壓縮記憶刷新**，在自動壓縮前提醒模�
 
 所有東西都在 `$OPENCLAW_STATE_DIR`（預設：`~/.openclaw`）下：
 
-| 路徑 | 用途 |
-|------|------|
-| `$OPENCLAW_STATE_DIR/openclaw.json` | 主設定（JSON5） |
-| `$OPENCLAW_STATE_DIR/credentials/oauth.json` | 舊版 OAuth 匯入（首次使用時複製到驗證設定檔） |
-| `$OPENCLAW_STATE_DIR/agents/<agentId>/agent/auth-profiles.json` | 驗證設定檔（OAuth + API 金鑰） |
-| `$OPENCLAW_STATE_DIR/agents/<agentId>/agent/auth.json` | 執行時驗證快取（自動管理） |
-| `$OPENCLAW_STATE_DIR/credentials/` | 供應商狀態（例如 `whatsapp/<accountId>/creds.json`） |
-| `$OPENCLAW_STATE_DIR/agents/` | 每 agent 狀態（agentDir + sessions） |
-| `$OPENCLAW_STATE_DIR/agents/<agentId>/sessions/` | 對話歷史 & 狀態（每 agent） |
-| `$OPENCLAW_STATE_DIR/agents/<agentId>/sessions/sessions.json` | Session 中繼資料（每 agent） |
+| 路徑                                                            | 用途                                                 |
+| --------------------------------------------------------------- | ---------------------------------------------------- |
+| `$OPENCLAW_STATE_DIR/openclaw.json`                             | 主設定（JSON5）                                      |
+| `$OPENCLAW_STATE_DIR/credentials/oauth.json`                    | 舊版 OAuth 匯入（首次使用時複製到驗證設定檔）        |
+| `$OPENCLAW_STATE_DIR/agents/<agentId>/agent/auth-profiles.json` | 驗證設定檔（OAuth + API 金鑰）                       |
+| `$OPENCLAW_STATE_DIR/agents/<agentId>/agent/auth.json`          | 執行時驗證快取（自動管理）                           |
+| `$OPENCLAW_STATE_DIR/credentials/`                              | 供應商狀態（例如 `whatsapp/<accountId>/creds.json`） |
+| `$OPENCLAW_STATE_DIR/agents/`                                   | 每 agent 狀態（agentDir + sessions）                 |
+| `$OPENCLAW_STATE_DIR/agents/<agentId>/sessions/`                | 對話歷史 & 狀態（每 agent）                          |
+| `$OPENCLAW_STATE_DIR/agents/<agentId>/sessions/sessions.json`   | Session 中繼資料（每 agent）                         |
 
 舊版單 agent 路徑：`~/.openclaw/agent/*`（由 `openclaw doctor` 遷移）。
 
@@ -912,7 +960,7 @@ OpenClaw 也執行**靜默預壓縮記憶刷新**，在自動壓縮前提醒模�
 
 ```json5
 {
-  agents: { defaults: { workspace: "~/.openclaw/workspace" } }
+  agents: { defaults: { workspace: "~/.openclaw/workspace" } },
 }
 ```
 
@@ -944,9 +992,9 @@ OpenClaw 也執行**靜默預壓縮記憶刷新**，在自動壓縮前提醒模�
 {
   agents: {
     defaults: {
-      workspace: "~/Projects/my-repo"
-    }
-  }
+      workspace: "~/Projects/my-repo",
+    },
+  },
 }
 ```
 
@@ -976,13 +1024,14 @@ $OPENCLAW_CONFIG_PATH
     bind: "lan",
     auth: {
       mode: "token",
-      token: "replace-me"
-    }
-  }
+      token: "replace-me",
+    },
+  },
 }
 ```
 
 注意：
+
 - `gateway.remote.token` 僅用於**遠端 CLI 呼叫**；它不啟用本地 gateway 驗證。
 - Control UI 透過 `connect.params.auth.token`（儲存在 app/UI 設定中）驗證。避免在 URL 中放入 token。
 
@@ -1010,17 +1059,18 @@ Gateway 監視設定並支援熱重載：
       search: {
         enabled: true,
         apiKey: "BRAVE_API_KEY_HERE",
-        maxResults: 5
+        maxResults: 5,
       },
       fetch: {
-        enabled: true
-      }
-    }
-  }
+        enabled: true,
+      },
+    },
+  },
 }
 ```
 
 注意：
+
 - 如果你使用允許清單，添加 `web_search`/`web_fetch` 或 `group:web`。
 - `web_fetch` 預設啟用（除非明確停用）。
 - Daemon 從 `~/.openclaw/.env`（或服務環境）讀取環境變數。
@@ -1042,11 +1092,12 @@ Nodes 看不到入站供應商流量；它們只接收 node RPC 呼叫。
 簡短回答：**將你的電腦配對為 node**。Gateway 在其他地方執行，但它可以透過 Gateway WebSocket 在你的本地機器上呼叫 `node.*` 工具（螢幕、相機、系統）。
 
 典型設定：
-1) 在始終開機的主機（VPS/家用伺服器）上執行 Gateway。
-2) 將 Gateway 主機 + 你的電腦放在同一個 tailnet 上。
-3) 確保 Gateway WS 可達（tailnet bind 或 SSH tunnel）。
-4) 在本地開啟 macOS app 並以 **Remote over SSH** 模式（或直接 tailnet）連接，這樣它可以註冊為 node。
-5) 在 Gateway 上批准 node：
+
+1. 在始終開機的主機（VPS/家用伺服器）上執行 Gateway。
+2. 將 Gateway 主機 + 你的電腦放在同一個 tailnet 上。
+3. 確保 Gateway WS 可達（tailnet bind 或 SSH tunnel）。
+4. 在本地開啟 macOS app 並以 **Remote over SSH** 模式（或直接 tailnet）連接，這樣它可以註冊為 node。
+5. 在 Gateway 上批准 node：
    ```bash
    openclaw nodes pending
    openclaw nodes approve <requestId>
@@ -1061,11 +1112,13 @@ Nodes 看不到入站供應商流量；它們只接收 node RPC 呼叫。
 ### tailscale-已連接但沒有回覆怎麼辦
 
 檢查基本事項：
+
 - Gateway 正在執行：`openclaw gateway status`
 - Gateway 健康：`openclaw status`
 - 頻道健康：`openclaw channels status`
 
 然後驗證驗證和路由：
+
 - 如果你使用 Tailscale Serve，確保 `gateway.auth.allowTailscale` 設定正確。
 - 如果你透過 SSH tunnel 連接，確認本地 tunnel 正常且指向正確的連接埠。
 - 確認你的允許清單（DM 或群組）包含你的帳戶。
@@ -1081,6 +1134,7 @@ Nodes 看不到入站供應商流量；它們只接收 node RPC 呼叫。
 **CLI 橋接（通用）：** 執行一個用 `openclaw agent --message ... --deliver` 呼叫另一個 Gateway 的腳本，目標是另一個 bot 監聽的聊天。如果一個 bot 在遠端 VPS 上，透過 SSH/Tailscale 將你的 CLI 指向該遠端 Gateway（參閱 [遠端存取](/zh-Hant/gateway/remote)）。
 
 範例模式（從可以連接目標 Gateway 的機器執行）：
+
 ```bash
 openclaw agent --message "Hello from local bot" --deliver --channel telegram --reply-to <chat-id>
 ```
@@ -1139,8 +1193,8 @@ OpenClaw 從父程序（shell、launchd/systemd、CI 等）讀取環境變數，
 {
   env: {
     OPENROUTER_API_KEY: "sk-or-...",
-    vars: { GROQ_API_KEY: "gsk-..." }
-  }
+    vars: { GROQ_API_KEY: "gsk-..." },
+  },
 }
 ```
 
@@ -1150,17 +1204,17 @@ OpenClaw 從父程序（shell、launchd/systemd、CI 等）讀取環境變數，
 
 兩個常見修復：
 
-1) 將缺少的金鑰放在 `~/.openclaw/.env` 中，這樣即使服務沒有繼承你的 shell 環境也會被載入。
-2) 啟用 shell 匯入（選擇性便利）：
+1. 將缺少的金鑰放在 `~/.openclaw/.env` 中，這樣即使服務沒有繼承你的 shell 環境也會被載入。
+2. 啟用 shell 匯入（選擇性便利）：
 
 ```json5
 {
   env: {
     shellEnv: {
       enabled: true,
-      timeoutMs: 15000
-    }
-  }
+      timeoutMs: 15000,
+    },
+  },
 }
 ```
 
@@ -1173,14 +1227,15 @@ OpenClaw 從父程序（shell、launchd/systemd、CI 等）讀取環境變數，
 
 如果 Gateway 作為服務執行（launchd/systemd），它不會繼承你的 shell 環境。修復方法之一：
 
-1) 將 token 放在 `~/.openclaw/.env`：
+1. 將 token 放在 `~/.openclaw/.env`：
    ```
    COPILOT_GITHUB_TOKEN=...
    ```
-2) 或啟用 shell 匯入（`env.shellEnv.enabled: true`）。
-3) 或將它添加到你的設定 `env` 區塊（僅在缺失時套用）。
+2. 或啟用 shell 匯入（`env.shellEnv.enabled: true`）。
+3. 或將它添加到你的設定 `env` 區塊（僅在缺失時套用）。
 
 然後重啟 gateway 並重新檢查：
+
 ```bash
 openclaw models status
 ```
@@ -1201,8 +1256,8 @@ Copilot token 從 `COPILOT_GITHUB_TOKEN`（也 `GH_TOKEN` / `GITHUB_TOKEN`）讀
 ```json5
 {
   session: {
-    idleMinutes: 240
-  }
+    idleMinutes: 240,
+  },
 }
 ```
 
@@ -1219,6 +1274,7 @@ Copilot token 從 `COPILOT_GITHUB_TOKEN`（也 `GH_TOKEN` / `GITHUB_TOKEN`）讀
 Session context 受模型視窗限制。長對話、大型工具輸出或許多檔案可能觸發壓縮或截斷。
 
 有幫助的方法：
+
 - 請 bot 總結當前狀態並寫入檔案。
 - 在長任務前使用 `/compact`，切換主題時使用 `/new`。
 - 將重要 context 保留在工作區中並請 bot 讀回來。
@@ -1246,6 +1302,7 @@ openclaw onboard --install-daemon
 ```
 
 注意：
+
 - 引導精靈如果看到現有設定也會提供 **Reset**。參閱 [精靈](/zh-Hant/start/wizard)。
 - 如果你使用 profiles（`--profile` / `OPENCLAW_PROFILE`），重置每個狀態目錄（預設是 `~/.openclaw-<profile>`）。
 - 開發重置：`openclaw gateway --dev --reset`（僅限開發；清除開發設定 + 憑證 + sessions + 工作區）。
@@ -1255,9 +1312,11 @@ openclaw onboard --install-daemon
 使用其中之一：
 
 - **壓縮**（保留對話但總結較舊的輪次）：
+
   ```
   /compact
   ```
+
   或 `/compact <instructions>` 來指導總結。
 
 - **重置**（同一聊天金鑰的新 session ID）：
@@ -1267,6 +1326,7 @@ openclaw onboard --install-daemon
   ```
 
 如果持續發生：
+
 - 啟用或調整 **session 修剪**（`agents.defaults.contextPruning`）以修剪舊工具輸出。
 - 使用 context 視窗更大的模型。
 
@@ -1281,10 +1341,10 @@ Heartbeats 預設每 **30m** 執行一次。調整或停用它們：
   agents: {
     defaults: {
       heartbeat: {
-        every: "2h"   // 或 "0m" 停用
-      }
-    }
-  }
+        every: "2h", // 或 "0m" 停用
+      },
+    },
+  },
 }
 ```
 
@@ -1303,9 +1363,9 @@ Heartbeats 預設每 **30m** 執行一次。調整或停用它們：
   channels: {
     whatsapp: {
       groupPolicy: "allowlist",
-      groupAllowFrom: ["+15551234567"]
-    }
-  }
+      groupAllowFrom: ["+15551234567"],
+    },
+  },
 }
 ```
 
@@ -1331,6 +1391,7 @@ openclaw directory groups list --channel whatsapp
 ### 為什麼-openclaw-不在群組中回覆
 
 兩個常見原因：
+
 - 提及控制已開啟（預設）。你必須 @提及 bot（或匹配 `mentionPatterns`）。
 - 你設定了 `channels.whatsapp.groups` 但沒有 `"*"` 且該群組不在允許清單中。
 
@@ -1349,6 +1410,7 @@ openclaw directory groups list --channel whatsapp
 - **營運開銷：** 每 agent 驗證設定檔、工作區和頻道路由。
 
 提示：
+
 - 每個 agent 保持一個**活躍**工作區（`agents.defaults.workspace`）。
 - 如果磁碟成長，修剪舊 sessions（刪除 JSONL 或儲存條目）。
 - 使用 `openclaw doctor` 發現迷途工作區和 profile 不匹配。
@@ -1385,6 +1447,7 @@ MiniMax M2.1 有自己的文件：[MiniMax](/zh-Hant/providers/minimax) 和 [本
 使用**模型指令**或只編輯**模型**欄位。避免完整設定替換。
 
 安全選項：
+
 - `/model` 在聊天中（快速，每 session）
 - `openclaw models set ...`（只更新模型設定）
 - `openclaw configure --section models`（互動式）
@@ -1442,8 +1505,8 @@ MiniMax M2.1 有自己的文件：[MiniMax](/zh-Hant/providers/minimax) 和 [本
 
 故障轉移分兩個階段：
 
-1) 同一供應商內的**驗證設定檔輪換**。
-2) **模型備用**到 `agents.defaults.model.fallbacks` 中的下一個模型。
+1. 同一供應商內的**驗證設定檔輪換**。
+2. **模型備用**到 `agents.defaults.model.fallbacks` 中的下一個模型。
 
 冷卻適用於失敗的設定檔（指數退避），所以 OpenClaw 可以在供應商受速率限制或暫時失敗時繼續回應。
 
@@ -1547,6 +1610,7 @@ OpenClaw 兩者都支援：
 因為「running」是 **supervisor** 的視角（launchd/systemd/schtasks）。RPC 探測是 CLI 實際連接到 gateway WebSocket 並呼叫 `status`。
 
 使用 `openclaw gateway status` 並信任這些行：
+
 - `Probe target:`（探測實際使用的 URL）
 - `Listening:`（連接埠上實際綁定的內容）
 - `Last gateway error:`（程序存活但連接埠沒有監聽時的常見根本原因）
@@ -1556,9 +1620,11 @@ OpenClaw 兩者都支援：
 你在編輯一個設定檔而服務在執行另一個（通常是 `--profile` / `OPENCLAW_STATE_DIR` 不匹配）。
 
 修復：
+
 ```bash
 openclaw gateway install --force
 ```
+
 從你想讓服務使用的同一 `--profile` / 環境執行。
 
 ### 另一個-gateway-實例已在監聽是什麼意思
@@ -1578,13 +1644,14 @@ OpenClaw 透過在啟動時立即綁定 WebSocket 監聽器（預設 `ws://127.0
     remote: {
       url: "ws://gateway.tailnet:18789",
       token: "your-token",
-      password: "your-password"
-    }
-  }
+      password: "your-password",
+    },
+  },
 }
 ```
 
 注意：
+
 - `openclaw gateway` 只在 `gateway.mode` 為 `local` 時啟動（或你傳遞覆蓋旗標）。
 - macOS app 監視設定檔並在這些值變更時即時切換模式。
 
@@ -1593,10 +1660,12 @@ OpenClaw 透過在啟動時立即綁定 WebSocket 監聽器（預設 `ws://127.0
 你的 gateway 啟用了驗證（`gateway.auth.*`），但 UI 沒有發送匹配的 token/密碼。
 
 事實（來自程式碼）：
+
 - Control UI 將 token 儲存在瀏覽器 localStorage 金鑰 `openclaw.control.settings.v1`。
 - UI 可以匯入 `?token=...`（和/或 `?password=...`）一次，然後從 URL 中移除。
 
 修復：
+
 - 最快：`openclaw dashboard`（印出 + 複製帶 token 的連結，嘗試開啟；如果是 headless 顯示 SSH 提示）。
 - 如果你還沒有 token：`openclaw doctor --generate-gateway-token`。
 - 如果是遠端，先建立 tunnel：`ssh -N -L 18789:127.0.0.1:18789 user@host` 然後開啟 `http://127.0.0.1:18789/?token=...`。
@@ -1609,6 +1678,7 @@ OpenClaw 透過在啟動時立即綁定 WebSocket 監聽器（預設 `ws://127.0
 `tailnet` bind 從你的網路介面選擇 Tailscale IP（100.64.0.0/10）。如果機器不在 Tailscale 上（或介面關閉），沒有東西可綁定。
 
 修復：
+
 - 在該主機上啟動 Tailscale（使它有 100.x 地址），或
 - 切換到 `gateway.bind: "loopback"` / `"lan"`。
 
@@ -1626,6 +1696,7 @@ OpenClaw 透過在啟動時立即綁定 WebSocket 監聽器（預設 `ws://127.0
 - `gateway.port`（唯一連接埠）
 
 快速設定（建議）：
+
 - 每個實例使用 `openclaw --profile <name> …`（自動建立 `~/.openclaw-<name>`）。
 - 在每個 profile 設定中設定唯一的 `gateway.port`（或手動執行時傳遞 `--port`）。
 - 安裝每 profile 服務：`openclaw --profile <name> gateway install`。
@@ -1652,6 +1723,7 @@ openclaw logs --follow
 ```
 
 服務/supervisor 日誌（當 gateway 透過 launchd/systemd 執行時）：
+
 - macOS：`$OPENCLAW_STATE_DIR/logs/gateway.log` 和 `gateway.err.log`（預設：`~/.openclaw/logs/...`；profiles 使用 `~/.openclaw-<profile>/logs/...`）
 - Linux：`journalctl --user -u openclaw-gateway[-<profile>].service -n 200 --no-pager`
 - Windows：`schtasks /Query /TN "OpenClaw Gateway (<profile>)" /V /FO LIST`
@@ -1718,6 +1790,7 @@ openclaw logs --follow
 ```
 
 常見原因：
+
 - 模型驗證未在 **gateway 主機**上載入（檢查 `models status`）。
 - 頻道配對/允許清單阻止回覆（檢查頻道設定 + 日誌）。
 - WebChat/Dashboard 開啟但沒有正確的 token。
@@ -1730,10 +1803,10 @@ openclaw logs --follow
 
 這通常表示 UI 失去了 WebSocket 連線。檢查：
 
-1) Gateway 正在執行嗎？`openclaw gateway status`
-2) Gateway 健康嗎？`openclaw status`
-3) UI 有正確的 token 嗎？`openclaw dashboard`
-4) 如果是遠端，tunnel/Tailscale 連結正常嗎？
+1. Gateway 正在執行嗎？`openclaw gateway status`
+2. Gateway 健康嗎？`openclaw status`
+3. UI 有正確的 token 嗎？`openclaw dashboard`
+4. 如果是遠端，tunnel/Tailscale 連結正常嗎？
 
 然後追蹤日誌：
 
@@ -1756,6 +1829,7 @@ openclaw message send --target +15555550123 --message "Here you go" --media /pat
 ```
 
 也檢查：
+
 - 目標頻道支援出站媒體且未被允許清單阻止。
 - 檔案在供應商的大小限制內（圖片調整大小至最大 2048px）。
 
@@ -1780,6 +1854,7 @@ openclaw message send --target +15555550123 --message "Here you go" --media /pat
 不是。Prompt injection 是關於**不受信任的內容**，不只是誰可以私訊 bot。如果你的助理讀取外部內容（網頁搜尋/擷取、瀏覽器頁面、電子郵件、文件、附件、貼上的日誌），該內容可以包含試圖劫持模型的指令。即使**你是唯一發送者**這也可能發生。
 
 最大風險是啟用工具時：模型可能被欺騙代你洩漏 context 或呼叫工具。透過以下方式減少影響範圍：
+
 - 使用唯讀或停用工具的「讀取器」agent 來總結不受信任的內容
 - 對啟用工具的 agents 關閉 `web_search` / `web_fetch` / `browser`
 - 沙箱和嚴格工具允許清單
@@ -1797,6 +1872,7 @@ openclaw message send --target +15555550123 --message "Here you go" --media /pat
 ### 我可以給它對我的簡訊的自主權這樣安全嗎
 
 我們**不建議**對你的個人訊息完全自主。最安全的模式是：
+
 - 保持 DM 在**配對模式**或嚴格允許清單。
 - 如果你想讓它代你發訊息，使用**獨立號碼或帳戶**。
 - 讓它草擬，然後**在發送前批准**。
@@ -1812,6 +1888,7 @@ openclaw message send --target +15555550123 --message "Here you go" --media /pat
 配對碼只在未知發送者發訊息給 bot 且 `dmPolicy: "pairing"` 啟用時發送。`/start` 本身不產生碼。
 
 檢查待處理請求：
+
 ```bash
 openclaw pairing list telegram
 ```
@@ -1843,6 +1920,7 @@ openclaw pairing list whatsapp
 大多數內部或工具訊息只在該 session 啟用 **verbose** 或 **reasoning** 時出現。
 
 在你看到它的聊天中修復：
+
 ```
 /verbose off
 /reasoning off
@@ -1891,12 +1969,12 @@ OpenClaw 預設阻止**跨供應商**訊息。如果工具呼叫綁定到 Telegr
         message: {
           crossContext: {
             allowAcrossProviders: true,
-            marker: { enabled: true, prefix: "[from {channel}] " }
-          }
-        }
-      }
-    }
-  }
+            marker: { enabled: true, prefix: "[from {channel}] " },
+          },
+        },
+      },
+    },
+  },
 }
 ```
 

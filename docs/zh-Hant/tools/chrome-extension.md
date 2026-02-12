@@ -4,7 +4,7 @@ read_when:
   - You want the agent to drive an existing Chrome tab (toolbar button)
   - You need remote Gateway + local browser automation via Tailscale
   - You want to understand the security implications of browser takeover
-title: "Chrome Extension"
+title: "Chrome Extension（Chrome 擴充功能）"
 ---
 
 # Chrome extension (browser relay)
@@ -173,6 +173,6 @@ Recommendations:
 
 Related:
 
-- Browser tool overview: [Browser](/tools/browser)
-- Security audit: [Security](/gateway/security)
-- Tailscale setup: [Tailscale](/gateway/tailscale)
+- Browser tool overview: [Browser](/zh-Hant/tools/browser)
+- Security audit: [Security](/zh-Hant/gateway/security)
+- Tailscale setup: [Tailscale](/zh-Hant/gateway/tailscale)

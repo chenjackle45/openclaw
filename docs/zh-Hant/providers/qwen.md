@@ -3,7 +3,7 @@ summary: "在 OpenClaw 中使用 Qwen OAuth（免費層級）"
 read_when:
   - 想要在 OpenClaw 中使用 Qwen 時
   - 想要使用 Qwen Coder 的免費層級 OAuth 權限時
-title: "Qwen"
+title: "Qwen（Qwen 通義千問）"
 ---
 
 # Qwen
@@ -45,4 +45,4 @@ openclaw models set qwen-portal/coder-model
 
 - Token 會自動刷新；若刷新失敗或存取權被撤銷，請重新執行登入指令。
 - 預設 Base URL：`https://portal.qwen.ai/v1`（若 Qwen 提供不同端點，可透過 `models.providers.qwen-portal.baseUrl` 覆寫）。
-- 全供應商通用規則請參閱 [模型服務供應商](/concepts/model-providers)。
+- 全供應商通用規則請參閱 [模型服務供應商](/zh-Hant/concepts/model-providers)。

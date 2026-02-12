@@ -1,162 +1,157 @@
 ---
-title: "首頁"
-summary: "OpenClaw 頂層概覽、功能與目的"
+summary: "OpenClaw 是一個在任何作業系統上執行的多頻道 AI Agent Gateway。"
 read_when:
-  - 向新用戶介紹 OpenClaw
+  - 介紹 OpenClaw 給新手
+title: "OpenClaw"
 ---
 # OpenClaw 🦞
 
-> *「EXFOLIATE! EXFOLIATE!」* — 某隻太空龍蝦
-
 <p align="center">
-    <picture>
-        <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/openclaw-logo-text-dark.png" />
-        <img src="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/openclaw-logo-text.png" alt="OpenClaw" width="500" />
-    </picture>
+    <img
+        src="/assets/openclaw-logo-text-dark.png"
+        alt="OpenClaw"
+        width="500"
+        class="dark:hidden"
+    />
+    <img
+        src="/assets/openclaw-logo-text.png"
+        alt="OpenClaw"
+        width="500"
+        class="hidden dark:block"
+    />
 </p>
 
-<p align="center">
-  <strong>跨平台 + WhatsApp/Telegram/Discord/iMessage 的 AI 代理 Gateway。</strong><br />
-  透過插件支援 Mattermost 等更多平台。
-  發送訊息，獲得代理回應 — 隨時隨地。
-</p>
+> _"脫皮！脫皮！"_ — 可能是一隻太空龍蝦
 
 <p align="center">
-  <a href="https://github.com/openclaw/openclaw">GitHub</a> ·
-  <a href="https://github.com/openclaw/openclaw/releases">發布版本</a> ·
-  <a href="/">文件</a> ·
-  <a href="/start/openclaw">OpenClaw 助理設定</a>
+  <strong>任何作業系統的 Gateway，適用於跨 WhatsApp、Telegram、Discord、iMessage 等的 AI Agent。</strong><br />
+  傳送訊息，從你的口袋取得 Agent 回應。外掛程式新增 Mattermost 等。
 </p>
 
-OpenClaw 將 WhatsApp（透過 WhatsApp Web / Baileys）、Telegram（Bot API / grammY）、Discord（Bot API / discord.js）和 iMessage（imsg CLI）橋接到程式碼代理如 [Pi](https://github.com/badlogic/pi-mono)。插件還支援 Mattermost（Bot API + WebSocket）等更多平台。
-OpenClaw 同時也驅動著 OpenClaw 助理。
+<Warning>
+**非官方翻譯聲明**
 
-## 從這裡開始
+這個中文網站是由 **[陳泰呈（Jackle）](https://www.facebook.com/jackle45/)** 因為自己要研究而順手翻譯的。未來不一定會即時更新，也不保證翻譯內容的正確性，純粹就是分享。如需最新且正確的資訊，請參考 [官方英文文件](https://docs.openclaw.ai)。
 
-- **從零開始安裝：** [入門指南](/start/getting-started)
-- **引導式設定（推薦）：** [設定精靈](/start/wizard)（`openclaw onboard`）
-- **開啟儀表板（本地 Gateway）：** http://127.0.0.1:18789/（或 http://localhost:18789/）
+**對應版本：`v2026.3.2`** · 翻譯更新日期：2026-03-04
 
-如果 Gateway 在同一台電腦上運行，該連結會立即開啟瀏覽器控制 UI。如果失敗，請先啟動 Gateway：`openclaw gateway`。
+<CardGroup cols={3}>
+  <Card title="Jackle 部落格" href="https://jackle.pro/about" icon="globe">
+    jackle.pro
+  </Card>
+  <Card title="Facebook" href="https://www.facebook.com/jackle45/" icon="facebook">
+    @jackle45
+  </Card>
+  <Card title="Threads" href="https://www.threads.com/@jackle9527" icon="at-sign">
+    @jackle9527
+  </Card>
+</CardGroup>
+</Warning>
 
-## 儀表板（瀏覽器控制 UI）
+<Columns>
+  <Card title="開始使用" href="/zh-Hant/start/getting-started" icon="rocket">
+    在幾分鐘內安裝 OpenClaw 並啟動 Gateway。
+  </Card>
+  <Card title="執行精靈" href="/zh-Hant/start/wizard" icon="sparkles">
+    使用 `openclaw onboard` 和配對流程的引導設定。
+  </Card>
+  <Card title="開啟 Control UI" href="/zh-Hant/web/control-ui" icon="layout-dashboard">
+    啟動瀏覽器儀表板以進行聊天、設定和會話。
+  </Card>
+</Columns>
 
-儀表板是用於聊天、設定、節點、會話等功能的瀏覽器控制 UI。
-本地預設：http://127.0.0.1:18789/
-遠端存取：[Web 界面](/web) 和 [Tailscale](/gateway/tailscale)
+## 什麼是 OpenClaw？
 
-<p align="center">
-  <img src="/whatsapp-openclaw.jpg" alt="OpenClaw" width="420" />
-</p>
+OpenClaw 是一個**自我託管的 Gateway**，將你最喜歡的聊天應用程式 — WhatsApp、Telegram、Discord、iMessage 等 — 連接到 AI 編碼 Agent，例如 Pi。你在自己的機器（或伺服器）上執行單個 Gateway 進程，它成為你的訊息應用程式和始終可用的 AI 助手之間的橋樑。
 
-## 運作原理
+**誰適合使用？** 開發人員和進階使用者，他們希望擁有可以從任何地方訊息的個人 AI 助手 — 而不放棄對其資料的控制或依賴託管服務。
 
+**有什麼不同之處？**
+
+- **自我託管**：在你的硬體上執行，你的規則
+- **多頻道**：一個 Gateway 同時服務 WhatsApp、Telegram、Discord 等
+- **Agent 原生**：為編碼 Agent 設計，具有工具使用、會話、記憶和多 Agent 路由
+- **開源**：MIT 授權，社群驅動
+
+**你需要什麼？** Node 22+、你選擇的提供者 API 金鑰和 5 分鐘。為了最佳品質和安全性，請使用可用的最強最新一代模型。
+
+## 它的運作方式
+
+```mermaid
+flowchart LR
+  A["聊天應用 + 外掛"] --> B["Gateway"]
+  B --> C["Pi Agent"]
+  B --> D["CLI"]
+  B --> E["Web Control UI"]
+  B --> F["macOS app"]
+  B --> G["iOS 和 Android 節點"]
 ```
-WhatsApp / Telegram / Discord / iMessage（+ 插件）
-        │
-        ▼
-  ┌───────────────────────────┐
-  │          Gateway          │  ws://127.0.0.1:18789（僅限本機）
-  │       （單一來源）         │
-  │                           │  http://[gateway-host]:18793
-  │                           │    /__openclaw__/canvas/（Canvas 主機）
-  └───────────┬───────────────┘
-              │
-              ├─ Pi 代理（RPC）
-              ├─ CLI（openclaw …）
-              ├─ 聊天 UI（SwiftUI）
-              ├─ macOS 應用程式（OpenClaw.app）
-              ├─ iOS 節點（透過 Gateway WS + 配對）
-              └─ Android 節點（透過 Gateway WS + 配對）
-```
 
-大多數操作都透過 **Gateway**（`openclaw gateway`）進行，這是一個長期運行的程序，負責管理頻道連線和 WebSocket 控制平面。
+Gateway 是會話、路由和頻道連接的單一事實來源。
 
-## 網路模型
+## 主要功能
 
-- **每台主機一個 Gateway（建議）**：這是唯一允許擁有 WhatsApp Web 會話的程序。如果您需要救援機器人或嚴格隔離，可以使用隔離的設定檔和連接埠運行多個 Gateway；請參閱 [多 Gateway](/gateway/multiple-gateways)。
-- **本機優先**：Gateway WS 預設為 `ws://127.0.0.1:18789`。
-  - 精靈現在預設會生成 Gateway 令牌（即使是本機連線）。
-  - 對於 Tailnet 存取，請執行 `openclaw gateway --bind tailnet --token ...`（非本機綁定需要令牌）。
-- **節點**：連接到 Gateway WebSocket（根據需要使用 LAN/tailnet/SSH）；舊版 TCP 橋接已棄用/移除。
-- **Canvas 主機**：在 `canvasHost.port`（預設 `18793`）上的 HTTP 檔案伺服器，為節點 WebView 提供 `/__openclaw__/canvas/`；請參閱 [Gateway 設定](/gateway/configuration)（`canvasHost`）。
-- **遠端使用**：SSH 隧道或 tailnet/VPN；請參閱 [遠端存取](/gateway/remote) 和 [探索](/gateway/discovery)。
-
-## 功能（概覽）
-
-- 📱 **WhatsApp 整合** — 使用 Baileys 實作 WhatsApp Web 協議
-- ✈️ **Telegram 機器人** — 透過 grammY 支援私訊 + 群組
-- 🎮 **Discord 機器人** — 透過 discord.js 支援私訊 + 伺服器頻道
-- 🧩 **Mattermost 機器人（插件）** — Bot token + WebSocket 事件
-- 💬 **iMessage** — 本地 imsg CLI 整合（僅 macOS）
-- 🤖 **代理橋接** — Pi（RPC 模式）搭配工具串流
-- ⏱️ **串流 + 分塊** — 區塊串流 + Telegram 草稿串流詳情（[/concepts/streaming](/concepts/streaming)）
-- 🧠 **多代理路由** — 將供應商帳戶/對等方路由到隔離的代理（工作區 + 每代理會話）
-- 🔐 **訂閱認證** — Anthropic（Claude Pro/Max）+ OpenAI（ChatGPT/Codex）透過 OAuth
-- 💬 **會話** — 直接聊天會合併到共享的 `main`（預設）；群組則隔離
-- 👥 **群組聊天支援** — 預設為提及式；擁有者可切換 `/activation always|mention`
-- 📎 **媒體支援** — 發送和接收圖片、音訊、文件
-- 🎤 **語音筆記** — 可選的轉錄 hook
-- 🖥️ **WebChat + macOS 應用程式** — 本地 UI + 選單列伴侶應用，用於操作和語音喚醒
-- 📱 **iOS 節點** — 配對為節點並公開 Canvas 介面
-- 📱 **Android 節點** — 配對為節點並公開 Canvas + 聊天 + 相機
-
-注意：舊版 Claude/Codex/Gemini/Opencode 路徑已移除；Pi 是唯一的程式碼代理路徑。
+<Columns>
+  <Card title="多頻道 Gateway" icon="network">
+    WhatsApp、Telegram、Discord 和 iMessage 搭配單一 Gateway 進程。
+  </Card>
+  <Card title="外掛程式頻道" icon="plug">
+    使用擴充套件套件新增 Mattermost 等。
+  </Card>
+  <Card title="多 Agent 路由" icon="route">
+    每個 Agent、工作區或寄件者的隔離會話。
+  </Card>
+  <Card title="媒體支援" icon="image">
+    傳送和接收影像、音訊和文件。
+  </Card>
+  <Card title="Web Control UI" icon="monitor">
+    用於聊天、設定、會話和節點的瀏覽器儀表板。
+  </Card>
+  <Card title="行動節點" icon="smartphone">
+    配對 iOS 和 Android 節點，支援 Canvas、相機/螢幕和語音工作流程。
+  </Card>
+</Columns>
 
 ## 快速開始
 
-運行環境要求：**Node ≥ 22**。
+<Steps>
+  <Step title="安裝 OpenClaw">
+    ```bash
+    npm install -g openclaw@latest
+    ```
+  </Step>
+  <Step title="上線並安裝服務">
+    ```bash
+    openclaw onboard --install-daemon
+    ```
+  </Step>
+  <Step title="配對 WhatsApp 並啟動 Gateway">
+    ```bash
+    openclaw channels login
+    openclaw gateway --port 18789
+    ```
+  </Step>
+</Steps>
 
-```bash
-# 推薦：全域安裝（npm/pnpm）
-npm install -g openclaw@latest
-# 或：pnpm add -g openclaw@latest
+需要完整的安裝和開發設定？詳見[快速開始](/zh-Hant/start/quickstart)。
 
-# 引導安裝 + 安裝服務（launchd/systemd 使用者服務）
-openclaw onboard --install-daemon
+## 儀表板
 
-# 配對 WhatsApp Web（顯示 QR 碼）
-openclaw channels login
+Gateway 啟動後開啟瀏覽器 Control UI。
 
-# 引導後 Gateway 會透過服務運行；仍可手動運行：
-openclaw gateway --port 18789
-```
+- 本機預設：[http://127.0.0.1:18789/](http://127.0.0.1:18789/)
+- 遠端存取：[Web 介面](/zh-Hant/web)和 [Tailscale](/zh-Hant/gateway/tailscale)
 
-在 npm 和 git 安裝之間切換很簡單：安裝另一個版本並執行 `openclaw doctor` 以更新 Gateway 服務入口點。
+<p align="center">
+  <img src="whatsapp-openclaw.jpg" alt="OpenClaw" width="420" />
+</p>
 
-從原始碼（開發）：
+## 設定（選擇性）
 
-```bash
-git clone https://github.com/openclaw/openclaw.git
-cd openclaw
-pnpm install
-pnpm ui:build # 首次運行時自動安裝 UI 依賴
-pnpm build
-openclaw onboard --install-daemon
-```
+設定存在於 `~/.openclaw/openclaw.json`。
 
-如果您還沒有全域安裝，請從 repo 透過 `pnpm openclaw ...` 運行引導步驟。
-
-多實例快速開始（可選）：
-
-```bash
-OPENCLAW_CONFIG_PATH=~/.openclaw/a.json \
-OPENCLAW_STATE_DIR=~/.openclaw-a \
-openclaw gateway --port 19001
-```
-
-發送測試訊息（需要運行中的 Gateway）：
-
-```bash
-openclaw message send --target +15555550123 --message "來自 OpenClaw 的問候"
-```
-
-## 設定（可選）
-
-設定檔位於 `~/.openclaw/openclaw.json`。
-
-- 如果您**什麼都不做**，OpenClaw 會以 RPC 模式使用內建的 Pi 二進制檔，並按發送者建立會話。
-- 如果您想限制存取，請從 `channels.whatsapp.allowFrom` 開始，並（對於群組）設定提及規則。
+- 如果你**不執行任何操作**，OpenClaw 使用 RPC 模式下的打包 Pi 二進位檔，具有每個寄件者會話。
+- 如果你想要鎖定，請從 `channels.whatsapp.allowFrom` 和（對於群組）提及規則開始。
 
 範例：
 
@@ -172,76 +167,51 @@ openclaw message send --target +15555550123 --message "來自 OpenClaw 的問候
 }
 ```
 
-## 文件
+## 從這裡開始
 
-- 從這裡開始：
-  - [文件中心（所有頁面連結）](/start/hubs)
-  - [幫助](/help) ← *常見修復 + 疑難排解*
-  - [設定](/gateway/configuration)
-  - [設定範例](/gateway/configuration-examples)
-  - [斜線命令](/tools/slash-commands)
-  - [多代理路由](/concepts/multi-agent)
-  - [更新 / 回滾](/install/updating)
-  - [配對（私訊 + 節點）](/start/pairing)
-  - [Nix 模式](/install/nix)
-  - [OpenClaw 助理設定](/start/openclaw)
-  - [技能](/tools/skills)
-  - [技能設定](/tools/skills-config)
-  - [工作區範本](/reference/templates/AGENTS)
-  - [RPC 適配器](/reference/rpc)
-  - [Gateway 操作手冊](/gateway)
-  - [節點（iOS/Android）](/nodes)
-  - [Web 界面（控制 UI）](/web)
-  - [探索 + 傳輸](/gateway/discovery)
-  - [遠端存取](/gateway/remote)
-- 供應商和用戶體驗：
-  - [WebChat](/web/webchat)
-  - [控制 UI（瀏覽器）](/web/control-ui)
-  - [Telegram](/channels/telegram)
-  - [Discord](/channels/discord)
-  - [Mattermost（插件）](/channels/mattermost)
-  - [iMessage](/channels/imessage)
-  - [群組](/concepts/groups)
-  - [WhatsApp 群組訊息](/concepts/group-messages)
-  - [媒體：圖片](/nodes/images)
-  - [媒體：音訊](/nodes/audio)
-- 伴侶應用程式：
-  - [macOS 應用程式](/platforms/macos)
-  - [iOS 應用程式](/platforms/ios)
-  - [Android 應用程式](/platforms/android)
-  - [Windows（WSL2）](/platforms/windows)
-  - [Linux 應用程式](/platforms/linux)
-- 營運和安全：
-  - [會話](/concepts/session)
-  - [排程任務](/automation/cron-jobs)
-  - [Webhooks](/automation/webhook)
-  - [Gmail hooks（Pub/Sub）](/automation/gmail-pubsub)
-  - [安全性](/gateway/security)
-  - [疑難排解](/gateway/troubleshooting)
+<Columns>
+  <Card title="文件中樞" href="/zh-Hant/start/hubs" icon="book-open">
+    所有文件和指南，按使用情境組織。
+  </Card>
+  <Card title="設定" href="/zh-Hant/gateway/configuration" icon="settings">
+    核心 Gateway 設定、標記和提供者設定。
+  </Card>
+  <Card title="遠端存取" href="/zh-Hant/gateway/remote" icon="globe">
+    SSH 和 tailnet 存取模式。
+  </Card>
+  <Card title="頻道" href="/zh-Hant/channels/telegram" icon="message-square">
+    特定頻道的 WhatsApp、Telegram、Discord 等設定。
+  </Card>
+  <Card title="節點" href="/zh-Hant/nodes" icon="smartphone">
+    iOS 和 Android 節點，支援配對、Canvas、相機/螢幕和裝置操作。
+  </Card>
+  <Card title="說明" href="/zh-Hant/help" icon="life-buoy">
+    常見修正和疑難排解進入點。
+  </Card>
+</Columns>
 
-## 名稱由來
+## 瞭解詳情
 
-**OpenClaw = CLAW + TARDIS** — 因為每隻太空龍蝦都需要一台時空機器。
+<Columns>
+  <Card title="完整功能清單" href="/zh-Hant/concepts/features" icon="list">
+    完整頻道、路由和媒體功能。
+  </Card>
+  <Card title="多 Agent 路由" href="/zh-Hant/concepts/multi-agent" icon="route">
+    工作區隔離和每個 Agent 會話。
+  </Card>
+  <Card title="安全" href="/zh-Hant/gateway/security" icon="shield">
+    標記、允許清單和安全控制。
+  </Card>
+  <Card title="疑難排解" href="/zh-Hant/gateway/troubleshooting" icon="wrench">
+    Gateway 診斷和常見錯誤。
+  </Card>
+  <Card title="關於和鳴謝" href="/zh-Hant/reference/credits" icon="info">
+    專案出處、貢獻者和授權。
+  </Card>
+</Columns>
 
 ---
 
-*「我們都只是在玩弄自己的提示詞。」* — 某個可能 token 過量的 AI
-
-## 致謝
-
-- **Peter Steinberger**（[@steipete](https://twitter.com/steipete)）— 創作者，龍蝦語者
-- **Mario Zechner**（[@badlogicc](https://twitter.com/badlogicgames)）— Pi 創作者，安全滲透測試員
-- **Clawd** — 要求更好名字的太空龍蝦
-
-## 核心貢獻者
-
-- **Maxim Vovshin**（@Hyaxia, 36747317+Hyaxia@users.noreply.github.com）— Blogwatcher 技能
-- **Nacho Iacovino**（@nachoiacovino, nacho.iacovino@gmail.com）— 位置解析（Telegram + WhatsApp）
-
-## 授權
-
-MIT — 像海洋中的龍蝦一樣自由 🦞
-
----
-
-*「我們都只是在玩弄自己的提示詞。」* — 某個可能 token 過量的 AI
+<p align="center">
+  <sub>繁體中文翻譯與維護：<a href="https://jackle.pro/about">陳泰呈（Jackle）</a> · <a href="https://www.facebook.com/jackle45/">Facebook</a> · <a href="https://www.threads.com/@jackle9527">Threads</a></sub>
+</p>

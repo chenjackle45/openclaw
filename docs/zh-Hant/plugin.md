@@ -1,10 +1,11 @@
 ---
-title: "Plugins(外掛)"
-summary: "OpenClaw plugins/extensions：發現、設定和安全性"
+title: "Plugins（外掛）"
+summary: "OpenClaw 外掛/擴展：探索、配置和安全"
 read_when:
   - 新增或修改 plugins/extensions
   - 記錄外掛安裝或載入規則
 ---
+
 # 外掛（擴充功能）
 
 ## 快速入門（對外掛不熟悉？）
@@ -15,39 +16,39 @@ read_when:
 
 快速路徑：
 
-1) 查看已載入的內容：
+1. 查看已載入的內容：
 
 ```bash
 openclaw plugins list
 ```
 
-2) 安裝官方外掛（範例：Voice Call）：
+2. 安裝官方外掛（範例：Voice Call）：
 
 ```bash
 openclaw plugins install @openclaw/voice-call
 ```
 
-3) 重新啟動 Gateway，然後在 `plugins.entries.<id>.config` 下設定。
+3. 重新啟動 Gateway，然後在 `plugins.entries.<id>.config` 下設定。
 
-請參閱 [Voice Call](/plugins/voice-call) 以取得具體範例外掛。
+請參閱 [Voice Call](/zh-Hant/plugins/voice-call) 以取得具體範例外掛。
 
 ## 可用外掛（官方）
 
 - Microsoft Teams 自 2026.1.15 起僅為外掛；如果您使用 Teams，請安裝 `@openclaw/msteams`。
 - Memory (Core) — 捆綁的記憶體搜尋外掛（透過 `plugins.slots.memory` 預設啟用）
 - Memory (LanceDB) — 捆綁的長期記憶體外掛（auto-recall/capture；設定 `plugins.slots.memory = "memory-lancedb"`）
-- [Voice Call](/plugins/voice-call) — `@openclaw/voice-call`
-- [Zalo Personal](/plugins/zalouser) — `@openclaw/zalouser`
-- [Matrix](/channels/matrix) — `@openclaw/matrix`
-- [Nostr](/channels/nostr) — `@openclaw/nostr`
-- [Zalo](/channels/zalo) — `@openclaw/zalo`
-- [Microsoft Teams](/channels/msteams) — `@openclaw/msteams`
+- [Voice Call](/zh-Hant/plugins/voice-call) — `@openclaw/voice-call`
+- [Zalo Personal](/zh-Hant/plugins/zalouser) — `@openclaw/zalouser`
+- [Matrix](/zh-Hant/channels/matrix) — `@openclaw/matrix`
+- [Nostr](/zh-Hant/channels/nostr) — `@openclaw/nostr`
+- [Zalo](/zh-Hant/channels/zalo) — `@openclaw/zalo`
+- [Microsoft Teams](/zh-Hant/channels/msteams) — `@openclaw/msteams`
 - Google Antigravity OAuth (provider auth) — 捆綁為 `google-antigravity-auth`（預設停用）
 - Gemini CLI OAuth (provider auth) — 捆綁為 `google-gemini-cli-auth`（預設停用）
 - Qwen OAuth (provider auth) — 捆綁為 `qwen-portal-auth`（預設停用）
 - Copilot Proxy (provider auth) — 本地 VS Code Copilot Proxy bridge；不同於內建 `github-copilot` 裝置登入（捆綁，預設停用）
 
-OpenClaw 外掛是透過 jiti 在 runtime 載入的 **TypeScript 模組**。**設定驗證不執行外掛程式碼**；它改用外掛 manifest 和 JSON Schema。請參閱 [Plugin manifest](/plugins/manifest)。
+OpenClaw 外掛是透過 jiti 在 runtime 載入的 **TypeScript 模組**。**設定驗證不執行外掛程式碼**；它改用外掛 manifest 和 JSON Schema。請參閱 [Plugin manifest](/zh-Hant/plugins/manifest)。
 
 外掛可以註冊：
 
@@ -61,7 +62,7 @@ OpenClaw 外掛是透過 jiti 在 runtime 載入的 **TypeScript 模組**。**�
 - **Auto-reply commands**（無需調用 AI agent 即可執行）
 
 外掛與 Gateway **在行程內**執行，因此將它們視為受信任的程式碼。
-工具撰寫指南：[Plugin agent tools](/plugins/agent-tools)。
+工具撰寫指南：[Plugin agent tools](/zh-Hant/plugins/agent-tools)。
 
 ## Runtime helpers
 
@@ -75,6 +76,7 @@ const result = await api.runtime.tts.textToSpeechTelephony({
 ```
 
 注意事項：
+
 - 使用核心 `messages.tts` 設定（OpenAI 或 ElevenLabs）。
 - 返回 PCM 音訊緩衝區 + 取樣率。外掛必須為供應商重新取樣/編碼。
 - Edge TTS 不支援電話。
@@ -83,18 +85,22 @@ const result = await api.runtime.tts.textToSpeechTelephony({
 
 OpenClaw 按順序掃描：
 
-1) 設定路徑
+1. 設定路徑
+
 - `plugins.load.paths`（檔案或目錄）
 
-2) 工作區擴充功能
+2. 工作區擴充功能
+
 - `<workspace>/.openclaw/extensions/*.ts`
 - `<workspace>/.openclaw/extensions/*/index.ts`
 
-3) 全域擴充功能
+3. 全域擴充功能
+
 - `~/.openclaw/extensions/*.ts`
 - `~/.openclaw/extensions/*/index.ts`
 
-4) 捆綁擴充功能（與 OpenClaw 一起提供，**預設停用**）
+4. 捆綁擴充功能（與 OpenClaw 一起提供，**預設停用**）
+
 - `<openclaw>/extensions/*`
 
 捆綁外掛必須透過 `plugins.entries.<id>.enabled` 或 `openclaw plugins enable <id>` 明確啟用。安裝的外掛預設啟用，但可以以相同方式停用。
@@ -151,6 +157,7 @@ OpenClaw 按順序掃描：
 ```
 
 OpenClaw 還可以合併**外部頻道目錄**（例如，MPM 註冊表匯出）。在以下位置之一放置 JSON 檔案：
+
 - `~/.openclaw/mpm/plugins.json`
 - `~/.openclaw/mpm/catalog.json`
 - `~/.openclaw/plugins/catalog.json`
@@ -176,13 +183,14 @@ OpenClaw 還可以合併**外部頻道目錄**（例如，MPM 註冊表匯出）
     deny: ["untrusted-plugin"],
     load: { paths: ["~/Projects/oss/voice-call-extension"] },
     entries: {
-      "voice-call": { enabled: true, config: { provider: "twilio" } }
-    }
-  }
+      "voice-call": { enabled: true, config: { provider: "twilio" } },
+    },
+  },
 }
 ```
 
 欄位：
+
 - `enabled`：主切換（預設：true）
 - `allow`：允許清單（可選）
 - `deny`：拒絕清單（可選；deny 獲勝）
@@ -192,6 +200,7 @@ OpenClaw 還可以合併**外部頻道目錄**（例如，MPM 註冊表匯出）
 設定變更**需要 gateway 重新啟動**。
 
 驗證規則（嚴格）：
+
 - `entries`、`allow`、`deny` 或 `slots` 中的未知外掛 ids 是**錯誤**。
 - 未知的 `channels.<id>` 鍵是**錯誤**，除非外掛 manifest 宣告頻道 id。
 - 外掛設定使用嵌入在 `openclaw.plugin.json`（`configSchema`）中的 JSON Schema 進行驗證。
@@ -205,9 +214,9 @@ OpenClaw 還可以合併**外部頻道目錄**（例如，MPM 註冊表匯出）
 {
   plugins: {
     slots: {
-      memory: "memory-core" // 或 "none" 以停用記憶體外掛
-    }
-  }
+      memory: "memory-core", // 或 "none" 以停用記憶體外掛
+    },
+  },
 }
 ```
 
@@ -289,6 +298,7 @@ export default function register(api) {
 ```
 
 注意事項：
+
 - Hook 目錄遵循正常的 hook 結構（`HOOK.md` + `handler.ts`）。
 - Hook 資格規則仍然適用（OS/bins/env/config 要求）。
 - 外掛管理的 hooks 在 `openclaw hooks list` 中顯示為 `plugin:<id>`。
@@ -337,6 +347,7 @@ api.registerProvider({
 ```
 
 注意事項：
+
 - `run` 接收具有 `prompter`、`runtime`、`openUrl` 和 `oauth.createVpsAwareHandlers` helpers 的 `ProviderAuthContext`。
 - 當您需要新增預設模型或 provider 設定時，返回 `configPatch`。
 - 返回 `defaultModel`，以便 `--set-default` 可以更新 agent 預設值。
@@ -360,7 +371,7 @@ const myChannel = {
   config: {
     listAccountIds: (cfg) => Object.keys(cfg.channels?.acmechat?.accounts ?? {}),
     resolveAccount: (cfg, accountId) =>
-      (cfg.channels?.acmechat?.accounts?.[accountId ?? "default"] ?? { accountId }),
+      cfg.channels?.acmechat?.accounts?.[accountId ?? "default"] ?? { accountId },
   },
   outbound: {
     deliveryMode: "direct",
@@ -374,6 +385,7 @@ export default function (api) {
 ```
 
 注意事項：
+
 - 將設定放在 `channels.<id>` 下（而不是 `plugins.entries`）。
 - `meta.label` 用於 CLI/UI 清單中的標籤。
 - `meta.aliases` 為正規化和 CLI 輸入新增備用 ids。
@@ -385,27 +397,32 @@ export default function (api) {
 當您想要**新的聊天介面**（「訊息頻道」）而不是模型 provider 時使用此方法。
 模型 provider 文件位於 `/providers/*` 下。
 
-1) 選擇 id + 設定形狀
+1. 選擇 id + 設定形狀
+
 - 所有頻道設定都位於 `channels.<id>` 下。
 - 對於多帳戶設定，偏好 `channels.<id>.accounts.<accountId>`。
 
-2) 定義頻道 metadata
+2. 定義頻道 metadata
+
 - `meta.label`、`meta.selectionLabel`、`meta.docsPath`、`meta.blurb` 控制 CLI/UI 清單。
 - `meta.docsPath` 應指向文件頁面，如 `/channels/<id>`。
 - `meta.preferOver` 讓外掛替換另一個頻道（自動啟用偏好它）。
 - `meta.detailLabel` 和 `meta.systemImage` 由 UIs 用於詳細文字/圖示。
 
-3) 實作所需的 adapters
+3. 實作所需的 adapters
+
 - `config.listAccountIds` + `config.resolveAccount`
 - `capabilities`（聊天類型、媒體、threads 等）
 - `outbound.deliveryMode` + `outbound.sendText`（用於基本發送）
 
-4) 根據需要新增可選 adapters
+4. 根據需要新增可選 adapters
+
 - `setup`（精靈）、`security`（DM 策略）、`status`（健康/診斷）
 - `gateway`（start/stop/login）、`mentions`、`threading`、`streaming`
 - `actions`（訊息操作）、`commands`（原生指令行為）
 
-5) 在外掛中註冊頻道
+5. 在外掛中註冊頻道
+
 - `api.registerChannel({ plugin })`
 
 最小設定範例：
@@ -415,10 +432,10 @@ export default function (api) {
   channels: {
     acmechat: {
       accounts: {
-        default: { token: "ACME_TOKEN", enabled: true }
-      }
-    }
-  }
+        default: { token: "ACME_TOKEN", enabled: true },
+      },
+    },
+  },
 }
 ```
 
@@ -459,7 +476,7 @@ export default function (api) {
 
 ### Agent 工具
 
-請參閱專門指南：[Plugin agent tools](/plugins/agent-tools)。
+請參閱專門指南：[Plugin agent tools](/zh-Hant/plugins/agent-tools)。
 
 ### 註冊 gateway RPC 方法
 
@@ -475,11 +492,14 @@ export default function (api) {
 
 ```ts
 export default function (api) {
-  api.registerCli(({ program }) => {
-    program.command("mycmd").action(() => {
-      console.log("Hello");
-    });
-  }, { commands: ["mycmd"] });
+  api.registerCli(
+    ({ program }) => {
+      program.command("mycmd").action(() => {
+        console.log("Hello");
+      });
+    },
+    { commands: ["mycmd"] },
+  );
 }
 ```
 
@@ -533,6 +553,7 @@ api.registerCommand({
 ```
 
 注意事項：
+
 - 外掛指令在內建指令和 AI agent **之前**處理
 - 指令在所有頻道中全域註冊並工作
 - 指令名稱不區分大小寫（`/MyStatus` 匹配 `/mystatus`）
@@ -589,7 +610,7 @@ export default function (api) {
 - 設定（twilio）：`provider: "twilio"` + `twilio.accountSid/authToken/from`（可選 `statusCallbackUrl`、`twimlUrl`）
 - 設定（dev）：`provider: "log"`（無網路）
 
-請參閱 [Voice Call](/plugins/voice-call) 和 `extensions/voice-call/README.md` 以取得設定和使用。
+請參閱 [Voice Call](/zh-Hant/plugins/voice-call) 和 `extensions/voice-call/README.md` 以取得設定和使用。
 
 ## 安全注意事項
 

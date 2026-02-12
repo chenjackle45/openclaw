@@ -1,155 +1,159 @@
 ---
-summary: "在沙盒 macOS VM (本地或託管) 中運行 OpenClaw，適用於隔離或 iMessage 需求"
+summary: "在沙箱 macOS VM（本地或代管）中執行 OpenClaw，需要隔離或 iMessage"
 read_when:
-  - 想要將 OpenClaw 與主要的 macOS 環境隔離時
-  - 想要在沙盒中整合 iMessage (BlueBubbles) 時
-  - 想要一個可重置且可複製的 macOS 環境時
-  - 想要比較本地與託管 macOS VM 選項時
-title: "macOS VM"
+  - You want OpenClaw isolated from your main macOS environment
+  - You want iMessage integration (BlueBubbles) in a sandbox
+  - You want a resettable macOS environment you can clone
+  - You want to compare local vs hosted macOS VM options
+title: "macOS VMs（macOS 虛擬機）"
 ---
 
-# 在 macOS VM 上運行 OpenClaw (沙盒化)
+# OpenClaw on macOS VMs (Sandboxing)
 
-## 推薦預設方案 (多數使用者)
+## Recommended default (most users)
 
-- **小型 Linux VPS**：用於全天候運行的 Gateway，成本低。參閱 [VPS hosting](/vps)。
-- **專用硬體** (Mac mini 或 Linux 主機)：若您需要完全控制權與**住宅 IP** 用於瀏覽器自動化。許多網站會封鎖資料中心 IP，因此本地瀏覽通常效果較好。
-- **混合模式**：將 Gateway 放在便宜的 VPS 上，並在需要瀏覽器/UI 自動化時將您的 Mac 作為**節點**連接。參閱 [Nodes](/nodes) 與 [Gateway remote](/gateway/remote)。
+- **Small Linux VPS** for an always-on Gateway and low cost. See [VPS hosting](/zh-Hant/vps).
+- **Dedicated hardware** (Mac mini or Linux box) if you want full control and a **residential IP** for browser automation. Many sites block data center IPs, so local browsing often works better.
+- **Hybrid:** keep the Gateway on a cheap VPS, and connect your Mac as a **node** when you need browser/UI automation. See [Nodes](/zh-Hant/nodes) and [Gateway remote](/zh-Hant/gateway/remote).
 
-當您特別需要 macOS 專屬功能 (iMessage/BlueBubbles) 或希望與日常使用的 Mac 嚴格隔離時，請使用 macOS VM。
+Use a macOS VM when you specifically need macOS-only capabilities (iMessage/BlueBubbles) or want strict isolation from your daily Mac.
 
-## macOS VM 選項
+## macOS VM options
 
-### 您 Apple Silicon Mac 上的本地 VM (Lume)
+### Local VM on your Apple Silicon Mac (Lume)
 
-使用 [Lume](https://cua.ai/docs/lume) 在您現有的 Apple Silicon Mac 上運行沙盒化的 macOS VM 中的 OpenClaw。
+Run OpenClaw in a sandboxed macOS VM on your existing Apple Silicon Mac using [Lume](https://cua.ai/docs/lume).
 
-這提供您：
-- 完全隔離的 macOS 環境（您的主機保持乾淨）
-- 透過 BlueBubbles 支援 iMessage（在 Linux/Windows 上無法實現）
-- 透過複製 VM 瞬間重置
-- 無需額外硬體或雲端成本
+This gives you:
 
-### 託管 Mac 供應商 (雲端)
+- Full macOS environment in isolation (your host stays clean)
+- iMessage support via BlueBubbles (impossible on Linux/Windows)
+- Instant reset by cloning VMs
+- No extra hardware or cloud costs
 
-若您想要雲端的 macOS，託管 Mac 供應商也是可行的：
-- [MacStadium](https://www.macstadium.com/) (託管 Macs)
-- 其他託管 Mac 供應商也可以；請依照他們的 VM + SSH 文件操作
+### Hosted Mac providers (cloud)
 
-一旦您擁有 macOS VM 的 SSH 存取權，請從下方的步驟 6 繼續。
+If you want macOS in the cloud, hosted Mac providers work too:
+
+- [MacStadium](https://www.macstadium.com/) (hosted Macs)
+- Other hosted Mac vendors also work; follow their VM + SSH docs
+
+Once you have SSH access to a macOS VM, continue at step 6 below.
 
 ---
 
-## 快速路徑 (Lume, 進階使用者)
+## Quick path (Lume, experienced users)
 
-1. 安裝 Lume
+1. Install Lume
 2. `lume create openclaw --os macos --ipsw latest`
-3. 完成設定輔助程式，啟用遠端登入 (SSH)
+3. Complete Setup Assistant, enable Remote Login (SSH)
 4. `lume run openclaw --no-display`
-5. SSH 進入，安裝 OpenClaw，配置頻道
-6. 完成
+5. SSH in, install OpenClaw, configure channels
+6. Done
 
 ---
 
-## 需求 (Lume)
+## What you need (Lume)
 
 - Apple Silicon Mac (M1/M2/M3/M4)
-- 主機需為 macOS Sequoia 或更新版本
-- 每個 VM 約需 60 GB 可用磁碟空間
-- 約 20 分鐘時間
+- macOS Sequoia or later on the host
+- ~60 GB free disk space per VM
+- ~20 minutes
 
 ---
 
-## 1) 安裝 Lume
+## 1) Install Lume
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/trycua/cua/main/libs/lume/scripts/install.sh)"
 ```
 
-若 `~/.local/bin` 不在您的 PATH 中：
+If `~/.local/bin` isn't in your PATH:
 
 ```bash
 echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.zshrc && source ~/.zshrc
 ```
 
-驗證：
+Verify:
 
 ```bash
 lume --version
 ```
 
-文件：[Lume Installation](https://cua.ai/docs/lume/guide/getting-started/installation)
+Docs: [Lume Installation](https://cua.ai/docs/lume/guide/getting-started/installation)
 
 ---
 
-## 2) 建立 macOS VM
+## 2) Create the macOS VM
 
 ```bash
 lume create openclaw --os macos --ipsw latest
 ```
 
-這會下載 macOS 並建立 VM。VNC 視窗會自動開啟。
+This downloads macOS and creates the VM. A VNC window opens automatically.
 
-注意：下載時間取決於您的網路連線。
-
----
-
-## 3) 完成設定輔助程式
-
-在 VNC 視窗中：
-1. 選擇語言與地區
-2. 跳過 Apple ID（若稍後需要 iMessage 則登入）
-3. 建立使用者帳戶（請記住使用者名稱與密碼）
-4. 跳過所有選用功能
-
-設定完成後，啟用 SSH：
-1. 開啟 System Settings → General → Sharing
-2. 啟用 "Remote Login"
+Note: The download can take a while depending on your connection.
 
 ---
 
-## 4) 取得 VM 的 IP 位址
+## 3) Complete Setup Assistant
+
+In the VNC window:
+
+1. Select language and region
+2. Skip Apple ID (or sign in if you want iMessage later)
+3. Create a user account (remember the username and password)
+4. Skip all optional features
+
+After setup completes, enable SSH:
+
+1. Open System Settings → General → Sharing
+2. Enable "Remote Login"
+
+---
+
+## 4) Get the VM's IP address
 
 ```bash
 lume get openclaw
 ```
 
-尋找 IP 位址（通常為 `192.168.64.x`）。
+Look for the IP address (usually `192.168.64.x`).
 
 ---
 
-## 5) SSH 進入 VM
+## 5) SSH into the VM
 
 ```bash
 ssh youruser@192.168.64.X
 ```
 
-將 `youruser` 替換為您建立的帳戶，並將 IP 替換為您的 VM IP。
+Replace `youruser` with the account you created, and the IP with your VM's IP.
 
 ---
 
-## 6) 安裝 OpenClaw
+## 6) Install OpenClaw
 
-在 VM 內部：
+Inside the VM:
 
 ```bash
 npm install -g openclaw@latest
 openclaw onboard --install-daemon
 ```
 
-依照 Onboarding 提示設定您的模型服務供應商 (Anthropic, OpenAI 等)。
+Follow the onboarding prompts to set up your model provider (Anthropic, OpenAI, etc.).
 
 ---
 
-## 7) 配置頻道
+## 7) Configure channels
 
-編輯設定檔：
+Edit the config file:
 
 ```bash
 nano ~/.openclaw/openclaw.json
 ```
 
-新增您的頻道：
+Add your channels:
 
 ```json
 {
@@ -165,7 +169,7 @@ nano ~/.openclaw/openclaw.json
 }
 ```
 
-接著登入 WhatsApp (掃瞄 QR Code)：
+Then login to WhatsApp (scan QR):
 
 ```bash
 openclaw channels login
@@ -173,18 +177,18 @@ openclaw channels login
 
 ---
 
-## 8) 無顯示模式運行 VM
+## 8) Run the VM headlessly
 
-停止 VM 並以無顯示模式重啟：
+Stop the VM and restart without display:
 
 ```bash
 lume stop openclaw
 lume run openclaw --no-display
 ```
 
-VM 會在背景運行。OpenClaw 的守護進程 (daemon) 會保持 Gateway 運行。
+The VM runs in the background. OpenClaw's daemon keeps the gateway running.
 
-檢查狀態：
+To check status:
 
 ```bash
 ssh youruser@192.168.64.X "openclaw status"
@@ -192,19 +196,18 @@ ssh youruser@192.168.64.X "openclaw status"
 
 ---
 
-## 加分項目：iMessage 整合
+## Bonus: iMessage integration
 
-這是在 macOS 上運行的殺手級功能。使用 [BlueBubbles](https://bluebubbles.app) 將 iMessage 加入 OpenClaw。
+This is the killer feature of running on macOS. Use [BlueBubbles](https://bluebubbles.app) to add iMessage to OpenClaw.
 
-在 VM 內部：
+Inside the VM:
 
-1. 從 bluebubbles.app 下載 BlueBubbles
-2. 使用您的 Apple ID 登入
-3. 啟用 Web API 並設定密碼
-4. 將 BlueBubbles webhook 指向您的 Gateway
-   （範例：`https://your-gateway-host:3000/bluebubbles-webhook?password=<password>`）
+1. Download BlueBubbles from bluebubbles.app
+2. Sign in with your Apple ID
+3. Enable the Web API and set a password
+4. Point BlueBubbles webhooks at your gateway (example: `https://your-gateway-host:3000/bluebubbles-webhook?password=<password>`)
 
-加入至您的 OpenClaw 配置：
+Add to your OpenClaw config:
 
 ```json
 {
@@ -218,22 +221,22 @@ ssh youruser@192.168.64.X "openclaw status"
 }
 ```
 
-重新啟動 Gateway。現在您的 Agent 可以發送與接收 iMessage。
+Restart the gateway. Now your agent can send and receive iMessages.
 
-詳細設定：[BlueBubbles channel](/channels/bluebubbles)
+Full setup details: [BlueBubbles channel](/zh-Hant/channels/bluebubbles)
 
 ---
 
-## 儲存黃金映像檔 (Golden Image)
+## Save a golden image
 
-在進一步客製化之前，為您的乾淨狀態建立快照：
+Before customizing further, snapshot your clean state:
 
 ```bash
 lume stop openclaw
 lume clone openclaw openclaw-golden
 ```
 
-隨時重置：
+Reset anytime:
 
 ```bash
 lume stop openclaw && lume delete openclaw
@@ -243,35 +246,36 @@ lume run openclaw --no-display
 
 ---
 
-## 全天候運行 (24/7)
+## Running 24/7
 
-透過以下方式保持 VM 運行：
-- 保持 Mac 接上電源
-- 在 System Settings → Energy Saver 中停用睡眠
-- 需要時使用 `caffeinate`
+Keep the VM running by:
 
-若需真正全天候運行，建議使用專用的 Mac mini 或小型 VPS。參閱 [VPS hosting](/vps)。
+- Keeping your Mac plugged in
+- Disabling sleep in System Settings → Energy Saver
+- Using `caffeinate` if needed
 
----
-
-## 故障排除
-
-| 問題 | 解決方案 |
-|---------|----------|
-| 無法 SSH 進入 VM | 檢查 VM 的 System Settings 中是否啟用 "Remote Login" |
-| 未顯示 VM IP | 等待 VM 完全開機，再次執行 `lume get openclaw` |
-| 找不到 Lume 指令 | 將 `~/.local/bin` 加入您的 PATH |
-| WhatsApp QR 無法掃描 | 執行 `openclaw channels login` 時確保您是登入到 VM（非主機） |
+For true always-on, consider a dedicated Mac mini or a small VPS. See [VPS hosting](/zh-Hant/vps).
 
 ---
 
-## 相關文件
+## Troubleshooting
 
-- [VPS hosting](/vps)
-- [Nodes](/nodes)
-- [Gateway remote](/gateway/remote)
-- [BlueBubbles channel](/channels/bluebubbles)
+| Problem                  | Solution                                                                           |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| Can't SSH into VM        | Check "Remote Login" is enabled in VM's System Settings                            |
+| VM IP not showing        | Wait for VM to fully boot, run `lume get openclaw` again                           |
+| Lume command not found   | Add `~/.local/bin` to your PATH                                                    |
+| WhatsApp QR not scanning | Ensure you're logged into the VM (not host) when running `openclaw channels login` |
+
+---
+
+## Related docs
+
+- [VPS hosting](/zh-Hant/vps)
+- [Nodes](/zh-Hant/nodes)
+- [Gateway remote](/zh-Hant/gateway/remote)
+- [BlueBubbles channel](/zh-Hant/channels/bluebubbles)
 - [Lume Quickstart](https://cua.ai/docs/lume/guide/getting-started/quickstart)
 - [Lume CLI Reference](https://cua.ai/docs/lume/reference/cli-reference)
-- [Unattended VM Setup](https://cua.ai/docs/lume/guide/fundamentals/unattended-setup) (進階)
-- [Docker Sandboxing](/install/docker) (替代的隔離方案)
+- [Unattended VM Setup](https://cua.ai/docs/lume/guide/fundamentals/unattended-setup) (advanced)
+- [Docker Sandboxing](/zh-Hant/install/docker) (alternative isolation approach)

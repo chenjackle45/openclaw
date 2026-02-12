@@ -1,5 +1,5 @@
 ---
-title: "Heartbeat"
+title: "Heartbeat（Heartbeat 心跳偵測）"
 summary: "Heartbeat 輪詢訊息與通知規則"
 read_when:
   - 調整 Heartbeat 節奏或訊息時
@@ -8,7 +8,7 @@ read_when:
 
 # Heartbeat (Gateway)
 
-> **Heartbeat vs Cron?** 請參閱 [Cron vs Heartbeat](/automation/cron-vs-heartbeat) 以取得使用時機指引。
+> **Heartbeat vs Cron?** 請參閱 [Cron vs Heartbeat](/zh-Hant/automation/cron-vs-heartbeat) 以取得使用時機指引。
 
 Heartbeat 在 Main Session 中執行 **週期性的 Agent Turns**，讓模型能呈現任何需要注意的事項，而不會發送垃圾訊息給您。
 
@@ -31,9 +31,9 @@ Heartbeat 在 Main Session 中執行 **週期性的 Agent Turns**，讓模型能
         target: "last",
         // activeHours: { start: "08:00", end: "24:00" },
         // includeReasoning: true, // optional: send separate `Reasoning:` message too
-      }
-    }
-  }
+      },
+    },
+  },
 }
 ```
 
@@ -48,8 +48,9 @@ Heartbeat 在 Main Session 中執行 **週期性的 Agent Turns**，讓模型能
 ## Heartbeat Prompt 的用途
 
 預設 Prompt 刻意設計得較為廣泛：
+
 - **背景任務**: “Consider outstanding tasks” 輕推 Agent 檢閱後續 (Inbox, Calendar, Reminders, Queued work) 並呈現任何緊急事項。
-- **人類簽到**: “Checkup sometimes on your human during day time” 輕推偶爾的輕量級 “需要幫忙嗎?” 訊息，但透過使用您設定的本地時區避免夜間干擾 (參閱 [/concepts/timezone](/concepts/timezone))。
+- **人類簽到**: “Checkup sometimes on your human during day time” 輕推偶爾的輕量級 “需要幫忙嗎?” 訊息，但透過使用您設定的本地時區避免夜間干擾 (參閱 [/concepts/timezone](/zh-Hant/concepts/timezone))。
 
 若您希望 Heartbeat 做非常具體的事 (例如 “檢查 Gmail PubSub 統計” 或 “驗證 Gateway 健康”)，將 `agents.defaults.heartbeat.prompt` (或 `agents.list[].heartbeat.prompt`) 設定為自訂 Body (逐字發送)。
 
@@ -69,16 +70,16 @@ Heartbeat 在 Main Session 中執行 **週期性的 Agent Turns**，讓模型能
   agents: {
     defaults: {
       heartbeat: {
-        every: "30m",           // default: 30m (0m disables)
+        every: "30m", // default: 30m (0m disables)
         model: "anthropic/claude-opus-4-5",
         includeReasoning: false, // default: false (deliver separate Reasoning: message when available)
-        target: "last",         // last | none | <channel id> (core or plugin, e.g. "bluebubbles")
-        to: "+15551234567",     // optional channel-specific override
+        target: "last", // last | none | <channel id> (core or plugin, e.g. "bluebubbles")
+        to: "+15551234567", // optional channel-specific override
         prompt: "Read HEARTBEAT.md if it exists (workspace context). Follow it strictly. Do not infer or repeat old tasks from prior chats. If nothing needs attention, reply HEARTBEAT_OK.",
-        ackMaxChars: 300         // max chars allowed after HEARTBEAT_OK
-      }
-    }
-  }
+        ackMaxChars: 300, // max chars allowed after HEARTBEAT_OK
+      },
+    },
+  },
 }
 ```
 
@@ -102,8 +103,8 @@ Heartbeat 在 Main Session 中執行 **週期性的 Agent Turns**，讓模型能
     defaults: {
       heartbeat: {
         every: "30m",
-        target: "last"
-      }
+        target: "last",
+      },
     },
     list: [
       { id: "main", default: true },
@@ -113,11 +114,11 @@ Heartbeat 在 Main Session 中執行 **週期性的 Agent Turns**，讓模型能
           every: "1h",
           target: "whatsapp",
           to: "+15551234567",
-          prompt: "Read HEARTBEAT.md if it exists (workspace context). Follow it strictly. Do not infer or repeat old tasks from prior chats. If nothing needs attention, reply HEARTBEAT_OK."
-        }
-      }
-    ]
-  }
+          prompt: "Read HEARTBEAT.md if it exists (workspace context). Follow it strictly. Do not infer or repeat old tasks from prior chats. If nothing needs attention, reply HEARTBEAT_OK.",
+        },
+      },
+    ],
+  },
 }
 ```
 
@@ -128,8 +129,8 @@ Heartbeat 在 Main Session 中執行 **週期性的 Agent Turns**，讓模型能
 - `includeReasoning`: 啟用時，若可用亦傳送分開的 `Reasoning:` 訊息 (與 `/reasoning on` 形狀相同)。
 - `session`: Heartbeat 執行的選用 Session Key。
   - `main` (預設): Agent Main Session。
-  - 顯式 Session Key (從 `openclaw sessions --json` 或 [sessions CLI](/cli/sessions) 複製)。
-  - Session Key 格式: 參閱 [Sessions](/concepts/session) 與 [Groups](/concepts/groups)。
+  - 顯式 Session Key (從 `openclaw sessions --json` 或 [sessions CLI](/zh-Hant/cli/sessions) 複製)。
+  - Session Key 格式: 參閱 [Sessions](/zh-Hant/concepts/session) 與 [Groups](/zh-Hant/concepts/groups)。
 - `target`:
   - `last` (預設): 傳送至該 Session 最後使用的外部 Channel。
   - 顯式 Channel: `whatsapp` / `telegram` / `discord` / `googlechat` / `slack` / `msteams` / `signal` / `imessage`。
@@ -155,12 +156,12 @@ Heartbeat 在 Main Session 中執行 **週期性的 Agent Turns**，讓模型能
 channels:
   defaults:
     heartbeat:
-      showOk: false      # 隱藏 HEARTBEAT_OK (預設)
-      showAlerts: true   # 顯示警報訊息 (預設)
+      showOk: false # 隱藏 HEARTBEAT_OK (預設)
+      showAlerts: true # 顯示警報訊息 (預設)
       useIndicator: true # 發出 Indicator Events (預設)
   telegram:
     heartbeat:
-      showOk: true       # 在 Telegram 上顯示 OK 確認
+      showOk: true # 在 Telegram 上顯示 OK 確認
   whatsapp:
     accounts:
       work:
@@ -201,12 +202,12 @@ channels:
 
 ### 常見模式
 
-| 目標 | Config |
-| --- | --- |
-| 預設行為 (OKs 靜音, Alerts 開啟) | *(無需 Config)* |
-| 完全靜音 (無訊息, 無 Indicator) | `channels.defaults.heartbeat: { showOk: false, showAlerts: false, useIndicator: false }` |
-| 僅 Indicator (無訊息) | `channels.defaults.heartbeat: { showOk: false, showAlerts: false, useIndicator: true }` |
-| 僅在一個 Channel 顯示 OKs | `channels.telegram.heartbeat: { showOk: true }` |
+| 目標                             | Config                                                                                   |
+| -------------------------------- | ---------------------------------------------------------------------------------------- |
+| 預設行為 (OKs 靜音, Alerts 開啟) | _(無需 Config)_                                                                          |
+| 完全靜音 (無訊息, 無 Indicator)  | `channels.defaults.heartbeat: { showOk: false, showAlerts: false, useIndicator: false }` |
+| 僅 Indicator (無訊息)            | `channels.defaults.heartbeat: { showOk: false, showAlerts: false, useIndicator: true }`  |
+| 僅在一個 Channel 顯示 OKs        | `channels.telegram.heartbeat: { showOk: true }`                                          |
 
 ## HEARTBEAT.md (選用)
 
@@ -223,7 +224,7 @@ channels:
 
 - Quick scan: anything urgent in inboxes?
 - If it’s daytime, do a lightweight check-in if nothing else is pending.
-- If a task is blocked, write down *what is missing* and ask Peter next time.
+- If a task is blocked, write down _what is missing_ and ask Peter next time.
 ```
 
 ### Agent 可以更新 HEARTBEAT.md 嗎？
@@ -231,6 +232,7 @@ channels:
 可以 — 若您要求它。
 
 `HEARTBEAT.md` 只是 Agent Workspace 中的普通檔案，所以您可以 (在一般聊天中) 告訴 Agent 類似：
+
 - “更新 `HEARTBEAT.md` 以新增每日行事曆檢查。”
 - “重寫 `HEARTBEAT.md` 讓它更短並專注於 Inbox Follow-ups。”
 
@@ -255,6 +257,7 @@ openclaw system event --text "Check for urgent follow-ups" --mode now
 預設情況下，Heartbeats 僅傳送最終的 “Answer” Payload。
 
 若您想要透明度，啟用：
+
 - `agents.defaults.heartbeat.includeReasoning: true`
 
 啟用時，Heartbeats 亦會傳送以 `Reasoning:` 為前綴的分開訊息 (與 `/reasoning on` 形狀相同)。當 Agent 管理多個 Sessions/Codexes 且您想看它為何決定 Ping 您時很有用 — 但這也可能洩漏比您想要的更多內部細節。建議在群組聊天中保持關閉。

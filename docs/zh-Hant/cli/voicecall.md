@@ -1,5 +1,5 @@
 ---
-title: "voicecall(語音通話外掛)"
+title: "voicecall（語音通話外掛）"
 summary: "`openclaw voicecall` CLI 參考（語音通話外掛指令介面）"
 read_when:
   - 使用語音通話外掛並需要 CLI 入口點資訊時
@@ -11,7 +11,8 @@ read_when:
 `voicecall` 是由外掛提供的指令。僅在安裝並啟用語音通話 (voice-call) 外掛後才會顯示。
 
 相關資訊：
-- 語音通話外掛主頁：[語音通話 (Voice Call)](/plugins/voice-call)
+
+- 語音通話外掛主頁：[語音通話 (Voice Call)](/zh-Hant/plugins/voice-call)
 
 ## 常見指令
 

@@ -1,5 +1,5 @@
 ---
-title: "index(指令總覽)"
+title: "CLI Reference（指令總覽）"
 summary: "OpenClaw CLI 參考手冊，包含 `openclaw` 指令、子指令及選項說明"
 read_when:
   - 新增或修改 CLI 指令或選項時
@@ -12,45 +12,45 @@ read_when:
 
 ## 指令頁面
 
-- [`setup`](/cli/setup) (環境初始化)
-- [`onboard`](/cli/onboard) (新手引導)
-- [`configure`](/cli/configure) (互動式配置)
-- [`config`](/cli/config) (配置管理)
-- [`doctor`](/cli/doctor) (健康檢查與修復)
-- [`dashboard`](/cli/dashboard) (控制中心)
-- [`reset`](/cli/reset) (重設狀態)
-- [`uninstall`](/cli/uninstall) (解除安裝)
-- [`update`](/cli/update) (系統更新)
-- [`message`](/cli/message) (訊息操作)
-- [`agent`](/cli/agent) (直連 Agent)
-- [`agents`](/cli/agents) (Agent 管理)
-- [`acp`](/cli/acp) (ACP 橋接)
-- [`status`](/cli/status) (狀態盤查)
-- [`health`](/cli/health) (健康度)
-- [`sessions`](/cli/sessions) (會話管理)
-- [`gateway`](/cli/gateway) (Gateway 服務)
-- [`logs`](/cli/logs) (日誌查看)
-- [`system`](/cli/system) (系統事件)
-- [`models`](/cli/models) (模型配置)
-- [`memory`](/cli/memory) (記憶體搜尋)
-- [`nodes`](/cli/nodes) (節點列表)
-- [`devices`](/cli/devices) (裝置列表)
-- [`node`](/cli/node) (節點操作)
-- [`approvals`](/cli/approvals) (核准管理)
-- [`sandbox`](/cli/sandbox) (沙盒管理)
-- [`tui`](/cli/tui) (終端機介面)
-- [`browser`](/cli/browser) (瀏覽器控制)
-- [`cron`](/cli/cron) (排程管理)
-- [`dns`](/cli/dns) (DNS 配置)
-- [`docs`](/cli/docs) (文件閱讀)
-- [`hooks`](/cli/hooks) (鉤子管理)
-- [`webhooks`](/cli/webhooks) (Webhooks 管理)
-- [`pairing`](/cli/pairing) (裝置配對)
-- [`plugins`](/cli/plugins) (外掛管理)
-- [`channels`](/cli/channels) (聊天頻道)
-- [`security`](/cli/security) (安全性審查)
-- [`skills`](/cli/skills) (技能管理)
-- [`voicecall`](/cli/voicecall) (語音通話外掛)
+- [`setup`](/zh-Hant/cli/setup) (環境初始化)
+- [`onboard`](/zh-Hant/cli/onboard) (新手引導)
+- [`configure`](/zh-Hant/cli/configure) (互動式配置)
+- [`config`](/zh-Hant/cli/config) (配置管理)
+- [`doctor`](/zh-Hant/cli/doctor) (健康檢查與修復)
+- [`dashboard`](/zh-Hant/cli/dashboard) (控制中心)
+- [`reset`](/zh-Hant/cli/reset) (重設狀態)
+- [`uninstall`](/zh-Hant/cli/uninstall) (解除安裝)
+- [`update`](/zh-Hant/cli/update) (系統更新)
+- [`message`](/zh-Hant/cli/message) (訊息操作)
+- [`agent`](/zh-Hant/cli/agent) (直連 Agent)
+- [`agents`](/zh-Hant/cli/agents) (Agent 管理)
+- [`acp`](/zh-Hant/cli/acp) (ACP 橋接)
+- [`status`](/zh-Hant/cli/status) (狀態盤查)
+- [`health`](/zh-Hant/cli/health) (健康度)
+- [`sessions`](/zh-Hant/cli/sessions) (會話管理)
+- [`gateway`](/zh-Hant/cli/gateway) (Gateway 服務)
+- [`logs`](/zh-Hant/cli/logs) (日誌查看)
+- [`system`](/zh-Hant/cli/system) (系統事件)
+- [`models`](/zh-Hant/cli/models) (模型配置)
+- [`memory`](/zh-Hant/cli/memory) (記憶體搜尋)
+- [`nodes`](/zh-Hant/cli/nodes) (節點列表)
+- [`devices`](/zh-Hant/cli/devices) (裝置列表)
+- [`node`](/zh-Hant/cli/node) (節點操作)
+- [`approvals`](/zh-Hant/cli/approvals) (核准管理)
+- [`sandbox`](/zh-Hant/cli/sandbox) (沙盒管理)
+- [`tui`](/zh-Hant/cli/tui) (終端機介面)
+- [`browser`](/zh-Hant/cli/browser) (瀏覽器控制)
+- [`cron`](/zh-Hant/cli/cron) (排程管理)
+- [`dns`](/zh-Hant/cli/dns) (DNS 配置)
+- [`docs`](/zh-Hant/cli/docs) (文件閱讀)
+- [`hooks`](/zh-Hant/cli/hooks) (鉤子管理)
+- [`webhooks`](/zh-Hant/cli/webhooks) (Webhooks 管理)
+- [`pairing`](/zh-Hant/cli/pairing) (裝置配對)
+- [`plugins`](/zh-Hant/cli/plugins) (外掛管理)
+- [`channels`](/zh-Hant/cli/channels) (聊天頻道)
+- [`security`](/zh-Hant/cli/security) (安全性審查)
+- [`skills`](/zh-Hant/cli/skills) (技能管理)
+- [`voicecall`](/zh-Hant/cli/voicecall) (語音通話外掛)
 
 ## 全域旗標 (Global flags)
 
@@ -161,7 +161,7 @@ openclaw [--dev] [--profile <名稱>] <指令>
 - `openclaw plugins enable <id>` / `disable <id>` —— 切換 `plugins.entries.<id>.enabled`。
 - `openclaw plugins doctor` —— 回報外掛載入錯誤。
 
-大多數外掛變更後需要重啟 Gateway。詳見 [/plugin](/plugin)。
+大多數外掛變更後需要重啟 Gateway。詳見 [/plugin](/zh-Hant/plugin)。
 
 ## 記憶體 (Memory)
 
@@ -173,7 +173,7 @@ openclaw [--dev] [--profile <名稱>] <指令>
 
 ## 聊天斜線指令
 
-聊天訊息支援 `/...` 指令形式（文字及原生形式）。詳見 [/tools/slash-commands](/tools/slash-commands)。
+聊天訊息支援 `/...` 指令形式（文字及原生形式）。詳見 [/tools/slash-commands](/zh-Hant/tools/slash-commands)。
 
 重點包括：
 
@@ -313,7 +313,7 @@ openclaw [--dev] [--profile <名稱>] <指令>
 - `--lines <n>` (預設 `200`)
 - `--json`
 
-詳見 [/concepts/oauth](/concepts/oauth)
+詳見 [/concepts/oauth](/zh-Hant/concepts/oauth)
 
 範例：
 
@@ -354,7 +354,7 @@ openclaw status --deep
 
 ### `webhooks gmail`
 
-Gmail Pub/Sub 鉤子設定與執行器。詳見 [/automation/gmail-pubsub](/automation/gmail-pubsub)。
+Gmail Pub/Sub 鉤子設定與執行器。詳見 [/automation/gmail-pubsub](/zh-Hant/automation/gmail-pubsub)。
 
 子指令：
 
@@ -363,7 +363,7 @@ Gmail Pub/Sub 鉤子設定與執行器。詳見 [/automation/gmail-pubsub](/auto
 
 ### `dns setup`
 
-廣域發現 DNS 助手（CoreDNS + Tailscale）。詳見 [/gateway/discovery](/gateway/discovery)。
+廣域發現 DNS 助手（CoreDNS + Tailscale）。詳見 [/gateway/discovery](/zh-Hant/gateway/discovery)。
 
 選項：
 
@@ -375,7 +375,7 @@ Gmail Pub/Sub 鉤子設定與執行器。詳見 [/automation/gmail-pubsub](/auto
 
 統一的出站訊息 + 頻道操作。
 
-詳見：[/cli/message](/cli/message)
+詳見：[/cli/message](/zh-Hant/cli/message)
 
 子指令：
 
@@ -455,7 +455,7 @@ Gmail Pub/Sub 鉤子設定與執行器。詳見 [/automation/gmail-pubsub](/auto
 
 執行將 IDE 連接至 Gateway 的 ACP 橋接器。
 
-詳見 [`acp`](/cli/acp) 的完整選項與範例。
+詳見 [`acp`](/zh-Hant/cli/acp) 的完整選項與範例。
 
 ### `status`
 
@@ -490,7 +490,7 @@ Gmail Pub/Sub 鉤子設定與執行器。詳見 [/automation/gmail-pubsub](/auto
 - 資料直接來自供應商用量端點（無估計）。
 - 供應商：Anthropic、GitHub Copilot、OpenAI Codex OAuth，加上啟用相關供應商外掛時的 Gemini CLI/Antigravity。
 - 若無匹配認證，用量將隱藏。
-- 詳見 [用量追蹤](/concepts/usage-tracking)。
+- 詳見 [用量追蹤](/zh-Hant/concepts/usage-tracking)。
 
 ### `health`
 
@@ -641,7 +641,7 @@ Gateway CLI 助手（RPC 子指令使用 `--url`、`--token`、`--password`、`-
 
 ## 模型
 
-詳見 [/concepts/models](/concepts/models) 關於退回行為與掃描策略。
+詳見 [/concepts/models](/zh-Hant/concepts/models) 關於退回行為與掃描策略。
 
 偏好的 Anthropic 認證（setup-token）：
 
@@ -790,7 +790,7 @@ openclaw models status
 
 ## 排程 (Cron)
 
-管理排程工作（Gateway RPC）。詳見 [/automation/cron-jobs](/automation/cron-jobs)。
+管理排程工作（Gateway RPC）。詳見 [/automation/cron-jobs](/zh-Hant/automation/cron-jobs)。
 
 子指令：
 
@@ -808,7 +808,7 @@ openclaw models status
 
 ## 節點主機
 
-`node` 執行**無頭節點主機**或將其作為背景服務管理。詳見 [`openclaw node`](/cli/node)。
+`node` 執行**無頭節點主機**或將其作為背景服務管理。詳見 [`openclaw node`](/zh-Hant/cli/node)。
 
 子指令：
 
@@ -821,7 +821,7 @@ openclaw models status
 
 ## 節點
 
-`nodes` 與 Gateway 通訊並針對配對節點。詳見 [/nodes](/nodes)。
+`nodes` 與 Gateway 通訊並針對配對節點。詳見 [/nodes](/zh-Hant/nodes)。
 
 常見選項：
 
@@ -863,7 +863,7 @@ Canvas + 螢幕：
 
 ## 瀏覽器
 
-瀏覽器控制 CLI（專用 Chrome/Brave/Edge/Chromium）。詳見 [`openclaw browser`](/cli/browser) 與 [瀏覽器工具](/tools/browser)。
+瀏覽器控制 CLI（專用 Chrome/Brave/Edge/Chromium）。詳見 [`openclaw browser`](/zh-Hant/cli/browser) 與 [瀏覽器工具](/zh-Hant/tools/browser)。
 
 常見選項：
 

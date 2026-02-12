@@ -1,14 +1,16 @@
 ---
-title: "Streaming(串流與分塊)"
+title: "Streaming and Chunking（串流與分塊）"
 summary: "串流 + 分塊行為（區塊回覆、草稿串流、限制）"
 read_when:
   - 解釋串流或分塊在頻道上如何運作
   - 更改區塊串流或頻道分塊行為
   - 除錯重複/過早的區塊回覆或草稿串流
 ---
+
 # Streaming + chunking（串流 + 分塊）
 
 OpenClaw 有兩個獨立的「串流」層：
+
 - **區塊串流（頻道）：** 在助手寫入時發出完成的**區塊**。這些是正常的頻道訊息（不是 token 增量）。
 - **類 Token 串流（僅 Telegram）：** 在生成時用部分文字更新**草稿氣泡**；最終訊息在結束時發送。
 
@@ -27,12 +29,15 @@ Model output
             └─ chunker flushes at message_end
                    └─ channel send (block replies)
 ```
+
 圖例：
+
 - `text_delta/events`：模型串流事件（對於非串流模型可能稀疏）。
 - `chunker`：`EmbeddedBlockChunker` 套用最小/最大邊界 + 斷開偏好。
 - `channel send`：實際出站訊息（區塊回覆）。
 
 **控制：**
+
 - `agents.defaults.blockStreamingDefault`：`"on"`/`"off"`（預設 off）。
 - 頻道覆寫：`*.blockStreaming`（和每帳戶變體）強制每頻道 `"on"`/`"off"`。
 - `agents.defaults.blockStreamingBreak`：`"text_end"` 或 `"message_end"`。
@@ -43,6 +48,7 @@ Model output
 - Discord 軟上限：`channels.discord.maxLinesPerMessage`（預設 17）分割高回覆以避免 UI 裁剪。
 
 **邊界語意：**
+
 - `text_end`：chunker 發出後立即串流區塊；在每個 `text_end` 處刷新。
 - `message_end`：等到助手訊息完成，然後刷新緩衝輸出。
 
@@ -51,6 +57,7 @@ Model output
 ## 分塊演算法（低/高邊界）
 
 區塊分塊由 `EmbeddedBlockChunker` 實現：
+
 - **低邊界：** 在緩衝區 >= `minChars` 之前不發出（除非強制）。
 - **高邊界：** 偏好在 `maxChars` 之前分割；如果強制，在 `maxChars` 處分割。
 - **斷開偏好：** `paragraph` → `newline` → `sentence` → `whitespace` → 硬斷開。
@@ -80,6 +87,7 @@ Model output
 ## 「串流塊或全部」
 
 這映射到：
+
 - **串流塊：** `blockStreamingDefault: "on"` + `blockStreamingBreak: "text_end"`（邊生成邊發）。非 Telegram 頻道還需要 `*.blockStreaming: true`。
 - **最後全部串流：** `blockStreamingBreak: "message_end"`（刷新一次，如果很長可能多個塊）。
 - **無區塊串流：** `blockStreamingDefault: "off"`（僅最終回覆）。
@@ -91,6 +99,7 @@ Model output
 ## Telegram 草稿串流（類 Token）
 
 Telegram 是唯一有草稿串流的頻道：
+
 - 在**帶主題的私人聊天**中使用 Bot API `sendMessageDraft`。
 - `channels.telegram.streamMode: "partial" | "block" | "off"`。
   - `partial`：使用最新串流文字更新草稿。
@@ -110,6 +119,8 @@ Telegram (private + topics)
        └─ streamMode=block   → chunker updates draft
   └─ final reply → normal message
 ```
+
 圖例：
+
 - `sendMessageDraft`：Telegram 草稿氣泡（不是真正的訊息）。
 - `final reply`：正常的 Telegram 訊息發送。

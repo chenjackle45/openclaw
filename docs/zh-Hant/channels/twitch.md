@@ -25,7 +25,7 @@ openclaw plugins install @openclaw/twitch
 openclaw plugins install ./extensions/twitch
 ```
 
-詳情：[插件](/plugin)
+詳情：[插件](/zh-Hant/plugin)
 
 ## 快速設定（初學者）
 
@@ -50,11 +50,11 @@ openclaw plugins install ./extensions/twitch
   channels: {
     twitch: {
       enabled: true,
-      username: "openclaw",        // 機器人的 Twitch 帳號
+      username: "openclaw", // 機器人的 Twitch 帳號
       accessToken: "oauth:abc123...",
       clientId: "xyz789...",
-      channel: "vevisk",           // 要加入的 Twitch 頻道
-      allowFrom: ["123456789"],    // （推薦）您的 Twitch 使用者 ID
+      channel: "vevisk", // 要加入的 Twitch 頻道
+      allowFrom: ["123456789"], // （推薦）您的 Twitch 使用者 ID
     },
   },
 }
@@ -111,7 +111,7 @@ OPENCLAW_TWITCH_ACCESS_TOKEN=oauth:abc123...
 {
   channels: {
     twitch: {
-      allowFrom: ["123456789"],    // （推薦）僅您的 Twitch 使用者 ID
+      allowFrom: ["123456789"], // （推薦）僅您的 Twitch 使用者 ID
     },
   },
 }
@@ -146,7 +146,7 @@ OPENCLAW_TWITCH_ACCESS_TOKEN=oauth:abc123...
 
 ## 多帳戶支援
 
-使用 `channels.twitch.accounts` 與每帳戶令牌。請參閱 [`gateway/configuration`](/gateway/configuration) 了解共享模式。
+使用 `channels.twitch.accounts` 與每帳戶令牌。請參閱 [`gateway/configuration`](/zh-Hant/gateway/configuration) 了解共享模式。
 
 範例（一個機器人帳號在兩個頻道）：
 

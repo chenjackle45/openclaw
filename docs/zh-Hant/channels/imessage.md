@@ -187,7 +187,7 @@ exec ssh -T bot@mac-mini.tailnet-1234.ts.net imsg "$@"
 - 使用 SSH 金鑰使 `ssh bot@mac-mini.tailnet-1234.ts.net` 無需提示即可運作。
 - `remoteHost` 應與 SSH 目標相符以便 SCP 可以提取附件。
 
-多帳戶支援：使用 `channels.imessage.accounts` 進行每帳戶設定和選用的 `name`。見 [`gateway/configuration`](/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts) 以了解共享模式。不要提交 `~/.openclaw/openclaw.json`（它通常包含令牌）。
+多帳戶支援：使用 `channels.imessage.accounts` 進行每帳戶設定和選用的 `name`。見 [`gateway/configuration`](/zh-Hant/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts) 以了解共享模式。不要提交 `~/.openclaw/openclaw.json`（它通常包含令牌）。
 
 ## 存取控制（DM + 群組）
 
@@ -198,7 +198,7 @@ DM：
 - 透過以下方式批准：
   - `openclaw pairing list imessage`
   - `openclaw pairing approve imessage <CODE>`
-- 配對是 iMessage DM 的預設令牌交換。詳情：[配對](/start/pairing)
+- 配對是 iMessage DM 的預設令牌交換。詳情：[配對](/zh-Hant/start/pairing)
 
 群組：
 
@@ -237,7 +237,7 @@ DM：
 }
 ```
 
-當您想要為特定討論串使用隔離的個性/模型時很有用（見[多代理路由](/concepts/multi-agent)）。對於檔案系統隔離，見[沙盒](/gateway/sandboxing)。
+當您想要為特定討論串使用隔離的個性/模型時很有用（見[多代理路由](/zh-Hant/concepts/multi-agent)）。對於檔案系統隔離，見[沙盒](/zh-Hant/gateway/sandboxing)。
 
 ## 媒體 + 限制
 
@@ -267,7 +267,7 @@ imsg chats --limit 20
 
 ## 設定參考 (iMessage)
 
-完整設定：[設定](/gateway/configuration)
+完整設定：[設定](/zh-Hant/gateway/configuration)
 
 提供商選項：
 

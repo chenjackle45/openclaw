@@ -1,11 +1,12 @@
 ---
-title: "Markdown formatting(Markdown 格式化)"
+title: "Markdown Formatting（Markdown 格式化）"
 summary: "用於出站頻道的 Markdown 格式化管線"
 read_when:
   - 您正在更改出站頻道的 Markdown 格式化或分塊方式
   - 您正在新增頻道格式化程式或樣式映射
   - 您正在除錯跨頻道的格式化衰退問題
 ---
+
 # Markdown formatting（Markdown 格式化）
 
 OpenClaw 透過在渲染頻道特定輸出之前，將其轉換為共享的中間表示 (Intermediate Representation, IR) 來格式化出站 Markdown。IR 保持源文字完整，同時攜帶樣式/連結範圍，以便分塊（chunking）和渲染在所有頻道中保持一致。
@@ -43,12 +44,8 @@ IR (示意圖)：
 ```json
 {
   "text": "Hello world — see docs.",
-  "styles": [
-    { "start": 6, "end": 11, "style": "bold" }
-  ],
-  "links": [
-    { "start": 19, "end": 23, "href": "https://docs.openclaw.ai" }
-  ]
+  "styles": [{ "start": 6, "end": 11, "style": "bold" }],
+  "links": [{ "start": 19, "end": 23, "href": "https://docs.openclaw.ai" }]
 }
 ```
 
@@ -85,7 +82,7 @@ channels:
 - 列表前綴和引用區塊前綴是 IR 文字的一部分，因此分塊不會從前綴中間拆分。
 - 行內樣式（粗體/斜體/刪除線/行內程式碼/雷擊隱藏）絕不會跨分塊拆分；渲染器會在每個分塊內重新開啟樣式。
 
-如果您需要更多關於跨頻道分塊行為的資訊，請參見 [Streaming + chunking（串流與分塊）](/concepts/streaming)。
+如果您需要更多關於跨頻道分塊行為的資訊，請參見 [Streaming + chunking（串流與分塊）](/zh-Hant/concepts/streaming)。
 
 ## 連結策略
 

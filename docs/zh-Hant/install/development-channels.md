@@ -1,5 +1,5 @@
 ---
-title: "Development Channels"
+title: "Development Channels（開發頻道）"
 summary: "穩定版、測試版與開發版：語義、切換與標籤"
 read_when:
   - 您想在穩定版/測試版/開發版間切換

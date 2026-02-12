@@ -1,38 +1,40 @@
 ---
-summary: "Android 應用程式 (Node): 連線操作手冊 + Canvas/聊天/相機功能"
+summary: "Android 應用程式（節點）：連接 runbook + Canvas/Chat/Camera"
 read_when:
-  - 配對或重新連接 Android 節點時
-  - 除錯 Android Gateway 探索或認證時
-  - 驗證跨客戶端的聊天記錄一致性時
-title: "Android 應用程式"
+  - 配對或重新連接 Android 節點
+  - 偵錯 Android gateway 發現或驗證
+  - 驗證聊天歷史跨客戶端的對等性
+title: "Android App（Android 應用程式）"
 ---
 
-# Android 應用程式 (Node)
+# Android 應用程式（節點）
 
 ## 支援快照
-- 角色：配套節點應用程式（Android 不託管 Gateway）。
-- Gateway 需求：是（需在 macOS、Linux 或 Windows WSL2 上運行）。
-- 安裝：[Getting Started](/start/getting-started) + [Pairing](/gateway/pairing)。
-- Gateway：[Runbook](/gateway) + [Configuration](/gateway/configuration)。
-  - 協定：[Gateway protocol](/gateway/protocol)（節點 + 控制平面）。
+
+- 角色：伴隨節點應用程式（Android 不主持 Gateway）。
+- 需要 Gateway：是（在 macOS、Linux 或 Windows via WSL2 上執行）。
+- 安裝：[開始使用](/zh-Hant/start/getting-started) + [配對](/zh-Hant/gateway/pairing)。
+- Gateway：[Runbook](/zh-Hant/gateway) + [配置](/zh-Hant/gateway/configuration)。
+  - 協定：[Gateway 協定](/zh-Hant/gateway/protocol)（節點 + 控制平面）。
 
 ## 系統控制
-系統控制 (launchd/systemd) 位於 Gateway 主機上。請參閱 [Gateway](/gateway)。
 
-## 連線操作手冊
+系統控制（launchd/systemd）位於 Gateway 主機上。詳見 [Gateway](/zh-Hant/gateway)。
+
+## 連接 Runbook
 
 Android 節點應用程式 ⇄ (mDNS/NSD + WebSocket) ⇄ **Gateway**
 
-Android 直接連線至 Gateway WebSocket（預設 `ws://<host>:18789`）並使用 Gateway 擁有的配對機制。
+Android 直接連接到 Gateway WebSocket（預設 `ws://<host>:18789`）並使用 Gateway 擁有的配對。
 
 ### 先決條件
 
-- 您可以在「主控」機器上運行 Gateway。
-- Android 裝置/模擬器可以連線至 Gateway WebSocket：
-  - 透過 mDNS/NSD 在同一 LAN 下，**或者**
-  - 使用 Wide-Area Bonjour / unicast DNS-SD 在同一 Tailscale tailnet 下（見下文），**或者**
-  - 手動輸入 Gateway 主機/通訊埠（備援方案）
-- 您可以在 Gateway 機器上運行 CLI (`openclaw`)（或透過 SSH）。
+- 你可在「主」機器上執行 Gateway。
+- Android 設備/模擬器可到達 gateway WebSocket：
+  - 相同 LAN 具有 mDNS/NSD，**或**
+  - 使用 Tailscale tailnet 的廣域 Bonjour / unicast DNS-SD（詳見下文），**或**
+  - 手動 gateway 主機/連接埠（退位）
+- 你可在 gateway 機器上（或透過 SSH）執行 CLI（`openclaw`）。
 
 ### 1) 啟動 Gateway
 
@@ -40,103 +42,110 @@ Android 直接連線至 Gateway WebSocket（預設 `ws://<host>:18789`）並使�
 openclaw gateway --port 18789 --verbose
 ```
 
-確認日誌中出現類似訊息：
+在日誌中確認你看到類似的內容：
+
 - `listening on ws://0.0.0.0:18789`
 
-對於僅使用 Tailnet 的設置（推薦用於 維也納 ⇄ 倫敦 遠端連線），將 Gateway 綁定至 Tailnet IP：
+對於僅 tailnet 設定（建議用於 Vienna ⇄ London），將 gateway 綁定到 tailnet IP：
 
-- 在 Gateway 主機上的 `~/.openclaw/openclaw.json` 設定 `gateway.bind: "tailnet"`。
-- 重新啟動 Gateway / macOS 選單列應用程式。
+- 在 gateway 主機上的 `~/.openclaw/openclaw.json` 中設定 `gateway.bind: "tailnet"`。
+- 重啟 Gateway / macOS 功能表欄應用程式。
 
-### 2) 驗證探索 (選用)
+### 2) 驗證發現（選用）
 
-在 Gateway 機器上：
+從 gateway 機器：
 
 ```bash
 dns-sd -B _openclaw-gw._tcp local.
 ```
 
-更多除錯筆記：[Bonjour](/gateway/bonjour)。
+更多偵錯注意：[Bonjour](/zh-Hant/gateway/bonjour)。
 
-#### 透過 unicast DNS-SD 進行 Tailnet (維也納 ⇄ 倫敦) 探索
+#### Tailnet（Vienna ⇄ London）透過 unicast DNS-SD 發現
 
-Android NSD/mDNS 探索無法跨越網路。如果您的 Android 節點與 Gateway 位於不同網路但透過 Tailscale 連接，請改用 Wide-Area Bonjour / unicast DNS-SD：
+Android NSD/mDNS 發現不會跨網路。如果你的 Android 節點和 gateway 位於不同網路但透過 Tailscale 連接，改用廣域 Bonjour / unicast DNS-SD：
 
-1) 在 Gateway 主機上設定 DNS-SD 區域（例如 `openclaw.internal.`）並發佈 `_openclaw-gw._tcp` 記錄。
-2) 為您選擇的網域配置 Tailscale Split DNS，指向該 DNS 伺服器。
+1. 在 gateway 主機上設定 DNS-SD 區域（例 `openclaw.internal.`）並發佈 `_openclaw-gw._tcp` 記錄。
+2. 為選擇的網域配置 Tailscale 拆分 DNS，指向該 DNS 伺服器。
 
-詳細資訊與 CoreDNS 配置範例：[Bonjour](/gateway/bonjour)。
+詳細資訊和 CoreDNS 配置範例：[Bonjour](/zh-Hant/gateway/bonjour)。
 
-### 3) 從 Android 連線
+### 3) 從 Android 連接
 
 在 Android 應用程式中：
 
-- 應用程式透過 **前景服務** (foreground service, 持續通知) 保持 Gateway 連線。
-- 開啟 **Settings** (設定)。
-- 在 **Discovered Gateways** (已探索的 Gateway) 下，選擇您的 Gateway 並點擊 **Connect** (連線)。
-- 若 mDNS 被阻擋，請使用 **Advanced → Manual Gateway** (手動 Gateway，輸入主機 + 通訊埠) 並點擊 **Connect (Manual)** (手動連線)。
+- 應用程式透過**前景服務**（持久通知）保持其 gateway 連接活躍。
+- 開啟**設定**。
+- 在**發現的 Gateways** 下，選擇你的 gateway 並點擊**連接**。
+- 如果 mDNS 被阻擋，使用**進階 → 手動 Gateway**（主機 + 連接埠）並**連接（手動）**。
 
-首次成功配對後，Android 啟動時會自動重新連線：
-- 手動端點（若已啟用），否則
-- 最後一次探索到的 Gateway（盡力而為）。
+第一次成功配對後，Android 在啟動時自動重新連接：
 
-### 4) 核准配對 (CLI)
+- 手動端點（如果啟用），否則
+- 最後發現的 gateway（盡力）。
 
-在 Gateway 機器上：
+### 4) 批准配對 (CLI)
+
+在 gateway 機器上：
 
 ```bash
 openclaw nodes pending
 openclaw nodes approve <requestId>
 ```
 
-配對詳情：[Gateway pairing](/gateway/pairing)。
+配對詳節：[Gateway 配對](/zh-Hant/gateway/pairing)。
 
-### 5) 驗證節點已連線
+### 5) 驗證節點已連接
 
-- 透過 nodes status:
+- 透過節點狀態：
+
   ```bash
   openclaw nodes status
   ```
-- 透過 Gateway:
+
+- 透過 Gateway：
+
   ```bash
   openclaw gateway call node.list --params "{}"
   ```
 
-### 6) 聊天 + 歷史記錄
+### 6) 聊天 + 歷史
 
-Android 節點的聊天頁面使用 Gateway 的 **主要會話金鑰** (`main`)，因此歷史記錄與回覆會與 WebChat 及其他客戶端共享：
+Android 節點的聊天工作表使用 gateway 的**主要會話金鑰**（`main`），所以歷史和回覆與 WebChat 和其他客戶端共用：
 
-- 歷史記錄：`chat.history`
+- 歷史：`chat.history`
 - 傳送：`chat.send`
-- 推送更新（盡力而為）：`chat.subscribe` → `event:"chat"`
+- 推播更新（盡力）：`chat.subscribe` → `event:"chat"`
 
-### 7) Canvas + 相機
+### 7) Canvas + 攝像頭
 
-#### Gateway Canvas Host (推薦用於網頁內容)
+#### Gateway Canvas Host（推薦用於網路內容）
 
-若您希望節點顯示 Agent 可在磁碟上編輯的真實 HTML/CSS/JS，請將節點指向 Gateway Canvas Host。
+如果你想要節點顯示代理可在磁碟上編輯的實際 HTML/CSS/JS，將節點指向 Gateway canvas 主機。
 
-注意：節點使用位於 `canvasHost.port`（預設 `18793`）的獨立 Canvas 主機。
+注意：節點在 `canvasHost.port`（預設 `18793`）上使用獨立 canvas 主機。
 
-1) 在 Gateway 主機上建立 `~/.openclaw/workspace/canvas/index.html`。
+1. 在 gateway 主機上建立 `~/.openclaw/workspace/canvas/index.html`。
 
-2) 將節點導航至該頁面 (LAN)：
+2. 導覽節點到它（LAN）：
 
 ```bash
 openclaw nodes invoke --node "<Android Node>" --command canvas.navigate --params '{"url":"http://<gateway-hostname>.local:18793/__openclaw__/canvas/"}'
 ```
 
-Tailnet (選用)：若兩台裝置皆在 Tailscale 上，請使用 MagicDNS 名稱或 Tailnet IP 取代 `.local`，例如 `http://<gateway-magicdns>:18793/__openclaw__/canvas/`。
+Tailnet（選用）：如果兩個設備都在 Tailscale 上，改用 MagicDNS 名稱或 tailnet IP 而非 `.local`，例 `http://<gateway-magicdns>:18793/__openclaw__/canvas/`。
 
-此伺服器會將 Live-reload 用戶端注入至 HTML 中，並在檔案變更時重新載入。
+此伺服器將實時重新載入客戶端注入 HTML 並在檔案變更時重新載入。
 A2UI 主機位於 `http://<gateway-host>:18793/__openclaw__/a2ui/`。
 
-Canvas 指令（僅限前景）：
-- `canvas.eval`, `canvas.snapshot`, `canvas.navigate`（使用 `{"url":""}` 或 `{"url":"/"}` 返回預設鷹架頁面）。`canvas.snapshot` 回傳 `{ format, base64 }`（預設 `format="jpeg"`）。
-- A2UI: `canvas.a2ui.push`, `canvas.a2ui.reset`（舊版別名 `canvas.a2ui.pushJSONL`）
+Canvas 命令（僅前景）：
 
-相機指令（僅限前景；需權限）：
-- `camera.snap` (jpg)
-- `camera.clip` (mp4)
+- `canvas.eval`、`canvas.snapshot`、`canvas.navigate`（使用 `{"url":""}` 或 `{"url":"/"}` 回到預設支架）。`canvas.snapshot` 回傳 `{ format, base64 }`（預設 `format="jpeg"`）。
+- A2UI：`canvas.a2ui.push`、`canvas.a2ui.reset`（`canvas.a2ui.pushJSONL` 舊版別名）
 
-參數與 CLI 輔助工具請參閱 [Camera node](/nodes/camera)。
+攝像頭命令（僅前景；權限門控）：
+
+- `camera.snap`（jpg）
+- `camera.clip`（mp4）
+
+詳見 [攝像頭節點](/zh-Hant/nodes/camera) 以獲取參數和 CLI 助手。

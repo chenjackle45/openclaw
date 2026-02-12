@@ -1,5 +1,5 @@
 ---
-title: "Zalouser(Zalo Personal Plugin)"
+title: "Zalo Personal Plugin（Zalo Personal 外掛）"
 summary: "Zalo Personal Plugin：QR 登入 + 透過 zca-cli 訊息傳遞（Plugin 安裝 + Channel Config + CLI + Tool）"
 read_when:
   - 您想在 OpenClaw 中使用 Zalo Personal（非官方）支援
@@ -58,9 +58,9 @@ Channel Config 位於 `channels.zalouser` 下（非 `plugins.entries.*`）：
   channels: {
     zalouser: {
       enabled: true,
-      dmPolicy: "pairing"
-    }
-  }
+      dmPolicy: "pairing",
+    },
+  },
 }
 ```
 

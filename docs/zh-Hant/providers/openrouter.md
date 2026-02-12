@@ -3,7 +3,7 @@ summary: "在 OpenClaw 中使用 OpenRouter 統一 API 存取多種模型"
 read_when:
   - 想要使用單一 API 金鑰存取多個 LLM 時
   - 想要在 OpenClaw 中透過 OpenRouter 運行模型時
-title: "OpenRouter"
+title: "OpenRouter（OpenRouter 路由）"
 ---
 
 # OpenRouter
@@ -23,14 +23,14 @@ openclaw onboard --auth-choice apiKey --token-provider openrouter --token "$OPEN
   env: { OPENROUTER_API_KEY: "sk-or-..." },
   agents: {
     defaults: {
-      model: { primary: "openrouter/anthropic/claude-sonnet-4-5" }
-    }
-  }
+      model: { primary: "openrouter/anthropic/claude-sonnet-4-5" },
+    },
+  },
 }
 ```
 
 ## 注意事項
 
 - 模型引用格式為 `openrouter/<供應商>/<模型>`。
-- 更多模型/供應商選項請參閱 [/concepts/model-providers](/concepts/model-providers)。
+- 更多模型/供應商選項請參閱 [/concepts/model-providers](/zh-Hant/concepts/model-providers)。
 - OpenRouter 底層使用帶有您 API 金鑰的 Bearer Token 進行認證。

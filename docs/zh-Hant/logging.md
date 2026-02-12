@@ -1,5 +1,5 @@
 ---
-title: "日誌"
+title: "Logging（日誌）"
 summary: "日誌概覽：檔案日誌、控制台輸出、CLI 追蹤和 Control UI"
 read_when:
   - 您需要日誌的初學者友善概覽
@@ -68,7 +68,7 @@ openclaw doctor
 ### Control UI（web）
 
 Control UI 的 **Logs** 標籤使用 `logs.tail` 追蹤相同的檔案。
-請參閱 [/web/control-ui](/web/control-ui) 以了解如何開啟它。
+請參閱 [/web/control-ui](/zh-Hant/web/control-ui) 以了解如何開啟它。
 
 ### 僅頻道日誌
 
@@ -107,9 +107,7 @@ openclaw channels logs --channel whatsapp
     "consoleLevel": "info",
     "consoleStyle": "pretty",
     "redactSensitive": "tools",
-    "redactPatterns": [
-      "sk-.*"
-    ]
+    "redactPatterns": ["sk-.*"]
   }
 }
 ```
@@ -162,9 +160,11 @@ openclaw channels logs --channel whatsapp
 ### 診斷事件目錄
 
 模型使用：
+
 - `model.usage`：tokens、成本、持續時間、上下文、provider/model/channel、會話 ids。
 
 訊息流：
+
 - `webhook.received`：每個頻道的 webhook 入口。
 - `webhook.processed`：webhook 已處理 + 持續時間。
 - `webhook.error`：webhook 處理器錯誤。
@@ -172,6 +172,7 @@ openclaw channels logs --channel whatsapp
 - `message.processed`：結果 + 持續時間 + 選用錯誤。
 
 Queue + session：
+
 - `queue.lane.enqueue`：指令佇列 lane enqueue + 深度。
 - `queue.lane.dequeue`：指令佇列 lane dequeue + 等待時間。
 - `session.state`：會話狀態轉換 + 原因。
@@ -211,9 +212,10 @@ OPENCLAW_DIAGNOSTICS=telegram.http,telegram.payload
 ```
 
 注意事項：
+
 - 標誌日誌進入標準日誌檔案（與 `logging.file` 相同）。
 - 輸出仍根據 `logging.redactSensitive` 脫敏。
-- 完整指南：[/diagnostics/flags](/diagnostics/flags)。
+- 完整指南：[/diagnostics/flags](/zh-Hant/diagnostics/flags)。
 
 ### 匯出到 OpenTelemetry
 
@@ -248,6 +250,7 @@ OPENCLAW_DIAGNOSTICS=telegram.http,telegram.payload
 ```
 
 注意事項：
+
 - 您也可以使用 `openclaw plugins enable diagnostics-otel` 啟用外掛。
 - `protocol` 目前僅支援 `http/protobuf`。`grpc` 被忽略。
 - Metrics 包括 token 使用量、成本、上下文大小、執行持續時間以及訊息流計數器/直方圖（webhooks、排隊、會話狀態、佇列深度/等待）。
@@ -258,12 +261,14 @@ OPENCLAW_DIAGNOSTICS=telegram.http,telegram.payload
 ### 匯出的 metrics（名稱 + 類型）
 
 模型使用：
+
 - `openclaw.tokens`（計數器，屬性：`openclaw.token`、`openclaw.channel`、`openclaw.provider`、`openclaw.model`）
 - `openclaw.cost.usd`（計數器，屬性：`openclaw.channel`、`openclaw.provider`、`openclaw.model`）
 - `openclaw.run.duration_ms`（直方圖，屬性：`openclaw.channel`、`openclaw.provider`、`openclaw.model`）
 - `openclaw.context.tokens`（直方圖，屬性：`openclaw.context`、`openclaw.channel`、`openclaw.provider`、`openclaw.model`）
 
 訊息流：
+
 - `openclaw.webhook.received`（計數器，屬性：`openclaw.channel`、`openclaw.webhook`）
 - `openclaw.webhook.error`（計數器，屬性：`openclaw.channel`、`openclaw.webhook`）
 - `openclaw.webhook.duration_ms`（直方圖，屬性：`openclaw.channel`、`openclaw.webhook`）
@@ -272,6 +277,7 @@ OPENCLAW_DIAGNOSTICS=telegram.http,telegram.payload
 - `openclaw.message.duration_ms`（直方圖，屬性：`openclaw.channel`、`openclaw.outcome`）
 
 Queues + sessions：
+
 - `openclaw.queue.lane.enqueue`（計數器，屬性：`openclaw.lane`）
 - `openclaw.queue.lane.dequeue`（計數器，屬性：`openclaw.lane`）
 - `openclaw.queue.depth`（直方圖，屬性：`openclaw.lane` 或 `openclaw.channel=heartbeat`）

@@ -57,10 +57,10 @@ read_when:
 8. 群組 DM 預設被忽略；透過 `channels.discord.dm.groupEnabled` 啟用，並可選擇透過 `channels.discord.dm.groupChannels` 限制。
 9. 可選的伺服器規則：設定 `channels.discord.guilds` 以伺服器 ID（首選）或 slug 為鍵，包含每頻道規則。
 10. 可選的 native command：`commands.native` 預設為 `"auto"`（Discord/Telegram 開啟，Slack 關閉）。使用 `channels.discord.commands.native: true|false|"auto"` 覆寫；`false` 清除先前註冊的命令。文字命令由 `commands.text` 控制，必須作為獨立的 `/...` 訊息發送。使用 `commands.useAccessGroups: false` 繞過命令的存取群組檢查。
-    - 完整命令列表 + 設定：[斜線命令](/tools/slash-commands)
+    - 完整命令列表 + 設定：[斜線命令](/zh-Hant/tools/slash-commands)
 11. 可選的伺服器上下文歷史：設定 `channels.discord.historyLimit`（預設 20，回退到 `messages.groupChat.historyLimit`）以在回覆 mention 時包含最後 N 條伺服器訊息作為上下文。設定 `0` 停用。
 12. 反應：代理可以透過 `discord` 工具觸發反應（由 `channels.discord.actions.*` 閘門控制）。
-    - 反應移除語意：請參閱[/tools/reactions](/tools/reactions)。
+    - 反應移除語意：請參閱[/tools/reactions](/zh-Hant/tools/reactions)。
     - `discord` 工具僅在當前頻道為 Discord 時公開。
 13. Native command 使用隔離的會話鍵（`agent:<agentId>:discord:slash:<userId>`）而不是共享的 `main` 會話。
 
@@ -156,7 +156,7 @@ Discord 到處使用數字 ID；OpenClaw 設定首選 ID。
 }
 ```
 
-多帳戶支援：使用 `channels.discord.accounts` 設定每個帳戶的令牌和可選的 `name`。請參閱[`gateway/configuration`](/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts)了解共享模式。
+多帳戶支援：使用 `channels.discord.accounts` 設定每個帳戶的令牌和可選的 `name`。請參閱[`gateway/configuration`](/zh-Hant/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts)了解共享模式。
 
 #### 允許清單 + 頻道路由
 
@@ -224,7 +224,7 @@ Discord 到處使用數字 ID；OpenClaw 設定首選 ID。
   - 您的設定中有 `channels.discord.execApprovals.enabled: true`。
   - 您的 Discord 用戶 ID 列在 `channels.discord.execApprovals.approvers` 中（UI 僅發送給批准者）。
   - 使用 DM 提示中的按鈕（**Allow once**、**Always allow**、**Deny**）。
-  - 請參閱[執行批准](/tools/exec-approvals)和[斜線命令](/tools/slash-commands)了解更廣泛的批准和命令流程。
+  - 請參閱[執行批准](/zh-Hant/tools/exec-approvals)和[斜線命令](/zh-Hant/tools/slash-commands)了解更廣泛的批准和命令流程。
 
 ## 功能 & 限制
 
@@ -238,7 +238,7 @@ Discord 到處使用數字 ID；OpenClaw 設定首選 ID。
 
 ## 重試策略
 
-外發 Discord API 呼叫在速率限制（429）時使用 Discord `retry_after`（如果可用）進行重試，並使用指數退避和抖動。透過 `channels.discord.retry` 設定。請參閱[重試策略](/concepts/retry)。
+外發 Discord API 呼叫在速率限制（429）時使用 Discord `retry_after`（如果可用）進行重試，並使用指數退避和抖動。透過 `channels.discord.retry` 設定。請參閱[重試策略](/zh-Hant/concepts/retry)。
 
 ## 設定
 
@@ -385,26 +385,26 @@ Discord 到處使用數字 ID；OpenClaw 設定首選 ID。
 
 ### 工具動作預設
 
-| 動作群組   | 預設  | 備註                              |
-| ---------- | ----- | --------------------------------- |
-| reactions  | 啟用  | React + list reactions + emojiList |
-| stickers   | 啟用  | 發送貼圖                        |
-| emojiUploads   | 啟用  | 上傳表情符號                      |
-| stickerUploads | 啟用  | 上傳貼圖                    |
-| polls      | 啟用  | 建立民調                       |
-| permissions    | 啟用  | 頻道權限快照        |
-| messages   | 啟用  | 讀取/發送/編輯/刪除              |
-| threads    | 啟用  | 建立/列出/回覆                  |
-| pins       | 啟用  | 釘選/取消釘選/列出                    |
-| search     | 啟用  | 訊息搜尋（預覽功能）   |
-| memberInfo | 啟用  | 成員資訊                        |
-| roleInfo   | 啟用  | 角色列表                         |
-| channelInfo    | 啟用  | 頻道資訊 + 列表                |
-| channels   | 啟用  | 頻道/分類管理        |
-| voiceStatus    | 啟用  | 語音狀態查詢                 |
-| events     | 啟用  | 列出/建立排定事件       |
-| roles      | 停用 | 角色新增/移除                    |
-| moderation | 停用 | 逾時/踢出/禁止                  |
+| 動作群組       | 預設 | 備註                               |
+| -------------- | ---- | ---------------------------------- |
+| reactions      | 啟用 | React + list reactions + emojiList |
+| stickers       | 啟用 | 發送貼圖                           |
+| emojiUploads   | 啟用 | 上傳表情符號                       |
+| stickerUploads | 啟用 | 上傳貼圖                           |
+| polls          | 啟用 | 建立民調                           |
+| permissions    | 啟用 | 頻道權限快照                       |
+| messages       | 啟用 | 讀取/發送/編輯/刪除                |
+| threads        | 啟用 | 建立/列出/回覆                     |
+| pins           | 啟用 | 釘選/取消釘選/列出                 |
+| search         | 啟用 | 訊息搜尋（預覽功能）               |
+| memberInfo     | 啟用 | 成員資訊                           |
+| roleInfo       | 啟用 | 角色列表                           |
+| channelInfo    | 啟用 | 頻道資訊 + 列表                    |
+| channels       | 啟用 | 頻道/分類管理                      |
+| voiceStatus    | 啟用 | 語音狀態查詢                       |
+| events         | 啟用 | 列出/建立排定事件                  |
+| roles          | 停用 | 角色新增/移除                      |
+| moderation     | 停用 | 逾時/踢出/禁止                     |
 
 - `replyToMode`：`off`（預設）、`first` 或 `all`。僅在模型包含回覆標籤時套用。
 

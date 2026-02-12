@@ -1,10 +1,11 @@
 ---
-title: "Hooks"
+title: "Hooks（Hooks 鉤子）"
 summary: "Hooks：指令和生命週期事件的事件驅動自動化"
 read_when:
   - 您想要 /new、/reset、/stop 和 agent 生命週期事件的事件驅動自動化
   - 您想要建置、安裝或除錯 hooks
 ---
+
 # Hooks
 
 Hooks 提供可擴充的事件驅動系統，用於自動化響應 agent 指令和事件的操作。Hooks 會從目錄自動發現，並且可以透過 CLI 指令管理，類似於 OpenClaw 中 skills 的工作方式。
@@ -14,11 +15,12 @@ Hooks 提供可擴充的事件驅動系統，用於自動化響應 agent 指令�
 Hooks 是在發生某事時執行的小型腳本。有兩種類型：
 
 - **Hooks**（本頁）：當 agent 事件觸發時在 Gateway 內執行，如 `/new`、`/reset`、`/stop` 或生命週期事件。
-- **Webhooks**：外部 HTTP webhooks，讓其他系統觸發 OpenClaw 中的工作。請參閱 [Webhook Hooks](/automation/webhook) 或使用 `openclaw webhooks` 取得 Gmail helper 指令。
+- **Webhooks**：外部 HTTP webhooks，讓其他系統觸發 OpenClaw 中的工作。請參閱 [Webhook Hooks](/zh-Hant/automation/webhook) 或使用 `openclaw webhooks` 取得 Gmail helper 指令。
 
-Hooks 也可以捆綁在外掛內；請參閱 [Plugins](/plugin#plugin-hooks)。
+Hooks 也可以捆綁在外掛內；請參閱 [Plugins](/zh-Hant/plugin#plugin-hooks)。
 
 常見用途：
+
 - 當您重置會話時儲存記憶體快照
 - 保留指令的審計追蹤以進行疑難排解或合規性
 - 當會話開始或結束時觸發後續自動化
@@ -29,6 +31,7 @@ Hooks 也可以捆綁在外掛內；請參閱 [Plugins](/plugin#plugin-hooks)。
 ## 概述
 
 hooks 系統允許您：
+
 - 當發出 `/new` 時將會話上下文儲存到記憶體
 - 記錄所有指令以進行審計
 - 在 agent 生命週期事件上觸發自訂自動化
@@ -125,7 +128,8 @@ Hook packs 可以提供依賴項；它們將安裝在 `~/.openclaw/hooks/<id>` �
 name: my-hook
 description: "Short description of what this hook does"
 homepage: https://docs.openclaw.ai/hooks#my-hook
-metadata: {"openclaw":{"emoji":"🔗","events":["command:new"],"requires":{"bins":["node"]}}}
+metadata:
+  { "openclaw": { "emoji": "🔗", "events": ["command:new"], "requires": { "bins": ["node"] } } }
 ---
 
 # My Hook
@@ -169,11 +173,11 @@ No configuration needed.
 `handler.ts` 檔案匯出 `HookHandler` 函式：
 
 ```typescript
-import type { HookHandler } from '../../src/hooks/hooks.js';
+import type { HookHandler } from "../../src/hooks/hooks.js";
 
 const myHandler: HookHandler = async (event) => {
   // Only trigger on 'new' command
-  if (event.type !== 'command' || event.action !== 'new') {
+  if (event.type !== "command" || event.action !== "new") {
     return;
   }
 
@@ -184,7 +188,7 @@ const myHandler: HookHandler = async (event) => {
   // Your custom logic here
 
   // Optionally send message to user
-  event.messages.push('✨ My hook executed!');
+  event.messages.push("✨ My hook executed!");
 };
 
 export default myHandler;
@@ -239,7 +243,7 @@ export default myHandler;
 
 這些 hooks 不是事件流監聽器；它們讓外掛在 OpenClaw 持久化工具結果之前同步調整工具結果。
 
-- **`tool_result_persist`**：在工具結果寫入會話記錄之前轉換它們。必須是同步的；返回更新的工具結果 payload 或 `undefined` 以保持原樣。請參閱 [Agent Loop](/concepts/agent-loop)。
+- **`tool_result_persist`**：在工具結果寫入會話記錄之前轉換它們。必須是同步的；返回更新的工具結果 payload 或 `undefined` 以保持原樣。請參閱 [Agent Loop](/zh-Hant/concepts/agent-loop)。
 
 ### 未來事件
 
@@ -271,7 +275,7 @@ cd ~/.openclaw/hooks/my-hook
 ---
 name: my-hook
 description: "Does something useful"
-metadata: {"openclaw":{"emoji":"🎯","events":["command:new"]}}
+metadata: { "openclaw": { "emoji": "🎯", "events": ["command:new"] } }
 ---
 
 # My Custom Hook
@@ -282,14 +286,14 @@ This hook does something useful when you issue `/new`.
 ### 4. 建立 handler.ts
 
 ```typescript
-import type { HookHandler } from '../../src/hooks/hooks.js';
+import type { HookHandler } from "../../src/hooks/hooks.js";
 
 const handler: HookHandler = async (event) => {
-  if (event.type !== 'command' || event.action !== 'new') {
+  if (event.type !== "command" || event.action !== "new") {
     return;
   }
 
-  console.log('[my-hook] Running!');
+  console.log("[my-hook] Running!");
   // Your logic here
 };
 
@@ -452,6 +456,7 @@ openclaw hooks disable command-logger
 **輸出**：`<workspace>/memory/YYYY-MM-DD-slug.md`（預設為 `~/.openclaw/workspace`）
 
 **它的作用**：
+
 1. 使用 pre-reset 會話條目來定位正確的記錄
 2. 提取對話的最後 15 行
 3. 使用 LLM 生成描述性檔名 slug
@@ -468,6 +473,7 @@ openclaw hooks disable command-logger
 ```
 
 **檔名範例**：
+
 - `2026-01-16-vendor-pitch.md`
 - `2026-01-16-api-design.md`
 - `2026-01-16-1430.md`（如果 slug 生成失敗，則為回退時間戳）
@@ -489,6 +495,7 @@ openclaw hooks enable session-memory
 **輸出**：`~/.openclaw/logs/commands.log`
 
 **它的作用**：
+
 1. 捕獲事件詳細資訊（指令操作、時間戳、會話鍵、發送者 ID、來源）
 2. 以 JSONL 格式追加到日誌檔案
 3. 在背景中靜默執行
@@ -525,7 +532,7 @@ openclaw hooks enable command-logger
 
 **事件**：`agent:bootstrap`
 
-**文件**：[SOUL Evil Hook](/hooks/soul-evil)
+**文件**：[SOUL Evil Hook](/zh-Hant/hooks/soul-evil)
 
 **輸出**：未寫入檔案；swap 僅在記憶體中發生。
 
@@ -565,6 +572,7 @@ openclaw hooks enable soul-evil
 **要求**：必須設定 `workspace.dir`
 
 **它的作用**：
+
 1. 從您的工作區讀取 `BOOT.md`
 2. 透過 agent runner 執行指令
 3. 透過訊息工具發送任何請求的出站訊息
@@ -603,7 +611,7 @@ const handler: HookHandler = async (event) => {
   try {
     await riskyOperation(event);
   } catch (err) {
-    console.error('[my-handler] Failed:', err instanceof Error ? err.message : String(err));
+    console.error("[my-handler] Failed:", err instanceof Error ? err.message : String(err));
     // Don't throw - let other handlers run
   }
 };
@@ -616,7 +624,7 @@ const handler: HookHandler = async (event) => {
 ```typescript
 const handler: HookHandler = async (event) => {
   // Only handle 'new' commands
-  if (event.type !== 'command' || event.action !== 'new') {
+  if (event.type !== "command" || event.action !== "new") {
     return;
   }
 
@@ -629,13 +637,13 @@ const handler: HookHandler = async (event) => {
 盡可能在 metadata 中指定精確事件：
 
 ```yaml
-metadata: {"openclaw":{"events":["command:new"]}}  # 特定
+metadata: { "openclaw": { "events": ["command:new"] } } # 特定
 ```
 
 而不是：
 
 ```yaml
-metadata: {"openclaw":{"events":["command"]}}      # 一般 - 更多開銷
+metadata: { "openclaw": { "events": ["command"] } } # 一般 - 更多開銷
 ```
 
 ## 除錯
@@ -664,7 +672,7 @@ openclaw hooks list --verbose
 
 ```typescript
 const handler: HookHandler = async (event) => {
-  console.log('[my-handler] Triggered:', event.type, event.action);
+  console.log("[my-handler] Triggered:", event.type, event.action);
   // Your logic
 };
 ```
@@ -698,13 +706,13 @@ tail -f ~/.openclaw/gateway.log
 隔離測試您的 handlers：
 
 ```typescript
-import { test } from 'vitest';
-import { createHookEvent } from './src/hooks/hooks.js';
-import myHandler from './hooks/my-hook/handler.js';
+import { test } from "vitest";
+import { createHookEvent } from "./src/hooks/hooks.js";
+import myHandler from "./hooks/my-hook/handler.js";
 
-test('my handler works', async () => {
-  const event = createHookEvent('command', 'new', 'test-session', {
-    foo: 'bar'
+test("my handler works", async () => {
+  const event = createHookEvent("command", "new", "test-session", {
+    foo: "bar",
   });
 
   await myHandler(event);
@@ -764,12 +772,14 @@ Session reset
 ### Hook 未發現
 
 1. 檢查目錄結構：
+
    ```bash
    ls -la ~/.openclaw/hooks/my-hook/
    # 應顯示：HOOK.md, handler.ts
    ```
 
 2. 驗證 HOOK.md 格式：
+
    ```bash
    cat ~/.openclaw/hooks/my-hook/HOOK.md
    # 應具有帶 name 和 metadata 的 YAML frontmatter
@@ -789,6 +799,7 @@ openclaw hooks info my-hook
 ```
 
 尋找缺少的：
+
 - 二進位檔案（檢查 PATH）
 - 環境變數
 - 設定值
@@ -797,6 +808,7 @@ openclaw hooks info my-hook
 ### Hook 未執行
 
 1. 驗證 hook 已啟用：
+
    ```bash
    openclaw hooks list
    # 應在啟用的 hooks 旁顯示 ✓
@@ -843,17 +855,19 @@ node -e "import('./path/to/handler.ts').then(console.log)"
 **之後**：
 
 1. 建立 hook 目錄：
+
    ```bash
    mkdir -p ~/.openclaw/hooks/my-hook
    mv ./hooks/handlers/my-handler.ts ~/.openclaw/hooks/my-hook/handler.ts
    ```
 
 2. 建立 HOOK.md：
+
    ```markdown
    ---
    name: my-hook
    description: "My custom hook"
-   metadata: {"openclaw":{"emoji":"🎯","events":["command:new"]}}
+   metadata: { "openclaw": { "emoji": "🎯", "events": ["command:new"] } }
    ---
 
    # My Hook
@@ -862,6 +876,7 @@ node -e "import('./path/to/handler.ts').then(console.log)"
    ```
 
 3. 更新設定：
+
    ```json
    {
      "hooks": {
@@ -882,6 +897,7 @@ node -e "import('./path/to/handler.ts').then(console.log)"
    ```
 
 **遷移的好處**：
+
 - 自動發現
 - CLI 管理
 - 資格檢查
@@ -890,7 +906,7 @@ node -e "import('./path/to/handler.ts').then(console.log)"
 
 ## 另請參閱
 
-- [CLI Reference: hooks](/cli/hooks)
+- [CLI Reference: hooks](/zh-Hant/cli/hooks)
 - [Bundled Hooks README](https://github.com/openclaw/openclaw/tree/main/src/hooks/bundled)
-- [Webhook Hooks](/automation/webhook)
-- [Configuration](/gateway/configuration#hooks)
+- [Webhook Hooks](/zh-Hant/automation/webhook)
+- [Configuration](/zh-Hant/gateway/configuration#hooks)

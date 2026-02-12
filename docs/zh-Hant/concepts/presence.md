@@ -1,14 +1,16 @@
 ---
-title: "Presence(狀態)"
+title: "Presence（狀態）"
 summary: "OpenClaw 在線狀態條目的生成、合併與顯示方式"
 read_when:
   - 除錯「執行實體 (Instances)」標籤頁
   - 調查重複或陳舊的實體行
   - 更改 Gateway WebSocket 連接或系統事件信標 (system-event beacons)
 ---
+
 # Presence（在線狀態）
 
 OpenClaw 的「在線狀態 (presence)」是一個輕量化、盡力而為的視圖，顯示：
+
 - **Gateway** 本身，以及
 - **連接到 Gateway 的客戶端** (Mac 應用程式、WebChat、CLI 等)
 

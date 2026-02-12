@@ -1,5 +1,5 @@
 ---
-title: "sessions(會話列表)"
+title: "sessions（會話列表）"
 summary: "`openclaw sessions` CLI 參考（列出儲存的會話與使用量）"
 read_when:
   - 想要列出儲存的會話並查看近期活動時

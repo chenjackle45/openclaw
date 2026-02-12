@@ -1,9 +1,9 @@
 ---
-summary: "在 OpenClaw 中使用 Ollama（本地 LLM 運行環境）"
+summary: "使用 Ollama（本機 LLM 執行時）在 OpenClaw 中執行"
 read_when:
   - 想要透過 Ollama 在本地運行 OpenClaw 時
   - 需要 Ollama 安裝與配置指南時
-title: "Ollama"
+title: "Ollama（Ollama 本機模型）"
 ---
 
 # Ollama
@@ -40,9 +40,9 @@ openclaw config set models.providers.ollama.apiKey "ollama-local"
 {
   agents: {
     defaults: {
-      model: { primary: "ollama/llama3.3" }
-    }
-  }
+      model: { primary: "ollama/llama3.3" },
+    },
+  },
 }
 ```
 
@@ -132,10 +132,10 @@ export OLLAMA_API_KEY="ollama-local"
     providers: {
       ollama: {
         apiKey: "ollama-local",
-        baseUrl: "http://ollama-host:11434/v1"
-      }
-    }
-  }
+        baseUrl: "http://ollama-host:11434/v1",
+      },
+    },
+  },
 }
 ```
 
@@ -149,10 +149,10 @@ export OLLAMA_API_KEY="ollama-local"
     defaults: {
       model: {
         primary: "ollama/llama3.3",
-        fallback: ["ollama/qwen2.5-coder:32b"]
-      }
-    }
-  }
+        fallback: ["ollama/qwen2.5-coder:32b"],
+      },
+    },
+  },
 }
 ```
 
@@ -193,6 +193,7 @@ curl http://localhost:11434/api/tags
 ### 沒有可用的模型
 
 OpenClaw 僅會自動探索報告具有工具支援的模型。若您的模型未列出，請：
+
 - 拉取一個支援工具的模型，或
 - 在 `models.providers.ollama` 中明確定義該模型。
 
@@ -217,6 +218,6 @@ ollama serve
 
 ## 參見
 
-- [模型服務供應商](/concepts/model-providers) - 所有供應商總覽
-- [模型選擇](/concepts/models) - 如何選擇模型
-- [配置導覽](/gateway/configuration) - 完整配置參考
+- [模型服務供應商](/zh-Hant/concepts/model-providers) - 所有供應商總覽
+- [模型選擇](/zh-Hant/concepts/models) - 如何選擇模型
+- [配置導覽](/zh-Hant/gateway/configuration) - 完整配置參考

@@ -1,10 +1,11 @@
 ---
-title: "Agent tools(Plugin Agent Tools)"
+title: "Plugin Agent Tools（Plugin Agent 工具）"
 summary: "在 Plugin 中撰寫 Agent Tools（Schemas、Optional Tools、Allowlists）"
 read_when:
   - 您想在 Plugin 中新增新的 Agent Tool
   - 您需要透過 Allowlists 使 Tool 成為 Opt-in
 ---
+
 # Plugin Agent Tools
 
 OpenClaw Plugins 可以註冊**Agent Tools**（JSON-schema Functions），在 Agent Run 期間向 LLM 公開。Tools 可以是**Required**（始終可用）或**Optional**（Opt-in）。
@@ -66,18 +67,19 @@ export default function (api) {
         id: "main",
         tools: {
           allow: [
-            "workflow_tool",  // 特定 Tool 名稱
-            "workflow",       // Plugin ID（啟用該 Plugin 的所有 Tools）
-            "group:plugins"   // 所有 Plugin Tools
-          ]
-        }
-      }
-    ]
-  }
+            "workflow_tool", // 特定 Tool 名稱
+            "workflow", // Plugin ID（啟用該 Plugin 的所有 Tools）
+            "group:plugins", // 所有 Plugin Tools
+          ],
+        },
+      },
+    ],
+  },
 }
 ```
 
 影響 Tool 可用性的其他 Config 設定：
+
 - 僅命名 Plugin Tools 的 Allowlists 被視為 Plugin Opt-ins；除非您也在 Allowlist 中包含 Core Tools 或 Groups，否則 Core Tools 保持啟用。
 - `tools.profile` / `agents.list[].tools.profile`（基礎 Allowlist）
 - `tools.byProvider` / `agents.list[].tools.byProvider`（Provider-specific Allow/Deny）

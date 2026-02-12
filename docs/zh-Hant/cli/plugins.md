@@ -1,5 +1,5 @@
 ---
-title: "plugins(外掛管理)"
+title: "plugins（外掛管理）"
 summary: "`openclaw plugins` CLI 參考（列表、安裝、啟用/停用與診斷）"
 read_when:
   - 想要安裝或管理 Gateway 外掛時
@@ -11,9 +11,10 @@ read_when:
 管理 Gateway 外掛與擴充功能（這些功能會直接在 Gateway 進程中加載）。
 
 相關資訊：
-- 外掛系統總覽：[外掛 (Plugins)](/plugin)
-- 外掛定義與規格：[外掛清單 (Plugin manifest)](/plugins/manifest)
-- 安全性加固：[安全性 (Security)](/gateway/security)
+
+- 外掛系統總覽：[外掛 (Plugins)](/zh-Hant/plugin)
+- 外掛定義與規格：[外掛清單 (Plugin manifest)](/zh-Hant/plugins/manifest)
+- 安全性加固：[安全性 (Security)](/zh-Hant/gateway/security)
 
 ## 指令說明
 

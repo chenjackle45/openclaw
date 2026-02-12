@@ -3,7 +3,7 @@ summary: "執行工具的使用方式、stdin 模式與 TTY 支援"
 read_when:
   - 使用或修改 exec 工具
   - 偵錯 stdin 或 TTY 行為
-title: "Exec Tool"
+title: "Exec Tool（Exec 執行工具）"
 ---
 
 # Exec 工具
@@ -95,7 +95,7 @@ openclaw config set agents.list[0].tools.exec.node "node-id-or-name"
 ## Exec 核准（companion app / node host）
 
 沙盒化的 Agent 可以在 exec 在 gateway 或 node host 執行之前要求每個要求的核准。
-請見 [Exec approvals](/tools/exec-approvals) 了解策略、allowlist 和 UI 流程。
+請見 [Exec approvals](/zh-Hant/tools/exec-approvals) 了解策略、allowlist 和 UI 流程。
 
 當需要核准時，exec 工具立即回傳
 `status: "approval-pending"` 和核准 ID。一旦核准（或拒絕/逾時），

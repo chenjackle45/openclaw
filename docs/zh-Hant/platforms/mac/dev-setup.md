@@ -1,93 +1,104 @@
 ---
-summary: "OpenClaw macOS 應用程式開發者設定指南"
+summary: "macOS app 開發人員的設定指南"
 read_when:
-  - 設定 macOS 開發環境時
-title: "macOS 開發者設定"
+  - Setting up the macOS development environment
+title: "macOS Dev Setup（macOS Dev 設定）"
 ---
 
-# macOS 開發者設定
+# macOS Developer Setup
 
-本指南涵蓋從原始碼建置並運行 OpenClaw macOS 應用程式所需的步驟。
+This guide covers the necessary steps to build and run the OpenClaw macOS application from source.
 
-## 先決條件
+## Prerequisites
 
-在建置應用程式之前，確保您已安裝：
+Before building the app, ensure you have the following installed:
 
-1.  **Xcode 26.2+**: Swift 開發所需。
-2.  **Node.js 22+ & pnpm**: Gateway、CLI 與打包腳本所需。
+1. **Xcode 26.2+**: Required for Swift development.
+2. **Node.js 22+ & pnpm**: Required for the gateway, CLI, and packaging scripts.
 
-## 1. 安裝相依套件
+## 1. Install Dependencies
 
-安裝專案層級的相依套件：
+Install the project-wide dependencies:
 
 ```bash
 pnpm install
 ```
 
-## 2. 建置與打包應用程式
+## 2. Build and Package the App
 
-要建置 macOS 應用程式並將其打包至 `dist/OpenClaw.app`，請執行：
+To build the macOS app and package it into `dist/OpenClaw.app`, run:
 
 ```bash
 ./scripts/package-mac-app.sh
 ```
 
-若您沒有 Apple Developer ID 憑證，腳本會自動使用 **ad-hoc 簽署** (`-`)。
+If you don't have an Apple Developer ID certificate, the script will automatically use **ad-hoc signing** (`-`).
 
-關於開發運行模式、簽署旗標與 Team ID 故障排除，請參閱 macOS 應用程式 README：
-https://github.com/openclaw/openclaw/blob/main/apps/macos/README.md
+For dev run modes, signing flags, and Team ID troubleshooting, see the macOS app README:
+[https://github.com/openclaw/openclaw/blob/main/apps/macos/README.md](https://github.com/openclaw/openclaw/blob/main/apps/macos/README.md)
 
-> **注意**: Ad-hoc 簽署的應用程式可能會觸發安全提示。若應用程式啟動即崩潰並顯示 "Abort trap 6"，請參閱 [故障排除](#故障排除) 章節。
+> **Note**: Ad-hoc signed apps may trigger security prompts. If the app crashes immediately with "Abort trap 6", see the [Troubleshooting](#troubleshooting) section.
 
-## 3. 安裝 CLI
+## 3. Install the CLI
 
-macOS 應用程式預期有一個全域的 `openclaw` CLI 安裝來管理背景任務。
+The macOS app expects a global `openclaw` CLI install to manage background tasks.
 
-**安裝方式（推薦）：**
-1.  開啟 OpenClaw 應用程式。
-2.  前往 **General** (一般) 設定頁籤。
-3.  點擊 **"Install CLI"**。
+**To install it (recommended):**
 
-或者，手動安裝：
+1. Open the OpenClaw app.
+2. Go to the **General** settings tab.
+3. Click **"Install CLI"**.
+
+Alternatively, install it manually:
+
 ```bash
 npm install -g openclaw@<version>
 ```
 
-## 故障排除
+## Troubleshooting
 
-### 建置失敗：工具鏈或 SDK 不相符
-macOS 應用程式建置預期使用最新的 macOS SDK 與 Swift 6.2 工具鏈。
+### Build Fails: Toolchain or SDK Mismatch
 
-**系統相依性（必需）：**
-- **軟體更新中可用的最新 macOS 版本**（Xcode 26.2 SDKs 所需）
-- **Xcode 26.2** (Swift 6.2 工具鏈)
+The macOS app build expects the latest macOS SDK and Swift 6.2 toolchain.
 
-**檢查：**
+**System dependencies (required):**
+
+- **Latest macOS version available in Software Update** (required by Xcode 26.2 SDKs)
+- **Xcode 26.2** (Swift 6.2 toolchain)
+
+**Checks:**
+
 ```bash
 xcodebuild -version
 xcrun swift --version
 ```
 
-若版本不符，請更新 macOS/Xcode 並重新執行建置。
+If versions don’t match, update macOS/Xcode and re-run the build.
 
-### 應用程式在授權時崩潰
-若您嘗試允許 **Speech Recognition** (語音辨識) 或 **Microphone** (麥克風) 存取時應用程式崩潰，可能是 TCC 快取損毀或簽章不符導致。
+### App Crashes on Permission Grant
 
-**修復：**
-1. 重置 TCC 權限：
+If the app crashes when you try to allow **Speech Recognition** or **Microphone** access, it may be due to a corrupted TCC cache or signature mismatch.
+
+**Fix:**
+
+1. Reset the TCC permissions:
+
    ```bash
    tccutil reset All bot.molt.mac.debug
    ```
-2. 若失敗，暫時變更 [`scripts/package-mac-app.sh`](https://github.com/openclaw/openclaw/blob/main/scripts/package-mac-app.sh) 中的 `BUNDLE_ID` 以強制 macOS 視為全新應用程式。
 
-### Gateway 無限顯示 "Starting..."
-若 Gateway 狀態停留在 "Starting..."，檢查是否由殭屍行程佔用了通訊埠：
+2. If that fails, change the `BUNDLE_ID` temporarily in [`scripts/package-mac-app.sh`](https://github.com/openclaw/openclaw/blob/main/scripts/package-mac-app.sh) to force a "clean slate" from macOS.
+
+### Gateway "Starting..." indefinitely
+
+If the gateway status stays on "Starting...", check if a zombie process is holding the port:
 
 ```bash
 openclaw gateway status
 openclaw gateway stop
 
-# 若您未使用 LaunchAgent (開發模式 / 手動運行)，尋找聆聽者：
+# If you’re not using a LaunchAgent (dev mode / manual runs), find the listener:
 lsof -nP -iTCP:18789 -sTCP:LISTEN
 ```
-若手動執行的行程佔用了通訊埠，請停止該行程 (Ctrl+C)。若無效，殺除上方找到的 PID。
+
+If a manual run is holding the port, stop that process (Ctrl+C). As a last resort, kill the PID you found above.

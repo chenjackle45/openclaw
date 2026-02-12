@@ -1,5 +1,5 @@
 ---
-title: "測試"
+title: "Testing（測試）"
 summary: "測試套件：unit/e2e/live 套件、Docker runners 以及每個測試涵蓋的內容"
 read_when:
   - 在本地或 CI 中執行測試
@@ -12,6 +12,7 @@ read_when:
 OpenClaw 有三個 Vitest 套件（unit/integration、e2e、live）和一小組 Docker runners。
 
 本文件是「我們如何測試」的指南：
+
 - 每個套件涵蓋什麼（以及故意*不*涵蓋什麼）
 - 常見工作流程要執行哪些指令（本地、推送前、除錯）
 - live 測試如何發現憑證並選擇模型/供應商
@@ -20,13 +21,16 @@ OpenClaw 有三個 Vitest 套件（unit/integration、e2e、live）和一小組 
 ## 快速開始
 
 大多數日子：
+
 - 完整 gate（推送前預期）：`pnpm lint && pnpm build && pnpm test`
 
 當您觸及測試或想要額外信心時：
+
 - Coverage gate：`pnpm test:coverage`
 - E2E 套件：`pnpm test:e2e`
 
 除錯真實供應商/模型時（需要真實憑證）：
+
 - Live 套件（模型 + gateway tool/image 探測）：`pnpm test:live`
 
 提示：當您只需要一個失敗案例時，透過下面描述的允許清單環境變數優選縮小 live 測試。
@@ -81,6 +85,7 @@ OpenClaw 有三個 Vitest 套件（unit/integration、e2e、live）和一小組 
 ## 我應該執行哪個套件？
 
 使用此決策表：
+
 - 編輯邏輯/測試：執行 `pnpm test`（如果您變更了很多，則 `pnpm test:coverage`）
 - 觸及 gateway 網路 / WS 協定 / 配對：新增 `pnpm test:e2e`
 - 除錯「我的機器人掛了」/ 供應商特定失敗 / 工具呼叫：執行縮小的 `pnpm test:live`
@@ -88,6 +93,7 @@ OpenClaw 有三個 Vitest 套件（unit/integration、e2e、live）和一小組 
 ## Live：模型 smoke（profile 金鑰）
 
 Live 測試分為兩層，以便我們可以隔離故障：
+
 - 「直接模型」告訴我們供應商/模型是否可以使用給定金鑰回答。
 - 「Gateway smoke」告訴我們完整的 gateway+agent 流水線對該模型是否有效（sessions、history、tools、sandbox policy 等）。
 
@@ -224,6 +230,7 @@ OPENCLAW_LIVE_CLI_BACKEND=1 \
   - Antigravity（OAuth）：`OPENCLAW_LIVE_GATEWAY_MODELS="google-antigravity/claude-opus-4-5-thinking,google-antigravity/gemini-3-pro-high" pnpm test:live src/gateway/gateway-models.profiles.live.test.ts`
 
 注意事項：
+
 - `google/...` 使用 Gemini API（API 金鑰）。
 - `google-antigravity/...` 使用 Antigravity OAuth bridge（Cloud Code Assist 風格的代理端點）。
 - `google-gemini-cli/...` 使用您機器上的本地 Gemini CLI（單獨的認證 + 工具怪癖）。
@@ -238,6 +245,7 @@ OPENCLAW_LIVE_CLI_BACKEND=1 \
 ### Modern smoke 集（工具呼叫 + 圖片）
 
 這是我們期望保持運作的「常見模型」執行：
+
 - OpenAI（非 Codex）：`openai/gpt-5.2`（選用：`openai/gpt-5.1`）
 - OpenAI Codex：`openai-codex/gpt-5.2`（選用：`openai-codex/gpt-5.2-codex`）
 - Anthropic：`anthropic/claude-opus-4-5`（或 `anthropic/claude-sonnet-4-5`）
@@ -252,6 +260,7 @@ OPENCLAW_LIVE_CLI_BACKEND=1 \
 ### 基準：工具呼叫（Read + 選用 Exec）
 
 每個供應商系列至少選擇一個：
+
 - OpenAI：`openai/gpt-5.2`（或 `openai/gpt-5-mini`）
 - Anthropic：`anthropic/claude-opus-4-5`（或 `anthropic/claude-sonnet-4-5`）
 - Google：`google/gemini-3-flash-preview`（或 `google/gemini-3-pro-preview`）
@@ -259,6 +268,7 @@ OPENCLAW_LIVE_CLI_BACKEND=1 \
 - MiniMax：`minimax/minimax-m2.1`
 
 選用額外涵蓋（很好有）：
+
 - xAI：`xai/grok-4`（或最新可用）
 - Mistral：`mistral/`…（選擇一個您啟用的「tools」有能力的模型）
 - Cerebras：`cerebras/`…（如果您有存取權限）
@@ -271,10 +281,12 @@ OPENCLAW_LIVE_CLI_BACKEND=1 \
 ### 聚合器 / 替代 gateways
 
 如果您啟用了金鑰，我們也支援透過以下方式測試：
+
 - OpenRouter：`openrouter/...`（數百個模型；使用 `openclaw models scan` 找到 tool+image 有能力的候選者）
 - OpenCode Zen：`opencode/...`（透過 `OPENCODE_API_KEY` / `OPENCODE_ZEN_API_KEY` 認證）
 
 您可以在 live 矩陣中包含更多供應商（如果您有憑證/設定）：
+
 - 內建：`openai`、`openai-codex`、`anthropic`、`google`、`google-vertex`、`google-antigravity`、`google-gemini-cli`、`zai`、`openrouter`、`opencode`、`xai`、`groq`、`cerebras`、`mistral`、`github-copilot`
 - 透過 `models.providers`（自訂端點）：`minimax`（雲端/API），加上任何 OpenAI/Anthropic 相容代理（LM Studio、vLLM、LiteLLM 等）
 
@@ -283,6 +295,7 @@ OPENCLAW_LIVE_CLI_BACKEND=1 \
 ## 憑證（絕不提交）
 
 Live 測試以與 CLI 相同的方式發現憑證。實際影響：
+
 - 如果 CLI 運作，live 測試應該找到相同的金鑰。
 - 如果 live 測試說「無憑證」，以與除錯 `openclaw models list` / 模型選擇相同的方式除錯。
 
@@ -321,21 +334,25 @@ Live 測試以與 CLI 相同的方式發現憑證。實際影響：
 ## 離線回歸測試（CI 安全）
 
 這些是「真實流水線」回歸測試，而沒有真實供應商：
+
 - Gateway 工具呼叫（模擬 OpenAI、真實 gateway + agent 迴圈）：`src/gateway/gateway.tool-calling.mock-openai.test.ts`
 - Gateway wizard（WS `wizard.start`/`wizard.next`、寫入設定 + auth enforced）：`src/gateway/gateway.wizard.e2e.test.ts`
 
 ## Agent 可靠性評估（skills）
 
 我們已經有一些 CI 安全測試，行為類似「agent 可靠性評估」：
+
 - 透過真實 gateway + agent 迴圈模擬工具呼叫（`src/gateway/gateway.tool-calling.mock-openai.test.ts`）。
 - 驗證會話接線和設定效果的端到端 wizard 流程（`src/gateway/gateway.wizard.e2e.test.ts`）。
 
-skills 仍然缺少的內容（請參閱 [Skills](/tools/skills)）：
+skills 仍然缺少的內容（請參閱 [Skills](/zh-Hant/tools/skills)）：
+
 - **決策**：當 skills 列在提示詞中時，代理是否選擇正確的 skill（或避免不相關的）？
 - **合規性**：代理是否在使用前讀取 `SKILL.md` 並遵循所需的步驟/參數？
 - **工作流程合約**：多輪場景，斷言工具順序、會話歷史結轉和沙盒邊界。
 
 未來的評估應首先保持確定性：
+
 - 使用模擬供應商斷言工具呼叫 + 順序、skill 檔案讀取和會話接線的場景執行器。
 - 一小組以 skill 為中心的場景（使用 vs 避免、gating、提示詞注入）。
 - 選用 live 評估（選用、環境變數門控）僅在 CI 安全套件就位後。
@@ -343,6 +360,7 @@ skills 仍然缺少的內容（請參閱 [Skills](/tools/skills)）：
 ## 新增回歸測試（指導）
 
 當您修復在 live 中發現的供應商/模型問題時：
+
 - 如果可能，新增 CI 安全回歸測試（模擬/存根供應商，或捕獲確切的請求形狀轉換）
 - 如果它本質上僅限 live（速率限制、認證策略），請透過環境變數保持 live 測試縮小且選用
 - 優選針對捕獲 bug 的最小層：

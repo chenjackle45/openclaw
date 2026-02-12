@@ -3,7 +3,7 @@ summary: "Slash commands: text vs native, config, and supported commands"
 read_when:
   - Using or configuring chat commands
   - Debugging command routing or permissions
-title: "Slash Commands"
+title: "Slash Commands（Slash Commands 斜線指令）"
 ---
 
 # Slash commands
@@ -73,7 +73,7 @@ Text + native (when enabled):
 - `/config show|get|set|unset` (persist config to disk, owner-only; requires `commands.config: true`)
 - `/debug show|set|unset|reset` (runtime overrides, owner-only; requires `commands.debug: true`)
 - `/usage off|tokens|full|cost` (per-response usage footer or local cost summary)
-- `/tts off|always|inbound|tagged|status|provider|limit|summary|audio` (control TTS; see [/tts](/tts))
+- `/tts off|always|inbound|tagged|status|provider|limit|summary|audio` (control TTS; see [/tts](/zh-Hant/tts))
   - Discord: native command is `/voice` (Discord reserves `/tts`); text `/tts` still works.
 - `/stop`
 - `/restart`
@@ -94,7 +94,7 @@ Text + native (when enabled):
 
 Text-only:
 
-- `/compact [instructions]` (see [/concepts/compaction](/concepts/compaction))
+- `/compact [instructions]` (see [/concepts/compaction](/zh-Hant/concepts/compaction))
 - `! <command>` (host-only; one at a time; use `!poll` + `!stop` for long-running jobs)
 - `!poll` (check output / status; accepts optional `sessionId`; `/bash poll` also works)
 - `!stop` (stop the running bash job; accepts optional `sessionId`; `/bash stop` also works)
@@ -119,7 +119,7 @@ Notes:
   - `/skill <name> [input]` runs a skill by name (useful when native command limits prevent per-skill commands).
   - By default, skill commands are forwarded to the model as a normal request.
   - Skills may optionally declare `command-dispatch: tool` to route the command directly to a tool (deterministic, no model).
-  - Example: `/prose` (OpenProse plugin) — see [OpenProse](/prose).
+  - Example: `/prose` (OpenProse plugin) — see [OpenProse](/zh-Hant/prose).
 - **Native command arguments:** Discord uses autocomplete for dynamic options (and button menus when you omit required args). Telegram and Slack show a button menu when a command supports choices and you omit the arg.
 
 ## Usage surfaces (what shows where)

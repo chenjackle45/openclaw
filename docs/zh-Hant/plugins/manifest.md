@@ -1,17 +1,19 @@
 ---
-title: "Manifest(Plugin Manifest)"
-summary: "Plugin Manifest + JSON Schema 需求（嚴格 Config 驗證）"
+summary: "外掛程式清單 + JSON 結構描述要求（嚴格設定驗證）"
 read_when:
-  - 您正在建立 OpenClaw Plugin
-  - 您需要提供 Plugin Config Schema 或除錯 Plugin 驗證錯誤
+  - 你正在建置 OpenClaw 外掛程式
+  - 你需要運出外掛程式設定結構描述或調試外掛程式驗證錯誤
+title: "Plugin Manifest（外掛程式清單）"
 ---
-# Plugin Manifest (openclaw.plugin.json)
 
-每個 Plugin **必須**在 **Plugin Root** 中提供 `openclaw.plugin.json` 檔案。OpenClaw 使用此 Manifest 來驗證設定，**無需執行 Plugin 程式碼**。遺失或無效的 Manifests 會被視為 Plugin 錯誤並阻止 Config 驗證。
+# 外掛程式清單（openclaw.plugin.json）
 
-請見完整的 Plugin 系統指南：[Plugins](/plugin)。
+每個外掛程式**必須**在**外掛程式根目錄**中運出 `openclaw.plugin.json` 檔案。
+OpenClaw 使用此清單**無需執行外掛程式程式碼**來驗證設定。遺漏或無效的清單被視為外掛程式錯誤並阻止設定驗證。
 
-## 必填欄位
+詳見完整外掛程式系統指南：[外掛程式](/zh-Hant/tools/plugin)。
+
+## 必要欄位
 
 ```json
 {
@@ -24,35 +26,38 @@ read_when:
 }
 ```
 
-必填 Keys：
-- `id`（string）：標準 Plugin ID。
-- `configSchema`（object）：Plugin Config 的 JSON Schema（內嵌）。
+必要鍵：
 
-選填 Keys：
-- `kind`（string）：Plugin 種類（例如：`"memory"`）。
-- `channels`（array）：此 Plugin 註冊的 Channel IDs（例如：`["matrix"]`）。
-- `providers`（array）：此 Plugin 註冊的 Provider IDs。
-- `skills`（array）：要載入的 Skill 目錄（相對於 Plugin Root）。
-- `name`（string）：Plugin 的顯示名稱。
-- `description`（string）：簡短的 Plugin 摘要。
-- `uiHints`（object）：UI 渲染的 Config 欄位標籤/佔位符/敏感旗標。
-- `version`（string）：Plugin 版本（資訊性）。
+- `id`（字串）：規範外掛程式 ID。
+- `configSchema`（物件）：外掛程式設定的 JSON 結構描述（內聯）。
 
-## JSON Schema 需求
+選擇性鍵：
 
-- **每個 Plugin 必須提供 JSON Schema**，即使它不接受 Config。
-- 空 Schema 是可接受的（例如 `{ "type": "object", "additionalProperties": false }`）。
-- Schemas 在 Config 讀取/寫入時驗證，而非 Runtime。
+- `kind`（字串）：外掛程式類型（範例：`"memory"`）。
+- `channels`（陣列）：此外掛程式註冊的頻道 ID（範例：`["matrix"]`）。
+- `providers`（陣列）：此外掛程式註冊的提供者 ID。
+- `skills`（陣列）：要載入的技能目錄（相對於外掛程式根目錄）。
+- `name`（字串）：外掛程式的顯示名稱。
+- `description`（字串）：外掛程式的簡短摘要。
+- `uiHints`（物件）：設定欄位標籤/預留位置/敏感旗標用於 UI 轉譯。
+- `version`（字串）：外掛程式版本（資訊性）。
+
+## JSON 結構描述要求
+
+- **每個外掛程式必須運出 JSON 結構描述**，即使它不接受設定。
+- 空結構描述是可接受的（例如 `{ "type": "object", "additionalProperties": false }`）。
+- 結構描述在設定讀取/寫入時驗證，而非在執行時。
 
 ## 驗證行為
 
-- 未知的 `channels.*` Keys 是**錯誤**，除非 Channel ID 由 Plugin Manifest 宣告。
-- `plugins.entries.<id>`、`plugins.allow`、`plugins.deny` 和 `plugins.slots.*` 必須參考**可探索的** Plugin IDs。未知 IDs 是**錯誤**。
-- 如果 Plugin 已安裝但有損壞或遺失的 Manifest 或 Schema，驗證失敗且 Doctor 會回報 Plugin 錯誤。
-- 如果 Plugin Config 存在但 Plugin 被**停用**，Config 會保留並在 Doctor + Logs 中顯示**警告**。
+- 未知 `channels.*` 鍵是**錯誤**，除非頻道 ID 由外掛程式清單聲明。
+- `plugins.entries.<id>`、`plugins.allow`、`plugins.deny` 和 `plugins.slots.*`
+  必須參考**可探索**的外掛程式 ID。未知 ID 是**錯誤**。
+- 如果外掛程式已安裝但有損壞或遺漏的清單或結構描述，驗證失敗且醫生報告外掛程式錯誤。
+- 如果外掛程式設定存在但外掛程式已**停用**，設定會保留且在醫生 + 日誌中表面出現**警告**。
 
-## 注意事項
+## 筆記
 
-- **所有 Plugin 都必須有 Manifest**，包括 Local Filesystem 載入。
-- Runtime 仍會單獨載入 Plugin 模組；Manifest 僅用於探索 + 驗證。
-- 如果您的 Plugin 依賴 Native 模組，請記錄建置步驟和任何 Package-manager Allowlist 需求（例如 pnpm `allow-build-scripts` + `pnpm rebuild <package>`）。
+- 清單**對所有外掛程式都是必要的**，包括本機檔案系統載入。
+- 執行時仍單獨載入外掛程式模組；清單僅用於發現 + 驗證。
+- 如果外掛程式依賴原生模組，記錄建置步驟和任何套件管理員允許清單要求（例如 pnpm `allow-build-scripts` - `pnpm rebuild <package>`）。

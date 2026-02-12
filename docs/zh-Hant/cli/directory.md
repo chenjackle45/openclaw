@@ -1,5 +1,5 @@
 ---
-title: "directory(通訊錄)"
+title: "directory（通訊錄）"
 summary: "`openclaw directory` CLI 參考（自我、聯絡人、群組）"
 read_when:
   - 想要查詢頻道的聯絡人、群組或自我 ID 時

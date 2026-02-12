@@ -14,7 +14,7 @@ read_when:
 
 - `gcloud` 已安裝且已登入（[安裝指南](https://docs.cloud.google.com/sdk/docs/install-sdk)）。
 - `gog` (gogcli) 已安裝且授權給 Gmail 帳戶（[gogcli.sh](https://gogcli.sh/)）。
-- OpenClaw Hooks 已啟用（見 [Webhooks](/automation/webhook)）。
+- OpenClaw Hooks 已啟用（見 [Webhooks](/zh-Hant/automation/webhook)）。
 - `tailscale` 已登入（[tailscale.com](https://tailscale.com/)）。支援的設定使用 Tailscale Funnel 作為公開 HTTPS 端點。
   其他隧道服務可以工作，但自行管理/不支援，需要手動接線。
   現在，Tailscale 是我們支援的內容。
@@ -83,7 +83,7 @@ read_when:
 - Gmail Hook 內容預設使用外部內容安全邊界進行包裝。
   若要禁用（危險），設定 `hooks.gmail.allowUnsafeExternalContent: true`。
 
-若要進一步自訂 Payload 處理，請在設定中加入 `hooks.mappings` 或 JS/TS 轉換模組，位於 `hooks.transformsDir` 下（見 [Webhooks](/automation/webhook)）。
+若要進一步自訂 Payload 處理，請在設定中加入 `hooks.mappings` 或 JS/TS 轉換模組，位於 `hooks.transformsDir` 下（見 [Webhooks](/zh-Hant/automation/webhook)）。
 
 ## 精靈（推薦）
 

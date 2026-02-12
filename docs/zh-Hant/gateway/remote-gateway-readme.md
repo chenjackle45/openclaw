@@ -1,5 +1,5 @@
 ---
-title: "使用遠端 Gateway 執行 OpenClaw.app"
+title: "Remote Gateway Setup（使用遠端 Gateway 執行 OpenClaw.app）"
 summary: "OpenClaw.app 連線至 Remote Gateway 的 SSH Tunnel 設定"
 read_when: "透過 SSH 將 macOS App 連線至 Remote Gateway 時"
 ---
@@ -113,6 +113,7 @@ launchctl bootstrap gui/$UID ~/Library/LaunchAgents/bot.molt.ssh-tunnel.plist
 ```
 
 Tunnel 現在將：
+
 - 在您登入時自動啟動
 - 若崩潰會重新啟動
 - 在背景持續運行
@@ -146,11 +147,11 @@ launchctl bootout gui/$UID/bot.molt.ssh-tunnel
 
 ## 運作原理
 
-| 元件 | 作用 |
-|-----------|--------------|
+| 元件                                 | 作用                                         |
+| ------------------------------------ | -------------------------------------------- |
 | `LocalForward 18789 127.0.0.1:18789` | 將 Local Port 18789 轉發至 Remote Port 18789 |
-| `ssh -N` | SSH 而不執行遠端指令 (僅 Port Forwarding) |
-| `KeepAlive` | 若崩潰自動重啟 Tunnel |
-| `RunAtLoad` | 在 Agent 載入時啟動 Tunnel |
+| `ssh -N`                             | SSH 而不執行遠端指令 (僅 Port Forwarding)    |
+| `KeepAlive`                          | 若崩潰自動重啟 Tunnel                        |
+| `RunAtLoad`                          | 在 Agent 載入時啟動 Tunnel                   |
 
 OpenClaw.app 連線至您 Client Machine 上的 `ws://127.0.0.1:18789`。SSH Tunnel 將該連線轉發至運行 Gateway 的 Remote Machine 上的 Port 18789。

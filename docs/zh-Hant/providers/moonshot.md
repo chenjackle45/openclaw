@@ -1,10 +1,10 @@
 ---
-summary: "配置 Moonshot K2 與 Kimi Coding（分離的供應商與金鑰）"
+summary: "配置 Moonshot K2 vs Kimi Coding（分開提供者 + 鑰匙）"
 read_when:
   - 想要設定 Moonshot K2 (Moonshot 開放平台) 或 Kimi Coding 時
   - 需要了解分離的端點、金鑰與模型引用時
   - 想要複製/貼上任一供應商的配置時
-title: "Moonshot AI"
+title: "Moonshot AI（Kimi）"
 ---
 
 # Moonshot AI (Kimi)
@@ -48,10 +48,10 @@ openclaw onboard --auth-choice kimi-coding-api-key
         "moonshot/kimi-k2-0905-preview": { alias: "Kimi K2" },
         "moonshot/kimi-k2-turbo-preview": { alias: "Kimi K2 Turbo" },
         "moonshot/kimi-k2-thinking": { alias: "Kimi K2 Thinking" },
-        "moonshot/kimi-k2-thinking-turbo": { alias: "Kimi K2 Thinking Turbo" }
+        "moonshot/kimi-k2-thinking-turbo": { alias: "Kimi K2 Thinking Turbo" },
         // moonshot-kimi-k2-aliases:end
-      }
-    }
+      },
+    },
   },
   models: {
     mode: "merge",
@@ -69,7 +69,7 @@ openclaw onboard --auth-choice kimi-coding-api-key
             input: ["text"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
             contextWindow: 256000,
-            maxTokens: 8192
+            maxTokens: 8192,
           },
           {
             id: "kimi-k2-0905-preview",
@@ -78,7 +78,7 @@ openclaw onboard --auth-choice kimi-coding-api-key
             input: ["text"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
             contextWindow: 256000,
-            maxTokens: 8192
+            maxTokens: 8192,
           },
           {
             id: "kimi-k2-turbo-preview",
@@ -87,7 +87,7 @@ openclaw onboard --auth-choice kimi-coding-api-key
             input: ["text"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
             contextWindow: 256000,
-            maxTokens: 8192
+            maxTokens: 8192,
           },
           {
             id: "kimi-k2-thinking",
@@ -96,7 +96,7 @@ openclaw onboard --auth-choice kimi-coding-api-key
             input: ["text"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
             contextWindow: 256000,
-            maxTokens: 8192
+            maxTokens: 8192,
           },
           {
             id: "kimi-k2-thinking-turbo",
@@ -105,13 +105,13 @@ openclaw onboard --auth-choice kimi-coding-api-key
             input: ["text"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
             contextWindow: 256000,
-            maxTokens: 8192
-          }
+            maxTokens: 8192,
+          },
           // moonshot-kimi-k2-models:end
-        ]
-      }
-    }
-  }
+        ],
+      },
+    },
+  },
 }
 ```
 

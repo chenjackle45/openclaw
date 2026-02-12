@@ -3,7 +3,7 @@ summary: "CLI 入門精靈：Gateway、工作區、頻道和技能的引導式�
 read_when:
   - 執行或設定入門精靈時
   - 設定新機器時
-title: "入門精靈"
+title: "Onboarding Wizard (CLI)（入門精靈）"
 ---
 
 # 入門精靈（CLI）
@@ -20,7 +20,7 @@ openclaw onboard
 ```
 
 最快首次聊天：開啟控制 UI（無需頻道設定）。執行
-`openclaw dashboard` 並在瀏覽器中聊天。文件：[儀表板](/web/dashboard)。
+`openclaw dashboard` 並在瀏覽器中聊天。文件：[儀表板](/zh-Hant/web/dashboard)。
 
 後續重新配置：
 
@@ -30,7 +30,7 @@ openclaw configure
 
 推薦：設定 Brave Search API 金鑰讓代理程式可以使用 `web_search`
 （`web_fetch` 無需金鑰工作）。最簡單的路徑：`openclaw configure --section web`
-儲存 `tools.web.search.apiKey`。文件：[網路工具](/tools/web)。
+儲存 `tools.web.search.apiKey`。文件：[網路工具](/zh-Hant/tools/web)。
 
 ## 快速開始 vs 進階
 
@@ -94,25 +94,25 @@ openclaw agents add <name>
    - **OpenCode Zen（多模型代理）**：提示 `OPENCODE_API_KEY`（或 `OPENCODE_ZEN_API_KEY`，在 https://opencode.ai/auth 取得）。
    - **API 金鑰**：儲存金鑰。
    - **Vercel AI Gateway（多模型代理）**：提示 `AI_GATEWAY_API_KEY`。
-     詳細資訊：[Vercel AI Gateway](/providers/vercel-ai-gateway)
+     詳細資訊：[Vercel AI Gateway](/zh-Hant/providers/vercel-ai-gateway)
    - **MiniMax M2.1**：配置自動寫入。
-     詳細資訊：[MiniMax](/providers/minimax)
+     詳細資訊：[MiniMax](/zh-Hant/providers/minimax)
    - **Synthetic（Anthropic 相容）**：提示 `SYNTHETIC_API_KEY`。
-     詳細資訊：[Synthetic](/providers/synthetic)
+     詳細資訊：[Synthetic](/zh-Hant/providers/synthetic)
    - **Moonshot（Kimi K2）**：配置自動寫入。
    - **Kimi 編碼**：配置自動寫入。
-     詳細資訊：[Moonshot AI（Kimi + Kimi 編碼）](/providers/moonshot)
+     詳細資訊：[Moonshot AI（Kimi + Kimi 編碼）](/zh-Hant/providers/moonshot)
    - **跳過**：尚無認證設定。
    - 從偵測到的選項選擇預設模型（或手動輸入提供商/模型）。
    - 精靈執行模型檢查並警告若設定的模型未知或缺失認證。
 
 - OAuth 認證位於 `~/.openclaw/credentials/oauth.json`；認證設定檔位於 `~/.openclaw/agents/<agentId>/agent/auth-profiles.json`（API 金鑰 + OAuth）。
-- 詳細資訊：[/concepts/oauth](/concepts/oauth)
+- 詳細資訊：[/concepts/oauth](/zh-Hant/concepts/oauth)
 
 3. **工作區**
    - 預設 `~/.openclaw/workspace`（可配置）。
    - 植入代理程式引導儀式所需的工作區檔案。
-   - 完整工作區佈局 + 備份指南：[Agent 工作區](/concepts/agent-workspace)
+   - 完整工作區佈局 + 備份指南：[Agent 工作區](/zh-Hant/concepts/agent-workspace)
 
 4. **Gateway**
    - 連接埠、綁定、認證模式、tailscale 暴露。
@@ -121,13 +121,13 @@ openclaw agents add <name>
    - 非環回綁定仍需要認證。
 
 5. **頻道**
-   - [WhatsApp](/channels/whatsapp)：選用 QR 登入。
-   - [Telegram](/channels/telegram)：bot 令牌。
-   - [Discord](/channels/discord)：bot 令牌。
-   - [Google Chat](/channels/googlechat)：服務帳戶 JSON + webhook 對象。
-   - [Mattermost](/channels/mattermost)（外掛）：bot 令牌 + 基本 URL。
-   - [Signal](/channels/signal)：選用 `signal-cli` 安裝 + 帳戶配置。
-   - [iMessage](/channels/imessage)：本地 `imsg` CLI 路徑 + DB 存取。
+   - [WhatsApp](/zh-Hant/channels/whatsapp)：選用 QR 登入。
+   - [Telegram](/zh-Hant/channels/telegram)：bot 令牌。
+   - [Discord](/zh-Hant/channels/discord)：bot 令牌。
+   - [Google Chat](/zh-Hant/channels/googlechat)：服務帳戶 JSON + webhook 對象。
+   - [Mattermost](/zh-Hant/channels/mattermost)（外掛）：bot 令牌 + 基本 URL。
+   - [Signal](/zh-Hant/channels/signal)：選用 `signal-cli` 安裝 + 帳戶配置。
+   - [iMessage](/zh-Hant/channels/imessage)：本地 `imsg` CLI 路徑 + DB 存取。
    - DM 安全性：預設是配對。首個 DM 傳送碼；透過 `openclaw pairing approve <channel> <code>` 核准或使用允許清單。
 
 6. **Daemon 安裝**
@@ -327,7 +327,7 @@ WhatsApp 認證位於 `~/.openclaw/credentials/whatsapp/<accountId>/`。
 
 ## 相關文件
 
-- macOS 應用程式入門：[入門](/start/onboarding)
-- 配置參考：[Gateway 配置](/gateway/configuration)
-- 提供商：[WhatsApp](/channels/whatsapp)、[Telegram](/channels/telegram)、[Discord](/channels/discord)、[Google Chat](/channels/googlechat)、[Signal](/channels/signal)、[iMessage](/channels/imessage)
-- 技能：[技能](/tools/skills)、[技能配置](/tools/skills-config)
+- macOS 應用程式入門：[入門](/zh-Hant/start/onboarding)
+- 配置參考：[Gateway 配置](/zh-Hant/gateway/configuration)
+- 提供商：[WhatsApp](/zh-Hant/channels/whatsapp)、[Telegram](/zh-Hant/channels/telegram)、[Discord](/zh-Hant/channels/discord)、[Google Chat](/zh-Hant/channels/googlechat)、[Signal](/zh-Hant/channels/signal)、[iMessage](/zh-Hant/channels/imessage)
+- 技能：[技能](/zh-Hant/tools/skills)、[技能配置](/zh-Hant/tools/skills-config)

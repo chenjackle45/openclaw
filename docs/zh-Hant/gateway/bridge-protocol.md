@@ -4,14 +4,14 @@ read_when:
   - 建置或除錯 Node Users (iOS/Android/macOS node mode)
   - 調查配對或 Bridge Auth 失敗時
   - 稽核 Gateway 暴露的 Node Surface 時
-title: "Bridge 協定"
+title: "Bridge Protocol（Bridge 協定）"
 ---
 
 # Bridge Protocol (Legacy Node Transport)
 
 Bridge Protocol 是一個 **舊版 (Legacy)** Node 傳輸協定 (TCP JSONL)。新的 Node Clients 應使用統一的 Gateway WebSocket 協定。
 
-若您正在建置 Operator 或 Node Client，請使用 [Gateway protocol](/gateway/protocol)。
+若您正在建置 Operator 或 Node Client，請使用 [Gateway protocol](/zh-Hant/gateway/protocol)。
 
 **注意:** 目前的 OpenClaw 建置不再隨附 TCP Bridge Listener；此文件保留作為歷史參考。舊版 `bridge.*` 設定鍵已不再是 Config Schema 的一部分。
 
@@ -32,20 +32,22 @@ Bridge Protocol 是一個 **舊版 (Legacy)** Node 傳輸協定 (TCP JSONL)。�
 
 ## 握手 + 配對
 
-1) Client 發送 `hello` 帶有 Node Metadata + Token (若已配對)。
-2) 若未配對，Gateway 回覆 `error` (`NOT_PAIRED`/`UNAUTHORIZED`)。
-3) Client 發送 `pair-request`。
-4) Gateway 等待核准，然後發送 `pair-ok` 與 `hello-ok`。
+1. Client 發送 `hello` 帶有 Node Metadata + Token (若已配對)。
+2. 若未配對，Gateway 回覆 `error` (`NOT_PAIRED`/`UNAUTHORIZED`)。
+3. Client 發送 `pair-request`。
+4. Gateway 等待核准，然後發送 `pair-ok` 與 `hello-ok`。
 
 `hello-ok` 回傳 `serverName` 並可能包含 `canvasHostUrl`。
 
 ## Frames
 
 Client → Gateway:
+
 - `req` / `res`: Scoped Gateway RPC (chat, sessions, config, health, voicewake, skills.bins)
 - `event`: Node Signals (voice transcript, agent request, chat subscribe, exec lifecycle)
 
 Gateway → Client:
+
 - `invoke` / `invoke-res`: Node Commands (`canvas.*`, `camera.*`, `screen.record`, `location.get`, `sms.send`)
 - `event`: 已訂閱 Session 的聊天更新
 - `ping` / `pong`: Keepalive
@@ -57,6 +59,7 @@ Gateway → Client:
 Nodes 可發出 `exec.finished` 或 `exec.denied` 事件以呈現 `system.run` 活動。這些被映射至 Gateway 中的系統事件。(舊版 Nodes 可能仍發出 `exec.started`。)
 
 Payload 欄位 (除非註明否則為選填):
+
 - `sessionKey` (必填): 接收系統事件的 Agent Session。
 - `runId`: 用於分組的 Unique Exec ID。
 - `command`: 原始或格式化的指令字串。

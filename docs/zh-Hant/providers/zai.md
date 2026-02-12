@@ -3,7 +3,7 @@ summary: "在 OpenClaw 中使用 Z.AI（GLM 模型）"
 read_when:
   - 想要在 OpenClaw 中使用 Z.AI / GLM 模型時
   - 需要簡單的 ZAI_API_KEY 設定教學時
-title: "Z.AI"
+title: "Z.AI（Z.AI 模型）"
 ---
 
 # Z.AI
@@ -23,12 +23,12 @@ openclaw onboard --zai-api-key "$ZAI_API_KEY"
 ```json5
 {
   env: { ZAI_API_KEY: "sk-..." },
-  agents: { defaults: { model: { primary: "zai/glm-4.7" } } }
+  agents: { defaults: { model: { primary: "zai/glm-4.7" } } },
 }
 ```
 
 ## 注意事項
 
 - GLM 模型透過 `zai/<model>` 存取（例如：`zai/glm-4.7`）。
-- 有關模型系列的概覽，請參閱 [/providers/glm](/providers/glm)。
+- 有關模型系列的概覽，請參閱 [/providers/glm](/zh-Hant/providers/glm)。
 - Z.AI 使用帶有您 API 金鑰的 Bearer 認證。

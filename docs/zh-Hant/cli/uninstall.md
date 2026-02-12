@@ -1,5 +1,5 @@
 ---
-title: "uninstall(解除安裝)"
+title: "uninstall（解除安裝）"
 summary: "`openclaw uninstall` CLI 參考（移除 Gateway 服務與本地資料）"
 read_when:
   - 想要移除 Gateway 服務及/或本地狀態時

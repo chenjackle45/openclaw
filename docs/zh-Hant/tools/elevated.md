@@ -2,7 +2,7 @@
 summary: "Elevated exec mode and /elevated directives"
 read_when:
   - Adjusting elevated mode defaults, allowlists, or slash command behavior
-title: "Elevated Mode"
+title: "Elevated Mode（Elevated 提權模式）"
 ---
 
 # Elevated Mode (/elevated directives)

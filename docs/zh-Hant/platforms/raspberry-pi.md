@@ -1,355 +1,229 @@
 ---
-summary: "在 Raspberry Pi 上執行 OpenClaw (經濟實惠的自託管方案)"
+summary: "Raspberry Pi 上的 OpenClaw（低預算自託管設定）"
 read_when:
-  - 在 Raspberry Pi 上設定 OpenClaw 時
-  - 在 ARM 裝置上執行 OpenClaw 時
-  - 打造廉價的全天候個人 AI 時
-title: "Raspberry Pi"
+  - 在 Raspberry Pi 上設定 OpenClaw
+  - 在 ARM 設備上執行 OpenClaw
+  - 構建便宜的始終開啟的個人 AI
+title: "Raspberry Pi（Raspberry Pi）"
 ---
 
-# OpenClaw on Raspberry Pi
+# Raspberry Pi 上的 OpenClaw
 
 ## 目標
 
-以 **~$35-80 美金** 的一次性成本（無月費），在 Raspberry Pi 上執行持久、全天候運行的 OpenClaw Gateway。
+在 Raspberry Pi 上執行持續、始終開啟的 OpenClaw Gateway，費用為 **~$35-80** 一次性（無月費）。
 
-適合：
-- 24/7 個人 AI 助理
-- 家庭自動化中心
-- 低功耗、永遠在線的 Telegram/WhatsApp 機器人
+完美適用於：
+
+- 24/7 個人 AI 助手
+- 家庭自動化中樞
+- 低功耗、始終可用的 Telegram/WhatsApp 機器人
 
 ## 硬體需求
 
-| Pi 型號 | RAM | 可行性 | 備註 |
-|----------|-----|--------|-------|
-| **Pi 5** | 4GB/8GB | ✅ 最佳 | 速度最快，推薦 |
-| **Pi 4** | 4GB | ✅ 良好 | 大多數使用者的甜蜜點 |
-| **Pi 4** | 2GB | ✅ OK | 可行，需增加 Swap |
-| **Pi 4** | 1GB | ⚠️ 緊繃 | 配合 Swap 可行，需最小化設定 |
-| **Pi 3B+** | 1GB | ⚠️ 緩慢 | 可運作但反應遲鈍 |
-| **Pi Zero 2 W** | 512MB | ❌ | 不推薦 |
+| Pi 型號         | RAM     | 有效嗎？ | 注意                   |
+| --------------- | ------- | -------- | ---------------------- |
+| **Pi 5**        | 4GB/8GB | ✅ 最佳  | 最快，推薦             |
+| **Pi 4**        | 4GB     | ✅ 良好  | 大多數使用者的最佳點   |
+| **Pi 4**        | 2GB     | ✅ 可以  | 有效，新增交換         |
+| **Pi 4**        | 1GB     | ⚠️ 緊張  | 可能帶有交換，最小配置 |
+| **Pi 3B+**      | 1GB     | ⚠️ 緩慢  | 有效但遲緩             |
+| **Pi Zero 2 W** | 512MB   | ❌       | 不推薦                 |
 
-**最低規格:** 1GB RAM, 1 核心, 500MB 磁碟  
-**推薦規格:** 2GB+ RAM, 64-bit OS, 16GB+ SD 卡 (或 USB SSD)
+**最低規格：** 1GB RAM、1 核、500MB 磁碟
+**推薦：** 2GB+ RAM、64 位作業系統、16GB+ SD 卡（或 USB SSD）
 
-## 您需要準備
+## 你需要什麼
 
-- Raspberry Pi 4 或 5 (推薦 2GB+)
-- MicroSD 卡 (16GB+) 或 USB SSD (效能較佳)
-- 電源供應器 (推薦官方 Pi PSU)
-- 網路連線 (Ethernet 或 WiFi)
-- 約 30 分鐘時間
+- Raspberry Pi 4 或 5（推薦 2GB+）
+- MicroSD 卡（16GB+）或 USB SSD（更好的性能）
+- 電源供應（推薦官方 Pi PSU）
+- 網路連線（乙太網或 WiFi）
+- ~30 分鐘
 
-## 1) 燒錄 OS
+## 1) 刷新操作系統
 
-使用 **Raspberry Pi OS Lite (64-bit)** — 無頭伺服器不需要桌面環境。
+使用 **Raspberry Pi OS Lite（64 位）** — 無需桌面進行無頭伺服器。
 
 1. 下載 [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
-2. 選擇 OS: **Raspberry Pi OS Lite (64-bit)**
-3. 點擊齒輪圖示 (⚙️) 預先設定：
-   - 設定主機名稱: `gateway-host`
+2. 選擇操作系統：**Raspberry Pi OS Lite（64 位）**
+3. 點擊齒輪圖示（⚙️）進行預配置：
+   - 設定主機名稱：gateway-host
    - 啟用 SSH
    - 設定使用者名稱/密碼
-   - 設定 WiFi (若不使用 Ethernet)
-4. 燒錄至您的 SD 卡 / USB 隨身碟
+   - 配置 WiFi（如果未使用乙太網）
+4. 刷新到你的 SD 卡 / USB 磁碟
 5. 插入並啟動 Pi
 
-## 2) 透過 SSH 連線
+## 2) 透過 SSH 連接
 
-```bash
 ssh user@gateway-host
-# 或使用 IP 位址
+或使用 IP 位址
 ssh user@192.168.x.x
-```
 
 ## 3) 系統設定
 
-```bash
-# 更新系統
-sudo apt update && sudo apt upgrade -y
+更新系統並安裝 Node.js 等基本套件。詳見原始英文文件。
 
-# 安裝必要套件
-sudo apt install -y git curl build-essential
+## 4) 安裝 OpenClaw
 
-# 設定時區 (對 cron/提醒很重要)
-sudo timedatectl set-timezone Asia/Taipei  # 請改為您的時區
-```
+### 選項 A：標準安裝（推薦）
 
-## 4) 安裝 Node.js 22 (ARM64)
+curl -fsSL https://openclaw.ai/install.sh | bash
 
-```bash
-# 透過 NodeSource 安裝 Node.js
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt install -y nodejs
+### 選項 B：可駭客安裝（用於調整）
 
-# 驗證
-node --version  # 應顯示 v22.x.x
-npm --version
-```
-
-## 5) 新增 Swap (2GB 或更少記憶體者重要)
-
-Swap 可防止記憶體不足 (OOM) 崩潰：
-
-```bash
-# 建立 2GB Swap 檔案
-sudo fallocate -l 2G /swapfile
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
-
-# 設定永久生效
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-
-# 優化低記憶體 (降低 swappiness)
-echo 'vm.swappiness=10' | sudo tee -a /etc/sysctl.conf
-sudo sysctl -p
-```
-
-## 6) 安裝 OpenClaw
-
-### 選項 A: 標準安裝 (推薦)
-
-```bash
-curl -fsSL https://openclaw.bot/install.sh | bash
-```
-
-### 選項 B: 可駭客安裝 (適合想自行修改者)
-
-```bash
 git clone https://github.com/openclaw/openclaw.git
 cd openclaw
 npm install
 npm run build
 npm link
-```
 
-可駭客安裝讓您直接存取日誌與程式碼 — 對於除錯 ARM 特定問題很有用。
+可駭客安裝提供對日誌和程式碼的直接存取 — 用於偵錯 ARM 特定問題。
 
-## 7) 執行 Onboarding
+## 5) 執行上線
 
-```bash
 openclaw onboard --install-daemon
-```
 
-依照精靈操作：
-1. **Gateway mode:** Local
-2. **Auth:** 推薦使用 API Keys (OAuth 在無頭 Pi 上可能較麻煩)
-3. **Channels:** Telegram 最容易上手
-4. **Daemon:** Yes (systemd)
+按照精靈進行：
 
-## 8) 驗證安裝
+1. **Gateway 模式：** 本機
+2. **驗證：** 推薦 API 金鑰（OAuth 在無頭 Pi 上可能很棘手）
+3. **頻道：** Telegram 最容易開始
+4. **守護程式：** 是（systemd）
 
-```bash
-# 檢查狀態
+## 6) 驗證安裝
+
 openclaw status
-
-# 檢查服務
-sudo systemctl status openclaw
-
-# 查看日誌
+openclaw status --user
 journalctl -u openclaw -f
-```
 
-## 9) 存取儀表板 (Dashboard)
+## 7) 存取儀表板
 
-由於 Pi 是無頭的 (headless)，使用 SSH 通道：
+由於 Pi 是無頭的，使用 SSH 隧道：
 
-```bash
-# 從您的筆電/桌機
 ssh -L 18789:localhost:18789 user@gateway-host
 
-# 然後在瀏覽器開啟
-open http://localhost:18789
-```
+然後在瀏覽器中開啟
+http://localhost:18789
 
-或使用 Tailscale 進行全天候存取：
+或使用 Tailscale 進行始終開啟存取：
 
-```bash
-# 在 Pi 上
 curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up
 
-# 更新設定
+更新配置
 openclaw config set gateway.bind tailnet
 sudo systemctl restart openclaw
-```
 
 ---
 
-## 效能優化
+## 性能優化
 
-### 使用 USB SSD (顯著提升)
+### 使用 USB SSD（巨大改進）
 
-SD 卡速度慢且容易損壞。USB SSD 可顯著提升效能：
-
-```bash
-# 檢查是否從 USB 啟動
-lsblk
-```
-
-設定請參閱 [Pi USB boot guide](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#usb-mass-storage-boot)。
+SD 卡速度慢且磨損。USB SSD 大幅改善性能。詳見 Pi USB 啟動指南。
 
 ### 減少記憶體使用
 
-```bash
-# 停用 GPU 記憶體分配 (headless)
+# 禁用 GPU 記憶體分配（無頭）
+
 echo 'gpu_mem=16' | sudo tee -a /boot/config.txt
 
-# 若不需要則停用藍牙
+# 禁用藍牙（如果不需要）
+
 sudo systemctl disable bluetooth
-```
 
-### 監控資源
+### 監視資源
 
-```bash
-# 檢查記憶體
 free -h
-
-# 檢查 CPU 溫度
 vcgencmd measure_temp
-
-# 即時監控
 htop
-```
 
 ---
 
 ## ARM 特定注意事項
 
-### 二進位檔相容性
+### 二進位相容性
 
-大多數 OpenClaw 功能在 ARM64 上運作良好，但部分外部二進位檔可能需要 ARM 版本：
+大多數 OpenClaw 功能在 ARM64 上有效，但某些外部二進位檔可能需要 ARM 構建。詳見原始文件。
 
-| 工具 | ARM64 狀態 | 備註 |
-|------|--------------|-------|
-| Node.js | ✅ | 運作良好 |
-| WhatsApp (Baileys) | ✅ | 純 JS，無問題 |
-| Telegram | ✅ | 純 JS，無問題 |
-| gog (Gmail CLI) | ⚠️ | 檢查是否有 ARM Release |
-| Chromium (browser) | ✅ | `sudo apt install chromium-browser` |
+### 32 位對 64 位
 
-若某個 Skill 失敗，檢查其二進位檔是否有 ARM 建置。許多 Go/Rust 工具都有；有些則無。
+**始終使用 64 位作業系統。** Node.js 和許多現代工具都需要它。檢查：
 
-### 32-bit vs 64-bit
-
-**務必使用 64-bit OS。** Node.js 與許多現代工具都需要它。檢查方式：
-
-```bash
 uname -m
-# 應顯示: aarch64 (64-bit) 而非 armv7l (32-bit)
-```
+應該顯示：aarch64（64 位）而不是 armv7l（32 位）
 
 ---
 
 ## 推薦模型設定
 
-由於 Pi 只是 Gateway（模型在雲端運行），請使用基於 API 的模型：
+由於 Pi 只是 Gateway（模型在雲中執行），使用基於 API 的模型。詳見原始文件。
 
-```json
-{
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "anthropic/claude-sonnet-4-20250514",
-        "fallbacks": ["openai/gpt-4o-mini"]
-      }
-    }
-  }
-}
-```
-
-**不要嘗試在 Pi 上運行本地 LLM** — 即使是小模型也太慢。讓 Claude/GPT 處理繁重工作。
+**不要嘗試在 Pi 上執行本機 LLM** — 即使小型模型也太慢。讓 Claude/GPT 執行繁重工作。
 
 ---
 
-## 開機自動啟動
+## 開機時自動啟動
 
-Onboarding 精靈會設定此項，但可透過以下方式驗證：
+上線精靈設定此，但驗證：
 
-```bash
-# 檢查服務是否啟用
 sudo systemctl is-enabled openclaw
 
-# 若未啟用則啟用
-sudo systemctl enable openclaw
+如果沒有啟用：
 
-# 啟動服務
-sudo systemctl start openclaw
-```
+sudo systemctl enable openclaw
 
 ---
 
-## 故障排除
+## 故障排查
 
-### 記憶體不足 (OOM)
+### 記憶體不足（OOM）
 
-```bash
-# 檢查記憶體
 free -h
 
-# 增加更多 Swap (見步驟 5)
-# 或減少 Pi 上運行的服務
-```
+新增更多交換（見步驟 5）或減少 Pi 上執行的服務。
 
 ### 效能緩慢
 
-- 使用 USB SSD 代替 SD 卡
-- 停用未使用的服務：`sudo systemctl disable cups bluetooth avahi-daemon`
-- 檢查 CPU 降頻：`vcgencmd get_throttled` (應回傳 `0x0`)
+- 使用 USB SSD 而不是 SD 卡
+- 禁用未使用的服務
+- 檢查 CPU 節流
 
-### 服務無法啟動
+### 服務不會啟動
 
-```bash
-# 檢查日誌
 journalctl -u openclaw --no-pager -n 100
 
-# 常見修復：重新建置
-cd ~/openclaw  # 若使用可駭客安裝
-npm run build
-sudo systemctl restart openclaw
-```
+常見修復：重新構建
 
 ### ARM 二進位檔問題
 
-若 Skill 失敗並顯示 "exec format error"：
-1. 檢查二進位檔是否有 ARM64 建置
-2. 嘗試從原始碼建置
-3. 或使用支援 ARM 的 Docker 容器
+如果技能以「exec format error」失敗：
 
-### WiFi 斷線
-
-對於使用 WiFi 的無頭 Pi：
-
-```bash
-# 停用 WiFi 電源管理
-sudo iwconfig wlan0 power off
-
-# 設定永久生效
-echo 'wireless-power off' | sudo tee -a /etc/network/interfaces
-```
+1. 檢查二進位檔是否有 ARM64 構建
+2. 嘗試從原始碼構建
+3. 或使用帶有 ARM 支援的 Docker 容器
 
 ---
 
 ## 成本比較
 
-| 設定 | 一次性成本 | 月費 | 備註 |
-|-------|---------------|--------------|-------|
-| **Pi 4 (2GB)** | ~$45 | $0 | + 電費 (~$5/年) |
-| **Pi 4 (4GB)** | ~$55 | $0 | 推薦 |
-| **Pi 5 (4GB)** | ~$60 | $0 | 效能最佳 |
-| **Pi 5 (8GB)** | ~$80 | $0 | 效能過剩但經得起未來考驗 |
-| DigitalOcean | $0 | $6/mo | $72/年 |
-| Hetzner | $0 | €3.79/mo | ~$50/年 |
+| 設定           | 一次性成本 | 月費 | 注意             |
+| -------------- | ---------- | ---- | ---------------- |
+| **Pi 4 (2GB)** | ~$45       | $0   | + 電源（~$5/年） |
+| **Pi 4 (4GB)** | ~$55       | $0   | 推薦             |
+| **Pi 5 (4GB)** | ~$60       | $0   | 最佳性能         |
+| **Pi 5 (8GB)** | ~$80       | $0   | 過度但未來防災   |
 
-**損益平衡點:** 與雲端 VPS 相比，Pi 在約 6-12 個月內回本。
+**損益平衡：** Pi 與雲 VPS 相比在 ~6-12 個月內為自己付費。
 
 ---
 
-## 參閱
+## 另請參閱
 
-- [Linux guide](/platforms/linux) — 通用 Linux 設定
-- [DigitalOcean guide](/platforms/digitalocean) — 雲端替代方案
-- [Hetzner guide](/platforms/hetzner) — Docker 設定
-- [Tailscale](/gateway/tailscale) — 遠端存取
-- [Nodes](/nodes) — 將您的筆電/手機與 Pi Gateway 配對
+- [Linux 指南](/zh-Hant/platforms/linux) — 一般 Linux 設定
+- [DigitalOcean 指南](/zh-Hant/platforms/digitalocean) — 雲替代品
+- [Hetzner 指南](/zh-Hant/install/hetzner) — Docker 設定
+- [Tailscale](/zh-Hant/gateway/tailscale) — 遠端存取
+- [節點](/zh-Hant/nodes) — 將你的筆記本電腦/電話與 Pi gateway 配對

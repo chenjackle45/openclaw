@@ -1,5 +1,5 @@
 ---
-title: "Pi 整合架構"
+title: "Pi Integration Architecture（Pi 整合架構）"
 ---
 
 # Pi 整合架構
@@ -28,12 +28,12 @@ OpenClaw 使用 pi SDK 將 AI 編碼代理嵌入其訊息閘道架構中。OpenC
 }
 ```
 
-| 套件              | 用途                                                                      |
-| ----------------- | ------------------------------------------------------------------------- |
-| `pi-ai`           | 核心 LLM 抽象：`Model`、`streamSimple`、訊息類型、提供商 API             |
-| `pi-agent-core`   | 代理循環、工具執行、`AgentMessage` 類型                                  |
-| `pi-coding-agent` | 高層級 SDK：`createAgentSession`、`SessionManager`、`AuthStorage` 等     |
-| `pi-tui`          | 終端機 UI 元件（用於 OpenClaw 本地 TUI 模式）                            |
+| 套件              | 用途                                                                 |
+| ----------------- | -------------------------------------------------------------------- |
+| `pi-ai`           | 核心 LLM 抽象：`Model`、`streamSimple`、訊息類型、提供商 API         |
+| `pi-agent-core`   | 代理循環、工具執行、`AgentMessage` 類型                              |
+| `pi-coding-agent` | 高層級 SDK：`createAgentSession`、`SessionManager`、`AuthStorage` 等 |
+| `pi-tui`          | 終端機 UI 元件（用於 OpenClaw 本地 TUI 模式）                        |
 
 ## 文件結構
 
@@ -511,15 +511,15 @@ import { ... } from "@mariozechner/pi-tui";
 
 ## 與 Pi CLI 的主要差異
 
-| 面向            | Pi CLI                  | OpenClaw 嵌入式                                                                   |
-| --------------- | ----------------------- | ------------------------------------------------------------------------------- |
-| 呼叫方式        | `pi` 指令 / RPC         | 透過 `createAgentSession()` 的 SDK                                              |
-| 工具            | 預設編碼工具            | 自訂 OpenClaw 工具套件                                                          |
-| 系統提示        | AGENTS.md + 提示        | 依通道／上下文動態設定                                                          |
-| 會話存儲        | `~/.pi/agent/sessions/` | `~/.openclaw/agents/<agentId>/sessions/`（或 `$OPENCLAW_STATE_DIR/agents/...`） |
-| 驗證            | 單一認證                | 多設定檔與輪換                                                                  |
-| 擴充功能        | 從磁碟載入              | 程式化 + 磁碟路徑                                                               |
-| 事件處理        | TUI 渲染                | 回呼型（onBlockReply 等）                                                       |
+| 面向     | Pi CLI                  | OpenClaw 嵌入式                                                                 |
+| -------- | ----------------------- | ------------------------------------------------------------------------------- |
+| 呼叫方式 | `pi` 指令 / RPC         | 透過 `createAgentSession()` 的 SDK                                              |
+| 工具     | 預設編碼工具            | 自訂 OpenClaw 工具套件                                                          |
+| 系統提示 | AGENTS.md + 提示        | 依通道／上下文動態設定                                                          |
+| 會話存儲 | `~/.pi/agent/sessions/` | `~/.openclaw/agents/<agentId>/sessions/`（或 `$OPENCLAW_STATE_DIR/agents/...`） |
+| 驗證     | 單一認證                | 多設定檔與輪換                                                                  |
+| 擴充功能 | 從磁碟載入              | 程式化 + 磁碟路徑                                                               |
+| 事件處理 | TUI 渲染                | 回呼型（onBlockReply 等）                                                       |
 
 ## 未來考慮
 

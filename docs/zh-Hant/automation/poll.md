@@ -1,5 +1,5 @@
 ---
-title: "投票 (Polls)"
+title: "Polls（投票）"
 summary: "透過 Gateway 與 CLI 發送投票"
 read_when:
   - 新增或修改投票支援時

@@ -1,34 +1,38 @@
 ---
-summary: "macOS 權限持久性 (TCC) 與簽署需求"
+summary: "macOS 權限持久化（TCC）和簽署需求"
 read_when:
-  - 除錯遺失或卡住的 macOS 權限提示時
-  - 打包或簽署 macOS 應用程式時
-  - 變更 Bundle ID 或應用程式安裝路徑時
-title: "macOS 權限"
+  - Debugging missing or stuck macOS permission prompts
+  - Packaging or signing the macOS app
+  - Changing bundle IDs or app install paths
+title: "macOS Permissions（macOS 權限）"
 ---
 
-# macOS 權限 (TCC)
+# macOS permissions (TCC)
 
-macOS 的權限授權相當脆弱。TCC 將權限授權與應用程式的程式碼簽章 (code signature)、Bundle Identifier 以及磁碟路徑綁定。若其中任何一項變更，macOS 會將應用程式視為新的應用程式，並可能移除或隱藏提示。
+macOS permission grants are fragile. TCC associates a permission grant with the
+app's code signature, bundle identifier, and on-disk path. If any of those change,
+macOS treats the app as new and may drop or hide prompts.
 
-## 穩定權限的需求
+## Requirements for stable permissions
 
-- 相同路徑：從固定位置運行應用程式（OpenClaw 為 `dist/OpenClaw.app`）。
-- 相同 Bundle Identifier：變更 Bundle ID 會建立新的權限身分。
-- 已簽署的應用程式：未簽署或 ad-hoc 簽署的建置不會持久保存權限。
-- 一致的簽章：使用真實的 Apple Development 或 Developer ID 憑證，以便簽章在多次重建後保持穩定。
+- Same path: run the app from a fixed location (for OpenClaw, `dist/OpenClaw.app`).
+- Same bundle identifier: changing the bundle ID creates a new permission identity.
+- Signed app: unsigned or ad-hoc signed builds do not persist permissions.
+- Consistent signature: use a real Apple Development or Developer ID certificate
+  so the signature stays stable across rebuilds.
 
-Ad-hoc 簽章會在每次建置時產生新的身分。macOS 會忘記先前的授權，且在清除陳舊項目之前，提示可能會完全消失。
+Ad-hoc signatures generate a new identity every build. macOS will forget previous
+grants, and prompts can disappear entirely until the stale entries are cleared.
 
-## 當提示消失時的復原檢查清單
+## Recovery checklist when prompts disappear
 
-1. 退出應用程式。
-2. 移除 System Settings -> Privacy & Security 中的應用程式項目。
-3. 從相同路徑重新啟動應用程式並重新授權權限。
-4. 若提示仍未出現，使用 `tccutil` 重置 TCC 項目並重試。
-5. 部分權限僅在 macOS 完全重啟後才會重新出現。
+1. Quit the app.
+2. Remove the app entry in System Settings -> Privacy & Security.
+3. Relaunch the app from the same path and re-grant permissions.
+4. If the prompt still does not appear, reset TCC entries with `tccutil` and try again.
+5. Some permissions only reappear after a full macOS restart.
 
-重置範例（視需要替換 Bundle ID）：
+Example resets (replace bundle ID as needed):
 
 ```bash
 sudo tccutil reset Accessibility bot.molt.mac
@@ -36,4 +40,11 @@ sudo tccutil reset ScreenCapture bot.molt.mac
 sudo tccutil reset AppleEvents
 ```
 
-若您正在測試權限，請務必使用真實憑證簽署。Ad-hoc 建置僅適用於不介意權限的快速本地運行。
+## Files and folders permissions (Desktop/Documents/Downloads)
+
+macOS may also gate Desktop, Documents, and Downloads for terminal/background processes. If file reads or directory listings hang, grant access to the same process context that performs file operations (for example Terminal/iTerm, LaunchAgent-launched app, or SSH process).
+
+Workaround: move files into the OpenClaw workspace (`~/.openclaw/workspace`) if you want to avoid per-folder grants.
+
+If you are testing permissions, always sign with a real certificate. Ad-hoc
+builds are only acceptable for quick local runs where permissions do not matter.

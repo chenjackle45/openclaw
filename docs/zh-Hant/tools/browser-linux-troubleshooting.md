@@ -1,7 +1,7 @@
 ---
 summary: "Fix Chrome/Brave/Edge/Chromium CDP startup issues for OpenClaw browser control on Linux"
 read_when: "Browser control fails on Linux, especially with snap Chromium"
-title: "Browser Troubleshooting"
+title: "Browser Troubleshooting（瀏覽器疑難排解）"
 ---
 
 # Browser Troubleshooting (Linux)

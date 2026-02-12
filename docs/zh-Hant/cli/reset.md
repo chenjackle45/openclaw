@@ -1,5 +1,5 @@
 ---
-title: "reset(重設配置)"
+title: "reset（重設配置）"
 summary: "`openclaw reset` CLI 參考（重設本地狀態與配置）"
 read_when:
   - 想要清除本地狀態但保留 CLI 安裝時

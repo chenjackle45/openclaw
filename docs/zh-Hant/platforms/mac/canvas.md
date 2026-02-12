@@ -4,7 +4,7 @@ read_when:
   - 實作 macOS Canvas 面板時
   - 為視覺工作區新增 Agent 控制項時
   - 除錯 WKWebView Canvas 載入問題時
-title: "Canvas"
+title: "Canvas（Canvas 畫布）"
 ---
 
 # Canvas (macOS 應用程式)
@@ -23,6 +23,7 @@ Canvas 面板透過 **自訂 URL Scheme** 提供這些檔案：
 - `openclaw-canvas://<session>/<path>`
 
 範例：
+
 - `openclaw-canvas://main/` → `<canvasRoot>/main/index.html`
 - `openclaw-canvas://main/assets/app.css` → `<canvasRoot>/main/assets/app.css`
 - `openclaw-canvas://main/widgets/todo/` → `<canvasRoot>/main/widgets/todo/index.html`
@@ -57,6 +58,7 @@ openclaw nodes canvas snapshot --node <id>
 ```
 
 注意：
+
 - `canvas.navigate` 接受 **本地 Canvas 路徑**、`http(s)` URL 以及 `file://` URL。
 - 若傳遞 `"/"`，Canvas 會顯示本地鷹架或 `index.html`。
 

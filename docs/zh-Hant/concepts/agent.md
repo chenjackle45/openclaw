@@ -1,9 +1,10 @@
 ---
-title: "Agent Runtime(代理執行時)"
-summary: "代理執行時（嵌入式 pi-mono）、工作區契約和會話啟動"
+title: "Agent Runtime（Agent 執行時間）"
+summary: "Agent 執行時間（內嵌 pi-mono）、工作區契約和會話啟動"
 read_when:
-  - 更改代理執行時、工作區啟動或會話行為
+  - 變更 Agent 執行時間、工作區啟動或會話行為
 ---
+
 # Agent Runtime（代理執行時） 🤖
 
 OpenClaw 運行一個從 **pi-mono** 衍生的單一嵌入式代理執行時。
@@ -14,13 +15,14 @@ OpenClaw 使用單一代理工作區目錄（`agents.defaults.workspace`）作�
 
 建議：使用 `openclaw setup` 在缺失時建立 `~/.openclaw/openclaw.json` 並初始化工作區檔案。
 
-完整工作區佈局 + 備份指南：[代理工作區](/concepts/agent-workspace)
+完整工作區佈局 + 備份指南：[代理工作區](/zh-Hant/concepts/agent-workspace)
 
-如果 `agents.defaults.sandbox` 已啟用，非主會話可以在 `agents.defaults.sandbox.workspaceRoot` 下使用每會話工作區覆寫此設定（請參閱 [Gateway 設定](/gateway/configuration)）。
+如果 `agents.defaults.sandbox` 已啟用，非主會話可以在 `agents.defaults.sandbox.workspaceRoot` 下使用每會話工作區覆寫此設定（請參閱 [Gateway 設定](/zh-Hant/gateway/configuration)）。
 
 ## 啟動檔案（注入）
 
 在 `agents.defaults.workspace` 內，OpenClaw 期望這些使用者可編輯的檔案：
+
 - `AGENTS.md` — 操作指令 + 「記憶」
 - `SOUL.md` — 人格、邊界、語氣
 - `TOOLS.md` — 使用者維護的工具備註（例如 `imsg`、`sag`、慣例）
@@ -49,11 +51,12 @@ OpenClaw 使用單一代理工作區目錄（`agents.defaults.workspace`）作�
 ## 技能
 
 OpenClaw 從三個位置載入技能（工作區在名稱衝突時優先）：
+
 - 綁定（隨安裝一起提供）
 - 管理/本地：`~/.openclaw/skills`
 - 工作區：`<workspace>/skills`
 
-技能可以透過設定/env 控制（請參閱 [Gateway 設定](/gateway/configuration) 中的 `skills`）。
+技能可以透過設定/env 控制（請參閱 [Gateway 設定](/zh-Hant/gateway/configuration) 中的 `skills`）。
 
 ## pi-mono 整合
 
@@ -65,6 +68,7 @@ OpenClaw 重用 pi-mono 程式碼庫的部分（models/tools），但 **會話�
 ## 會話
 
 會話轉錄以 JSONL 格式儲存於：
+
 - `~/.openclaw/agents/<agentId>/sessions/<SessionId>.jsonl`
 
 會話 ID 是穩定的，由 OpenClaw 選擇。
@@ -74,14 +78,14 @@ OpenClaw 重用 pi-mono 程式碼庫的部分（models/tools），但 **會話�
 
 當佇列模式為 `steer` 時，入站訊息會被注入當前運行。佇列在**每次工具呼叫後**檢查；如果存在排隊的訊息，當前助手訊息的剩餘工具呼叫會被跳過（錯誤工具結果為「因排隊的使用者訊息而跳過。」），然後排隊的使用者訊息會在下一個助手回應之前被注入。
 
-當佇列模式為 `followup` 或 `collect` 時，入站訊息會被保留直到當前輪次結束，然後新的代理輪次會以排隊的負載開始。請參閱 [佇列](/concepts/queue) 了解模式 + 防抖/上限行為。
+當佇列模式為 `followup` 或 `collect` 時，入站訊息會被保留直到當前輪次結束，然後新的代理輪次會以排隊的負載開始。請參閱 [佇列](/zh-Hant/concepts/queue) 了解模式 + 防抖/上限行為。
 
 區塊串流在完成後立即發送完成的助手區塊；它**預設關閉**（`agents.defaults.blockStreamingDefault: "off"`）。
 透過 `agents.defaults.blockStreamingBreak` 調整邊界（`text_end` vs `message_end`；預設為 text_end）。
 使用 `agents.defaults.blockStreamingChunk` 控制軟區塊分塊（預設為 800-1200 字元；偏好段落斷行，然後換行；句子最後）。
 使用 `agents.defaults.blockStreamingCoalesce` 合併串流區塊以減少單行垃圾訊息（發送前基於閒置的合併）。非 Telegram 頻道需要明確的 `*.blockStreaming: true` 來啟用區塊回覆。
 詳細工具摘要在工具啟動時發出（無防抖）；Control UI 在可用時透過代理事件串流工具輸出。
-更多詳情：[串流 + 分塊](/concepts/streaming)。
+更多詳情：[串流 + 分塊](/zh-Hant/concepts/streaming)。
 
 ## 模型參考
 
@@ -94,9 +98,10 @@ OpenClaw 重用 pi-mono 程式碼庫的部分（models/tools），但 **會話�
 ## 設定（最小）
 
 至少設定：
+
 - `agents.defaults.workspace`
 - `channels.whatsapp.allowFrom`（強烈建議）
 
 ---
 
-*下一步：[群組聊天](/concepts/group-messages)* 🦞
+_下一步：[群組聊天](/zh-Hant/concepts/group-messages)_ 🦞

@@ -1,6 +1,6 @@
 ---
-title: "deepgram(Deepgram)"
-summary: "用於輸入語音訊息的 Deepgram 轉錄服務"
+title: "Deepgram（Deepgram 語音辨識）"
+summary: "入站語音筆記的 Deepgram 語音轉文字"
 read_when:
   - 想要使用 Deepgram 進行音訊附件的語音轉文字時
   - 需要深層配置範例時 (Deepgram config example)
@@ -17,22 +17,24 @@ Deepgram 是一個語音轉文字 API。在 OpenClaw 中，它透過 `tools.medi
 
 ## 快速開始
 
-1) 設定您的 API 金鑰：
+1. 設定您的 API 金鑰：
+
 ```
 DEEPGRAM_API_KEY=dg_...
 ```
 
-2) 啟用供應商：
+2. 啟用供應商：
+
 ```json5
 {
   tools: {
     media: {
       audio: {
         enabled: true,
-        models: [{ provider: "deepgram", model: "nova-3" }]
-      }
-    }
-  }
+        models: [{ provider: "deepgram", model: "nova-3" }],
+      },
+    },
+  },
 }
 ```
 
@@ -45,22 +47,22 @@ DEEPGRAM_API_KEY=dg_...
 - `tools.media.audio.providerOptions.deepgram.smart_format`: 啟用智慧格式化（選用）
 
 包含語言設定的範例：
+
 ```json5
 {
   tools: {
     media: {
       audio: {
         enabled: true,
-        models: [
-          { provider: "deepgram", model: "nova-3", language: "zh-Hant" }
-        ]
-      }
-    }
-  }
+        models: [{ provider: "deepgram", model: "nova-3", language: "zh-Hant" }],
+      },
+    },
+  },
 }
 ```
 
 包含 Deepgram 選項的範例：
+
 ```json5
 {
   tools: {
@@ -71,13 +73,13 @@ DEEPGRAM_API_KEY=dg_...
           deepgram: {
             detect_language: true,
             punctuate: true,
-            smart_format: true
-          }
+            smart_format: true,
+          },
         },
-        models: [{ provider: "deepgram", model: "nova-3" }]
-      }
-    }
-  }
+        models: [{ provider: "deepgram", model: "nova-3" }],
+      },
+    },
+  },
 }
 ```
 

@@ -1,9 +1,10 @@
 ---
-title: "Channel routing(頻道路由)"
+title: "Channel Routing（頻道路由）"
 summary: "按頻道（WhatsApp、Telegram、Discord、Slack）的路由規則與共享上下文"
 read_when:
   - 更改頻道路由或收件匣行為
 ---
+
 # Channels & routing（頻道與路由）
 
 OpenClaw 將回覆**路由回訊息來源的頻道**。模型不會選擇頻道；路由是確定性的，由主機設定控制。
@@ -60,12 +61,12 @@ OpenClaw 將回覆**路由回訊息來源的頻道**。模型不會選擇頻道�
   broadcast: {
     strategy: "parallel",
     "120363403215116621@g.us": ["alfred", "baerbel"],
-    "+15555550123": ["support", "logger"]
-  }
+    "+15555550123": ["support", "logger"],
+  },
 }
 ```
 
-請參閱：[廣播群組 (Broadcast Groups)](/broadcast-groups)。
+請參閱：[廣播群組 (Broadcast Groups)](/zh-Hant/broadcast-groups)。
 
 ## 設定概覽
 
@@ -77,14 +78,12 @@ OpenClaw 將回覆**路由回訊息來源的頻道**。模型不會選擇頻道�
 ```json5
 {
   agents: {
-    list: [
-      { id: "support", name: "Support", workspace: "~/.openclaw/workspace-support" }
-    ]
+    list: [{ id: "support", name: "Support", workspace: "~/.openclaw/workspace-support" }],
   },
   bindings: [
     { match: { channel: "slack", teamId: "T123" }, agentId: "support" },
-    { match: { channel: "telegram", peer: { kind: "group", id: "-100123" } }, agentId: "support" }
-  ]
+    { match: { channel: "telegram", peer: { kind: "group", id: "-100123" } }, agentId: "support" },
+  ],
 }
 ```
 
@@ -104,6 +103,7 @@ WebChat 附加到**選定的代理**，並預設為代理的主會話。因此�
 ## 回覆上下文
 
 入站回覆包含：
+
 - `ReplyToId`、`ReplyToBody` 和 `ReplyToSender`（如果可用）。
 - 引用上下文會作為 `[Replying to ...]` 區塊附加到 `Body` 中。
 

@@ -81,7 +81,7 @@ read_when:
 }
 ```
 
-多帳戶支援：使用 `channels.signal.accounts` 設定每個帳戶的設定和可選的 `name`。請參閱 [`gateway/configuration`](/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts) 了解共享模式。
+多帳戶支援：使用 `channels.signal.accounts` 設定每個帳戶的設定和可選的 `name`。請參閱 [`gateway/configuration`](/zh-Hant/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts) 了解共享模式。
 
 ## 外部守護程序模式（httpUrl）
 
@@ -109,7 +109,7 @@ read_when:
 - 透過以下方式批准：
   - `openclaw pairing list signal`
   - `openclaw pairing approve signal <CODE>`
-- 配對是 Signal 私訊的預設令牌交換。詳情：[配對](/start/pairing)
+- 配對是 Signal 私訊的預設令牌交換。詳情：[配對](/zh-Hant/start/pairing)
 - 僅 UUID 的發送者（來自 `sourceUuid`）在 `channels.signal.allowFrom` 中儲存為 `uuid:<id>`。
 
 群組：
@@ -170,7 +170,7 @@ message action=react channel=signal target=signal:group:<groupId> targetAuthor=u
 
 ## 設定參考（Signal）
 
-完整設定：[設定](/gateway/configuration)
+完整設定：[設定](/zh-Hant/gateway/configuration)
 
 供應商選項：
 

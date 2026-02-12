@@ -3,7 +3,7 @@ summary: "在 OpenClaw 中使用 Xiaomi MiMo（mimo-v2-flash）"
 read_when:
   - 想要在 OpenClaw 中使用 Xiaomi MiMo 模型時
   - 需要 XIAOMI_API_KEY 設定教學時
-title: "Xiaomi MiMo"
+title: "Xiaomi MiMo（Xiaomi MiMo 模型）"
 ---
 
 # Xiaomi MiMo
@@ -45,12 +45,12 @@ openclaw onboard --auth-choice xiaomi-api-key --xiaomi-api-key "$XIAOMI_API_KEY"
             input: ["text"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
             contextWindow: 262144,
-            maxTokens: 8192
-          }
-        ]
-      }
-    }
-  }
+            maxTokens: 8192,
+          },
+        ],
+      },
+    },
+  },
 }
 ```
 
@@ -58,4 +58,4 @@ openclaw onboard --auth-choice xiaomi-api-key --xiaomi-api-key "$XIAOMI_API_KEY"
 
 - 模型引用：`xiaomi/mimo-v2-flash`。
 - 當設定了 `XIAOMI_API_KEY`（或存在認證設定檔）時，供應商會自動注入。
-- 更多供應商規則請參閱 [/concepts/model-providers](/concepts/model-providers)。
+- 更多供應商規則請參閱 [/concepts/model-providers](/zh-Hant/concepts/model-providers)。

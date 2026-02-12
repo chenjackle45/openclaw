@@ -1,5 +1,5 @@
 ---
-title: "OpenResponses gateway(OpenResponses gateway 整合)"
+title: "OpenResponses Gateway Plan（OpenResponses gateway 整合）"
 summary: "計畫：新增 OpenResponses /v1/responses 端點並乾淨地棄用 chat completions"
 owner: "openclaw"
 status: "draft"
@@ -10,7 +10,7 @@ last_updated: "2026-01-19"
 
 ## 背景
 
-OpenClaw Gateway 目前在 `/v1/chat/completions` 公開最小的 OpenAI 相容 Chat Completions 端點（請參閱 [OpenAI Chat Completions](/gateway/openai-http-api)）。
+OpenClaw Gateway 目前在 `/v1/chat/completions` 公開最小的 OpenAI 相容 Chat Completions 端點（請參閱 [OpenAI Chat Completions](/zh-Hant/gateway/openai-http-api)）。
 
 Open Responses 是基於 OpenAI Responses API 的開放推理標準。它專為
 代理工作流程設計，並使用基於項目的輸入加上語意串流事件。OpenResponses

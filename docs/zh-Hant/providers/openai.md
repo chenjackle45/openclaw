@@ -1,5 +1,5 @@
 ---
-summary: "在 OpenClaw 中使用 OpenAI API 金鑰或 Codex 訂閱"
+summary: "在 OpenClaw 中使用 OpenAI API 鑰匙或 Codex 訂閱"
 read_when:
   - 想要在 OpenClaw 中使用 OpenAI 模型時
   - 想要使用 Codex 訂閱認證而非 API 金鑰時
@@ -28,7 +28,7 @@ openclaw onboard --openai-api-key "$OPENAI_API_KEY"
 ```json5
 {
   env: { OPENAI_API_KEY: "sk-..." },
-  agents: { defaults: { model: { primary: "openai/gpt-5.2" } } }
+  agents: { defaults: { model: { primary: "openai/gpt-5.2" } } },
 }
 ```
 
@@ -51,11 +51,11 @@ openclaw models auth login --provider openai-codex
 
 ```json5
 {
-  agents: { defaults: { model: { primary: "openai-codex/gpt-5.2" } } }
+  agents: { defaults: { model: { primary: "openai-codex/gpt-5.2" } } },
 }
 ```
 
 ## 注意事項
 
-- 模型引用始終使用 `provider/model` 格式（請參閱 [/concepts/models](/concepts/models)）。
-- 認證細節與重複使用規則請參閱 [/concepts/oauth](/concepts/oauth)。
+- 模型引用始終使用 `provider/model` 格式（請參閱 [/concepts/models](/zh-Hant/concepts/models)）。
+- 認證細節與重複使用規則請參閱 [/concepts/oauth](/zh-Hant/concepts/oauth)。

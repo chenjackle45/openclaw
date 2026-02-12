@@ -1,5 +1,5 @@
 ---
-title: "疑難排解"
+title: "Troubleshooting（疑難排解）"
 summary: "疑難排解中心：症狀 → 檢查 → 修復"
 read_when:
   - 您看到錯誤並想要修復路徑時
@@ -32,7 +32,7 @@ openclaw status --deep
 
 幾乎總是 Node/npm PATH 問題。從這裡開始：
 
-- [Install (Node/npm PATH 健全性)](/install#nodejs--npm-path-sanity)
+- [Install (Node/npm PATH 健全性)](/zh-Hant/install#nodejs--npm-path-sanity)
 
 ### 安裝程式失敗（或您需要完整日誌）
 
@@ -52,13 +52,13 @@ curl -fsSL https://openclaw.bot/install.sh | bash -s -- --beta --verbose
 
 ### Gateway「未授權」、無法連線或持續重新連線
 
-- [Gateway 疑難排解](/gateway/troubleshooting)
-- [Gateway 認證](/gateway/authentication)
+- [Gateway 疑難排解](/zh-Hant/gateway/troubleshooting)
+- [Gateway 認證](/zh-Hant/gateway/authentication)
 
 ### Control UI 在 HTTP 上失敗（需要裝置身份）
 
-- [Gateway 疑難排解](/gateway/troubleshooting)
-- [Control UI](/web/control-ui#insecure-http)
+- [Gateway 疑難排解](/zh-Hant/gateway/troubleshooting)
+- [Control UI](/zh-Hant/web/control-ui#insecure-http)
 
 ### `docs.openclaw.ai` 顯示 SSL 錯誤 (Comcast/Xfinity)
 
@@ -70,13 +70,13 @@ curl -fsSL https://openclaw.bot/install.sh | bash -s -- --beta --verbose
 
 ### 服務顯示正在運行，但 RPC 探測失敗
 
-- [Gateway 疑難排解](/gateway/troubleshooting)
-- [背景程序/服務](/gateway/background-process)
+- [Gateway 疑難排解](/zh-Hant/gateway/troubleshooting)
+- [背景程序/服務](/zh-Hant/gateway/background-process)
 
 ### 模型/認證失敗（速率限制、帳單、「所有模型都失敗」）
 
-- [Models](/cli/models)
-- [OAuth / 認證概念](/concepts/oauth)
+- [Models](/zh-Hant/cli/models)
+- [OAuth / 認證概念](/zh-Hant/concepts/oauth)
 
 ### `/model` 顯示 `model not allowed`
 

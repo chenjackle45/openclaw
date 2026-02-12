@@ -1,5 +1,5 @@
 ---
-title: "OpenAI Chat Completions (HTTP)"
+title: "OpenAI Chat Completions（OpenAI Chat Completions API）"
 summary: "從 Gateway 暴露 OpenAI 相容的 /v1/chat/completions HTTP Endpoint"
 read_when:
   - 整合預期 OpenAI Chat Completions 格式的工具時
@@ -23,6 +23,7 @@ OpenClaw 的 Gateway 可以服務一個小型、OpenAI 相容的 Chat Completion
 - `Authorization: Bearer <token>`
 
 註記：
+
 - 當 `gateway.auth.mode="token"`，使用 `gateway.auth.token` (或 `OPENCLAW_GATEWAY_TOKEN`)。
 - 當 `gateway.auth.mode="password"`，使用 `gateway.auth.password` (或 `OPENCLAW_GATEWAY_PASSWORD`)。
 
@@ -38,6 +39,7 @@ OpenClaw 的 Gateway 可以服務一個小型、OpenAI 相容的 Chat Completion
 - `x-openclaw-agent-id: <agentId>` (預設: `main`)
 
 進階：
+
 - `x-openclaw-session-key: <sessionKey>` 以完全控制 Session Routing。
 
 ## 啟用 Endpoint
@@ -49,10 +51,10 @@ OpenClaw 的 Gateway 可以服務一個小型、OpenAI 相容的 Chat Completion
   gateway: {
     http: {
       endpoints: {
-        chatCompletions: { enabled: true }
-      }
-    }
-  }
+        chatCompletions: { enabled: true },
+      },
+    },
+  },
 }
 ```
 
@@ -65,10 +67,10 @@ OpenClaw 的 Gateway 可以服務一個小型、OpenAI 相容的 Chat Completion
   gateway: {
     http: {
       endpoints: {
-        chatCompletions: { enabled: false }
-      }
-    }
-  }
+        chatCompletions: { enabled: false },
+      },
+    },
+  },
 }
 ```
 
@@ -89,6 +91,7 @@ OpenClaw 的 Gateway 可以服務一個小型、OpenAI 相容的 Chat Completion
 ## 範例
 
 Non-streaming:
+
 ```bash
 curl -sS http://127.0.0.1:18789/v1/chat/completions \
   -H 'Authorization: Bearer YOUR_TOKEN' \
@@ -101,6 +104,7 @@ curl -sS http://127.0.0.1:18789/v1/chat/completions \
 ```
 
 Streaming:
+
 ```bash
 curl -N http://127.0.0.1:18789/v1/chat/completions \
   -H 'Authorization: Bearer YOUR_TOKEN' \

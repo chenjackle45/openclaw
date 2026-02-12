@@ -1,9 +1,10 @@
 ---
-title: "Architecture(架構)"
+title: "Gateway Architecture（架構）"
 summary: "WebSocket Gateway 架構、元件和客戶端流程"
 read_when:
   - 處理 Gateway 協議、客戶端或傳輸
 ---
+
 # Gateway architecture（Gateway 架構）
 
 最後更新：2026-01-22
@@ -19,25 +20,30 @@ read_when:
 ## 元件和流程
 
 ### Gateway（守護程序）
+
 - 維護供應商連線。
 - 公開類型化的 WS API（請求、回應、伺服器推送事件）。
 - 對照 JSON Schema 驗證入站幀。
 - 發出事件如 `agent`、`chat`、`presence`、`health`、`heartbeat`、`cron`。
 
 ### 客戶端（mac app / CLI / web admin）
+
 - 每個客戶端一個 WS 連線。
 - 發送請求（`health`、`status`、`send`、`agent`、`system-presence`）。
 - 訂閱事件（`tick`、`agent`、`presence`、`shutdown`）。
 
 ### 節點（macOS / iOS / Android / 無頭）
+
 - 使用 `role: node` 連接到**同一個 WS 伺服器**。
 - 在 `connect` 中提供設備身份；配對是**基於設備的**（角色 `node`），批准存在於設備配對儲存中。
 - 公開命令如 `canvas.*`、`camera.*`、`screen.record`、`location.get`。
 
 協議詳情：
-- [Gateway 協議](/gateway/protocol)
+
+- [Gateway 協議](/zh-Hant/gateway/protocol)
 
 ### WebChat
+
 - 使用 Gateway WS API 進行聊天歷史和發送的靜態 UI。
 - 在遠端設定中，透過與其他客戶端相同的 SSH/Tailscale 隧道連接。
 
@@ -79,7 +85,7 @@ Client                    Gateway
 - **非本地**連接必須簽署 `connect.challenge` nonce 並需要明確批准。
 - Gateway 認證（`gateway.auth.*`）仍適用於**所有**連接，無論本地或遠端。
 
-詳情：[Gateway 協議](/gateway/protocol)、[配對](/start/pairing)、[安全](/gateway/security)。
+詳情：[Gateway 協議](/zh-Hant/gateway/protocol)、[配對](/zh-Hant/start/pairing)、[安全](/zh-Hant/gateway/security)。
 
 ## 協議類型和程式碼生成
 

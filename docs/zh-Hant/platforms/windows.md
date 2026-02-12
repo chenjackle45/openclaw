@@ -1,147 +1,94 @@
 ---
-summary: "Windows (WSL2) 支援 + 配套應用程式狀態"
+summary: "Windows（WSL2）支援 + 伴隨應用程式狀態"
 read_when:
-  - 在 Windows 上安裝 OpenClaw 時
-  - 尋找 Windows 配套應用程式狀態時
-title: "Windows (WSL2)"
+  - 在 Windows 上安裝 OpenClaw
+  - 尋找 Windows 伴隨應用程式狀態
+title: "Windows (WSL2)（Windows WSL2 支援）"
 ---
 
-# Windows (WSL2)
+# Windows（WSL2）
 
-OpenClaw 在 Windows 上推薦 **透過 WSL2** (建議使用 Ubuntu)。
-CLI 與 Gateway 在 Linux 內運行，這能保持執行環境一致，並使工具相容性更高 (Node/Bun/pnpm, Linux binaries, skills)。原生 Windows 安裝未經測試且問題較多。
+Windows 上的 OpenClaw 推薦透過 WSL2（推薦 Ubuntu）。
+CLI + Gateway 在 Linux 內執行，保持執行時一致並讓
+工具更相容（Node/Bun/pnpm、Linux 二進位檔、技能）。原生
+Windows 可能更棘手。WSL2 給你完整 Linux 體驗 — 安裝一行指令：wsl --install。
 
-原生 Windows 配套應用程式已在計畫中。
+原生 Windows 伴隨應用程式已計畫。
 
 ## 安裝 (WSL2)
-- [Getting Started](/start/getting-started) (在 WSL 內使用)
-- [Install & updates](/install/updating)
-- 官方 WSL2 指南 (Microsoft): https://learn.microsoft.com/windows/wsl/install
+
+- [開始使用](/zh-Hant/start/getting-started)（在 WSL 內使用）
+- [安裝和更新](/zh-Hant/install/updating)
+- 官方 WSL2 指南（Microsoft）：https://learn.microsoft.com/windows/wsl/install
 
 ## Gateway
-- [Gateway runbook](/gateway)
-- [Configuration](/gateway/configuration)
+
+- [Gateway runbook](/zh-Hant/gateway)
+- [配置](/zh-Hant/gateway/configuration)
 
 ## Gateway 服務安裝 (CLI)
 
 在 WSL2 內：
 
-```bash
 openclaw onboard --install-daemon
-```
 
 或：
 
-```bash
 openclaw gateway install
-```
 
 或：
 
-```bash
 openclaw configure
-```
 
-在提示時選擇 **Gateway service**。
+提示時選擇 Gateway 服務。
 
 修復/遷移：
 
-```bash
 openclaw doctor
-```
 
-## 進階：透過 LAN 暴露 WSL 服務 (portproxy)
+## 進階：透過 LAN 暴露 WSL 服務（portproxy）
 
-WSL 擁有自己的虛擬網路。若另一台機器需要存取 **WSL 內** 運行的服務 (SSH, 本地 TTS 伺服器, 或 Gateway)，您必須將 Windows 通訊埠轉發至目前的 WSL IP。WSL IP 在重啟後會改變，因此您可能需要更新轉發規則。
+WSL 有其自己的虛擬網路。如果另一機器需要到達在 WSL 內執行的服務
+（SSH、本機 TTS 伺服器或 Gateway），你必須
+將 Windows 連接埠轉送到目前 WSL IP。WSL IP 在重新啟動後變更，
+所以你可能需要重新整理轉送規則。
 
-範例 (PowerShell **以最高權限執行**):
-
-```powershell
-$Distro = "Ubuntu-24.04"
-$ListenPort = 2222
-$TargetPort = 22
-
-$WslIp = (wsl -d $Distro -- hostname -I).Trim().Split(" ")[0]
-if (-not $WslIp) { throw "WSL IP not found." }
-
-netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=$ListenPort `
-  connectaddress=$WslIp connectport=$TargetPort
-```
-
-允許通訊埠通過 Windows 防火牆 (一次性):
-
-```powershell
-New-NetFirewallRule -DisplayName "WSL SSH $ListenPort" -Direction Inbound `
-  -Protocol TCP -LocalPort $ListenPort -Action Allow
-```
-
-在 WSL 重啟後更新 portproxy：
-
-```powershell
-netsh interface portproxy delete v4tov4 listenport=$ListenPort listenaddress=0.0.0.0 | Out-Null
-netsh interface portproxy add v4tov4 listenport=$ListenPort listenaddress=0.0.0.0 `
-  connectaddress=$WslIp connectport=$TargetPort | Out-Null
-```
-
-注意：
-- 從另一台機器 SSH 的目標是 **Windows 主機 IP** (範例: `ssh user@windows-host -p 2222`)。
-- 遠端節點必須指向 **可達的** Gateway URL (非 `127.0.0.1`)；使用 `openclaw status --all` 確認。
-- 使用 `listenaddress=0.0.0.0` 以供 LAN 存取；`127.0.0.1` 僅限本地存取。
-- 若希望自動化此步驟，請註冊工作排程器 (Scheduled Task) 在登入時執行更新步驟。
+詳見官方 WSL 文件以獲取 portproxy 設定詳節。
 
 ## 逐步 WSL2 安裝
 
 ### 1) 安裝 WSL2 + Ubuntu
 
-開啟 PowerShell (Admin):
+開啟 PowerShell（管理員）：
 
-```powershell
 wsl --install
-# 或明確選擇 distro:
+
+或明確選擇 distro：
+
 wsl --list --online
 wsl --install -d Ubuntu-24.04
-```
 
-若 Windows 要求，請重新開機。
+如果 Windows 要求，重新開機。
 
-### 2) 啟用 systemd (Gateway 安裝所需)
+### 2) 啟用 systemd（gateway 安裝必需）
 
-在您的 WSL 終端機中：
+在你的 WSL 終端中，編輯 /etc/wsl.conf 以啟用 systemd。
 
-```bash
-sudo tee /etc/wsl.conf >/dev/null <<'EOF'
-[boot]
-systemd=true
-EOF
-```
+詳見 WSL 官方文件。
 
-接著從 PowerShell：
+### 3) 安裝 OpenClaw（在 WSL 內）
 
-```powershell
-wsl --shutdown
-```
+在 WSL 內按照 Linux 開始使用流程：
 
-重新開啟 Ubuntu，然後驗證：
-
-```bash
-systemctl --user status
-```
-
-### 3) 安裝 OpenClaw (在 WSL 內)
-
-在 WSL 內遵循 Linux Getting Started 流程：
-
-```bash
 git clone https://github.com/openclaw/openclaw.git
 cd openclaw
 pnpm install
-pnpm ui:build # 首次執行時自動安裝 UI 相依套件
+pnpm ui:build
 pnpm build
 openclaw onboard
-```
 
-完整指南: [Getting Started](/start/getting-started)
+完整指南：[開始使用](/zh-Hant/start/getting-started)
 
-## Windows 配套應用程式
+## Windows 伴隨應用程式
 
-我們尚未有 Windows 配套應用程式。若您想協助開發，歡迎貢獻。
+我們還沒有 Windows 伴隨應用程式。歡迎貢獻。

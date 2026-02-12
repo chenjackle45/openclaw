@@ -1,28 +1,30 @@
 ---
-title: "Models(模型)"
+title: "Models CLI（模型）"
 summary: "模型 CLI：list、set、aliases、fallbacks、scan、status"
 read_when:
   - 新增或修改模型 CLI（models list/set/scan/aliases/fallbacks）
   - 更改模型備援行為或選擇 UX
   - 更新模型掃描探測（tools/images）
 ---
+
 # Models CLI（模型 CLI）
 
-請參閱 [/concepts/model-failover](/concepts/model-failover) 了解認證設定檔輪換、冷卻時間以及它如何與備援互動。
-快速供應商概述 + 範例：[/concepts/model-providers](/concepts/model-providers)。
+請參閱 [/concepts/model-failover](/zh-Hant/concepts/model-failover) 了解認證設定檔輪換、冷卻時間以及它如何與備援互動。
+快速供應商概述 + 範例：[/concepts/model-providers](/zh-Hant/concepts/model-providers)。
 
 ## 模型選擇如何運作
 
 OpenClaw 按此順序選擇模型：
 
-1) **主要**模型（`agents.defaults.model.primary` 或 `agents.defaults.model`）。
-2) **備援**在 `agents.defaults.model.fallbacks` 中（按順序）。
-3) **供應商認證備援**在移動到下一個模型之前在供應商內部發生。
+1. **主要**模型（`agents.defaults.model.primary` 或 `agents.defaults.model`）。
+2. **備援**在 `agents.defaults.model.fallbacks` 中（按順序）。
+3. **供應商認證備援**在移動到下一個模型之前在供應商內部發生。
 
 相關：
+
 - `agents.defaults.models` 是 OpenClaw 可以使用的模型的允許清單/目錄（加上別名）。
 - `agents.defaults.imageModel` **僅在**主要模型無法接受圖片時使用。
-- 每代理預設可以透過 `agents.list[].model` 加上綁定覆寫 `agents.defaults.model`（請參閱 [/concepts/multi-agent](/concepts/multi-agent)）。
+- 每代理預設可以透過 `agents.list[].model` 加上綁定覆寫 `agents.defaults.model`（請參閱 [/concepts/multi-agent](/zh-Hant/concepts/multi-agent)）。
 
 ## 快速模型選擇（經驗分享）
 
@@ -48,7 +50,7 @@ openclaw onboard
 
 模型參考被正規化為小寫。供應商別名如 `z.ai/*` 正規化為 `zai/*`。
 
-供應商設定範例（包括 OpenCode Zen）位於 [/gateway/configuration](/gateway/configuration#opencode-zen-multi-model-proxy)。
+供應商設定範例（包括 OpenCode Zen）位於 [/gateway/configuration](/zh-Hant/gateway/configuration#opencode-zen-multi-model-proxy)。
 
 ## 「模型不被允許」（以及為什麼回覆停止）
 
@@ -72,9 +74,9 @@ Model "provider/model" is not allowed. Use /model to list available models.
     model: { primary: "anthropic/claude-sonnet-4-5" },
     models: {
       "anthropic/claude-sonnet-4-5": { alias: "Sonnet" },
-      "anthropic/claude-opus-4-5": { alias: "Opus" }
-    }
-  }
+      "anthropic/claude-opus-4-5": { alias: "Opus" },
+    },
+  },
 }
 ```
 
@@ -91,6 +93,7 @@ Model "provider/model" is not allowed. Use /model to list available models.
 ```
 
 備註：
+
 - `/model`（和 `/model list`）是緊湊的、編號的選擇器（模型系列 + 可用供應商）。
 - `/model <#>` 從該選擇器中選擇。
 - `/model status` 是詳細視圖（認證候選和，當設定時，供應商端點 `baseUrl` + `api` 模式）。
@@ -98,7 +101,7 @@ Model "provider/model" is not allowed. Use /model to list available models.
 - 如果模型 ID 本身包含 `/`（OpenRouter 風格），您必須包含供應商前綴（例如：`/model openrouter/moonshotai/kimi-k2`）。
 - 如果您省略供應商，OpenClaw 會將輸入視為別名或**預設供應商**的模型（僅當模型 ID 中沒有 `/` 時有效）。
 
-完整命令行為/設定：[斜線命令](/tools/slash-commands)。
+完整命令行為/設定：[斜線命令](/zh-Hant/tools/slash-commands)。
 
 ## CLI 命令
 
@@ -166,14 +169,16 @@ openclaw models status
 探測需要 OpenRouter API 金鑰（來自認證設定檔或 `OPENROUTER_API_KEY`）。沒有金鑰時，使用 `--no-probe` 僅列出候選。
 
 掃描結果按以下順序排名：
-1) 圖片支援
-2) 工具延遲
-3) 上下文大小
-4) 參數數量
+
+1. 圖片支援
+2. 工具延遲
+3. 上下文大小
+4. 參數數量
 
 輸入
+
 - OpenRouter `/models` 清單（篩選 `:free`）
-- 需要來自認證設定檔的 OpenRouter API 金鑰或 `OPENROUTER_API_KEY`（請參閱 [/environment](/environment)）
+- 需要來自認證設定檔的 OpenRouter API 金鑰或 `OPENROUTER_API_KEY`（請參閱 [/environment](/zh-Hant/environment)）
 - 可選篩選：`--max-age-days`、`--min-params`、`--provider`、`--max-candidates`
 - 探測控制：`--timeout`、`--concurrency`
 

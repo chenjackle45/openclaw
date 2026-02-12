@@ -1,39 +1,32 @@
 ---
-title: "Group policy hardening(群組策略強化)"
-summary: "Telegram 允許清單強化：前綴 + 空白正規化"
+summary: "實驗計畫：群組原則強化和集中管理"
 read_when:
-  - 審查歷史 Telegram 允許清單變更
+  - 計畫企業 OpenClaw 部署
+  - 實現集中設定管理
+  - 安全強化多 Agent 環境
+title: "Telegram Allowlist Hardening（群組原則強化）"
 ---
-# Telegram Allowlist Hardening(Telegram 允許清單強化)
 
-**日期**: 2026-01-05  
-**狀態**: 完成  
-**PR**: #216
+# 群組原則強化
 
-## 摘要
+## 目標
 
-Telegram 允許清單現在不區分大小寫地接受 `telegram:` 和 `tg:` 前綴，並容忍
-意外的空白。這使入站允許清單檢查與出站發送正規化對齊。
+此計畫旨在實現集中式 OpenClaw 部署和群組原則強化：
 
-## 變更內容
+1. **集中設定管理**：從中央儲存庫同步設定
+2. **原則實施**：強制安全設定和約束
+3. **稽核和合規性**：追蹤變更和存取
+4. **多 Agent 治理**：隔離和監視多個 Agent
 
-- 前綴 `telegram:` 和 `tg:` 被視為相同（不區分大小寫）。
-- 允許清單條目被修剪；空條目被忽略。
+## 狀態
 
-## 範例
+實驗性 - 以反饋為準。
 
-所有這些都被接受為相同 ID：
+## 計畫的功能
 
-- `telegram:123456`
-- `TG:123456`
-- ` tg:123456 `
+- 集中式設定服務
+- 原則範本和強制
+- 稽核日誌和報告
+- 多 Agent 隔離
 
-## 為什麼重要
-
-從日誌或聊天 ID 複製/貼上通常包括前綴和空白。正規化可避免
-在決定是否在 DM 或群組中回應時出現假陰性。
-
-## 相關文件
-
-- [Group Chats](/concepts/groups)
-- [Telegram Provider](/channels/telegram)
+詳見 [Gateway 安全](/zh-Hant/gateway/security)了解目前安全功能。

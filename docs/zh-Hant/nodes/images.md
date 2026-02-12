@@ -1,5 +1,5 @@
 ---
-title: "圖片與媒體支援"
+title: "Image and Media Support（圖片與媒體支援）"
 summary: "發送、Gateway 與 Agent 回應的圖片與媒體處理規則"
 read_when:
   - 修改媒體流水線或附件處理邏輯時

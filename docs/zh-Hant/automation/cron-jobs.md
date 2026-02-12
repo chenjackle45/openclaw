@@ -1,5 +1,5 @@
 ---
-title: "排程任務 (Cron Jobs)"
+title: "Cron Jobs（排程任務）"
 summary: "Gateway 排程器的任務排程與喚醒機制"
 read_when:
   - 安排背景任務或喚醒時
@@ -9,7 +9,7 @@ read_when:
 
 # 排程任務 (Gateway 排程器)
 
-> **Cron 還是心跳？** 見 [Cron vs Heartbeat](/automation/cron-vs-heartbeat) 瞭解何時使用各自。
+> **Cron 還是心跳？** 見 [Cron vs Heartbeat](/zh-Hant/automation/cron-vs-heartbeat) 瞭解何時使用各自。
 
 Cron 是 Gateway 的內建排程器。它持久化任務，在正確的時間喚醒 Agent，並可選擇將輸出傳回聊天。
 
@@ -58,7 +58,7 @@ openclaw cron add \
 
 ## 工具呼叫等價物 (Gateway cron tool)
 
-對於規範的 JSON 形狀和範例，見 [JSON schema for tool calls](/automation/cron-jobs#json-schema-for-tool-calls)。
+對於規範的 JSON 形狀和範例，見 [JSON schema for tool calls](/zh-Hant/automation/cron-jobs#json-schema-for-tool-calls)。
 
 ## Cron 任務的存儲位置
 
@@ -115,7 +115,7 @@ Cron 表達式使用 `croner`。若省略時區，使用 Gateway 主機的本地
 - `wakeMode: "next-heartbeat"` (預設)：事件等待下次排程的心跳。
 - `wakeMode: "now"`：事件觸發立即心跳執行。
 
-這是您想要常規心跳提示 + 主會話語境時的最佳選擇。見 [Heartbeat](/gateway/heartbeat)。
+這是您想要常規心跳提示 + 主會話語境時的最佳選擇。見 [Heartbeat](/zh-Hant/gateway/heartbeat)。
 
 #### 隔離任務（專屬 Cron 會話）
 
@@ -409,7 +409,7 @@ openclaw system event --mode now --text "Next heartbeat: check battery."
 
 - `cron.list`、`cron.status`、`cron.add`、`cron.update`、`cron.remove`
 - `cron.run` (force 或 due)、`cron.runs`
-  對於立即系統事件而不建立任務，使用 [`openclaw system event`](/cli/system)。
+  對於立即系統事件而不建立任務，使用 [`openclaw system event`](/zh-Hant/cli/system)。
 
 ## 故障排除
 

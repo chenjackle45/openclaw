@@ -1,14 +1,15 @@
 ---
-title: "Model providers(模型供應商)"
+title: "Model Providers（模型供應商）"
 summary: "模型供應商概覽與設定範例 + CLI 流程"
 read_when:
   - 您需要逐個供應商的模型設定參考
   - 您想要了解模型供應商的設定範例或 CLI 引導命令
 ---
+
 # Model providers（模型供應商）
 
 本頁面涵蓋 **LLM/模型供應商**（不是像 WhatsApp/Telegram 這樣的聊天頻道）。
-有關模型選擇規則，請參閱 [/concepts/models](/concepts/models)。
+有關模型選擇規則，請參閱 [/concepts/models](/zh-Hant/concepts/models)。
 
 ## 快速規則
 
@@ -29,7 +30,7 @@ OpenClaw 內建了 pi‑ai 目錄。這些供應商**不需要**設定 `models.p
 
 ```json5
 {
-  agents: { defaults: { model: { primary: "openai/gpt-5.2" } } }
+  agents: { defaults: { model: { primary: "openai/gpt-5.2" } } },
 }
 ```
 
@@ -42,7 +43,7 @@ OpenClaw 內建了 pi‑ai 目錄。這些供應商**不需要**設定 `models.p
 
 ```json5
 {
-  agents: { defaults: { model: { primary: "anthropic/claude-opus-4-5" } } }
+  agents: { defaults: { model: { primary: "anthropic/claude-opus-4-5" } } },
 }
 ```
 
@@ -55,7 +56,7 @@ OpenClaw 內建了 pi‑ai 目錄。這些供應商**不需要**設定 `models.p
 
 ```json5
 {
-  agents: { defaults: { model: { primary: "openai-codex/gpt-5.2" } } }
+  agents: { defaults: { model: { primary: "openai-codex/gpt-5.2" } } },
 }
 ```
 
@@ -68,7 +69,7 @@ OpenClaw 內建了 pi‑ai 目錄。這些供應商**不需要**設定 `models.p
 
 ```json5
 {
-  agents: { defaults: { model: { primary: "opencode/claude-opus-4-5" } } }
+  agents: { defaults: { model: { primary: "opencode/claude-opus-4-5" } } },
 }
 ```
 
@@ -128,7 +129,7 @@ Moonshot 使用相容 OpenAI 的端點：
 ```json5
 {
   agents: {
-    defaults: { model: { primary: "moonshot/kimi-k2.5" } }
+    defaults: { model: { primary: "moonshot/kimi-k2.5" } },
   },
   models: {
     mode: "merge",
@@ -137,10 +138,10 @@ Moonshot 使用相容 OpenAI 的端點：
         baseUrl: "https://api.moonshot.ai/v1",
         apiKey: "${MOONSHOT_API_KEY}",
         api: "openai-completions",
-        models: [{ id: "kimi-k2.5", name: "Kimi K2.5" }]
-      }
-    }
-  }
+        models: [{ id: "kimi-k2.5", name: "Kimi K2.5" }],
+      },
+    },
+  },
 }
 ```
 
@@ -176,7 +177,7 @@ MiniMax 需要自訂端點：
 - 供應商：`minimax`
 - 認證：`MINIMAX_API_KEY`
 
-詳情請參閱 [/providers/minimax](/providers/minimax)。
+詳情請參閱 [/providers/minimax](/zh-Hant/providers/minimax)。
 
 ### Ollama
 
@@ -194,8 +195,8 @@ Ollama 是本地執行環境：
 {
   agents: {
     defaults: {
-      model: { primary: "lmstudio/minimax-m2.1-gs32" }
-    }
+      model: { primary: "lmstudio/minimax-m2.1-gs32" },
+    },
   },
   models: {
     providers: {
@@ -208,12 +209,12 @@ Ollama 是本地執行環境：
             id: "minimax-m2.1-gs32",
             name: "MiniMax M2.1",
             contextWindow: 200000,
-            maxTokens: 8192
-          }
-        ]
-      }
-    }
-  }
+            maxTokens: 8192,
+          },
+        ],
+      },
+    },
+  },
 }
 ```
 
@@ -225,4 +226,4 @@ openclaw models set opencode/claude-opus-4-5
 openclaw models list
 ```
 
-另請參閱：[/gateway/configuration](/gateway/configuration) 以獲取完整配置範例。
+另請參閱：[/gateway/configuration](/zh-Hant/gateway/configuration) 以獲取完整配置範例。

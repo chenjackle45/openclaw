@@ -1,16 +1,18 @@
 ---
-title: "Context(上下文)"
+title: "Context（上下文）"
 summary: "上下文：模型看到什麼、如何建構以及如何檢查"
 read_when:
   - 您想了解 OpenClaw 中「上下文」的含義
   - 您正在除錯為什麼模型「知道」某些東西（或忘記了它）
   - 您想減少上下文開銷（/context、/status、/compact）
 ---
+
 # Context（上下文）
 
 「上下文」是 **OpenClaw 為一次運行發送給模型的所有內容**。它受模型的**上下文視窗**（token 限制）限制。
 
 初學者的心智模型：
+
 - **系統提示**（OpenClaw 建構）：規則、工具、技能列表、時間/執行時間和注入的工作區檔案。
 - **對話歷史**：您的訊息 + 此會話中助手的訊息。
 - **工具呼叫/結果 + 附件**：命令輸出、檔案讀取、圖片/音訊等。
@@ -25,7 +27,7 @@ read_when:
 - `/usage tokens` → 在正常回覆後附加每回覆使用量頁腳。
 - `/compact` → 將較舊的歷史摘要為緊湊條目以釋放視窗空間。
 
-另請參閱：[斜線命令](/tools/slash-commands)、[Token 使用與成本](/token-use)、[壓縮](/concepts/compaction)。
+另請參閱：[斜線命令](/zh-Hant/tools/slash-commands)、[Token 使用與成本](/zh-Hant/token-use)、[壓縮](/zh-Hant/concepts/compaction)。
 
 ## 範例輸出
 
@@ -77,6 +79,7 @@ Top tools (schema size):
 ## 什麼計入上下文視窗
 
 模型接收的所有內容都計入，包括：
+
 - 系統提示（所有部分）。
 - 對話歷史。
 - 工具呼叫 + 工具結果。
@@ -87,6 +90,7 @@ Top tools (schema size):
 ## OpenClaw 如何建構系統提示
 
 系統提示**由 OpenClaw 擁有**，每次運行重新建構。它包括：
+
 - 工具列表 + 簡短描述。
 - 技能列表（僅元資料；見下文）。
 - 工作區位置。
@@ -94,11 +98,12 @@ Top tools (schema size):
 - 執行時間元資料（主機/作業系統/模型/思考）。
 - 在**專案上下文**下注入的工作區啟動檔案。
 
-完整明細：[系統提示](/concepts/system-prompt)。
+完整明細：[系統提示](/zh-Hant/concepts/system-prompt)。
 
 ## 注入的工作區檔案（專案上下文）
 
 預設情況下，OpenClaw 注入一組固定的工作區檔案（如果存在）：
+
 - `AGENTS.md`
 - `SOUL.md`
 - `TOOLS.md`
@@ -118,34 +123,38 @@ Top tools (schema size):
 ## 工具：有兩種成本
 
 工具以兩種方式影響上下文：
-1) 系統提示中的**工具列表文字**（您看到的「Tooling」）。
-2) **工具 schemas**（JSON）。這些發送給模型以便它可以呼叫工具。它們計入上下文，即使您不會看到它們作為純文字。
+
+1. 系統提示中的**工具列表文字**（您看到的「Tooling」）。
+2. **工具 schemas**（JSON）。這些發送給模型以便它可以呼叫工具。它們計入上下文，即使您不會看到它們作為純文字。
 
 `/context detail` 分解最大的工具 schemas，以便您可以看到什麼占主導地位。
 
 ## 命令、指令和「內嵌捷徑」
 
 斜線命令由 Gateway 處理。有幾種不同的行為：
+
 - **獨立命令**：僅為 `/...` 的訊息作為命令運行。
 - **指令**：`/think`、`/verbose`、`/reasoning`、`/elevated`、`/model`、`/queue` 在模型看到訊息之前被剝離。
   - 僅指令訊息持久化會話設定。
   - 正常訊息中的內嵌指令作為每訊息提示。
 - **內嵌捷徑**（僅限允許清單發送者）：正常訊息中的某些 `/...` 令牌可以立即運行（例如：「hey /status」），並在模型看到剩餘文字之前被剝離。
 
-詳情：[斜線命令](/tools/slash-commands)。
+詳情：[斜線命令](/zh-Hant/tools/slash-commands)。
 
 ## 會話、壓縮和修剪（什麼持久化）
 
 跨訊息持久化的內容取決於機制：
+
 - **正常歷史**持久化在會話轉錄中，直到被策略壓縮/修剪。
 - **壓縮**將摘要持久化到轉錄中並保持最近的訊息完整。
 - **修剪**從運行的*記憶體中*提示移除舊工具結果，但不重寫轉錄。
 
-文件：[會話](/concepts/session)、[壓縮](/concepts/compaction)、[會話修剪](/concepts/session-pruning)。
+文件：[會話](/zh-Hant/concepts/session)、[壓縮](/zh-Hant/concepts/compaction)、[會話修剪](/zh-Hant/concepts/session-pruning)。
 
 ## `/context` 實際報告什麼
 
 `/context` 在可用時偏好最新的**運行建構**系統提示報告：
+
 - `System prompt (run)` = 從最後一次嵌入式（具工具能力）運行捕獲並持久化在會話儲存中。
 - `System prompt (estimate)` = 當沒有運行報告存在時（或透過不生成報告的 CLI 後端運行時）即時計算。
 

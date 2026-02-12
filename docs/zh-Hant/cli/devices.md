@@ -1,5 +1,5 @@
 ---
-title: "devices(裝置管理)"
+title: "devices（裝置管理）"
 summary: "`openclaw devices` CLI 參考（裝置配對、權杖輪換與撤銷）"
 read_when:
   - 正在核准裝置配對請求時

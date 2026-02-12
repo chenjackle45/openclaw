@@ -1,5 +1,5 @@
 ---
-title: "音訊與語音訊息"
+title: "Audio and Voice Notes（音訊與語音訊息）"
 summary: "傳入的音訊與語音訊息如何被下載、轉錄並注入至回應中"
 read_when:
   - 變更音訊轉錄或媒體處理方式時
@@ -97,7 +97,7 @@ read_when:
 
 - 供應商認證遵循標準模型認證順序（認證設定檔、環境變數、`models.providers.*.apiKey`）。
 - Deepgram 在使用 `provider: "deepgram"` 時會讀取 `DEEPGRAM_API_KEY`。
-- Deepgram 設定詳情：[Deepgram（音訊轉錄）](/providers/deepgram)。
+- Deepgram 設定詳情：[Deepgram（音訊轉錄）](/zh-Hant/providers/deepgram)。
 - 音訊供應商可透過 `tools.media.audio` 覆蓋 `baseUrl`、`headers` 和 `providerOptions`。
 - 預設大小上限為 20MB（`tools.media.audio.maxBytes`）。超過大小的音訊會跳過該模型，嘗試下一個項目。
 - 音訊的預設 `maxChars` 為**未設定**（完整轉錄）。設定 `tools.media.audio.maxChars` 或每項的 `maxChars` 以修剪輸出。

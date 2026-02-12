@@ -1,5 +1,5 @@
 ---
-title: "Channel Troubleshooting"
+title: "Channel Troubleshooting（頻道疑難排解）"
 summary: "頻道特定疑難排解快捷方式（Discord/Telegram/WhatsApp）"
 read_when:
   - 頻道連線但訊息不流通
@@ -19,11 +19,11 @@ openclaw channels status --probe
 
 ## 頻道
 
-- Discord：[/channels/discord#troubleshooting](/channels/discord#troubleshooting)
-- Telegram：[/channels/telegram#troubleshooting](/channels/telegram#troubleshooting)
-- WhatsApp：[/channels/whatsapp#troubleshooting-quick](/channels/whatsapp#troubleshooting-quick)
+- Discord：[/channels/discord#troubleshooting](/zh-Hant/channels/discord#troubleshooting)
+- Telegram：[/channels/telegram#troubleshooting](/zh-Hant/channels/telegram#troubleshooting)
+- WhatsApp：[/channels/whatsapp#troubleshooting-quick](/zh-Hant/channels/whatsapp#troubleshooting-quick)
 
 ## Telegram 快速修復
 
-- 日誌顯示 `HttpError: Network request for 'sendMessage' failed` 或 `sendChatAction` → 檢查 IPv6 DNS。如果 `api.telegram.org` 首先解析為 IPv6 且主機缺少 IPv6 出口，強制使用 IPv4 或啟用 IPv6。請參閱 [/channels/telegram#troubleshooting](/channels/telegram#troubleshooting)。
+- 日誌顯示 `HttpError: Network request for 'sendMessage' failed` 或 `sendChatAction` → 檢查 IPv6 DNS。如果 `api.telegram.org` 首先解析為 IPv6 且主機缺少 IPv6 出口，強制使用 IPv4 或啟用 IPv6。請參閱 [/channels/telegram#troubleshooting](/zh-Hant/channels/telegram#troubleshooting)。
 - 日誌顯示 `setMyCommands failed` → 檢查到 `api.telegram.org` 的外發 HTTPS 和 DNS 可達性（在鎖定的 VPS 或代理上常見）。

@@ -1,5 +1,5 @@
 ---
-title: "pairing(裝置配對)"
+title: "pairing（裝置配對）"
 summary: "`openclaw pairing` CLI 參考（核准與列出配對請求）"
 read_when:
   - 正在使用配對模式的私訊 (DM) 且需要核准發送者時
@@ -10,7 +10,8 @@ read_when:
 核准或查看私訊 (DM) 配對請求（適用於支援配對機制的頻道）。
 
 相關資訊：
-- 配對流程導覽：[配對流程 (Pairing)](/start/pairing)
+
+- 配對流程導覽：[配對流程 (Pairing)](/zh-Hant/start/pairing)
 
 ## 指令範例
 

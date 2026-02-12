@@ -1,5 +1,5 @@
 ---
-title: "acp(Agent 控制協定)"
+title: "acp（Agent 控制協定）"
 summary: "執行用於 IDE 整合的 ACP 橋接器"
 read_when:
   - 正在設定基於 ACP 的 IDE 整合時
@@ -51,8 +51,7 @@ openclaw acp client --server "node" --server-args openclaw.mjs acp --url ws://12
 當 IDE（或其他客戶端）支援 Agent Client Protocol 且您希望由它來驅動 OpenClaw Gateway 會話時，請使用 ACP。
 
 1. 確保 Gateway 正在運行（本地或遠端）。
-2. 配置 Gateway 目標（透過 config 或旗標）。
-3.這定您的 IDE 透過 stdio 執行 `openclaw acp`。
+2. 配置 Gateway 目標（透過 config 或旗標）。3.這定您的 IDE 透過 stdio 執行 `openclaw acp`。
 
 配置範例（持久化）：
 
@@ -108,9 +107,12 @@ openclaw acp --session agent:qa:bug-123
       "command": "openclaw",
       "args": [
         "acp",
-        "--url", "wss://gateway-host:18789",
-        "--token", "<權杖>",
-        "--session", "agent:design:main"
+        "--url",
+        "wss://gateway-host:18789",
+        "--token",
+        "<權杖>",
+        "--session",
+        "agent:design:main"
       ],
       "env": {}
     }
@@ -141,7 +143,7 @@ openclaw acp --session agent:qa:bug-123
 }
 ```
 
-更多會話金鑰資訊請參考 [/concepts/session](/concepts/session)。
+更多會話金鑰資訊請參考 [/concepts/session](/zh-Hant/concepts/session)。
 
 ## 參數選項
 

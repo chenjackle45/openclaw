@@ -1,5 +1,5 @@
 ---
-title: "Bun (實驗性)"
+title: "Bun (Experimental)（實驗性）"
 summary: "Bun 工作流程（實驗性）：安裝與相比 pnpm 之相關須知"
 read_when:
   - 您想要最快的本地開發迴圈 (bun + watch)

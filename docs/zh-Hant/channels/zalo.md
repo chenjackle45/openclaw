@@ -15,7 +15,7 @@ Zalo 不隨核心安裝綑綁。
 
 - 透過 CLI 安裝：`openclaw plugins install @openclaw/zalo`
 - 或在入門期間選擇 **Zalo** 並確認安裝提示
-- 詳情：[插件](/plugin)
+- 詳情：[插件](/zh-Hant/plugin)
 
 ## 快速設定（初學者）
 
@@ -104,7 +104,7 @@ Zalo 是一個越南中心的訊息應用程式；其 Bot API 讓 Gateway 為 1:
 - 核准方式：
   - `openclaw pairing list zalo`
   - `openclaw pairing approve zalo <CODE>`
-- 配對是預設令牌交換。詳情：[配對](/start/pairing)
+- 配對是預設令牌交換。詳情：[配對](/zh-Hant/start/pairing)
 - `channels.zalo.allowFrom` 接受數字使用者 ID（無使用者名稱查詢可用）。
 
 ## 長輪詢 vs Webhook
@@ -127,16 +127,16 @@ Zalo 是一個越南中心的訊息應用程式；其 Bot API 讓 Gateway 為 1:
 
 ## 功能
 
-| 特性         | 狀態                         |
-| --------------- | ------------------------------ |
-| 私訊 | 支援                   |
-| 群組          | 即將推出（根據 Zalo 文件） |
-| 媒體（圖片）  | 支援                   |
-| 表情回饋       | 不支援               |
-| 執行緒         | 不支援               |
-| 民調           | 不支援               |
-| 原生指令 | 不支援               |
-| 串流       | 已阻止（2000 字元限制）   |
+| 特性         | 狀態                       |
+| ------------ | -------------------------- |
+| 私訊         | 支援                       |
+| 群組         | 即將推出（根據 Zalo 文件） |
+| 媒體（圖片） | 支援                       |
+| 表情回饋     | 不支援                     |
+| 執行緒       | 不支援                     |
+| 民調         | 不支援                     |
+| 原生指令     | 不支援                     |
+| 串流         | 已阻止（2000 字元限制）    |
 
 ## 交付目標（CLI/cron）
 
@@ -160,7 +160,7 @@ Zalo 是一個越南中心的訊息應用程式；其 Bot API 讓 Gateway 為 1:
 
 ## 設定參考（Zalo）
 
-完整設定：[設定](/gateway/configuration)
+完整設定：[設定](/zh-Hant/gateway/configuration)
 
 供應商選項：
 

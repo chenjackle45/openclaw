@@ -1,40 +1,46 @@
 ---
-title: "Dashboard(儀表板)"
-summary: "Gateway 儀表板 (Control UI) 存取與認證"
+summary: "Gateway 儀表板（Control UI）存取和驗證"
 read_when:
-  - 變更儀表板認證或公開模式時
+  - 更改儀表板驗證或曝露模式
+title: "Dashboard（儀表板）"
 ---
-# 儀表板 (Dashboard)
 
-Gateway 儀表板即為瀏覽器控制介面 (Control UI)，預設路徑為 `/`（可透過 `gateway.controlUi.basePath` 覆蓋）。
+# 儀表板（Control UI）
 
-### 快速開啟（本地執行時）：
-- http://127.0.0.1:18789/ (或 http://localhost:18789/)
+Gateway 儀表板是由 `/` 預設提供的瀏覽器 Control UI
+（使用 `gateway.controlUi.basePath` 覆蓋）。
 
-相關參考：
-- [控制介面 (Control UI)](/web/control-ui)：功能與介面操作。
-- [Tailscale](/gateway/tailscale)：自動化的 Serve/Funnel 功能。
-- [網頁介面總覽](/web)：綁定模式與安全性說明。
+快速開啟（本機 Gateway）：
 
-認證機制是在 WebSocket 交握階段透過 `connect.params.auth`（Token 或密碼）強制執行的。詳見 [Gateway 配置](/gateway/configuration) 中的 `gateway.auth` 段落。
+- [http://127.0.0.1:18789/](http://127.0.0.1:18789/)（或 [http://localhost:18789/](http://localhost:18789/)）
 
-> [!CAUTION]
-> 控制介面是具備**管理權限的介面**（包含聊天、配置、指令執行核准）。請勿將其公開暴露。介面會在首次載入後將 Token 存放在 `localStorage` 中。推薦使用 localhost、Tailscale Serve 或 SSH 隧道進行存取。
+主要參考資料：
 
-## 推薦路徑 (Recommended)
+- [Control UI](/zh-Hant/web/control-ui) 用於使用和 UI 功能。
+- [Tailscale](/zh-Hant/gateway/tailscale) 用於 Serve/Funnel 自動化。
+- [Web 介面](/zh-Hant/web) 用於繫結模式和安全筆記。
 
-- 完成入門引導後，CLI 會自動開啟帶有 Token 的儀表板連結，並在終端機印出該連結。
-- 隨時重新開啟：執行 `openclaw dashboard`（會複製連結，並在可能的情況下開啟瀏覽器；若在無頭伺服器上則會顯示 SSH 提示）。
-- Token 僅存在於本地（作為查詢參數）；介面在首次載入後會將其隱藏並儲存至 localStorage。
+驗證在 WebSocket 握手時透過 `connect.params.auth` 執行
+（標記或密碼）。詳見[Gateway 設定](/zh-Hant/gateway/configuration)中的 `gateway.auth`。
 
-## Token 基礎（本地 vs 遠端）
+安全筆記：Control UI 是一個**管理員介面**（聊天、設定、Exec 核准）。
+不要公開曝露。UI 在首次載入後在 `localStorage` 中儲存標記。
+偏好 localhost、Tailscale Serve 或 SSH 隧道。
 
-- **Localhost (本地)**：開啟 `http://127.0.0.1:18789/`。若看到「unauthorized」，請執行 `openclaw dashboard` 並使用帶有 Token 的連結 (`?token=...`)。
-- **Token 來源**：`gateway.auth.token` (或環境變數 `OPENCLAW_GATEWAY_TOKEN`)。
-- **非 Localhost (遠端)**：建議使用 Tailscale Serve (若開啟 `gateway.auth.allowTailscale` 則無需 Token)、或是透過 Token 綁定至 tailnet、或使用 SSH 隧道。詳見 [網頁介面總覽](/web)。
+## 快速路徑（建議）
 
-## 若出現「unauthorized」或 1008 錯誤
+- 上線後，CLI 自動開啟儀表板並列印乾淨的（非標記化的）連結。
+- 隨時重新開啟：`openclaw dashboard`（複製連結、盡可能開啟瀏覽器、如果無頭顯示 SSH 提示）。
+- 如果 UI 提示驗證，將 `gateway.auth.token`（或 `OPENCLAW_GATEWAY_TOKEN`）中的標記貼到 Control UI 設定。
 
-- 執行 `openclaw dashboard` 獲取最新的 Token 連結。
-- 確保 Gateway 可存取（本地：`openclaw status`；遠端：使用 SSH 隧道 `ssh -N -L 18789:127.0.0.1:18789 user@host` 後開啟 `http://127.0.0.1:18789/?token=...`）。
-- 在儀表板設定中，貼上您在 `gateway.auth.token` (或 `OPENCLAW_GATEWAY_TOKEN`) 中配置的同一個 Token。
+## 標記基礎（本機與遠端）
+
+- **本機主機**：開啟 `http://127.0.0.1:18789/`。
+- **標記來源**：`gateway.auth.token`（或 `OPENCLAW_GATEWAY_TOKEN`）；UI 在連接後在 localStorage 中儲存副本。
+- **不是本機主機**：使用 Tailscale Serve（如果 `gateway.auth.allowTailscale: true` 則無標記）、帶有標記的 tailnet 繫結或 SSH 隧道。詳見[Web 介面](/zh-Hant/web)。
+
+## 如果你看到「unauthorized」/ 1008
+
+- 確保 Gateway 可達（本機：`openclaw status`；遠端：SSH 隧道 `ssh -N -L 18789:127.0.0.1:18789 user@host` 然後開啟 `http://127.0.0.1:18789/`）。
+- 從 Gateway 主機檢索標記：`openclaw config get gateway.auth.token`（或產生一個：`openclaw doctor --generate-gateway-token`）。
+- 在儀表板設定中，將標記貼到驗證欄位，然後連接。

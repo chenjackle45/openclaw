@@ -1,5 +1,5 @@
 ---
-title: "裝置型號資料庫"
+title: "Device Model Database（裝置型號資料庫）"
 summary: "OpenClaw 如何為 macOS App 的友善名稱 Vendor Apple 裝置型號識別碼"
 read_when:
   - 更新裝置型號識別碼對應或 NOTICE/License 檔案時

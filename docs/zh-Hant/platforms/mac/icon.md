@@ -2,7 +2,7 @@
 summary: "OpenClaw macOS 選單列圖示的狀態與動畫"
 read_when:
   - 變更選單列圖示行為時
-title: "選單列圖示狀態"
+title: "Menu Bar Icon（選單列圖示狀態）"
 ---
 
 # 選單列圖示狀態

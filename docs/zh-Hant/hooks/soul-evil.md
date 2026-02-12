@@ -1,5 +1,5 @@
 ---
-title: "Soul evil(SOUL Evil Hook)"
+title: "SOUL Evil Hook（SOUL Evil Hook 範例）"
 summary: "SOUL Evil hook（將 SOUL.md 替換為 SOUL_EVIL.md）"
 read_when:
   - 您想要啟用或調整 SOUL Evil hook
@@ -62,4 +62,4 @@ openclaw hooks enable soul-evil
 
 ## 另請參閱
 
-- [Hooks](/hooks)
+- [Hooks](/zh-Hant/hooks)

@@ -1,5 +1,5 @@
 ---
-title: "對話模式"
+title: "Talk Mode（對話模式）"
 summary: "對話模式：使用 ElevenLabs TTS 進行連續語音對話"
 read_when:
   - 在 macOS/iOS/Android 上實作對話模式時

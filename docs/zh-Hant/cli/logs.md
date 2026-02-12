@@ -1,5 +1,5 @@
 ---
-title: "logs(日誌查看)"
+title: "logs（日誌查看）"
 summary: "`openclaw logs` CLI 參考（透過 RPC 追蹤 Gateway 日誌）"
 read_when:
   - 需要在不使用 SSH 的情況下遠端追蹤 Gateway 日誌時
@@ -11,7 +11,8 @@ read_when:
 透過 RPC 追蹤 Gateway 的檔案日誌（支援遠端模式）。
 
 相關資訊：
-- 日誌配置總覽：[日誌配置 (Logging)](/logging)
+
+- 日誌配置總覽：[日誌配置 (Logging)](/zh-Hant/logging)
 
 ## 指令範例
 

@@ -5,6 +5,7 @@ read_when:
   - 您想要記憶檔案佈局和工作流程
   - 您想要調整自動壓縮前記憶體刷新
 ---
+
 # Memory（記憶）
 
 OpenClaw 記憶是**代理工作區中的純 Markdown**。檔案是真實來源；模型只「記得」寫入磁碟的內容。
@@ -22,7 +23,7 @@ OpenClaw 記憶是**代理工作區中的純 Markdown**。檔案是真實來源�
   - 精選的長期記憶。
   - **僅在主私人會話中載入**（絕不在群組上下文中載入）。
 
-這些檔案位於工作區下（`agents.defaults.workspace`，預設為 `~/.openclaw/workspace`）。請參閱 [代理工作區](/concepts/agent-workspace) 了解完整佈局。
+這些檔案位於工作區下（`agents.defaults.workspace`，預設為 `~/.openclaw/workspace`）。請參閱 [代理工作區](/zh-Hant/concepts/agent-workspace) 了解完整佈局。
 
 ## 何時寫入記憶
 
@@ -48,28 +49,30 @@ OpenClaw 記憶是**代理工作區中的純 Markdown**。檔案是真實來源�
           enabled: true,
           softThresholdTokens: 4000,
           systemPrompt: "Session nearing compaction. Store durable memories now.",
-          prompt: "Write any lasting notes to memory/YYYY-MM-DD.md; reply with NO_REPLY if nothing to store."
-        }
-      }
-    }
-  }
+          prompt: "Write any lasting notes to memory/YYYY-MM-DD.md; reply with NO_REPLY if nothing to store.",
+        },
+      },
+    },
+  },
 }
 ```
 
 詳情：
+
 - **軟閾值**：當會話 token 估計超過 `contextWindow - reserveTokensFloor - softThresholdTokens` 時觸發刷新。
 - 預設**靜默**：提示包含 `NO_REPLY` 以便不交付任何內容。
 - **兩個提示**：一個使用者提示加上一個系統提示追加提醒。
 - **每個壓縮週期一次刷新**（在 `sessions.json` 中追蹤）。
 - **工作區必須可寫**：如果會話以 `workspaceAccess: "ro"` 或 `"none"` 在沙盒中運行，則跳過刷新。
 
-有關完整的壓縮生命週期，請參閱 [會話管理 + 壓縮](/reference/session-management-compaction)。
+有關完整的壓縮生命週期，請參閱 [會話管理 + 壓縮](/zh-Hant/reference/session-management-compaction)。
 
 ## 向量記憶搜尋
 
 OpenClaw 可以對 `MEMORY.md` 和 `memory/*.md`（加上您選擇加入的任何額外目錄或檔案）建立一個小型向量索引，以便語義查詢可以找到相關備註，即使措辭不同。
 
 預設值：
+
 - 預設啟用。
 - 觀察記憶檔案的更改（防抖）。
 - 預設使用遠端 embeddings。如果未設定 `memorySearch.provider`，OpenClaw 會自動選擇：
@@ -97,6 +100,7 @@ agents: {
 ```
 
 備註：
+
 - 路徑可以是絕對路徑或相對於工作區的路徑。
 - 遞迴掃描目錄尋找 `.md` 檔案。
 - 僅對 Markdown 檔案建立索引。
@@ -121,6 +125,7 @@ agents: {
 ```
 
 備註：
+
 - `remote.baseUrl` 是可選的（預設為 Gemini API 基準 URL）。
 - `remote.headers` 讓您在需要時新增額外標頭。
 - 預設模型：`gemini-embedding-001`。
@@ -146,10 +151,12 @@ agents: {
 如果您不想設定 API 金鑰，請使用 `memorySearch.provider = "local"` 或設定 `memorySearch.fallback = "none"`。
 
 回退機制：
+
 - `memorySearch.fallback` 可以是 `openai`、`gemini`、`local` 或 `none`。
 - 回退供應商僅在主要 embedding 供應商失敗時使用。
 
 批次索引（OpenAI + Gemini）：
+
 - 對於 OpenAI 和 Gemini embeddings，預設啟用。將 `agents.defaults.memorySearch.remote.batch.enabled = false` 設為停用。
 - 預設行為是等待批次完成；如果需要，請調整 `remote.batch.wait`、`remote.batch.pollIntervalMs` 和 `remote.batch.timeoutMinutes`。
 - 設定 `remote.batch.concurrency` 以控制我們並行提交多少個批次工作（預設：2）。
@@ -157,6 +164,7 @@ agents: {
 - Gemini 批次工作使用非同步 embeddings 批次端點，需要 Gemini Batch API 可用。
 
 為什麼 OpenAI 批次快速又便宜：
+
 - 對於大型回填，OpenAI 通常是我們支援的最快選項，因為我們可以在單個批次工作中提交許多 embedding 請求，讓 OpenAI 非同步處理。
 - OpenAI 為批次 API 工作量提供折扣定價，因此大型索引運行的通常比同步發送相同請求便宜。
 - 有關詳情，請參閱 OpenAI 批次 API 文檔和定價：
@@ -182,10 +190,12 @@ agents: {
 ```
 
 工具：
+
 - `memory_search` — 返回帶有檔案 + 行範圍的程式碼片段。
 - `memory_get` — 按路徑讀取記憶檔案內容。
 
 本地模式：
+
 - 將 `agents.defaults.memorySearch.provider = "local"`。
 - 提供 `agents.defaults.memorySearch.local.modelPath`（GGUF 或 `hf:` URI）。
 - 可選：將 `agents.defaults.memorySearch.fallback = "none"` 設為避免遠端回退。
@@ -206,6 +216,7 @@ agents: {
 ### 混合搜尋 (BM25 + 向量)
 
 啟用時，OpenClaw 結合：
+
 - **向量相似度**（語義匹配，措辭可以不同）
 - **BM25 關鍵字相關性**（精確權杖，如 ID、環境變數、程式碼符號）
 
@@ -214,10 +225,12 @@ agents: {
 #### 為什麼要混合？
 
 向量搜尋非常擅長「這意味著同樣的事情」：
+
 - 「Mac Studio gateway host」vs 「運行 gateway 的機器」
 - 「debounce file updates」vs 「避免每次寫入都建立索引」
 
 但它在精確的、高訊號權杖方面可能較弱：
+
 - ID (`a828e60`, `b3b9895a…`)
 - 程式碼符號 (`memorySearch.query.hybrid`)
 - 錯誤字串 (「sqlite-vec unavailable」)
@@ -229,17 +242,21 @@ BM25（全文搜尋）則相反：擅長精確權杖，在轉述方面較弱。
 
 實作草圖：
 
-1) 從雙方檢索候選池：
+1. 從雙方檢索候選池：
+
 - **向量**：按餘弦相似度取前 `maxResults * candidateMultiplier` 個。
 - **BM25**：按 FTS5 BM25 排名（越低越好）取前 `maxResults * candidateMultiplier` 個。
 
-2) 將 BM25 排名轉換為 0..1 左右的評分：
+2. 將 BM25 排名轉換為 0..1 左右的評分：
+
 - `textScore = 1 / (1 + max(0, bm25Rank))`
 
-3) 按區塊 id 合併候選者並計算加權評分：
+3. 按區塊 id 合併候選者並計算加權評分：
+
 - `finalScore = vectorWeight * vectorScore + textWeight * textScore`
 
 備註：
+
 - `vectorWeight` + `textWeight` 在配置解析中被正規化為 1.0，因此權重的表現就像百分比。
 - 如果 embeddings 不可用（或供應商返回零向量），我們仍會運行 BM25 並返回關鍵字匹配。
 - 如果無法建立 FTS5，我們會保持僅向量搜尋（不會發生致命失敗）。
@@ -302,6 +319,7 @@ agents: {
 ```
 
 備註：
+
 - 會話索引是**選擇性加入**（預設關閉）。
 - 會話更新會進行防抖處理，並在跨增量閾值後**非同步建立索引**（盡力而為）。
 - `memory_search` 從不阻塞索引；在背景同步完成之前，結果可能略微陳舊。
@@ -348,6 +366,7 @@ agents: {
 ```
 
 備註：
+
 - `enabled` 預設為 true；停用時，搜尋會回退到對儲存的 embeddings 進行程序內餘弦相似度計算。
 - 如果 sqlite-vec 擴展開遺失或載入失敗，OpenClaw 會記錄錯誤並繼續執行 JS 回退（無向量表）。
 - `extensionPath` 會覆寫綁定的 sqlite-vec 路徑（對自訂建置或非標準安裝位置有用）。
@@ -381,5 +400,6 @@ agents: {
 ```
 
 備註：
+
 - `remote.*` 優先於 `models.providers.openai.*`。
 - `remote.headers` 與 OpenAI 標頭合併；在金鑰衝突時遠端優先。省略 `remote.headers` 以使用 OpenAI 預設值。

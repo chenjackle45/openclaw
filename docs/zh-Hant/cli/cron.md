@@ -1,5 +1,5 @@
 ---
-title: "cron(排程管理)"
+title: "cron（排程管理）"
 summary: "`openclaw cron` CLI 參考（排程與執行背景任務）"
 read_when:
   - 想要排定任務或喚醒動作時
@@ -11,7 +11,8 @@ read_when:
 管理 Gateway 排程器中的排程任務 (Cron jobs)。
 
 相關資訊：
-- 排程任務概念：[排程任務 (Cron jobs)](/automation/cron-jobs)
+
+- 排程任務概念：[排程任務 (Cron jobs)](/zh-Hant/automation/cron-jobs)
 
 提示：執行 `openclaw cron --help` 可查看完整的指令介面與參數。
 

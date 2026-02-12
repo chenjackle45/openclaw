@@ -1,5 +1,5 @@
 ---
-title: "sandbox(沙盒管理)"
+title: "Sandbox CLI（沙盒管理）"
 summary: "管理沙盒容器並盤查有效的沙盒政策"
 read_when: "正在管理沙盒容器或調試沙盒/工具原則行為時。"
 ---
@@ -45,6 +45,7 @@ openclaw sandbox list --json
 ```
 
 **輸出內容包含：**
+
 - 容器名稱與狀態（運行中/已停止）
 - Docker 映像檔（以及是否與配置匹配）
 - 建立時間（Age）
@@ -94,6 +95,7 @@ openclaw sandbox recreate --all
 ## 為什麼需要這個指令？
 
 **問題**：當您更新沙盒 Docker 映像檔或變更配置時：
+
 - 既有的容器會繼續使用舊設定運行。
 - 容器僅在閒置 24 小時後才會被自動清理。
 - 頻繁使用的 Agent 可能會導致舊容器無限期運行。
@@ -111,24 +113,24 @@ openclaw sandbox recreate --all
   "agents": {
     "defaults": {
       "sandbox": {
-        "mode": "all",                    // off, non-main, all
-        "scope": "agent",                 // session, agent, shared
+        "mode": "all", // off, non-main, all
+        "scope": "agent", // session, agent, shared
         "docker": {
           "image": "openclaw-sandbox:bookworm-slim",
-          "containerPrefix": "openclaw-sbx-"
+          "containerPrefix": "openclaw-sbx-",
         },
         "prune": {
-          "idleHours": 24,               // 閒置 24 小時後自動清理
-          "maxAgeDays": 7                // 最長存留 7 天
-        }
-      }
-    }
-  }
+          "idleHours": 24, // 閒置 24 小時後自動清理
+          "maxAgeDays": 7, // 最長存留 7 天
+        },
+      },
+    },
+  },
 }
 ```
 
 ## 相關連結
 
-- [沙盒技術文件](/gateway/sandboxing)
-- [Agent 配置導覽](/concepts/agent-workspace)
-- [Doctor 指令](/gateway/doctor) —— 盤查沙盒安裝狀態
+- [沙盒技術文件](/zh-Hant/gateway/sandboxing)
+- [Agent 配置導覽](/zh-Hant/concepts/agent-workspace)
+- [Doctor 指令](/zh-Hant/gateway/doctor) —— 盤查沙盒安裝狀態

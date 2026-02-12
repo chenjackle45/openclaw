@@ -1,5 +1,5 @@
 ---
-title: "gateway(Gateway 服務)"
+title: "gateway（Gateway 服務）"
 summary: "OpenClaw Gateway CLI (`openclaw gateway`) —— 運行、查詢與發現 Gateway"
 read_when:
   - 從 CLI 運行 Gateway（開發或伺服器環境）時
@@ -14,9 +14,10 @@ Gateway 是 OpenClaw 的 WebSocket 伺服器，負責管理頻道 (Channels)、�
 本頁面說明的子指令皆位於 `openclaw gateway …` 之下。
 
 相關文件：
-- [Bonjour 發現](/gateway/bonjour)
-- [廣域發現與 DNS](/gateway/discovery)
-- [Gateway 配置](/gateway/configuration)
+
+- [Bonjour 發現](/zh-Hant/gateway/bonjour)
+- [廣域發現與 DNS](/zh-Hant/gateway/discovery)
+- [Gateway 配置](/zh-Hant/gateway/configuration)
 
 ## 運行 Gateway
 
@@ -33,6 +34,7 @@ openclaw gateway run
 ```
 
 **注意事項**：
+
 - 預設情況下，除非在 `~/.openclaw/openclaw.json` 中設定了 `gateway.mode=local`，否則 Gateway 會拒絕啟動。開發或臨時運行可加上 `--allow-unconfigured` 旗標。
 - 為了安全起見，禁止在未啟用認證的情況下綁定至非本地回環 (Loopback) 位址。
 - 具備權限時，可透過 `SIGUSR1` 訊號觸發進程內重啟。
@@ -57,10 +59,12 @@ openclaw gateway run
 所有查詢指令皆使用 WebSocket RPC 協定。
 
 輸出模式：
+
 - 預設：易於閱讀的格式（TTY 環境下帶色彩）。
 - `--json`：機器可讀的 JSON 格式（停用樣式與動畫）。
 
 共用選項：
+
 - `--url <url>`：Gateway 的 WebSocket URL。
 - `--token <token>`：認證權杖。
 - `--password <password>`：認證密碼。
@@ -153,7 +157,7 @@ openclaw gateway uninstall
 `gateway discover` 掃描 Gateway 信號 (`_openclaw-gw._tcp`)。
 
 - 多播 DNS-SD：`local.`
-- 單播 DNS-SD（廣域 Bonjour）：選擇一個網域（例如 `openclaw.internal.`）並設定分割 DNS + DNS 伺服器；詳見 [/gateway/bonjour](/gateway/bonjour)
+- 單播 DNS-SD（廣域 Bonjour）：選擇一個網域（例如 `openclaw.internal.`）並設定分割 DNS + DNS 伺服器；詳見 [/gateway/bonjour](/zh-Hant/gateway/bonjour)
 
 只有啟用 Bonjour 發現（預設）的 Gateway 才會廣告信號。
 

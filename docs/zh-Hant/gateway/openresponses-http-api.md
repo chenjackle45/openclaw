@@ -1,5 +1,5 @@
 ---
-title: "OpenResponses API (HTTP)"
+title: "OpenResponses API（OpenResponses API）"
 summary: "從 Gateway 暴露 OpenResponses 相容的 /v1/responses HTTP Endpoint"
 read_when:
   - 整合使用 OpenResponses API 的 Clients 時
@@ -24,6 +24,7 @@ OpenClaw 的 Gateway 可以服務一個 OpenResponses 相容的 `POST /v1/respon
 - `Authorization: Bearer <token>`
 
 註記：
+
 - 當 `gateway.auth.mode="token"`，使用 `gateway.auth.token` (或 `OPENCLAW_GATEWAY_TOKEN`)。
 - 當 `gateway.auth.mode="password"`，使用 `gateway.auth.password` (或 `OPENCLAW_GATEWAY_PASSWORD`)。
 
@@ -39,6 +40,7 @@ OpenClaw 的 Gateway 可以服務一個 OpenResponses 相容的 `POST /v1/respon
 - `x-openclaw-agent-id: <agentId>` (預設: `main`)
 
 進階：
+
 - `x-openclaw-session-key: <sessionKey>` 以完全控制 Session Routing。
 
 ## 啟用 Endpoint
@@ -50,10 +52,10 @@ OpenClaw 的 Gateway 可以服務一個 OpenResponses 相容的 `POST /v1/respon
   gateway: {
     http: {
       endpoints: {
-        responses: { enabled: true }
-      }
-    }
-  }
+        responses: { enabled: true },
+      },
+    },
+  },
 }
 ```
 
@@ -66,10 +68,10 @@ OpenClaw 的 Gateway 可以服務一個 OpenResponses 相容的 `POST /v1/respon
   gateway: {
     http: {
       endpoints: {
-        responses: { enabled: false }
-      }
-    }
-  }
+        responses: { enabled: false },
+      },
+    },
+  },
 }
 ```
 
@@ -103,6 +105,7 @@ OpenClaw 的 Gateway 可以服務一個 OpenResponses 相容的 `POST /v1/respon
 ## Items (Input)
 
 ### `message`
+
 Roles: `system`, `developer`, `user`, `assistant`.
 
 - `system` 與 `developer` 被附加到 System Prompt。
@@ -166,12 +169,14 @@ Roles: `system`, `developer`, `user`, `assistant`.
 最大尺寸 (目前): 5MB.
 
 目前行為：
+
 - 檔案內容被解碼並新增至 **System Prompt**，而非 User Message，因此它保持短暫存在 (Ephemeral) (不持久化於 Session History)。
 - PDFs 會被解析為文字。若發現很少文字，前幾頁會被光柵化 (Rasterized) 為圖片並傳遞給 Model。
 
 PDF 解析使用 Node 友善的 `pdfjs-dist` Legacy Build (無 Worker)。現代 PDF.js Build 預期 Browser Workers/DOM Globals，因此不在 Gateway 中使用。
 
 URL Fetch 預設值:
+
 - `files.allowUrl`: `true`
 - `images.allowUrl`: `true`
 - 請求受防護 (DNS Resolution, Private IP Blocking, Redirect Caps, Timeouts)。
@@ -190,7 +195,14 @@ URL Fetch 預設值:
           maxBodyBytes: 20000000,
           files: {
             allowUrl: true,
-            allowedMimes: ["text/plain", "text/markdown", "text/html", "text/csv", "application/json", "application/pdf"],
+            allowedMimes: [
+              "text/plain",
+              "text/markdown",
+              "text/html",
+              "text/csv",
+              "application/json",
+              "application/pdf",
+            ],
             maxBytes: 5242880,
             maxChars: 200000,
             maxRedirects: 3,
@@ -198,24 +210,25 @@ URL Fetch 預設值:
             pdf: {
               maxPages: 4,
               maxPixels: 4000000,
-              minTextChars: 200
-            }
+              minTextChars: 200,
+            },
           },
           images: {
             allowUrl: true,
             allowedMimes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
             maxBytes: 10485760,
             maxRedirects: 3,
-            timeoutMs: 10000
-          }
-        }
-      }
-    }
-  }
+            timeoutMs: 10000,
+          },
+        },
+      },
+    },
+  },
 }
 ```
 
 省略時的預設值：
+
 - `maxBodyBytes`: 20MB
 - `files.maxBytes`: 5MB
 - `files.maxChars`: 200k
@@ -237,6 +250,7 @@ URL Fetch 預設值:
 - Stream 結束於 `data: [DONE]`
 
 目前發出的 Event Types：
+
 - `response.created`
 - `response.in_progress`
 - `response.output_item.added`
@@ -261,6 +275,7 @@ URL Fetch 預設值:
 ```
 
 常見情況：
+
 - `401` Missing/Invalid Auth
 - `400` Invalid Request Body
 - `405` Wrong Method
@@ -268,6 +283,7 @@ URL Fetch 預設值:
 ## 範例
 
 Non-streaming:
+
 ```bash
 curl -sS http://127.0.0.1:18789/v1/responses \
   -H 'Authorization: Bearer YOUR_TOKEN' \
@@ -280,6 +296,7 @@ curl -sS http://127.0.0.1:18789/v1/responses \
 ```
 
 Streaming:
+
 ```bash
 curl -N http://127.0.0.1:18789/v1/responses \
   -H 'Authorization: Bearer YOUR_TOKEN' \

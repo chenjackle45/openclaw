@@ -1,5 +1,5 @@
 ---
-title: "遷移"
+title: "Migration Guide（遷移）"
 summary: "將 OpenClaw 安裝從一台機器遷移至另一台"
 read_when:
   - 您正將 OpenClaw 移至新筆電/伺服器
@@ -91,7 +91,7 @@ tar -czf openclaw-workspace.tgz .openclaw/workspace
 
 在**新**機器上，安裝 CLI（必要時安裝 Node）：
 
-- 詳見：[安裝](/install)
+- 詳見：[安裝](/zh-Hant/install)
 
 此階段，引導建立新鮮 `~/.openclaw/` 可以 — 您將在下一步覆蓋。
 
@@ -187,6 +187,6 @@ openclaw doctor
 
 ## 相關
 
-- [Doctor](/gateway/doctor)
-- [Gateway 故障排除](/gateway/troubleshooting)
-- [OpenClaw 儲存資料在哪？](/help/faq#where-does-openclaw-store-its-data)
+- [Doctor](/zh-Hant/gateway/doctor)
+- [Gateway 故障排除](/zh-Hant/gateway/troubleshooting)
+- [OpenClaw 儲存資料在哪？](/zh-Hant/help/faq#where-does-openclaw-store-its-data)

@@ -1,9 +1,10 @@
 ---
-title: "Multi agent(多代理路由)"
+title: "Multi-Agent Routing（多代理路由）"
 summary: "多代理路由：隔離的代理、頻道帳戶與綁定"
 read_when:
   - 您想要在一個 Gateway 程序中運行多個隔離的代理（工作區 + 認證）
 ---
+
 # Multi-Agent Routing（多代理路由）
 
 目標：在一個運行的 Gateway 中擁有多個**隔離的**代理（獨立的工作區 + `agentDir` + 會話），以及多個頻道帳戶（例如兩個 WhatsApp）。入站訊息透過「綁定 (bindings)」路由到特定的代理。
@@ -24,11 +25,11 @@ read_when:
 
 主代理 (Main agent) 的憑證**不會**自動共享。切勿在代理之間重複使用 `agentDir`（這會導致認證/會話衝突）。如果您想共享憑證，請將 `auth-profiles.json` 複製到另一個代理的 `agentDir` 中。
 
-技能是按代理透過每個工作區的 `skills/` 資料夾提供的，通用技能則位於 `~/.openclaw/skills`。請參閱 [技能：每代理 vs 共享](/tools/skills#per-agent-vs-shared-skills)。
+技能是按代理透過每個工作區的 `skills/` 資料夾提供的，通用技能則位於 `~/.openclaw/skills`。請參閱 [技能：每代理 vs 共享](/zh-Hant/tools/skills#per-agent-vs-shared-skills)。
 
 Gateway 可以側並側地託管**一個代理**（預設）或**多個代理**。
 
-**工作區備註：** 每個代理的工作區是**預設的 CWD**，而不是硬性沙盒。相對路徑在工作區內解析，但除非啟用了沙盒化，否則絕對路徑可以到達其他主機位置。請參閱 [沙盒化](/gateway/sandboxing)。
+**工作區備註：** 每個代理的工作區是**預設的 CWD**，而不是硬性沙盒。相對路徑在工作區內解析，但除非啟用了沙盒化，否則絕對路徑可以到達其他主機位置。請參閱 [沙盒化](/zh-Hant/gateway/sandboxing)。
 
 ## 路徑（快速地圖）
 
@@ -86,25 +87,26 @@ openclaw agents list --bindings
   agents: {
     list: [
       { id: "alex", workspace: "~/.openclaw/workspace-alex" },
-      { id: "mia", workspace: "~/.openclaw/workspace-mia" }
-    ]
+      { id: "mia", workspace: "~/.openclaw/workspace-mia" },
+    ],
   },
   bindings: [
     { agentId: "alex", match: { channel: "whatsapp", peer: { kind: "dm", id: "+15551230001" } } },
-    { agentId: "mia",  match: { channel: "whatsapp", peer: { kind: "dm", id: "+15551230002" } } }
+    { agentId: "mia", match: { channel: "whatsapp", peer: { kind: "dm", id: "+15551230002" } } },
   ],
   channels: {
     whatsapp: {
       dmPolicy: "allowlist",
-      allowFrom: ["+15551230001", "+15551230002"]
-    }
-  }
+      allowFrom: ["+15551230001", "+15551230002"],
+    },
+  },
 }
 ```
 
 備註：
+
 - DM 存取控制是**全域按 WhatsApp 帳戶**（配對/允許清單）進行的，而不是按代理。
-- 對於共享群組，將群組綁定到一個代理，或使用 [廣播群組 (Broadcast groups)](/broadcast-groups)。
+- 對於共享群組，將群組綁定到一個代理，或使用 [廣播群組 (Broadcast groups)](/zh-Hant/broadcast-groups)。
 
 ## 路由規則（訊息如何挑選代理）
 
@@ -199,24 +201,25 @@ openclaw agents list --bindings
         id: "chat",
         name: "Everyday",
         workspace: "~/.openclaw/workspace-chat",
-        model: "anthropic/claude-sonnet-4-5"
+        model: "anthropic/claude-sonnet-4-5",
       },
       {
         id: "opus",
         name: "Deep Work",
         workspace: "~/.openclaw/workspace-opus",
-        model: "anthropic/claude-opus-4-5"
-      }
-    ]
+        model: "anthropic/claude-opus-4-5",
+      },
+    ],
   },
   bindings: [
     { agentId: "chat", match: { channel: "whatsapp" } },
-    { agentId: "opus", match: { channel: "telegram" } }
-  ]
+    { agentId: "opus", match: { channel: "telegram" } },
+  ],
 }
 ```
 
 備註：
+
 - 如果您在某個頻道有多個帳戶，請在綁定中新增 `accountId`（例如 `{ channel: "whatsapp", accountId: "personal" }`）。
 - 欲將單個 DM/群組路由到 Opus 代理，而保持其他訊息在日常聊天代理，請為該對象新增一個 `match.peer` 綁定；對象匹配總是優先於全頻道規則。
 
@@ -228,14 +231,24 @@ openclaw agents list --bindings
 {
   agents: {
     list: [
-      { id: "chat", name: "Everyday", workspace: "~/.openclaw/workspace-chat", model: "anthropic/claude-sonnet-4-5" },
-      { id: "opus", name: "Deep Work", workspace: "~/.openclaw/workspace-opus", model: "anthropic/claude-opus-4-5" }
-    ]
+      {
+        id: "chat",
+        name: "Everyday",
+        workspace: "~/.openclaw/workspace-chat",
+        model: "anthropic/claude-sonnet-4-5",
+      },
+      {
+        id: "opus",
+        name: "Deep Work",
+        workspace: "~/.openclaw/workspace-opus",
+        model: "anthropic/claude-opus-4-5",
+      },
+    ],
   },
   bindings: [
     { agentId: "opus", match: { channel: "whatsapp", peer: { kind: "dm", id: "+15551234567" } } },
-    { agentId: "chat", match: { channel: "whatsapp" } }
-  ]
+    { agentId: "chat", match: { channel: "whatsapp" } },
+  ],
 }
 ```
 
@@ -255,32 +268,41 @@ openclaw agents list --bindings
         workspace: "~/.openclaw/workspace-family",
         identity: { name: "Family Bot" },
         groupChat: {
-          mentionPatterns: ["@family", "@familybot", "@Family Bot"]
+          mentionPatterns: ["@family", "@familybot", "@Family Bot"],
         },
         sandbox: {
           mode: "all",
-          scope: "agent"
+          scope: "agent",
         },
         tools: {
-          allow: ["exec", "read", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "session_status"],
-          deny: ["write", "edit", "apply_patch", "browser", "canvas", "nodes", "cron"]
-        }
-      }
-    ]
+          allow: [
+            "exec",
+            "read",
+            "sessions_list",
+            "sessions_history",
+            "sessions_send",
+            "sessions_spawn",
+            "session_status",
+          ],
+          deny: ["write", "edit", "apply_patch", "browser", "canvas", "nodes", "cron"],
+        },
+      },
+    ],
   },
   bindings: [
     {
       agentId: "family",
       match: {
         channel: "whatsapp",
-        peer: { kind: "group", id: "120363999999999999@g.us" }
-      }
-    }
-  ]
+        peer: { kind: "group", id: "120363999999999999@g.us" },
+      },
+    },
+  ],
 }
 ```
 
 備註：
+
 - 工具允許/拒絕列表適用於**工具 (tools)**，而非技能。如果某項技能需要運行二進位檔案，請確保 `exec` 已被允許，且該二進位檔案存在於沙盒中。
 - 欲進行更嚴格的控制，請設定 `agents.list[].groupChat.mentionPatterns` 並為該頻道啟用群組允許清單。
 
@@ -324,10 +346,11 @@ openclaw agents list --bindings
 備註：`setupCommand` 位於 `sandbox.docker` 下，於容器建立時運行一次。當解析範圍為 `"shared"` 時，會忽略每代理的 `sandbox.docker.*` 覆寫。
 
 **優點：**
+
 - **安全性隔離**：限制不受信任代理的工具權限
 - **資源控制**：沙盒化特定代理，同時讓其他代理由主機運行
 - **靈活原則**：每個代理有不同的權限
 
 備註：`tools.elevated` 是**全域性**且基於發送者的；它無法按代理進行設定。如果您需要按代理劃分邊界，請使用 `agents.list[].tools` 來拒絕 `exec`。對於群組目標，請使用 `agents.list[].groupChat.mentionPatterns`，以便 @提及能乾淨地映射到預期的代理。
 
-請參閱 [多代理沙盒與工具](/multi-agent-sandbox-tools) 了解詳細範例。
+請參閱 [多代理沙盒與工具](/zh-Hant/multi-agent-sandbox-tools) 了解詳細範例。

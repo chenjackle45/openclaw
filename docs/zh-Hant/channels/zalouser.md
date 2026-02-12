@@ -18,7 +18,7 @@ Zalo Personal 不隨核心安裝綑綁。
 
 - 透過 CLI 安裝：`openclaw plugins install @openclaw/zalouser`
 - 或從原始簽出：`openclaw plugins install ./extensions/zalouser`
-- 詳情：[插件](/plugin)
+- 詳情：[插件](/zh-Hant/plugin)
 
 ## 先決條件：zca-cli
 

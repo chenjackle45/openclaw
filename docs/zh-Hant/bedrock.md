@@ -1,6 +1,6 @@
 ---
 title: "Amazon Bedrock"
-summary: "在 OpenClaw 中使用 Amazon Bedrock (Converse API) 模型"
+summary: "使用 Amazon Bedrock（Converse API）模型與 OpenClaw"
 read_when:
   - 想要在 OpenClaw 中使用 Amazon Bedrock 模型時
   - 需要設定 AWS 憑證/區域以進行模型調用時
@@ -32,13 +32,14 @@ OpenClaw 可以透過 pi‑ai 的 **Bedrock Converse** 串流供應商來使用 
       providerFilter: ["anthropic", "amazon"],
       refreshInterval: 3600,
       defaultContextWindow: 32000,
-      defaultMaxTokens: 4096
-    }
-  }
+      defaultMaxTokens: 4096,
+    },
+  },
 }
 ```
 
 注意：
+
 - 當存在 AWS 憑證時，`enabled` 預設為 `true`。
 - `region` 預設為 `AWS_REGION` 或 `AWS_DEFAULT_REGION`，其次為 `us-east-1`。
 - `providerFilter` 匹配 Bedrock 供應商名稱（例如 `anthropic`）。
@@ -47,7 +48,7 @@ OpenClaw 可以透過 pi‑ai 的 **Bedrock Converse** 串流供應商來使用 
 
 ## 手動設定
 
-1) 確保 **Gateway 主機**上有可用的 AWS 憑證：
+1. 確保 **Gateway 主機**上有可用的 AWS 憑證：
 
 ```bash
 export AWS_ACCESS_KEY_ID="AKIA..."
@@ -60,7 +61,7 @@ export AWS_PROFILE="your-profile"
 export AWS_BEARER_TOKEN_BEDROCK="..."
 ```
 
-2) 在配置中新增 Bedrock 供應商與模型（無需 `apiKey`）：
+2. 在配置中新增 Bedrock 供應商與模型（無需 `apiKey`）：
 
 ```json5
 {
@@ -78,17 +79,17 @@ export AWS_BEARER_TOKEN_BEDROCK="..."
             input: ["text", "image"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
             contextWindow: 200000,
-            maxTokens: 8192
-          }
-        ]
-      }
-    }
+            maxTokens: 8192,
+          },
+        ],
+      },
+    },
   },
   agents: {
     defaults: {
-      model: { primary: "amazon-bedrock/anthropic.claude-opus-4-5-20251101-v1:0" }
-    }
-  }
+      model: { primary: "amazon-bedrock/anthropic.claude-opus-4-5-20251101-v1:0" },
+    },
+  },
 }
 ```
 
@@ -106,6 +107,7 @@ export AWS_REGION=us-east-1
 ```
 
 EC2 實例角色**必要的 IAM 權限**：
+
 - `bedrock:InvokeModel`
 - `bedrock:InvokeModelWithResponseStream`
 - `bedrock:ListFoundationModels`（用於自動探索）

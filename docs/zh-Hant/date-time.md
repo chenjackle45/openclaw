@@ -1,5 +1,5 @@
 ---
-title: "日期與時間"
+title: "Date and Time（日期與時間）"
 summary: "跨 envelopes、prompts、tools 和 connectors 的日期和時間處理"
 read_when:
   - 您正在變更時間戳記如何顯示給模型或使用者
@@ -29,9 +29,9 @@ OpenClaw 預設為**傳輸時間戳記使用主機本地時間**和**僅在系�
     defaults: {
       envelopeTimezone: "local", // "utc" | "local" | "user" | IANA timezone
       envelopeTimestamp: "on", // "on" | "off"
-      envelopeElapsed: "on" // "on" | "off"
-    }
-  }
+      envelopeElapsed: "on", // "on" | "off"
+    },
+  },
 }
 ```
 
@@ -91,9 +91,9 @@ System: [2026-01-12 12:19:17 PST] Model switched.
   agents: {
     defaults: {
       userTimezone: "America/Chicago",
-      timeFormat: "auto" // auto | 12 | 24
-    }
-  }
+      timeFormat: "auto", // auto | 12 | 24
+    },
+  },
 }
 ```
 
@@ -123,6 +123,6 @@ System: [2026-01-12 12:19:17 PST] Model switched.
 
 ## 相關文件
 
-- [System Prompt](/concepts/system-prompt)
-- [Timezones](/concepts/timezone)
-- [Messages](/concepts/messages)
+- [System Prompt](/zh-Hant/concepts/system-prompt)
+- [Timezones](/zh-Hant/concepts/timezone)
+- [Messages](/zh-Hant/concepts/messages)

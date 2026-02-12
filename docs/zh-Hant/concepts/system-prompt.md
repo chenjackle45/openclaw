@@ -1,10 +1,11 @@
 ---
-title: "System prompt(系統提示詞)"
+title: "System Prompt（系統提示詞）"
 summary: "OpenClaw 系統提示詞包含什麼以及如何組裝"
 read_when:
   - 編輯系統提示詞文字、工具列表或時間/心跳部分
   - 更改工作區啟動或技能注入行為
 ---
+
 # System Prompt（系統提示詞）
 
 OpenClaw 為每次代理運行建構自訂的系統提示詞。該提示詞由 **OpenClaw 擁有**，且不使用 p-coding-agent 的預設提示詞。
@@ -54,7 +55,7 @@ OpenClaw 可以為子代理生成較小的系統提示詞。執行時間會為�
 
 內部 hook 可以透過 `agent:bootstrap` 攔截此步驟，以修改或替換注入的啟動檔案（例如將 `SOUL.md` 換成另一個性格）。
 
-要檢查每個注入檔案貢獻了多少（原始 vs 注入、截斷，以及工具 schema 的開銷），請使用 `/context list` 或 `/context detail`。請參閱 [Context (上下文)](/concepts/context)。
+要檢查每個注入檔案貢獻了多少（原始 vs 注入、截斷，以及工具 schema 的開銷），請使用 `/context list` 或 `/context detail`。請參閱 [Context (上下文)](/zh-Hant/concepts/context)。
 
 ## 時間處理
 
@@ -67,7 +68,7 @@ OpenClaw 可以為子代理生成較小的系統提示詞。執行時間會為�
 - `agents.defaults.userTimezone`
 - `agents.defaults.timeFormat` (`auto` | `12` | `24`)
 
-請參閱 [Date & Time (日期與時間)](/date-time) 了解完整的行為細節。
+請參閱 [Date & Time (日期與時間)](/zh-Hant/date-time) 了解完整的行為細節。
 
 ## 技能 (Skills)
 

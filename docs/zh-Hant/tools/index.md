@@ -1,61 +1,70 @@
 ---
-summary: "Agent tool surface for OpenClaw (browser, canvas, nodes, message, cron) replacing legacy `openclaw-*` skills"
+summary: "OpenClaw 的代理工具介面（瀏覽器、畫布、節點、訊息、cron）取代舊版 `openclaw-*` 技能"
 read_when:
   - Adding or modifying agent tools
   - Retiring or changing `openclaw-*` skills
-title: "Tools"
+title: "Tools（工具）"
 ---
 
-# Tools (OpenClaw)
+# Tools（工具）
 
-OpenClaw 為 Browser、Canvas、Nodes 和 Cron 提供**第一級 Agent Tools**。這些取代舊版的 `openclaw-*` Skills：這些 Tools 是 Typed 的、無需 Shelling，Agent 應直接依賴它們。
+OpenClaw 為瀏覽器、畫布、節點及 cron 公開**第一級代理工具**。
+這些取代舊的 `openclaw-*` 技能：工具具有型別、無 shell，
+代理應直接依賴它們。
 
-## 停用 Tools
+## 停用工具
 
-您可以透過 `openclaw.json` 中的 `tools.allow` / `tools.deny` 全域允許/拒絕 Tools（deny 優先）。這可防止不允許的 Tools 傳送至 Model Providers。
+可以透過 `openclaw.json` 中的 `tools.allow` / `tools.deny` 全域允許/拒絕工具
+（拒絕獲勝）。這防止不允許的工具被發送到模型提供者。
 
 ```json5
 {
-  tools: { deny: ["browser"] }
+  tools: { deny: ["browser"] },
 }
 ```
 
-注意事項：
-- 比對不區分大小寫。
-- 支援 `*` 萬用字元（`"*"` 表示所有 Tools）。
-- 如果 `tools.allow` 僅參考未知或未載入的 Plugin Tool 名稱，OpenClaw 會記錄警告並忽略 Allowlist，讓 Core Tools 保持可用。
+注意：
 
-## Tool Profiles（基礎 Allowlist）
+- 符合不區分大小寫。
+- 支援 `*` 通配符（`"*"` 表示所有工具）。
+- 如果 `tools.allow` 僅引用未知或未載入的外掛工具名稱，OpenClaw 會記錄警告並忽略 allowlist，以保持核心工具可用。
 
-`tools.profile` 在 `tools.allow`/`tools.deny` 之前設定**基礎 Tool Allowlist**。Per-agent 覆寫：`agents.list[].tools.profile`。
+## 工具設定檔（基本 allowlist）
 
-Profiles：
+`tools.profile` 設定一個**基本工具 allowlist**，在 `tools.allow`/`tools.deny` 之前。
+每個代理覆蓋：`agents.list[].tools.profile`。
+
+設定檔：
+
 - `minimal`：僅 `session_status`
 - `coding`：`group:fs`、`group:runtime`、`group:sessions`、`group:memory`、`image`
 - `messaging`：`group:messaging`、`sessions_list`、`sessions_history`、`sessions_send`、`session_status`
 - `full`：無限制（與未設定相同）
 
-範例（預設僅 Messaging，也允許 Slack + Discord Tools）：
+範例（預設傳訊，也允許 Slack ＋ Discord 工具）：
+
 ```json5
 {
   tools: {
     profile: "messaging",
-    allow: ["slack", "discord"]
-  }
+    allow: ["slack", "discord"],
+  },
 }
 ```
 
-範例（Coding Profile，但在任何地方都拒絕 exec/process）：
+範例（編碼設定檔，但到處拒絕 exec/process）：
+
 ```json5
 {
   tools: {
     profile: "coding",
-    deny: ["group:runtime"]
-  }
+    deny: ["group:runtime"],
+  },
 }
 ```
 
-範例（全域 Coding Profile，僅 Messaging 的 Support Agent）：
+範例（全域編碼設定檔，傳訊支援代理）：
+
 ```json5
 {
   tools: { profile: "coding" },
@@ -63,44 +72,52 @@ Profiles：
     list: [
       {
         id: "support",
-        tools: { profile: "messaging", allow: ["slack"] }
-      }
-    ]
-  }
+        tools: { profile: "messaging", allow: ["slack"] },
+      },
+    ],
+  },
 }
 ```
 
-## Provider-specific Tool Policy
+## 提供者特定工具政策
 
-使用 `tools.byProvider` 為特定 Providers（或單一 `provider/model`）**進一步限制** Tools，而不變更您的全域預設值。Per-agent 覆寫：`agents.list[].tools.byProvider`。
+使用 `tools.byProvider` 為特定提供者
+（或單個 `provider/model`）進一步限制工具，無需改變全域預設值。
+每個代理覆蓋：`agents.list[].tools.byProvider`。
 
-這會在基礎 Tool Profile **之後**、Allow/Deny 清單**之前**套用，因此只能縮小 Tool 集合。Provider Keys 接受 `provider`（例如 `google-antigravity`）或 `provider/model`（例如 `openai/gpt-5.2`）。
+這在基本工具設定檔**之後**及 allow/deny 列表**之前**套用，
+因此只能縮小工具集。
+提供者鑰接受 `provider`（例如 `google-antigravity`）或
+`provider/model`（例如 `openai/gpt-5.2`）。
 
-範例（保持全域 Coding Profile，但 Google Antigravity 使用 Minimal Tools）：
+範例（保持全域編碼設定檔，但 Google Antigravity 的最少工具）：
+
 ```json5
 {
   tools: {
     profile: "coding",
     byProvider: {
-      "google-antigravity": { profile: "minimal" }
-    }
-  }
+      "google-antigravity": { profile: "minimal" },
+    },
+  },
 }
 ```
 
-範例（不穩定端點的 Provider/Model-specific Allowlist）：
+範例（不穩定端點的提供者/模型特定 allowlist）：
+
 ```json5
 {
   tools: {
     allow: ["group:fs", "group:runtime", "sessions_list"],
     byProvider: {
-      "openai/gpt-5.2": { allow: ["group:fs", "sessions_list"] }
-    }
-  }
+      "openai/gpt-5.2": { allow: ["group:fs", "sessions_list"] },
+    },
+  },
 }
 ```
 
-範例（單一 Provider 的 Agent-specific 覆寫）：
+範例（單個提供者的代理特定覆蓋）：
+
 ```json5
 {
   agents: {
@@ -109,20 +126,21 @@ Profiles：
         id: "support",
         tools: {
           byProvider: {
-            "google-antigravity": { allow: ["message", "sessions_list"] }
-          }
-        }
-      }
-    ]
-  }
+            "google-antigravity": { allow: ["message", "sessions_list"] },
+          },
+        },
+      },
+    ],
+  },
 }
 ```
 
-## Tool Groups（速寫）
+## 工具群組（速記）
 
-Tool Policies（Global、Agent、Sandbox）支援會展開為多個 Tools 的 `group:*` 項目。在 `tools.allow` / `tools.deny` 中使用這些。
+工具政策（全域、代理、沙箱）支援在 `tools.allow` / `tools.deny` 中的 `group:*` 項目。
 
-可用 Groups：
+可用群組：
+
 - `group:runtime`：`exec`、`bash`、`process`
 - `group:fs`：`read`、`write`、`edit`、`apply_patch`
 - `group:sessions`：`sessions_list`、`sessions_history`、`sessions_send`、`sessions_spawn`、`session_status`
@@ -132,148 +150,174 @@ Tool Policies（Global、Agent、Sandbox）支援會展開為多個 Tools 的 `g
 - `group:automation`：`cron`、`gateway`
 - `group:messaging`：`message`
 - `group:nodes`：`nodes`
-- `group:openclaw`：所有內建 OpenClaw Tools（排除 Provider Plugins）
+- `group:openclaw`：所有內建 OpenClaw 工具（排除提供者外掛）
 
-範例（僅允許 File Tools + Browser）：
+範例（僅允許檔案工具＋瀏覽器）：
+
 ```json5
 {
   tools: {
-    allow: ["group:fs", "browser"]
-  }
+    allow: ["group:fs", "browser"],
+  },
 }
 ```
 
-## Plugins + Tools
+## 外掛＋工具
 
-Plugins 可以在 Core 集合之外註冊**額外的 Tools**（和 CLI 指令）。請見 [Plugins](/plugin) 了解安裝 + Config，以及 [Skills](/tools/skills) 了解 Tool 使用指引如何注入到 Prompts 中。部分 Plugins 會隨 Tools 一起提供自己的 Skills（例如 Voice-call Plugin）。
+外掛可以在核心集之外註冊**額外工具**（及 CLI 命令）。
+見 [Plugins](/zh-Hant/tools/plugin) 以取得安裝＋設定，及 [Skills](/zh-Hant/tools/skills) 以瞭解工具使用指導如何注入到提示中。某些外掛隨工具一起提供其自己的技能
+（例如 voice-call 外掛）。
 
-選用 Plugin Tools：
-- [Lobster](/tools/lobster)：Typed 工作流程 Runtime，具有可恢復的 Approvals（需要 Gateway Host 上有 Lobster CLI）。
-- [LLM Task](/tools/llm-task)：純 JSON LLM 步驟，用於結構化工作流程輸出（選用 Schema 驗證）。
+可選外掛工具：
 
-## Tool 清單
+- [Lobster](/zh-Hant/tools/lobster)：具有可恢復許可的型別工作流執行時（在 gateway host 上需要 Lobster CLI）。
+- [LLM Task](/zh-Hant/tools/llm-task)：工作流的 JSON-only LLM 步驟（可選架構驗證）。
+
+## 工具庫存
 
 ### `apply_patch`
-在一個或多個檔案中套用結構化 Patches。用於 Multi-hunk 編輯。
-實驗性：透過 `tools.exec.applyPatch.enabled` 啟用（僅限 OpenAI 模型）。
+
+在一個或多個檔案上套用結構化補丁。用於多 hunk 編輯。
+實驗性：透過 `tools.exec.applyPatch.enabled` 啟用（OpenAI 模型僅）。
 
 ### `exec`
-在 Workspace 中執行 Shell 指令。
+
+在工作區中執行 shell 命令。
 
 核心參數：
-- `command`（必填）
-- `yieldMs`（Timeout 後自動背景，預設 10000）
-- `background`（立即背景）
-- `timeout`（秒；超過時終止 Process，預設 1800）
-- `elevated`（bool；如果啟用/允許 Elevated Mode 則在 Host 上執行；僅在 Agent 被 Sandboxed 時改變行為）
+
+- `command`（必需）
+- `yieldMs`（逾時後自動背景化，預設 10000）
+- `background`（立即背景化）
+- `timeout`（秒；超過時殺死程序，預設 1800）
+- `elevated`（bool；如果啟用/允許提升模式時在主機上執行；僅當代理沙箱化時改變行為）
 - `host`（`sandbox | gateway | node`）
 - `security`（`deny | allowlist | full`）
 - `ask`（`off | on-miss | always`）
-- `node`（`host=node` 的 Node ID/Name）
-- 需要真正的 TTY？設定 `pty: true`。
+- `node`（用於 `host=node` 的節點 id/name）
+- 需要真實 TTY？設定 `pty: true`。
 
-注意事項：
-- 背景化時回傳 `status: "running"` 和 `sessionId`。
-- 使用 `process` 來 Poll/Log/Write/Kill/Clear 背景 Sessions。
-- 如果 `process` 被禁止，`exec` 會同步執行並忽略 `yieldMs`/`background`。
-- `elevated` 受 `tools.elevated` 加上任何 `agents.list[].tools.elevated` 覆寫的限制（兩者都必須允許），是 `host=gateway` + `security=full` 的別名。
-- `elevated` 僅在 Agent 被 Sandboxed 時改變行為（否則是 No-op）。
-- `host=node` 可以指定 macOS Companion App 或 Headless Node Host（`openclaw node run`）。
-- Gateway/Node Approvals 和 Allowlists：[Exec approvals](/tools/exec-approvals)。
+注意：
+
+- 背景化時返回 `status: "running"` 及 `sessionId`。
+- 使用 `process` 輪詢/記錄/寫入/殺死/清除背景工作階段。
+- 如果 `process` 被拒絕，`exec` 同步執行並忽略 `yieldMs`/`background`。
+- `elevated` 由 `tools.elevated` 加上任何 `agents.list[].tools.elevated` 覆蓋閘控（兩者都必須允許），是 `host=gateway` ＋ `security=full` 的別名。
+- `elevated` 僅當代理沙箱化時改變行為（否則是無作用）。
+- `host=node` 可以以 macOS 配套應用或無頭 node host（`openclaw node run`）為目標。
+- gateway/node approvals 及 allowlist：[Exec approvals](/zh-Hant/tools/exec-approvals)。
 
 ### `process`
-管理背景 Exec Sessions。
+
+管理背景 exec 工作階段。
 
 核心動作：
+
 - `list`、`poll`、`log`、`write`、`kill`、`clear`、`remove`
 
-注意事項：
-- `poll` 在完成時回傳新輸出和 Exit Status。
-- `log` 支援基於行的 `offset`/`limit`（省略 `offset` 可取得最後 N 行）。
-- `process` 依 Agent 劃分範圍；其他 Agents 的 Sessions 不可見。
+注意：
+
+- `poll` 返回新輸出及完成時的結束狀態。
+- `log` 支援以行為基礎的 `offset`/`limit`（省略 `offset` 來抓取最後 N 行）。
+- `process` 範圍為每個代理；來自其他代理的工作階段不可見。
 
 ### `web_search`
+
 使用 Brave Search API 搜尋網路。
 
 核心參數：
-- `query`（必填）
-- `count`（1–10；預設來自 `tools.web.search.maxResults`）
 
-注意事項：
-- 需要 Brave API Key（建議：`openclaw configure --section web`，或設定 `BRAVE_API_KEY`）。
+- `query`（必需）
+- `count`（1–10；從 `tools.web.search.maxResults` 預設）
+
+注意：
+
+- 需要 Brave API 鑰（推薦：`openclaw configure --section web`，或設定 `BRAVE_API_KEY`）。
 - 透過 `tools.web.search.enabled` 啟用。
-- 回應會被快取（預設 15 分鐘）。
-- 請見 [Web tools](/tools/web) 了解設定。
+- 回應被快取（預設 15 分鐘）。
+- 見 [Web tools](/zh-Hant/tools/web) 以進行設定。
 
 ### `web_fetch`
-從 URL 取得並擷取可讀內容（HTML → Markdown/Text）。
+
+從 URL 取得及擷取可讀內容（HTML → markdown/text）。
 
 核心參數：
-- `url`（必填）
+
+- `url`（必需）
 - `extractMode`（`markdown` | `text`）
 - `maxChars`（截斷長頁面）
 
-注意事項：
+注意：
+
 - 透過 `tools.web.fetch.enabled` 啟用。
-- 回應會被快取（預設 15 分鐘）。
-- 對於 JS-heavy 網站，建議使用 Browser Tool。
-- 請見 [Web tools](/tools/web) 了解設定。
-- 請見 [Firecrawl](/tools/firecrawl) 了解選用的 Anti-bot Fallback。
+- `maxChars` 由 `tools.web.fetch.maxCharsCap`（預設 50000）固定。
+- 回應被快取（預設 15 分鐘）。
+- 對於 JS 繁重的網站，優先使用瀏覽器工具。
+- 見 [Web tools](/zh-Hant/tools/web) 以進行設定。
+- 見 [Firecrawl](/zh-Hant/tools/firecrawl) 用於可選的反機器人 fallback。
 
 ### `browser`
-控制專用的 OpenClaw-managed Browser。
+
+控制專用 OpenClaw 管理的瀏覽器。
 
 核心動作：
+
 - `status`、`start`、`stop`、`tabs`、`open`、`focus`、`close`
 - `snapshot`（aria/ai）
-- `screenshot`（回傳 Image Block + `MEDIA:<path>`）
+- `screenshot`（返回影像區塊＋ `MEDIA:<path>`）
 - `act`（UI 動作：click/type/press/hover/drag/select/fill/resize/wait/evaluate）
 - `navigate`、`console`、`pdf`、`upload`、`dialog`
 
-Profile 管理：
-- `profiles` — 列出所有 Browser Profiles 及狀態
-- `create-profile` — 使用自動配置的 Port（或 `cdpUrl`）建立新 Profile
-- `delete-profile` — 停止 Browser、刪除 User Data、從 Config 移除（僅限 Local）
-- `reset-profile` — 終止 Profile Port 上的孤兒 Process（僅限 Local）
+設定檔管理：
+
+- `profiles` — 列出所有瀏覽器設定檔及狀態
+- `create-profile` — 以自動分配的 port 建立新設定檔（或 `cdpUrl`）
+- `delete-profile` — 停止瀏覽器、刪除使用者資料、從設定檔移除（僅本地）
+- `reset-profile` — 殺死設定檔 port 上的孤立程序（僅本地）
 
 常見參數：
-- `profile`（選用；預設為 `browser.defaultProfile`）
-- `target`（`sandbox` | `host` | `node`）
-- `node`（選用；指定特定 Node ID/Name）
 
-注意事項：
+- `profile`（可選；預設為 `browser.defaultProfile`）
+- `target`（`sandbox` | `host` | `node`）
+- `node`（可選；選擇特定節點 id/name）
+  注意：
 - 需要 `browser.enabled=true`（預設為 `true`；設定 `false` 停用）。
-- 所有動作接受選用的 `profile` 參數以支援多實例。
-- 省略 `profile` 時使用 `browser.defaultProfile`（預設為 "chrome"）。
-- Profile 名稱：僅限小寫英數字元 + 連字號（最多 64 字元）。
-- Port 範圍：18800-18899（最多約 100 個 Profiles）。
-- Remote Profiles 僅支援 Attach（無 Start/Stop/Reset）。
-- 如果連接了具備 Browser 能力的 Node，Tool 可能會自動路由到它（除非您指定 `target`）。
-- `snapshot` 在安裝 Playwright 時預設為 `ai`；使用 `aria` 取得 Accessibility Tree。
-- `snapshot` 也支援 Role-snapshot 選項（`interactive`、`compact`、`depth`、`selector`），回傳如 `e12` 的 Refs。
-- `act` 需要來自 `snapshot` 的 `ref`（AI Snapshots 的數字 `12`，或 Role Snapshots 的 `e12`）；如需 CSS Selector，使用 `evaluate`。
-- 避免預設 `act` → `wait`；僅在特殊情況下使用（無可靠的 UI 狀態可等待）。
-- `upload` 可選擇傳入 `ref` 以在 Arming 後自動點擊。
-- `upload` 也支援 `inputRef`（Aria Ref）或 `element`（CSS Selector）以直接設定 `<input type="file">`。
+- 所有動作接受選擇性 `profile` 參數以支援多實例。
+- 當省略 `profile` 時，使用 `browser.defaultProfile`（預設為 "chrome"）。
+- 設定檔名稱：僅小寫英數及連字號（最多 64 字元）。
+- Port 範圍：18800-18899（約 100 個設定檔上限）。
+- 遠端設定檔是僅附加（無 start/stop/reset）。
+- 如果連接了瀏覽器capable node，工具可能自動路由到它（除非你固定 `target`）。
+- 安裝 Playwright 時 `snapshot` 預設為 `ai`；使用 `aria` 以取得無障礙樹。
+- `snapshot` 也支援角色快照選項（`interactive`、`compact`、`depth`、`selector`），返回 refs 如 `e12`。
+- `act` 需要來自 `snapshot` 的 `ref`（AI 快照的數字 `12`，或角色快照的 `e12`）；對罕見 CSS 選擇器需要使用 `evaluate`。
+- 根據預設避免 `act` → `wait`；僅在例外情況下使用（無可靠的 UI 狀態等待）。
+- `upload` 可以選擇性傳遞 `ref` 以自動點擊後武裝。
+- `upload` 也支援 `inputRef`（aria ref）或 `element`（CSS 選擇器）以直接設定 `<input type="file">`。
 
 ### `canvas`
-驅動 Node Canvas（Present、Eval、Snapshot、A2UI）。
+
+驅動節點 Canvas（出現、評估、快照、A2UI）。
 
 核心動作：
+
 - `present`、`hide`、`navigate`、`eval`
-- `snapshot`（回傳 Image Block + `MEDIA:<path>`）
+- `snapshot`（返回影像區塊＋ `MEDIA:<path>`）
 - `a2ui_push`、`a2ui_reset`
 
-注意事項：
-- 底層使用 Gateway `node.invoke`。
-- 如果未提供 `node`，Tool 會選擇預設（單一連接的 Node 或 Local Mac Node）。
-- A2UI 僅限 v0.8（無 `createSurface`）；CLI 會拒絕 v0.9 JSONL 並顯示行錯誤。
-- 快速測試：`openclaw nodes canvas a2ui push --node <id> --text "Hello from A2UI"`。
+注意：
+
+- 在引擎下使用 gateway `node.invoke`。
+- 如果沒有提供 `node`，工具選擇預設（單個連接節點或本地 mac 節點）。
+- A2UI 是 v0.8 僅（無 `createSurface`）；CLI 以行錯誤拒絕 v0.9 JSONL。
+- 快速煙霧測試：`openclaw nodes canvas a2ui push --node <id> --text "Hello from A2UI"`。
 
 ### `nodes`
-探索和指定已配對的 Nodes；傳送通知；擷取 Camera/Screen。
+
+探索及目標配對節點；發送通知；捕獲相機/螢幕。
 
 核心動作：
+
 - `status`、`describe`
 - `pending`、`approve`、`reject`（配對）
 - `notify`（macOS `system.notify`）
@@ -281,14 +325,16 @@ Profile 管理：
 - `camera_snap`、`camera_clip`、`screen_record`
 - `location_get`
 
-注意事項：
-- Camera/Screen 指令需要 Node App 在前景。
-- Images 回傳 Image Blocks + `MEDIA:<path>`。
-- Videos 回傳 `FILE:<path>`（mp4）。
-- Location 回傳 JSON Payload（lat/lon/accuracy/timestamp）。
-- `run` 參數：`command` argv 陣列；選用 `cwd`、`env`（`KEY=VAL`）、`commandTimeoutMs`、`invokeTimeoutMs`、`needsScreenRecording`。
+注意：
+
+- 相機/螢幕命令需要 node 應用處於前景。
+- 影像返回影像區塊＋ `MEDIA:<path>`。
+- 影片返回 `FILE:<path>`（mp4）。
+- 位置返回 JSON 有效負載（lat/lon/accuracy/timestamp）。
+- `run` 參數：`command` argv 陣列；可選 `cwd`、`env`（`KEY=VAL`）、`commandTimeoutMs`、`invokeTimeoutMs`、`needsScreenRecording`。
 
 範例（`run`）：
+
 ```json
 {
   "action": "run",
@@ -302,24 +348,29 @@ Profile 管理：
 ```
 
 ### `image`
-使用設定的 Image Model 分析圖片。
+
+用設定的影像模型分析影像。
 
 核心參數：
-- `image`（必填路徑或 URL）
-- `prompt`（選用；預設為 "Describe the image."）
-- `model`（選用覆寫）
-- `maxBytesMb`（選用大小上限）
 
-注意事項：
-- 僅在設定 `agents.defaults.imageModel`（Primary 或 Fallbacks）時可用，或當可從您的預設 Model + 設定的 Auth 推斷出 Implicit Image Model 時（盡力配對）。
-- 直接使用 Image Model（與主要 Chat Model 無關）。
+- `image`（必需路徑或 URL）
+- `prompt`（可選；預設為 "Describe the image."）
+- `model`（可選覆蓋）
+- `maxBytesMb`（可選大小上限）
+
+注意：
+
+- 僅當 `agents.defaults.imageModel` 被設定（主要或 fallback）時可用，或當可以從你的預設模型＋設定的認證推斷隱含影像模型時（最佳嘗試）。
+- 直接使用影像模型（獨立於主聊天模型）。
 
 ### `message`
-在 Discord/Google Chat/Slack/Telegram/WhatsApp/Signal/iMessage/MS Teams 間傳送訊息和 Channel 動作。
+
+透過 Discord/Google Chat/Slack/Telegram/WhatsApp/Signal/iMessage/MS Teams 發送訊息及頻道動作。
 
 核心動作：
-- `send`（Text + 選用 Media；MS Teams 也支援 `card` 用於 Adaptive Cards）
-- `poll`（WhatsApp/Discord/MS Teams Polls）
+
+- `send`（文字＋可選媒體；MS Teams 也支援 `card` 用於調適卡片）
+- `poll`（WhatsApp/Discord/MS Teams 民調）
 - `react` / `reactions` / `read` / `edit` / `delete`
 - `pin` / `unpin` / `list-pins`
 - `permissions`
@@ -334,105 +385,126 @@ Profile 管理：
 - `event-list` / `event-create`
 - `timeout` / `kick` / `ban`
 
-注意事項：
-- `send` 透過 Gateway 路由 WhatsApp；其他 Channels 直接傳送。
-- `poll` 對 WhatsApp 和 MS Teams 使用 Gateway；Discord Polls 直接傳送。
-- 當 Message Tool Call 綁定到活躍 Chat Session 時，傳送會限制在該 Session 的目標，以避免跨 Context 洩漏。
+注意：
+
+- `send` 透過 Gateway 路由 WhatsApp；其他頻道直接進行。
+- `poll` 使用 WhatsApp 及 MS Teams 的 Gateway；Discord 民調直接進行。
+- 當訊息工具呼叫綁定到活躍聊天工作階段時，發送被限制到該工作階段的目標，以避免跨context 洩露。
 
 ### `cron`
-管理 Gateway Cron Jobs 和 Wakeups。
+
+管理 Gateway cron 工作及喚醒。
 
 核心動作：
+
 - `status`、`list`
 - `add`、`update`、`remove`、`run`、`runs`
-- `wake`（排入 System Event + 選用立即 Heartbeat）
+- `wake`（排隊系統事件＋可選立即心跳）
 
-注意事項：
-- `add` 期望完整的 Cron Job 物件（與 `cron.add` RPC 相同的 Schema）。
-- `update` 使用 `{ id, patch }`。
+注意：
+
+- `add` 期望完整的 cron 工作物件（與 `cron.add` RPC 相同架構）。
+- `update` 使用 `{ jobId, patch }`（為相容性接受 `id`）。
 
 ### `gateway`
-重新啟動或套用更新至執行中的 Gateway Process（In-place）。
+
+重啟或套用更新到執行中 Gateway 程序（就地）。
 
 核心動作：
-- `restart`（授權 + 傳送 `SIGUSR1` 進行 In-process 重新啟動；`openclaw gateway` In-place 重新啟動）
-- `config.get` / `config.schema`
-- `config.apply`（驗證 + 寫入 Config + 重新啟動 + Wake）
-- `config.patch`（合併部分更新 + 重新啟動 + Wake）
-- `update.run`（執行更新 + 重新啟動 + Wake）
 
-注意事項：
-- 使用 `delayMs`（預設 2000）以避免中斷進行中的回覆。
+- `restart`（授權＋發送 `SIGUSR1` 進行程序內重啟；`openclaw gateway` 就地重啟）
+- `config.get` / `config.schema`
+- `config.apply`（驗證＋寫入設定＋重啟＋喚醒）
+- `config.patch`（合併部分更新＋重啟＋喚醒）
+- `update.run`（執行更新＋重啟＋喚醒）
+
+注意：
+
+- 使用 `delayMs`（預設 2000）以避免中斷飛行中的回覆。
 - `restart` 預設停用；使用 `commands.restart: true` 啟用。
 
 ### `sessions_list` / `sessions_history` / `sessions_send` / `sessions_spawn` / `session_status`
-列出 Sessions、檢視 Transcript 歷史，或傳送到另一個 Session。
+
+列出工作階段、檢查副本歷史或發送到另一工作階段。
 
 核心參數：
+
 - `sessions_list`：`kinds?`、`limit?`、`activeMinutes?`、`messageLimit?`（0 = 無）
 - `sessions_history`：`sessionKey`（或 `sessionId`）、`limit?`、`includeTools?`
-- `sessions_send`：`sessionKey`（或 `sessionId`）、`message`、`timeoutSeconds?`（0 = Fire-and-forget）
+- `sessions_send`：`sessionKey`（或 `sessionId`）、`message`、`timeoutSeconds?`（0 = fire-and-forget）
 - `sessions_spawn`：`task`、`label?`、`agentId?`、`model?`、`runTimeoutSeconds?`、`cleanup?`
-- `session_status`：`sessionKey?`（預設目前；接受 `sessionId`）、`model?`（`default` 清除覆寫）
+- `session_status`：`sessionKey?`（預設現在；接受 `sessionId`）、`model?`（`default` 清除覆蓋）
 
-注意事項：
-- `main` 是標準 Direct-chat Key；Global/Unknown 會隱藏。
-- `messageLimit > 0` 取得每個 Session 的最後 N 則訊息（過濾 Tool 訊息）。
+注意：
+
+- `main` 是正規直接聊天鑰；全域/未知被隱藏。
+- `messageLimit > 0` 來 per session 取最後 N 訊息（工具訊息篩選）。
 - `sessions_send` 在 `timeoutSeconds > 0` 時等待最終完成。
-- Delivery/Announce 在完成後發生且為盡力而為；`status: "ok"` 確認 Agent Run 完成，而非 Announce 已傳遞。
-- `sessions_spawn` 啟動 Sub-agent Run 並將公告回覆張貼回請求者 Chat。
-- `sessions_spawn` 是非阻塞的，立即回傳 `status: "accepted"`。
-- `sessions_send` 執行 Reply-back Ping-pong（回覆 `REPLY_SKIP` 停止；最大 Turns 透過 `session.agentToAgent.maxPingPongTurns`，0–5）。
-- Ping-pong 後，目標 Agent 執行 **Announce 步驟**；回覆 `ANNOUNCE_SKIP` 可抑制公告。
+- 傳遞/宣佈在完成後發生，且是最佳嘗試；`status: "ok"` 確認代理執行完成，非宣佈被傳遞。
+- `sessions_spawn` 啟動子代理執行並將公告回覆發佈到要求者聊天。
+- `sessions_spawn` 非阻止且立即返回 `status: "accepted"`。
+- `sessions_send` 執行回覆往返 ping-pong（回覆 `REPLY_SKIP` 停止；最大轉數透過 `session.agentToAgent.maxPingPongTurns`，0–5）。
+- 在 ping-pong 之後，目標代理執行一個**公告步驟**；回覆 `ANNOUNCE_SKIP` 以抑制公告。
 
 ### `agents_list`
-列出目前 Session 可透過 `sessions_spawn` 指定的 Agent IDs。
 
-注意事項：
-- 結果受 Per-agent Allowlists（`agents.list[].subagents.allowAgents`）限制。
-- 設定 `["*"]` 時，Tool 會包含所有設定的 Agents 並標記 `allowAny: true`。
+列出現在工作階段可能以 `sessions_spawn` 為目標的代理 id。
 
-## 參數（通用）
+注意：
 
-Gateway-backed Tools（`canvas`、`nodes`、`cron`）：
+- 結果受限於每個代理 allowlist（`agents.list[].subagents.allowAgents`）。
+- 當設定為 `["*"]` 時，工具包含所有設定的代理並標記 `allowAny: true`。
+
+## 參數（常見）
+
+Gateway 背靠的工具（`canvas`、`nodes`、`cron`）：
+
 - `gatewayUrl`（預設 `ws://127.0.0.1:18789`）
-- `gatewayToken`（如果啟用 Auth）
+- `gatewayToken`（如果啟用認證）
 - `timeoutMs`
 
-Browser Tool：
-- `profile`（選用；預設為 `browser.defaultProfile`）
+注意：當設定 `gatewayUrl` 時，明確包含 `gatewayToken`。工具不為覆蓋繼承設定
+或環境認證，缺少明確認證是錯誤。
+
+瀏覽器工具：
+
+- `profile`（可選；預設為 `browser.defaultProfile`）
 - `target`（`sandbox` | `host` | `node`）
-- `node`（選用；指定特定 Node ID/Name）
+- `node`（可選；固定特定節點 id/name）
 
-## 建議的 Agent 流程
+## 推薦的代理流程
 
-Browser 自動化：
-1) `browser` → `status` / `start`
-2) `snapshot`（ai 或 aria）
-3) `act`（click/type/press）
-4) `screenshot` 如果需要視覺確認
+瀏覽器自動化：
 
-Canvas Render：
-1) `canvas` → `present`
-2) `a2ui_push`（選用）
-3) `snapshot`
+1. `browser` → `status` / `start`
+2. `snapshot`（ai 或 aria）
+3. `act`（click/type/press）
+4. `screenshot` 如果需要視覺確認
 
-Node Targeting：
-1) `nodes` → `status`
-2) 對所選 Node 執行 `describe`
-3) `notify` / `run` / `camera_snap` / `screen_record`
+Canvas 渲染：
+
+1. `canvas` → `present`
+2. `a2ui_push`（可選）
+3. `snapshot`
+
+節點目標：
+
+1. `nodes` → `status`
+2. `describe` 在選擇的節點上
+3. `notify` / `run` / `camera_snap` / `screen_record`
 
 ## 安全
 
-- 避免直接 `system.run`；僅在明確使用者同意下使用 `nodes` → `run`。
-- 尊重使用者對 Camera/Screen 擷取的同意。
-- 在呼叫 Media 指令前使用 `status/describe` 確保權限。
+- 避免直接 `system.run`；僅使用 `nodes` → `run` 及明確使用者同意。
+- 尊重相機/螢幕捕獲的使用者同意。
+- 使用 `status/describe` 以確保權限，然後再調用媒體命令。
 
-## 如何向 Agent 呈現 Tools
+## 工具如何呈現給代理
 
-Tools 透過兩個平行管道公開：
+工具透過兩個平行管道公開：
 
-1) **System Prompt Text**：可讀的清單 + 指引。
-2) **Tool Schema**：傳送至 Model API 的結構化 Function 定義。
+1. **系統提示文字**：人類可讀列表＋指導。
+2. **工具架構**：發送到模型 API 的結構化函式定義。
 
-這表示 Agent 同時看到「有哪些 Tools」和「如何呼叫它們」。如果 Tool 未出現在 System Prompt 或 Schema 中，Model 無法呼叫它。
+這表示代理看到"存在什麼工具"及"如何呼叫它們"。如果工具
+不出現在系統提示或架構中，模型無法呼叫它。

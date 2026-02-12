@@ -1,5 +1,5 @@
 ---
-title: "glm(GLM models)"
+title: "GLM Models（GLM 模型）"
 summary: "GLM 模型系列概覽 + 如何在 OpenClaw 中使用"
 read_when:
   - 想要在 OpenClaw 中使用 GLM 模型時
@@ -21,7 +21,7 @@ openclaw onboard --auth-choice zai-api-key
 ```json5
 {
   env: { ZAI_API_KEY: "sk-..." },
-  agents: { defaults: { model: { primary: "zai/glm-4.7" } } }
+  agents: { defaults: { model: { primary: "zai/glm-4.7" } } },
 }
 ```
 
@@ -29,4 +29,4 @@ openclaw onboard --auth-choice zai-api-key
 
 - GLM 版本與可用性可能會變更；請查看 Z.AI 文件以獲取最新資訊。
 - 模型 ID 範例包括 `glm-4.7` 與 `glm-4.6`。
-- 關於供應商詳情，請參閱 [/providers/zai](/providers/zai)。
+- 關於供應商詳情，請參閱 [/providers/zai](/zh-Hant/providers/zai)。

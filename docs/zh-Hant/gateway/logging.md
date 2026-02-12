@@ -1,5 +1,5 @@
 ---
-title: "日誌"
+title: "Logging（日誌）"
 summary: "Logging surfaces, file logs, WS log styles, 與 console formatting"
 read_when:
   - 變更 Log 輸出或格式時
@@ -8,7 +8,7 @@ read_when:
 
 # 日誌 (Logging)
 
-關於使用者面向的概觀 (CLI + Control UI + Config)，參閱 [/logging](/logging)。
+關於使用者面向的概觀 (CLI + Control UI + Config)，參閱 [/logging](/zh-Hant/logging)。
 
 OpenClaw 有兩個 Log “Surfaces”：
 

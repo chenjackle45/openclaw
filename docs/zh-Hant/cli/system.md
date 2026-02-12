@@ -1,5 +1,5 @@
 ---
-title: "system(系統操作)"
+title: "system（系統操作）"
 summary: "`openclaw system` CLI 參考（系統事件、心跳與在線狀態）"
 read_when:
   - 想要在不建立排程任務的情況下發送系統事件時
@@ -32,6 +32,7 @@ openclaw system presence
 將系統事件排入**主要 (main)** 會話的隊列中。下一次心跳觸發時，系統會將其作為 `System:` 行注入提示詞 (Prompt) 中。使用 `--mode now` 可立即觸發心跳；`next-heartbeat` (預設值) 則會等待下一次排定的週期。
 
 **旗標說明**：
+
 - `--text <文字>`：(必要) 系統事件內容。
 - `--mode <模式>`：`now` 或 `next-heartbeat`。
 - `--json`：機器可讀輸出。
@@ -43,6 +44,7 @@ openclaw system presence
 - `disable`：暫停心跳機制。
 
 **旗標說明**：
+
 - `--json`：機器可讀輸出。
 
 ## `system presence` (在線狀態)
@@ -50,6 +52,7 @@ openclaw system presence
 列出 Gateway 目前掌握的系統在線條目（包含節點、執行實例及類似的狀態資訊）。
 
 **旗標說明**：
+
 - `--json`：機器可讀輸出。
 
 ## 注意事項

@@ -1,6 +1,6 @@
 ---
-title: "Multi agent sandbox tools(多代理沙盒與工具)"
-summary: "每個代理的沙盒 + 工具限制、優先順序和範例"
+title: "Multi-Agent Sandbox & Tools（多代理沙盒和工具）"
+summary: "每個代理沙盒 + 工具限制、優先級和範例"
 read_when: "您想要在多代理 gateway 中實現每個代理的沙盒或每個代理的工具 allow/deny 策略。"
 status: active
 ---
@@ -10,10 +10,12 @@ status: active
 ## 概覽
 
 多代理設定中的每個代理現在可以擁有自己的：
+
 - **沙盒設定**（`agents.list[].sandbox` 覆蓋 `agents.defaults.sandbox`）
 - **工具限制**（`tools.allow` / `tools.deny`，加上 `agents.list[].tools`）
 
 這允許您執行具有不同安全設定檔的多個代理：
+
 - 具有完全存取權限的個人助理
 - 具有受限工具的家庭/工作代理
 - 沙盒中的面向公眾的代理
@@ -29,8 +31,8 @@ status: active
 憑證在代理之間**不共享**。絕不要跨代理重複使用 `agentDir`。
 如果您想要共享憑證，請將 `auth-profiles.json` 複製到其他代理的 `agentDir`。
 
-有關沙盒在執行時的行為方式，請參閱 [Sandboxing](/gateway/sandboxing)。
-有關除錯「為什麼這被阻止？」，請參閱 [Sandbox vs Tool Policy vs Elevated](/gateway/sandbox-vs-tool-policy-vs-elevated) 和 `openclaw sandbox explain`。
+有關沙盒在執行時的行為方式，請參閱 [Sandboxing](/zh-Hant/gateway/sandboxing)。
+有關除錯「為什麼這被阻止？」，請參閱 [Sandbox vs Tool Policy vs Elevated](/zh-Hant/gateway/sandbox-vs-tool-policy-vs-elevated) 和 `openclaw sandbox explain`。
 
 ---
 
@@ -81,6 +83,7 @@ status: active
 ```
 
 **結果：**
+
 - `main` 代理：在主機上執行，完全工具存取
 - `family` 代理：在 Docker 中執行（每個代理一個容器），僅 `read` 工具
 
@@ -134,6 +137,7 @@ status: active
 ```
 
 **結果：**
+
 - 預設代理獲得 coding 工具
 - `support` 代理僅訊息（+ Slack 工具）
 
@@ -146,7 +150,7 @@ status: active
   "agents": {
     "defaults": {
       "sandbox": {
-        "mode": "non-main",  // 全域預設
+        "mode": "non-main", // 全域預設
         "scope": "session"
       }
     },
@@ -155,14 +159,14 @@ status: active
         "id": "main",
         "workspace": "~/.openclaw/workspace",
         "sandbox": {
-          "mode": "off"  // 覆蓋：main 從不沙盒
+          "mode": "off" // 覆蓋：main 從不沙盒
         }
       },
       {
         "id": "public",
         "workspace": "~/.openclaw/workspace-public",
         "sandbox": {
-          "mode": "all",  // 覆蓋：public 總是沙盒
+          "mode": "all", // 覆蓋：public 總是沙盒
           "scope": "agent"
         },
         "tools": {
@@ -182,7 +186,9 @@ status: active
 當全域（`agents.defaults.*`）和代理特定（`agents.list[].*`）設定都存在時：
 
 ### 沙盒設定
+
 代理特定設定覆蓋全域：
+
 ```
 agents.list[].sandbox.mode > agents.defaults.sandbox.mode
 agents.list[].sandbox.scope > agents.defaults.sandbox.scope
@@ -194,10 +200,13 @@ agents.list[].sandbox.prune.* > agents.defaults.sandbox.prune.*
 ```
 
 **注意事項：**
+
 - `agents.list[].sandbox.{docker,browser,prune}.*` 覆蓋該代理的 `agents.defaults.sandbox.{docker,browser,prune}.*`（當沙盒範圍解析為 `"shared"` 時忽略）。
 
 ### 工具限制
+
 過濾順序為：
+
 1. **工具 profile**（`tools.profile` 或 `agents.list[].tools.profile`）
 2. **供應商工具 profile**（`tools.byProvider[provider].profile` 或 `agents.list[].tools.byProvider[provider].profile`）
 3. **全域工具策略**（`tools.allow` / `tools.deny`）
@@ -227,9 +236,11 @@ agents.list[].sandbox.prune.* > agents.defaults.sandbox.prune.*
 - `group:openclaw`：所有內建 OpenClaw 工具（排除供應商外掛）
 
 ### Elevated 模式
+
 `tools.elevated` 是全域基準（基於發送者的允許清單）。`agents.list[].tools.elevated` 可以進一步限制特定代理的 elevated（兩者都必須允許）。
 
 緩解模式：
+
 - 對不受信任的代理拒絕 `exec`（`agents.list[].tools.deny: ["exec"]`）
 - 避免將路由到受限代理的發送者列入允許清單
 - 如果您只想要沙盒執行，請全域停用 elevated（`tools.elevated.enabled: false`）
@@ -240,6 +251,7 @@ agents.list[].sandbox.prune.* > agents.defaults.sandbox.prune.*
 ## 從單一代理遷移
 
 **之前（單一代理）：**
+
 ```json
 {
   "agents": {
@@ -262,6 +274,7 @@ agents.list[].sandbox.prune.* > agents.defaults.sandbox.prune.*
 ```
 
 **之後（具有不同設定檔的多代理）：**
+
 ```json
 {
   "agents": {
@@ -284,6 +297,7 @@ agents.list[].sandbox.prune.* > agents.defaults.sandbox.prune.*
 ## 工具限制範例
 
 ### 唯讀代理
+
 ```json
 {
   "tools": {
@@ -294,6 +308,7 @@ agents.list[].sandbox.prune.* > agents.defaults.sandbox.prune.*
 ```
 
 ### 安全執行代理（無檔案修改）
+
 ```json
 {
   "tools": {
@@ -304,6 +319,7 @@ agents.list[].sandbox.prune.* > agents.defaults.sandbox.prune.*
 ```
 
 ### 僅通訊代理
+
 ```json
 {
   "tools": {
@@ -329,11 +345,13 @@ agents.list[].sandbox.prune.* > agents.defaults.sandbox.prune.*
 設定多代理沙盒和工具後：
 
 1. **檢查代理解析：**
+
    ```exec
    openclaw agents list --bindings
    ```
 
 2. **驗證沙盒容器：**
+
    ```exec
    docker ps --filter "name=openclaw-sbx-"
    ```
@@ -352,15 +370,18 @@ agents.list[].sandbox.prune.* > agents.defaults.sandbox.prune.*
 ## 疑難排解
 
 ### 儘管 `mode: "all"`，代理未被沙盒化
+
 - 檢查是否有全域 `agents.defaults.sandbox.mode` 覆蓋它
 - 代理特定設定優先，因此請設定 `agents.list[].sandbox.mode: "all"`
 
 ### 工具儘管拒絕清單仍可用
+
 - 檢查工具過濾順序：全域 → 代理 → 沙盒 → subagent
 - 每個層級只能進一步限制，不能授予回來
 - 使用日誌驗證：`[tools] filtering tools for agent:${agentId}`
 
 ### 容器未按代理隔離
+
 - 在代理特定沙盒設定中設定 `scope: "agent"`
 - 預設是 `"session"`，它為每個會話建立一個容器
 
@@ -368,6 +389,6 @@ agents.list[].sandbox.prune.* > agents.defaults.sandbox.prune.*
 
 ## 另請參閱
 
-- [Multi-Agent Routing](/concepts/multi-agent)
-- [Sandbox Configuration](/gateway/configuration#agentsdefaults-sandbox)
-- [Session Management](/concepts/session)
+- [Multi-Agent Routing](/zh-Hant/concepts/multi-agent)
+- [Sandbox Configuration](/zh-Hant/gateway/configuration#agentsdefaults-sandbox)
+- [Session Management](/zh-Hant/concepts/session)

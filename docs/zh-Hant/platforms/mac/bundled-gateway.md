@@ -4,7 +4,7 @@ read_when:
   - 打包 OpenClaw.app 時
   - 除錯 macOS Gateway launchd 服務時
   - 為 macOS 安裝 Gateway CLI 時
-title: "macOS 上的 Gateway"
+title: "Gateway on macOS（macOS 上的 Gateway）"
 ---
 
 # macOS 上的 Gateway (外部 launchd)
@@ -24,22 +24,27 @@ macOS 應用程式的 **Install CLI** 按鈕也會透過 npm/pnpm 執行相同�
 ## Launchd (Gateway 作為 LaunchAgent)
 
 標籤 (Label)：
+
 - `bot.molt.gateway`（若使用 `--profile` 則為 `bot.molt.<profile>`；舊版 `com.openclaw.*` 可能仍存在）
 
 Plist 位置 (使用者層級)：
+
 - `~/Library/LaunchAgents/bot.molt.gateway.plist`
   （或 `~/Library/LaunchAgents/bot.molt.<profile>.plist`）
 
 管理器：
+
 - macOS 應用程式在 Local 模式下擁有 LaunchAgent 的安裝/更新權限。
 - CLI 也可以安裝它：`openclaw gateway install`。
 
 行為：
+
 - 「OpenClaw Active」啟用/停用 LaunchAgent。
 - 關閉應用程式**不會**停止 Gateway（launchd 會保持其存活）。
 - 若 Gateway 已在配置的通訊埠運行，應用程式會連接至它，而非啟動新的 Gateway。
 
 日誌：
+
 - launchd stdout/err: `/tmp/openclaw/openclaw-gateway.log`
 
 ## 版本相容性

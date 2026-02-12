@@ -1,17 +1,18 @@
 ---
-title: "Agent workspace(代理工作區)"
-summary: "代理工作區：位置、佈局和備份策略"
+title: "Agent Workspace（Agent 工作區）"
+summary: "Agent 工作區：位置、版面配置和備份策略"
 read_when:
-  - 您需要解釋代理工作區或其檔案佈局
-  - 您想要備份或遷移代理工作區
+  - 您需要解釋 Agent 工作區或其檔案版面配置
+  - 您想要備份或遷移 Agent 工作區
 ---
+
 # Agent workspace（代理工作區）
 
 工作區是代理的家。它是唯一用於檔案工具和工作區上下文的工作目錄。請保持其私密性，並將其視為記憶。
 
 這與 `~/.openclaw/` 分開，後者儲存設定、憑證和會話。
 
-**重要提示：** 工作區是**預設的 CWD**（當前工作目錄），而不是硬性沙盒。工具根據工作區解析相對路徑，但除非啟用了沙盒化，否則絕對路徑仍然可以到達主機上的其他地方。如果您需要隔離，請使用 [`agents.defaults.sandbox`](/gateway/sandboxing)（以及/或每代理沙盒設定）。當啟用沙盒化且 `workspaceAccess` 不是 `"rw"` 時，工具在 `~/.openclaw/sandboxes` 下的沙盒工作區中操作，而不是您的主機工作區。
+**重要提示：** 工作區是**預設的 CWD**（當前工作目錄），而不是硬性沙盒。工具根據工作區解析相對路徑，但除非啟用了沙盒化，否則絕對路徑仍然可以到達主機上的其他地方。如果您需要隔離，請使用 [`agents.defaults.sandbox`](/zh-Hant/gateway/sandboxing)（以及/或每代理沙盒設定）。當啟用沙盒化且 `workspaceAccess` 不是 `"rw"` 時，工具在 `~/.openclaw/sandboxes` 下的沙盒工作區中操作，而不是您的主機工作區。
 
 ## 預設位置
 
@@ -22,8 +23,8 @@ read_when:
 ```json5
 {
   agent: {
-    workspace: "~/.openclaw/workspace"
-  }
+    workspace: "~/.openclaw/workspace",
+  },
 }
 ```
 
@@ -89,7 +90,7 @@ read_when:
   - 精選的長期記憶。
   - 僅在主私人會話中載入（不包括共享/群組上下文）。
 
-有關工作流程和自動記憶體刷新，請參閱 [Memory](/concepts/memory)。
+有關工作流程和自動記憶體刷新，請參閱 [Memory](/zh-Hant/concepts/memory)。
 
 - `skills/`（可選）
   - 工作區特定的技能。
@@ -201,5 +202,5 @@ git push
 
 ## 進階備註
 
-- 多代理路由可以為每個代理使用不同的工作區。有關路由設定，請參閱 [頻道路由](/concepts/channel-routing)。
+- 多代理路由可以為每個代理使用不同的工作區。有關路由設定，請參閱 [頻道路由](/zh-Hant/concepts/channel-routing)。
 - 如果啟用了 `agents.defaults.sandbox`，非主會話可以在 `agents.defaults.sandbox.workspaceRoot` 下使用每會話沙盒工作區。

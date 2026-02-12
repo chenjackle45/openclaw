@@ -24,12 +24,12 @@ ClawdHub 是 **OpenClaw 的公開 Skill Registry**。這是一項免費服務：
 
 ## 快速開始（非技術）
 
-1) 安裝 CLI（見下一節）。
-2) 搜尋您需要的東西：
+1. 安裝 CLI（見下一節）。
+2. 搜尋您需要的東西：
    - `clawdhub search "calendar"`
-3) 安裝 Skill：
+3. 安裝 Skill：
    - `clawdhub install <skill-slug>`
-4) 啟動新的 OpenClaw Session 讓它載入新 Skill。
+4. 啟動新的 OpenClaw Session 讓它載入新 Skill。
 
 ## 安裝 CLI
 
@@ -47,7 +47,7 @@ pnpm add -g clawdhub
 
 預設情況下，CLI 會將 Skills 安裝到目前工作目錄下的 `./skills`。如果設定了 OpenClaw Workspace，`clawdhub` 會回退到該 Workspace，除非您覆寫 `--workdir`（或 `CLAWDHUB_WORKDIR`）。OpenClaw 從 `<workspace>/skills` 載入 Workspace Skills，並會在**下一個** Session 載入它們。如果您已經使用 `~/.openclaw/skills` 或 Bundled Skills，Workspace Skills 優先。
 
-有關 Skills 如何載入、分享和 Gated 的更多詳情，請見 [Skills](/tools/skills)。
+有關 Skills 如何載入、分享和 Gated 的更多詳情，請見 [Skills](/zh-Hant/tools/skills)。
 
 ## 服務提供的功能
 

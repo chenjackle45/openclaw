@@ -1,10 +1,11 @@
 ---
-title: "Flags(診斷標誌)"
+title: "Diagnostics Flags（診斷標誌）"
 summary: "用於針對性除錯日誌的診斷標誌"
 read_when:
   - 您需要針對性的除錯日誌而不提高全域日誌層級
   - 您需要捕獲特定子系統的日誌以供支援
 ---
+
 # Diagnostics Flags(診斷標誌)
 
 診斷標誌讓您能夠啟用針對性的除錯日誌，而無需在所有地方開啟詳細日誌記錄。標誌是選用的，除非子系統檢查它們，否則不會有任何效果。
@@ -81,10 +82,10 @@ rg "telegram http error" /tmp/openclaw/openclaw-*.log
 tail -f /tmp/openclaw/openclaw-$(date +%F).log | rg "telegram http error"
 ```
 
-對於遠端 gateways，您也可以使用 `openclaw logs --follow`（請參閱 [/cli/logs](/cli/logs)）。
+對於遠端 gateways，您也可以使用 `openclaw logs --follow`（請參閱 [/cli/logs](/zh-Hant/cli/logs)）。
 
 ## 注意事項
 
 - 如果 `logging.level` 設定高於 `warn`，這些日誌可能會被抑制。預設的 `info` 沒問題。
 - 標誌保持啟用是安全的；它們只會影響特定子系統的日誌量。
-- 使用 [/logging](/logging) 來變更日誌目的地、層級和脫敏處理。
+- 使用 [/logging](/zh-Hant/logging) 來變更日誌目的地、層級和脫敏處理。

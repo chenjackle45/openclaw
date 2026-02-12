@@ -1,5 +1,5 @@
 ---
-title: "agent(直連 Agent)"
+title: "agent（直連 Agent）"
 summary: "`openclaw agent` CLI 參考（透過 Gateway 發送單次 Agent 運行）"
 read_when:
   - 想要透過腳本執行單次 Agent 運行時（可選用回應遞送功能）
@@ -11,7 +11,8 @@ read_when:
 使用 `--agent <ID>` 可直接指定已配置的 Agent。
 
 相關資訊：
-- Agent 發送工具：[Agent 發送 (agent-send)](/tools/agent-send)
+
+- Agent 發送工具：[Agent 發送 (agent-send)](/zh-Hant/tools/agent-send)
 
 ## 指令範例
 

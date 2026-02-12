@@ -28,7 +28,7 @@ openclaw plugins install ./extensions/mattermost
 
 如果您在設定/入門期間選擇 Mattermost 並偵測到 git 簽出，OpenClaw 將自動提供本地安裝路徑。
 
-詳情：[外掛](/plugin)
+詳情：[外掛](/zh-Hant/plugin)
 
 ## 快速設定
 

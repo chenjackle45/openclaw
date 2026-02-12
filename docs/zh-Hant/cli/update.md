@@ -1,5 +1,5 @@
 ---
-title: "update(系統更新)"
+title: "update（系統更新）"
 summary: "`openclaw update` CLI 參考（安全源碼更新與 Gateway 自動重啟）"
 read_when:
   - 想要安全地更新原始碼或切換頻道時
@@ -10,7 +10,7 @@ read_when:
 
 安全地更新 OpenClaw，並在穩定 (Stable)、測試 (Beta) 與開發 (Dev) 頻道之間切換。
 
-如果您是透過 **npm/pnpm** 全域安裝（無 git 元數據），更新流程將依照 [更新指南 (Updating)](/install/updating) 中的套件管理員流程執行。
+如果您是透過 **npm/pnpm** 全域安裝（無 git 元數據），更新流程將依照 [更新指南 (Updating)](/zh-Hant/install/updating) 中的套件管理員流程執行。
 
 ## 使用範例
 
@@ -69,6 +69,7 @@ openclaw update status --json
 - `stable`/`beta`：使用對應的發佈標籤從 npm 安裝。
 
 ### Git Checkout 流程細節：
+
 1. 要求工作樹（Worktree）是乾淨的（無未提交的變動）。
 2. 切換至選定的頻道。
 3. 抓取遠端更新（僅限 dev）。
@@ -82,6 +83,6 @@ openclaw update status --json
 ## 相關連結
 
 - `openclaw doctor`（對於 Git 安裝，會優先建議執行更新）
-- [開發頻道介紹](/install/development-channels)
-- [更新指南 (Updating)](/install/updating)
-- [CLI 指令總覽](/cli)
+- [開發頻道介紹](/zh-Hant/install/development-channels)
+- [更新指南 (Updating)](/zh-Hant/install/updating)
+- [CLI 指令總覽](/zh-Hant/cli)

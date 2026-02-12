@@ -1,10 +1,11 @@
 ---
-title: "認證監控 (Auth Monitoring)"
+title: "Auth Monitoring（認證監控）"
 summary: "監控模型供應商的 OAuth 過期狀態"
 read_when:
   - 設定認證過期監控或告警時
   - 自動化檢查 Claude Code / Codex 的 OAuth 重新整理狀態時
 ---
+
 # 認證監控 (Auth Monitoring)
 
 OpenClaw 透過 `openclaw models status` 暴露 OAuth 的有效性狀態。建議使用此指令進行自動化與告警；腳本部分則是針對手機工作流研發的選用附加功能。
@@ -16,6 +17,7 @@ openclaw models status --check
 ```
 
 結束狀態碼 (Exit codes)：
+
 - `0`：正常 (OK)
 - `1`：憑證已過期或缺失
 - `2`：即將過期（24 小時內）

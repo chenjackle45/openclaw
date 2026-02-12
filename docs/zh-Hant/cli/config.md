@@ -1,5 +1,5 @@
 ---
-title: "config(配置管理)"
+title: "config（配置管理）"
 summary: "`openclaw config` CLI 參考（獲取、設定或移除配置值）"
 read_when:
   - 想要以非互動方式讀取或編輯配置時

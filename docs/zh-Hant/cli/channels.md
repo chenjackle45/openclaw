@@ -1,5 +1,5 @@
 ---
-title: "channels(聊天頻道)"
+title: "channels（聊天頻道）"
 summary: "`openclaw channels` CLI 參考（帳戶管理、狀態查看、登入/登出與日誌）"
 read_when:
   - 想要新增或移除頻道帳戶（如 WhatsApp, Telegram, Discord, Google Chat, Slack, Mattermost, Signal, iMessage）時
@@ -11,8 +11,9 @@ read_when:
 管理聊天頻道帳戶及其在 Gateway 上的運行狀態。
 
 相關資訊：
-- 頻道指南總覽：[各類頻道介紹](/channels/index)
-- Gateway 配置說明：[配置導覽](/gateway/configuration)
+
+- 頻道指南總覽：[各類頻道介紹](/zh-Hant/channels/index)
+- Gateway 配置說明：[配置導覽](/zh-Hant/gateway/configuration)
 
 ## 常見指令
 
@@ -74,6 +75,7 @@ openclaw channels capabilities --channel discord --target channel:123
 ```
 
 **注意事項**：
+
 - `--channel` 為選用參數；若省略則會列出所有頻道（包含擴充功能）。
 - 探測結果因供應商而異：例如 Discord 的 Intents 與頻道權限、Slack 的 Bot 與 User Scopes、Telegram 的機器人標記與 Webhook 設定以及 Signal 的背景程序版本等。
 

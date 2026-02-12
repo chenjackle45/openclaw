@@ -1,5 +1,5 @@
 ---
-title: "安全性"
+title: "Security（安全性）"
 summary: "運行具有 Shell 存取權限的 AI Gateway 的安全性考量與威脅模型"
 read_when:
   - 新增擴大存取權限或自動化的功能時
@@ -9,7 +9,7 @@ read_when:
 
 ## 快速檢查：`openclaw security audit`
 
-另請參閱：[形式化驗證 (Security Models)](/security/formal-verification)
+另請參閱：[形式化驗證 (Security Models)](/zh-Hant/security/formal-verification)
 
 請定期執行此指令（特別是在變更 Config 或暴露網路介面後）：
 
@@ -20,6 +20,7 @@ openclaw security audit --fix
 ```
 
 它會檢查：
+
 - 暴露的 Admin Ports
 - 弱 Auth Tokens
 - 過於寬鬆的 Tool Policies
@@ -42,46 +43,53 @@ OpenClaw 是一個 **Remote Code Execution (RCE) as a Service** 引擎。
 4.  **Audit**: 記錄所有操作以便事後分析。
 
 ### 攻擊向量 1: 遠端 RCE (惡意使用者)
+
 - **情境**：攻擊者 DM 您的機器人或在群組中提及它，誘騙它執行 `rm -rf /` 或竊取 `~/.ssh/id_rsa`。
 - **防禦**：
-    - **Pairing/Allowlists**: 預設忽略來自未知使用者的訊息。
-    - **Session Isolation**: 每個 DM 都有自己的 Sandbox/Workspace。
-    - **Group Gating**: 群組需要明確的 Config Allowlist + Mention。
+  - **Pairing/Allowlists**: 預設忽略來自未知使用者的訊息。
+  - **Session Isolation**: 每個 DM 都有自己的 Sandbox/Workspace。
+  - **Group Gating**: 群組需要明確的 Config Allowlist + Mention。
 
 ### 攻擊向量 2: 模型越獄 (Jailbreak)
+
 - **情境**：使用者要求合法任務，但模型決定變壞（"Waluigi effect"）或被注入的內容（網頁搜尋結果）劫持以攻擊 Host。
 - **防禦**：
-    - **Sandboxing**: 即使模型想要 `rm -rf /`，它也只能刪除拋棄式 Sandbox 中的檔案。
-    - **Tool Policy**: `exec` 工具被嚴格限制或在 Sandbox 內無特權。
-    - **Network Egress Filtering**: Docker Network 設定為 `none` 或特定 Allowlist，防止外洩資料。
+  - **Sandboxing**: 即使模型想要 `rm -rf /`，它也只能刪除拋棄式 Sandbox 中的檔案。
+  - **Tool Policy**: `exec` 工具被嚴格限制或在 Sandbox 內無特權。
+  - **Network Egress Filtering**: Docker Network 設定為 `none` 或特定 Allowlist，防止外洩資料。
 
 ### 攻擊向量 3: 本地提權 (Local Privilege Escalation)
+
 - **情境**：受損的 Agent 試圖從 Sandbox 逃逸到 Host。
 - **防禦**：
-    - **Docker User Namespace**: Sandbox 在容器內以 Root 運行，但在 Host 上對應為非特權使用者。
-    - **Mount Restrictions**: Host FS 僅以 Read-only 掛載，或完全不掛載。
-    - **Capabilities**: Drop all caps (`CAP_SYS_ADMIN`, `CAP_NET_ADMIN` etc.)。
+  - **Docker User Namespace**: Sandbox 在容器內以 Root 運行，但在 Host 上對應為非特權使用者。
+  - **Mount Restrictions**: Host FS 僅以 Read-only 掛載，或完全不掛載。
+  - **Capabilities**: Drop all caps (`CAP_SYS_ADMIN`, `CAP_NET_ADMIN` etc.)。
 
 ## 隔離層級 (Isolation Levels)
 
 OpenClaw 支援不同強度的隔離：
 
 ### Level 0: Host Execution (Development / Personal)
+
 - **Config**: `sandbox: { mode: "off" }`
 - **風險**：極高。模型以您的使用者身分在 Host 上運行。
 - **適用於**：受信任的本地開發、個人使用的 Coding Agent（您監控每個操作）。
 
 ### Level 1: Containerized Agent (Shared)
+
 - **Config**: `sandbox: { mode: "all", scope: "shared" }`
 - **風險**：中等。模型被限制在 Docker Container 內，但所有 Sessions 共用同一個 Container/Filesystem。Session A 可以看見 Session B 的檔案。
 - **適用於**：Single-user Deployments，需要持久化 State。
 
 ### Level 2: Per-Session Sandboxes (Recommended for Public Bots)
+
 - **Config**: `sandbox: { mode: "all", scope: "session" }`
 - **風險**：低。每個 Session 啟動一個全新的、隔離的 Container。Session 結束後資料被銷毀（除非明確持久化）。
 - **適用於**：Public DMs, Group Chats, Untrusted Users。
 
 ### Level 3: Gvisor / Firecracker (Paranoid)
+
 - **Config**: 使用 `docker.runtime` (例如 `runsc`)。
 - **風險**：極低。核心層級隔離。
 - **適用於**：Multi-tenant SaaS, High-value Hosts。
@@ -95,7 +103,7 @@ OpenClaw 支援不同強度的隔離：
 tools: {
   // Allowlist approach (Recommended)
   allow: ["read", "web_search", "sessions_send"],
-  
+
   // Deny specific dangerous tools
   deny: ["exec", "bash", "process", "write", "edit"]
 }

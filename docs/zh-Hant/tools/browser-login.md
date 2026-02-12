@@ -1,61 +1,67 @@
 ---
-summary: "Manual logins for browser automation + X/Twitter posting"
+summary: "瀏覽器自動化的手動登入及 X/Twitter 發文"
 read_when:
   - You need to log into sites for browser automation
   - You want to post updates to X/Twitter
-title: "Browser Login"
+title: "Browser Login（瀏覽器登入）"
 ---
 
-# Browser login + X/Twitter posting
+# 瀏覽器登入及 X/Twitter 發文
 
-## Manual login (recommended)
+## 手動登入（推薦）
 
-When a site requires login, **sign in manually** in the **host** browser profile (the openclaw browser).
+當網站需要登入時，請在**主機** 瀏覽器設定檔（OpenClaw 瀏覽器）**手動登入**。
 
-Do **not** give the model your credentials. Automated logins often trigger anti‑bot defenses and can lock the account.
+**不要**將認證資訊提供給模型。自動登入經常會觸發反機器人防護，可能導致帳戶被鎖定。
 
-Back to the main browser docs: [Browser](/tools/browser).
+返回主要瀏覽器文件：[Browser](/zh-Hant/tools/browser)。
 
-## Which Chrome profile is used?
+## 使用哪個 Chrome 設定檔？
 
-OpenClaw controls a **dedicated Chrome profile** (named `openclaw`, orange‑tinted UI). This is separate from your daily browser profile.
+OpenClaw 控制一個**專用 Chrome 設定檔**（名稱為 `openclaw`，UI 帶有橙色色調）。這與日常瀏覽器設定檔不同。
 
-Two easy ways to access it:
+兩種簡單方式來存取它：
 
-1. **Ask the agent to open the browser** and then log in yourself.
-2. **Open it via CLI**:
+1. **要求代理開啟瀏覽器**，然後自己登入。
+2. **透過 CLI 開啟**：
 
 ```bash
 openclaw browser start
 openclaw browser open https://x.com
 ```
 
-If you have multiple profiles, pass `--browser-profile <name>` (the default is `openclaw`).
+如果有多個設定檔，傳遞 `--browser-profile <name>`（預設為 `openclaw`）。
 
-## X/Twitter: recommended flow
+## X/Twitter：推薦流程
 
-- **Read/search/threads:** use the **bird** CLI skill (no browser, stable).
-  - Repo: https://github.com/steipete/bird
-- **Post updates:** use the **host** browser (manual login).
+- **讀取/搜尋/執行緒**：使用**主機** 瀏覽器（手動登入）。
+- **發文更新**：使用**主機** 瀏覽器（手動登入）。
 
-## Sandboxing + host browser access
+## 沙箱化及主機瀏覽器存取
 
-Sandboxed browser sessions are **more likely** to trigger bot detection. For X/Twitter (and other strict sites), prefer the **host** browser.
+沙箱化瀏覽器工作階段**更可能**觸發機器人偵測。針對 X/Twitter（及其他嚴格網站），優先選擇**主機** 瀏覽器。
 
-If the agent is sandboxed, the browser tool defaults to the sandbox. To allow host control:
+如果代理已沙箱化，瀏覽器工具預設為沙箱。若要允許主機控制：
 
 ```json5
 {
   agents: {
     defaults: {
       sandbox: {
+        mode: "non-main",
         browser: {
-          allowHostControl: true
-        }
-      }
-    }
-  }
+          allowHostControl: true,
+        },
+      },
+    },
+  },
 }
 ```
 
-Then pass `target="host"` when calling the tool, or disable sandboxing for that task.
+接著指定主機瀏覽器：
+
+```bash
+openclaw browser open https://x.com --browser-profile openclaw --target host
+```
+
+或為發文更新的代理停用沙箱化。

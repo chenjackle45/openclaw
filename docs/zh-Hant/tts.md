@@ -1,5 +1,5 @@
 ---
-title: "文字轉語音"
+title: "Text-to-Speech（文字轉語音）"
 summary: "出站回覆的文字轉語音（TTS）"
 read_when:
   - 為回覆啟用文字轉語音
@@ -27,6 +27,7 @@ Edge TTS 透過 `node-edge-tts` 程式庫使用 Microsoft Edge 的線上神經 T
 ## 可選金鑰
 
 如果您想要 OpenAI 或 ElevenLabs：
+
 - `ELEVENLABS_API_KEY`（或 `XI_API_KEY`）
 - `OPENAI_API_KEY`
 
@@ -53,7 +54,7 @@ Edge TTS **不**需要 API 金鑰。如果找不到 API 金鑰，OpenClaw 預設
 ## 設定
 
 TTS 設定位於 `openclaw.json` 中的 `messages.tts` 下。
-完整 schema 在 [Gateway configuration](/gateway/configuration) 中。
+完整 schema 在 [Gateway configuration](/zh-Hant/gateway/configuration) 中。
 
 ### 最小設定（啟用 + 供應商）
 
@@ -62,9 +63,9 @@ TTS 設定位於 `openclaw.json` 中的 `messages.tts` 下。
   messages: {
     tts: {
       auto: "always",
-      provider: "elevenlabs"
-    }
-  }
+      provider: "elevenlabs",
+    },
+  },
 }
 ```
 
@@ -78,12 +79,12 @@ TTS 設定位於 `openclaw.json` 中的 `messages.tts` 下。
       provider: "openai",
       summaryModel: "openai/gpt-4.1-mini",
       modelOverrides: {
-        enabled: true
+        enabled: true,
       },
       openai: {
         apiKey: "openai_api_key",
         model: "gpt-4o-mini-tts",
-        voice: "alloy"
+        voice: "alloy",
       },
       elevenlabs: {
         apiKey: "elevenlabs_api_key",
@@ -98,11 +99,11 @@ TTS 設定位於 `openclaw.json` 中的 `messages.tts` 下。
           similarityBoost: 0.75,
           style: 0.0,
           useSpeakerBoost: true,
-          speed: 1.0
-        }
-      }
-    }
-  }
+          speed: 1.0,
+        },
+      },
+    },
+  },
 }
 ```
 
@@ -120,10 +121,10 @@ TTS 設定位於 `openclaw.json` 中的 `messages.tts` 下。
         lang: "en-US",
         outputFormat: "audio-24khz-48kbitrate-mono-mp3",
         rate: "+10%",
-        pitch: "-5%"
-      }
-    }
-  }
+        pitch: "-5%",
+      },
+    },
+  },
 }
 ```
 
@@ -134,10 +135,10 @@ TTS 設定位於 `openclaw.json` 中的 `messages.tts` 下。
   messages: {
     tts: {
       edge: {
-        enabled: false
-      }
-    }
-  }
+        enabled: false,
+      },
+    },
+  },
 }
 ```
 
@@ -150,9 +151,9 @@ TTS 設定位於 `openclaw.json` 中的 `messages.tts` 下。
       auto: "always",
       maxTextLength: 4000,
       timeoutMs: 30000,
-      prefsPath: "~/.openclaw/settings/tts.json"
-    }
-  }
+      prefsPath: "~/.openclaw/settings/tts.json",
+    },
+  },
 }
 ```
 
@@ -162,9 +163,9 @@ TTS 設定位於 `openclaw.json` 中的 `messages.tts` 下。
 {
   messages: {
     tts: {
-      auto: "inbound"
-    }
-  }
+      auto: "inbound",
+    },
+  },
 }
 ```
 
@@ -174,9 +175,9 @@ TTS 設定位於 `openclaw.json` 中的 `messages.tts` 下。
 {
   messages: {
     tts: {
-      auto: "always"
-    }
-  }
+      auto: "always",
+    },
+  },
 }
 ```
 
@@ -237,6 +238,7 @@ Here you go.
 ```
 
 可用的指令鍵（啟用時）：
+
 - `provider`（`openai` | `elevenlabs` | `edge`）
 - `voice`（OpenAI voice）或 `voiceId`（ElevenLabs）
 - `model`（OpenAI TTS 模型或 ElevenLabs 模型 id）
@@ -252,10 +254,10 @@ Here you go.
   messages: {
     tts: {
       modelOverrides: {
-        enabled: false
-      }
-    }
-  }
+        enabled: false,
+      },
+    },
+  },
 }
 ```
 
@@ -268,10 +270,10 @@ Here you go.
       modelOverrides: {
         enabled: true,
         allowProvider: false,
-        allowSeed: false
-      }
-    }
-  }
+        allowSeed: false,
+      },
+    },
+  },
 }
 ```
 
@@ -280,6 +282,7 @@ Here you go.
 Slash 指令將本地覆蓋寫入 `prefsPath`（預設：`~/.openclaw/settings/tts.json`，使用 `OPENCLAW_TTS_PREFS` 或 `messages.tts.prefsPath` 覆蓋）。
 
 儲存的欄位：
+
 - `enabled`
 - `provider`
 - `maxLength`（摘要閾值；預設 1500 個字元）
@@ -304,6 +307,7 @@ OpenAI/ElevenLabs 格式是固定的；Telegram 期望 Opus 用於語音筆記 U
 ## 自動 TTS 行為
 
 啟用時，OpenClaw：
+
 - 如果回覆已包含媒體或 `MEDIA:` 指令，則跳過 TTS。
 - 跳過非常短的回覆（< 10 個字元）。
 - 使用 `agents.defaults.model.primary`（或 `summaryModel`）在啟用時總結長回覆。
@@ -329,7 +333,7 @@ Reply -> TTS enabled?
 ## Slash 指令使用
 
 有一個指令：`/tts`。
-請參閱 [Slash commands](/tools/slash-commands) 以取得啟用詳細資訊。
+請參閱 [Slash commands](/zh-Hant/tools/slash-commands) 以取得啟用詳細資訊。
 
 Discord 注意事項：`/tts` 是內建的 Discord 指令，因此 OpenClaw 在那裡註冊 `/voice` 作為原生指令。文字 `/tts ...` 仍然有效。
 
@@ -346,6 +350,7 @@ Discord 注意事項：`/tts` 是內建的 Discord 指令，因此 OpenClaw 在�
 ```
 
 注意事項：
+
 - 指令需要授權發送者（允許清單/擁有者規則仍然適用）。
 - 必須啟用 `commands.text` 或原生指令註冊。
 - `off|always|inbound|tagged` 是每個會話的切換（`/tts on` 是 `/tts always` 的別名）。
@@ -359,6 +364,7 @@ Discord 注意事項：`/tts` 是內建的 Discord 指令，因此 OpenClaw 在�
 ## Gateway RPC
 
 Gateway 方法：
+
 - `tts.status`
 - `tts.enable`
 - `tts.disable`

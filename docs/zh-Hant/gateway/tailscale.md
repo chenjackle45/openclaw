@@ -1,5 +1,5 @@
 ---
-title: "Tailscale (Gateway dashboard)"
+title: "Tailscale（Tailscale 整合）"
 summary: "為 Gateway Dashboard 整合 Tailscale Serve/Funnel"
 read_when:
   - 在 Localhost 之外暴露 Gateway Control UI 時
@@ -35,8 +35,8 @@ OpenClaw 可以為 Gateway Dashboard 與 WebSocket Port 自動設定 Tailscale *
 {
   gateway: {
     bind: "loopback",
-    tailscale: { mode: "serve" }
-  }
+    tailscale: { mode: "serve" },
+  },
 }
 ```
 
@@ -50,12 +50,13 @@ OpenClaw 可以為 Gateway Dashboard 與 WebSocket Port 自動設定 Tailscale *
 {
   gateway: {
     bind: "tailnet",
-    auth: { mode: "token", token: "your-token" }
-  }
+    auth: { mode: "token", token: "your-token" },
+  },
 }
 ```
 
 從另一台 Tailnet 裝置連線:
+
 - Control UI: `http://<tailscale-ip>:18789/`
 - WebSocket: `ws://<tailscale-ip>:18789`
 
@@ -68,8 +69,8 @@ OpenClaw 可以為 Gateway Dashboard 與 WebSocket Port 自動設定 Tailscale *
   gateway: {
     bind: "loopback",
     tailscale: { mode: "funnel" },
-    auth: { mode: "password", password: "replace-me" }
-  }
+    auth: { mode: "password", password: "replace-me" },
+  },
 }
 ```
 

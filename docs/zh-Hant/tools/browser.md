@@ -4,7 +4,7 @@ read_when:
   - 新增 Agent 控制的瀏覽器自動化
   - 偵錯為何 openclaw 干擾您自己的 Chrome
   - 在 macOS 應用程式中實現瀏覽器設定 + 生命週期
-title: "Browser (OpenClaw-managed)"
+title: "Browser (OpenClaw-managed)（Browser 瀏覽器工具）"
 ---
 
 # Browser (openclaw-managed)
@@ -214,7 +214,7 @@ OpenClaw 支援多個具名設定檔（路由 config）。設定檔可以是：
 
 OpenClaw 也可以透過本地 CDP 轉發 + Chrome 擴充功能驅動**您現有的 Chrome 分頁**（無獨立的「openclaw」Chrome 執行個體）。
 
-完整指南：[Chrome extension](/tools/chrome-extension)
+完整指南：[Chrome extension](/zh-Hant/tools/chrome-extension)
 
 流程：
 
@@ -331,7 +331,7 @@ docker compose run --rm openclaw-cli \
 
 要保留瀏覽器下載，請設定 `PLAYWRIGHT_BROWSERS_PATH`（例如，
 `/home/node/.cache/ms-playwright`）並確保 `/home/node` 透過
-`OPENCLAW_HOME_VOLUME` 或綁定掛載保留。見 [Docker](/install/docker)。
+`OPENCLAW_HOME_VOLUME` 或綁定掛載保留。見 [Docker](/zh-Hant/install/docker)。
 
 ## 運作方式（內部）
 
@@ -434,7 +434,7 @@ docker compose run --rm openclaw-cli \
   - `--format ai`（安裝 Playwright 時的預設）：回傳帶有數字 refs 的 AI 快照（`aria-ref="<n>"`）。
   - `--format aria`：回傳輔助功能樹（無 refs；僅檢查）。
   - `--efficient`（或 `--mode efficient`）：緊湊角色快照預設（interactive + compact + depth + 較低 maxChars）。
-  - Config 預設（工具/CLI 僅）：設定 `browser.snapshotDefaults.mode: "efficient"` 以在呼叫者未傳遞模式時使用有效快照（見 [Gateway configuration](/gateway/configuration#browser-openclaw-managed-browser)）。
+  - Config 預設（工具/CLI 僅）：設定 `browser.snapshotDefaults.mode: "efficient"` 以在呼叫者未傳遞模式時使用有效快照（見 [Gateway configuration](/zh-Hant/gateway/configuration#browser-openclaw-managed-browser)）。
   - 角色快照選項（`--interactive`、`--compact`、`--depth`、`--selector`）會強制進行帶有 `ref=e12` 等 refs 的基於角色的快照。
   - `--frame "<iframe selector>"` 將角色快照範圍限制在 iframe（與 `e12` 等角色 refs 配對）。
   - `--interactive` 輸出互動元素的平面、容易挑選清單（最適合驅動動作）。
@@ -537,14 +537,14 @@ JSON 中的角色快照包含 `refs` 加上一個小型 `stats` 區塊（lines/c
 - `browser act kind=evaluate` / `openclaw browser evaluate` 和 `wait --fn`
   在頁面內容中執行任意 JavaScript。提示注射可以轉向
   這。如果不需要，使用 `browser.evaluateEnabled=false` 停用它。
-- 對於登入和反機器人注意（X/Twitter 等），見 [Browser login + X/Twitter posting](/tools/browser-login)。
+- 對於登入和反機器人注意（X/Twitter 等），見 [Browser login + X/Twitter posting](/zh-Hant/tools/browser-login)。
 - 讓 Gateway/node host 保持私有（迴路或僅限 tailnet）。
 - 遠端 CDP 端點很強大；對其進行隧道和保護。
 
 ## 疑難排解
 
 對於 Linux 特定的問題（特別是 snap Chromium），見
-[Browser troubleshooting](/tools/browser-linux-troubleshooting)。
+[Browser troubleshooting](/zh-Hant/tools/browser-linux-troubleshooting)。
 
 ## Agent 工具 + 控制運作方式
 

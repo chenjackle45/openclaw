@@ -1,10 +1,11 @@
 ---
-title: "Token 使用與成本"
+title: "Token Use and Costs（Token 使用與成本）"
 summary: "OpenClaw 如何建構提示詞上下文並報告 token 使用量 + 成本"
 read_when:
   - 解釋 token 使用量、成本或上下文視窗
   - 除錯上下文成長或壓縮行為
 ---
+
 # Token use & costs(Token 使用與成本)
 
 OpenClaw 追蹤 **tokens**，而非字元。Tokens 是模型特定的，但大多數
@@ -22,7 +23,7 @@ OpenClaw 在每次執行時組裝自己的系統提示詞。它包括：
 - 回覆標籤 + heartbeat 行為
 - 執行時 metadata（host/OS/model/thinking）
 
-請參閱 [System Prompt](/concepts/system-prompt) 中的完整細分。
+請參閱 [System Prompt](/zh-Hant/concepts/system-prompt) 中的完整細分。
 
 ## 上下文視窗中計算什麼
 
@@ -35,7 +36,7 @@ OpenClaw 在每次執行時組裝自己的系統提示詞。它包括：
 - 壓縮摘要和修剪工件
 - 供應商包裝器或安全標頭（不可見，但仍計算）
 
-對於實際細分（每個注入的檔案、工具、skills 和系統提示詞大小），使用 `/context list` 或 `/context detail`。請參閱 [Context](/concepts/context)。
+對於實際細分（每個注入的檔案、工具、skills 和系統提示詞大小），使用 `/context list` 或 `/context detail`。請參閱 [Context](/zh-Hant/concepts/context)。
 
 ## 如何查看當前 token 使用量
 
@@ -66,7 +67,7 @@ models.providers.<provider>.models[].cost
 
 供應商提示詞快取僅在快取 TTL 視窗內適用。OpenClaw 可以選擇性地執行**快取 TTL 修剪**：一旦快取 TTL 過期，它會修剪會話，然後重設快取視窗，以便後續請求可以重新使用剛剛快取的上下文，而不是重新快取完整歷史。當會話在 TTL 之後閒置時，這可以保持較低的快取寫入成本。
 
-在 [Gateway configuration](/gateway/configuration) 中設定它，並在 [Session pruning](/concepts/session-pruning) 中查看行為詳情。
+在 [Gateway configuration](/zh-Hant/gateway/configuration) 中設定它，並在 [Session pruning](/zh-Hant/concepts/session-pruning) 中查看行為詳情。
 
 Heartbeat 可以在閒置間隙之間保持快取**溫暖**。如果您的模型快取 TTL 是 `1h`，將 heartbeat 間隔設定為略低於該值（例如 `55m`）可以避免重新快取完整提示詞，從而降低快取寫入成本。
 
@@ -95,4 +96,4 @@ agents:
 - 保持 skill 描述簡短（skill 清單注入到提示詞中）。
 - 對於詳細的、探索性的工作，優先使用較小的模型。
 
-請參閱 [Skills](/tools/skills) 以取得確切的 skill 清單開銷公式。
+請參閱 [Skills](/zh-Hant/tools/skills) 以取得確切的 skill 清單開銷公式。

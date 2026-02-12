@@ -245,6 +245,6 @@ openclaw channels status
 
 相關文件：
 
-- [Gateway 設定](/gateway/configuration)
-- [安全性](/gateway/security)
-- [反應](/tools/reactions)
+- [Gateway 設定](/zh-Hant/gateway/configuration)
+- [安全性](/zh-Hant/gateway/security)
+- [反應](/zh-Hant/tools/reactions)

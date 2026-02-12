@@ -1,5 +1,5 @@
 ---
-title: "遠端存取 (SSH、tunnels 與 tailnets)"
+title: "Remote Access（SSH、tunnels 與 tailnets）"
 summary: "使用 SSH Tunnels (Gateway WS) 與 Tailnets 進行遠端存取"
 read_when:
   - 運行或疑難排解遠端 Gateway 設定時
@@ -28,7 +28,7 @@ read_when:
 
 - **最佳 UX:** 保持 `gateway.bind: "loopback"` 並使用 **Tailscale Serve** 作為 Control UI。
 - **Fallback:** 保持 Loopback + SSH Tunnel，從任何需要存取的機器連線。
-- **範例:** [exe.dev](/platforms/exe-dev) (簡單 VM) 或 [Hetzner](/platforms/hetzner) (Production VPS)。
+- **範例:** [exe.dev](/zh-Hant/platforms/exe-dev) (簡單 VM) 或 [Hetzner](/zh-Hant/platforms/hetzner) (Production VPS)。
 
 當您的 Laptop 經常休眠但您希望 Agent 永遠開啟時，這是理想選擇。
 
@@ -39,7 +39,7 @@ Laptop **不** 運行 Agent。它遠端連線：
 - 使用 macOS App 的 **Remote over SSH** 模式 (Settings → General → “OpenClaw runs”)。
 - App 會開啟並管理 Tunnel，因此 WebChat + Health Checks “直接可用 (Just work)”。
 
-Runbook: [macOS remote access](/platforms/mac/remote)。
+Runbook: [macOS remote access](/zh-Hant/platforms/mac/remote)。
 
 ### 3) Laptop 運行 Gateway，從其他機器遠端存取
 
@@ -48,20 +48,22 @@ Runbook: [macOS remote access](/platforms/mac/remote)。
 - 從其他機器 SSH Tunnel 至 Laptop，或
 - Tailscale Serve 該 Control UI 並保持 Gateway 僅限 Loopback。
 
-指南: [Tailscale](/gateway/tailscale) 與 [Web overview](/web)。
+指南: [Tailscale](/zh-Hant/gateway/tailscale) 與 [Web overview](/zh-Hant/web)。
 
 ## 指令流向 (什麼在哪運行)
 
 一個 Gateway Service 擁有 State + Channels。Nodes 是周邊設備。
 
 流程範例 (Telegram → Node):
+
 - Telegram 訊息抵達 **Gateway**。
 - Gateway 運行 **Agent** 並決定是否呼叫 Node Tool。
 - Gateway 透過 Gateway WebSocket (`node.*` RPC) 呼叫 **Node**。
 - Node 回傳結果；Gateway 回覆給 Telegram。
 
 註記:
-- **Nodes 不運行 Gateway Service。** 除非您刻意運行隔離的 Profiles，否則每台主機應僅運行一個 Gateway (參閱 [Multiple gateways](/gateway/multiple-gateways))。
+
+- **Nodes 不運行 Gateway Service。** 除非您刻意運行隔離的 Profiles，否則每台主機應僅運行一個 Gateway (參閱 [Multiple gateways](/zh-Hant/gateway/multiple-gateways))。
 - macOS App “Node Mode” 僅是 Gateway WebSocket 上的一個 Node Client。
 
 ## SSH Tunnel (CLI + Tools)
@@ -73,6 +75,7 @@ ssh -N -L 18789:127.0.0.1:18789 user@host
 ```
 
 當 Tunnel 建立後：
+
 - `openclaw health` 與 `openclaw status --deep` 現在透過 `ws://127.0.0.1:18789` 到達 Remote Gateway。
 - `openclaw gateway {status,health,send,agent,call}` 在需要時亦可透過 `--url` 目標至轉發的 URL。
 
@@ -88,9 +91,9 @@ ssh -N -L 18789:127.0.0.1:18789 user@host
     mode: "remote",
     remote: {
       url: "ws://127.0.0.1:18789",
-      token: "your-token"
-    }
-  }
+      token: "your-token",
+    },
+  },
 }
 ```
 
@@ -107,7 +110,7 @@ WebChat 不再使用分開的 HTTP Port。SwiftUI Chat UI 直接連線至 Gatewa
 
 macOS Menu Bar App 可以端對端驅動相同的設定 (Remote Status Checks, WebChat, 與 Voice Wake Forwarding)。
 
-Runbook: [macOS remote access](/platforms/mac/remote)。
+Runbook: [macOS remote access](/zh-Hant/platforms/mac/remote)。
 
 ## 安全性規則 (Remote/VPN)
 
@@ -121,4 +124,4 @@ Runbook: [macOS remote access](/platforms/mac/remote)。
   若您想要 Tokens/Passwords 則將其設為 `false`。
 - 將 Browser Control 視為 Operator Access: 僅限 Tailnet + 審慎的 Node 配對。
 
-深入探討: [Security](/gateway/security)。
+深入探討: [Security](/zh-Hant/gateway/security)。

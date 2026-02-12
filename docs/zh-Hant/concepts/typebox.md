@@ -1,16 +1,17 @@
 ---
-title: "Typebox(TypeBox Schemas)"
+title: "TypeBox（TypeBox 型別）"
 summary: "TypeBox 架構作為 Gateway 通訊協議的單一事實來源"
 read_when:
   - 更新協議架構或程式碼生成 (codegen)
 ---
+
 # TypeBox as protocol source of truth（TypeBox 作為協議事實來源）
 
 最後更新：2026-01-10
 
 TypeBox 是一個 TypeScript 優先的架構庫。我們使用它來定義 **Gateway WebSocket 協議**（握手、請求/回應、伺服器事件）。這些架構驅動著**運行時驗證**、**JSON Schema 匯出**以及 macOS 應用程式的 **Swift 程式碼生成**。單一事實來源，其餘一切均由其生成。
 
-如果您需要更高層級的協議背景，請先閱讀 [Gateway architecture（Gateway 架構）](/concepts/architecture)。
+如果您需要更高層級的協議背景，請先閱讀 [Gateway architecture（Gateway 架構）](/zh-Hant/concepts/architecture)。
 
 ## 心理模型（30 秒）
 
@@ -68,22 +69,24 @@ import { WebSocket } from "ws";
 const ws = new WebSocket("ws://127.0.0.1:18789");
 
 ws.on("open", () => {
-  ws.send(JSON.stringify({
-    type: "req",
-    id: "c1",
-    method: "connect",
-    params: {
-      minProtocol: 3,
-      maxProtocol: 3,
-      client: {
-        id: "cli",
-        displayName: "example",
-        version: "dev",
-        platform: "node",
-        mode: "cli"
-      }
-    }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: "req",
+      id: "c1",
+      method: "connect",
+      params: {
+        minProtocol: 3,
+        maxProtocol: 3,
+        client: {
+          id: "cli",
+          displayName: "example",
+          version: "dev",
+          platform: "node",
+          mode: "cli",
+        },
+      },
+    }),
+  );
 });
 
 ws.on("message", (data) => {

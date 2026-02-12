@@ -1,5 +1,5 @@
 ---
-title: "除錯"
+title: "Debugging（除錯）"
 summary: "除錯工具：監視模式、原始模型串流以及推理洩漏追蹤"
 read_when:
   - 您需要檢查原始模型輸出以查看推理洩漏
@@ -62,13 +62,13 @@ OPENCLAW_PROFILE=dev openclaw tui
 
 這會做什麼：
 
-1) **Profile 隔離**（全域 `--dev`）
+1. **Profile 隔離**（全域 `--dev`）
    - `OPENCLAW_PROFILE=dev`
    - `OPENCLAW_STATE_DIR=~/.openclaw-dev`
    - `OPENCLAW_CONFIG_PATH=~/.openclaw-dev/openclaw.json`
    - `OPENCLAW_GATEWAY_PORT=19001`（browser/canvas 相應移動）
 
-2) **Dev bootstrap**（`gateway --dev`）
+2. **Dev bootstrap**（`gateway --dev`）
    - 如果缺少則寫入最小設定（`gateway.mode=local`，綁定 loopback）。
    - 設定 `agent.workspace` 為 dev workspace。
    - 設定 `agent.skipBootstrap=true`（無 BOOTSTRAP.md）。

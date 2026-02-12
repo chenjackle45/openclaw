@@ -1,20 +1,22 @@
 ---
-summary: "JSON-only LLM tasks for workflows (optional plugin tool)"
+summary: "工作流用 JSON-only LLM 任務（可選外掛工具）"
 read_when:
   - You want a JSON-only LLM step inside workflows
   - You need schema-validated LLM output for automation
-title: "LLM Task"
+title: "LLM Task（LLM 任務）"
 ---
 
-# LLM 任務
+# LLM Task
 
-`llm-task` 是一個**選用 Plugin Tool**，用於執行純 JSON 的 LLM 任務並回傳結構化輸出（可選擇使用 JSON Schema 驗證）。
+`llm-task` 是一個**可選外掛工具**，執行 JSON-only LLM 任務並
+返回結構化輸出（可選地針對 JSON Schema 驗證）。
 
-這非常適合 Lobster 等工作流程引擎：您可以新增單一 LLM 步驟，無需為每個工作流程撰寫自訂 OpenClaw 程式碼。
+這對工作流引擎（如 Lobster）理想：可以新增單一 LLM 步驟
+無需為每個工作流寫自訂 OpenClaw 代碼。
 
-## 啟用 Plugin
+## 啟用外掛
 
-1) 啟用 Plugin：
+1. 啟用外掛：
 
 ```json
 {
@@ -26,7 +28,7 @@ title: "LLM Task"
 }
 ```
 
-2) 將 Tool 加入 Allowlist（它以 `optional: true` 註冊）：
+2. Allowlist 工具（使用 `optional: true` 註冊）：
 
 ```json
 {
@@ -41,7 +43,7 @@ title: "LLM Task"
 }
 ```
 
-## 設定（選用）
+## 設定（可選）
 
 ```json
 {
@@ -53,7 +55,7 @@ title: "LLM Task"
           "defaultProvider": "openai-codex",
           "defaultModel": "gpt-5.2",
           "defaultAuthProfileId": "main",
-          "allowedModels": ["openai-codex/gpt-5.2"],
+          "allowedModels": ["openai-codex/gpt-5.3-codex"],
           "maxTokens": 800,
           "timeoutMs": 30000
         }
@@ -63,25 +65,25 @@ title: "LLM Task"
 }
 ```
 
-`allowedModels` 是 `provider/model` 字串的 Allowlist。如果設定，任何不在清單中的請求都會被拒絕。
+`allowedModels` 是 `provider/model` 字串的 allowlist。如果設定，任何在列表外的請求都被拒絕。
 
-## Tool 參數
+## 工具參數
 
-- `prompt`（string，必填）
-- `input`（any，選填）
-- `schema`（object，選填 JSON Schema）
-- `provider`（string，選填）
-- `model`（string，選填）
-- `authProfileId`（string，選填）
-- `temperature`（number，選填）
-- `maxTokens`（number，選填）
-- `timeoutMs`（number，選填）
+- `prompt`（字串，必需）
+- `input`（任何，可選）
+- `schema`（物件，可選 JSON Schema）
+- `provider`（字串，可選）
+- `model`（字串，可選）
+- `authProfileId`（字串，可選）
+- `temperature`（數字，可選）
+- `maxTokens`（數字，可選）
+- `timeoutMs`（數字，可選）
 
 ## 輸出
 
-回傳 `details.json`，包含解析的 JSON（提供 `schema` 時會進行驗證）。
+返回 `details.json` 包含已解析 JSON（及在提供時針對 `schema` 驗證）。
 
-## 範例：Lobster 工作流程步驟
+## 範例：Lobster 工作流步驟
 
 ```lobster
 openclaw.invoke --tool llm-task --action json --args-json '{
@@ -102,9 +104,9 @@ openclaw.invoke --tool llm-task --action json --args-json '{
 }'
 ```
 
-## 安全注意事項
+## 安全注意
 
-- 此 Tool 是**純 JSON** 的，會指示模型僅輸出 JSON（無 Code Fences、無註解）。
-- 此次執行不會向模型公開任何 Tools。
-- 除非使用 `schema` 驗證，否則應將輸出視為不受信任。
-- 在任何有副作用的步驟（send、post、exec）之前設定 Approvals。
+- 工具是 **JSON-only** 及指示模型僅輸出 JSON（無代碼籬、無評論）。
+- 無工具暴露給此執行的模型。
+- 除非使用 `schema` 驗證，將輸出視為不可信。
+- 在任何副作用步驟（發送、發佈、exec）之前放置許可。

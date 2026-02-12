@@ -2,7 +2,7 @@
 summary: "macOS 應用程式中的語音喚醒與按鍵通話模式及路由細節"
 read_when:
   - 開發語音喚醒或 PTT 路徑時
-title: "語音喚醒與按鍵通話"
+title: "Voice Wake（語音喚醒與按鍵通話）"
 ---
 
 # 語音喚醒與按鍵通話
@@ -32,6 +32,7 @@ title: "語音喚醒與按鍵通話"
 先前，若覆蓋介面卡在可見狀態而您手動關閉它，語音喚醒可能會看似「死掉」，因為 Runtime 的重啟嘗試可能被覆蓋介面的可見性阻擋，且後續未排程重啟。
 
 強化措施 (Hardening):
+
 - 喚醒 Runtime 的重啟不再受覆蓋介面可見性阻擋。
 - 覆蓋介面關閉完成會透過 `VoiceSessionCoordinator` 觸發 `VoiceWakeRuntime.refresh(...)`，因此手動 X-關閉總是會恢復聆聽。
 
