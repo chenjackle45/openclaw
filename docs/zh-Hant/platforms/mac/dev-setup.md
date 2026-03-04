@@ -5,100 +5,100 @@ read_when:
 title: "macOS Dev Setup（macOS Dev 設定）"
 ---
 
-# macOS Developer Setup
+# macOS 開發人員設定
 
-This guide covers the necessary steps to build and run the OpenClaw macOS application from source.
+此指南涵蓋從原始碼構建和執行 OpenClaw macOS 應用所需的步驟。
 
-## Prerequisites
+## 先決條件
 
-Before building the app, ensure you have the following installed:
+構建應用之前，請確保您已安裝下列項目：
 
-1. **Xcode 26.2+**: Required for Swift development.
-2. **Node.js 22+ & pnpm**: Required for the gateway, CLI, and packaging scripts.
+1. **Xcode 26.2+**：Swift 開發必須。
+2. **Node.js 22+ & pnpm**：閘道、CLI 和打包指令碼必須。
 
-## 1. Install Dependencies
+## 1. 安裝依賴項
 
-Install the project-wide dependencies:
+安裝專案級的依賴項：
 
 ```bash
 pnpm install
 ```
 
-## 2. Build and Package the App
+## 2. 構建和打包應用
 
-To build the macOS app and package it into `dist/OpenClaw.app`, run:
+要構建 macOS 應用並將其打包到 `dist/OpenClaw.app`，執行：
 
 ```bash
 ./scripts/package-mac-app.sh
 ```
 
-If you don't have an Apple Developer ID certificate, the script will automatically use **ad-hoc signing** (`-`).
+如果您沒有 Apple 開發者 ID 憑證，指令碼會自動使用**臨時簽名** (`-`)。
 
-For dev run modes, signing flags, and Team ID troubleshooting, see the macOS app README:
+有關開發執行模式、簽署旗標和團隊 ID 故障排除，請參閱 macOS 應用 README：
 [https://github.com/openclaw/openclaw/blob/main/apps/macos/README.md](https://github.com/openclaw/openclaw/blob/main/apps/macos/README.md)
 
-> **Note**: Ad-hoc signed apps may trigger security prompts. If the app crashes immediately with "Abort trap 6", see the [Troubleshooting](#troubleshooting) section.
+> **注意**：臨時簽署的應用可能會觸發安全提示。如果應用立即因「Abort trap 6」崩潰，請參閱[故障排除](#troubleshooting)部分。
 
-## 3. Install the CLI
+## 3. 安裝 CLI
 
-The macOS app expects a global `openclaw` CLI install to manage background tasks.
+macOS 應用期望全域 `openclaw` CLI 安裝以管理背景工作。
 
-**To install it (recommended):**
+**安裝方式（建議）：**
 
-1. Open the OpenClaw app.
-2. Go to the **General** settings tab.
-3. Click **"Install CLI"**.
+1. 開啟 OpenClaw 應用。
+2. 前往**一般**設定標籤。
+3. 點擊**「安裝 CLI」**。
 
-Alternatively, install it manually:
+或者，手動安裝：
 
 ```bash
 npm install -g openclaw@<version>
 ```
 
-## Troubleshooting
+## 故障排除
 
-### Build Fails: Toolchain or SDK Mismatch
+### 構建失敗：工具鏈或 SDK 不符
 
-The macOS app build expects the latest macOS SDK and Swift 6.2 toolchain.
+macOS 應用構建期望最新的 macOS SDK 和 Swift 6.2 工具鏈。
 
-**System dependencies (required):**
+**系統依賴項（必須）：**
 
-- **Latest macOS version available in Software Update** (required by Xcode 26.2 SDKs)
-- **Xcode 26.2** (Swift 6.2 toolchain)
+- **軟體更新中可用的最新 macOS 版本**（Xcode 26.2 SDK 必須）
+- **Xcode 26.2**（Swift 6.2 工具鏈）
 
-**Checks:**
+**檢查：**
 
 ```bash
 xcodebuild -version
 xcrun swift --version
 ```
 
-If versions don’t match, update macOS/Xcode and re-run the build.
+如果版本不符，請更新 macOS/Xcode 並重新執行構建。
 
-### App Crashes on Permission Grant
+### 應用在權限授予時崩潰
 
-If the app crashes when you try to allow **Speech Recognition** or **Microphone** access, it may be due to a corrupted TCC cache or signature mismatch.
+如果在嘗試允許**語音辨識**或**麥克風**存取時應用崩潰，可能是因為損壞的 TCC 快取或簽名不符。
 
-**Fix:**
+**修正：**
 
-1. Reset the TCC permissions:
+1. 重設 TCC 權限：
 
    ```bash
-   tccutil reset All bot.molt.mac.debug
+   tccutil reset All ai.openclaw.mac.debug
    ```
 
-2. If that fails, change the `BUNDLE_ID` temporarily in [`scripts/package-mac-app.sh`](https://github.com/openclaw/openclaw/blob/main/scripts/package-mac-app.sh) to force a "clean slate" from macOS.
+2. 如果失敗，暫時更改 [`scripts/package-mac-app.sh`](https://github.com/openclaw/openclaw/blob/main/scripts/package-mac-app.sh) 中的 `BUNDLE_ID` 以從 macOS 強制「乾淨樓梯」。
 
-### Gateway "Starting..." indefinitely
+### 閘道「啟動中...」無限期
 
-If the gateway status stays on "Starting...", check if a zombie process is holding the port:
+如果閘道狀態保留在「啟動中...」，請檢查是否有殭屍處理程序佔據該埠：
 
 ```bash
 openclaw gateway status
 openclaw gateway stop
 
-# If you’re not using a LaunchAgent (dev mode / manual runs), find the listener:
+# 如果您未使用 LaunchAgent（開發模式/手動執行），找到監聽程式：
 lsof -nP -iTCP:18789 -sTCP:LISTEN
 ```
 
-If a manual run is holding the port, stop that process (Ctrl+C). As a last resort, kill the PID you found above.
+如果手動執行佔據該埠，停止該處理程序 (Ctrl+C)。作為最後的手段，終止您上面找到的 PID。

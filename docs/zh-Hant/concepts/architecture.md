@@ -1,11 +1,11 @@
 ---
-title: "Gateway Architecture（架構）"
 summary: "WebSocket Gateway 架構、元件和客戶端流程"
 read_when:
   - 處理 Gateway 協議、客戶端或傳輸
+title: "Gateway Architecture（Gateway 架構）"
 ---
 
-# Gateway architecture（Gateway 架構）
+# Gateway architecture
 
 最後更新：2026-01-22
 
@@ -15,7 +15,10 @@ read_when:
 - 控制平面客戶端（macOS 應用程式、CLI、Web UI、自動化）透過 **WebSocket** 連接到 Gateway，在設定的綁定主機上（預設 `127.0.0.1:18789`）。
 - **節點**（macOS/iOS/Android/無頭）也透過 **WebSocket** 連接，但宣告 `role: node` 並帶有明確的 caps/commands。
 - 每台主機一個 Gateway；它是唯一開啟 WhatsApp 會話的地方。
-- **Canvas 主機**（預設 `18793`）提供代理可編輯的 HTML 和 A2UI。
+- **Canvas 主機**由 Gateway HTTP 伺服器在以下路徑提供：
+  - `/__openclaw__/canvas/`（Agent 可編輯的 HTML/CSS/JS）
+  - `/__openclaw__/a2ui/`（A2UI 主機）
+    它使用與 Gateway 相同的埠（預設 `18789`）。
 
 ## 元件和流程
 
@@ -50,20 +53,18 @@ read_when:
 ## 連線生命週期（單一客戶端）
 
 ```
-Client                    Gateway
-  |                          |
-  |---- req:connect -------->|
-  |<------ res (ok) ---------|   (或 res error + close)
-  |   (payload=hello-ok 攜帶快照: presence + health)
-  |                          |
-  |<------ event:presence ---|
-  |<------ event:tick -------|
-  |                          |
-  |------- req:agent ------->|
-  |<------ res:agent --------|   (ack: {runId,status:"accepted"})
-  |<------ event:agent ------|   (串流)
-  |<------ res:agent --------|   (最終: {runId,status,summary})
-  |                          |
+客戶端                    Gateway
+
+  |-------- req:connect -------->|
+  |<------ res (ok) ------------|  或 res error + close
+  |       (payload=hello-ok    |  (快照: presence + health)
+  |<------ event:presence ------|
+  |<------ event:tick ----------|
+  |                             |
+  |-------- req:agent -------->|
+  |<------ res:agent ----------| (ack {runId, status:"accepted"})
+  |<------ event:agent --------|  (串流)
+  |<------ res:agent ----------| (最終 {runId, status, summary})
 ```
 
 ## Wire 協議（摘要）
@@ -82,10 +83,12 @@ Client                    Gateway
 - 所有 WS 客戶端（操作員 + 節點）在 `connect` 時包含**設備身份**。
 - 新設備 ID 需要配對批准；Gateway 為後續連接發出**設備令牌**。
 - **本地**連接（loopback 或 Gateway 主機自己的 tailnet 地址）可以自動批准以保持同主機 UX 順暢。
-- **非本地**連接必須簽署 `connect.challenge` nonce 並需要明確批准。
+- 所有連接必須簽署 `connect.challenge` nonce。
+- 簽名負載 `v3` 也綁定 `platform` + `deviceFamily`；Gateway 在重新連接時固定配對的中繼資料，並為中繼資料更改需要重新配對。
+- **非本地**連接仍需明確批准。
 - Gateway 認證（`gateway.auth.*`）仍適用於**所有**連接，無論本地或遠端。
 
-詳情：[Gateway 協議](/zh-Hant/gateway/protocol)、[配對](/zh-Hant/start/pairing)、[安全](/zh-Hant/gateway/security)。
+詳情：[Gateway protocol](/zh-Hant/gateway/protocol)、[Pairing](/zh-Hant/channels/pairing)、[Security](/zh-Hant/gateway/security)。
 
 ## 協議類型和程式碼生成
 
@@ -97,9 +100,11 @@ Client                    Gateway
 
 - 首選：Tailscale 或 VPN。
 - 替代方案：SSH 隧道
+
   ```bash
   ssh -N -L 18789:127.0.0.1:18789 user@host
   ```
+
 - 相同的握手 + 認證令牌適用於隧道。
 - 在遠端設定中可以為 WS 啟用 TLS + 可選的 pinning。
 

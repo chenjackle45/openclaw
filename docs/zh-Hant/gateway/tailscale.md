@@ -6,26 +6,24 @@ read_when:
   - 自動化 Tailnet 或 Public Dashboard 存取時
 ---
 
-# Tailscale (Gateway dashboard)
+# Tailscale（閘道儀表板）
 
-OpenClaw 可以為 Gateway Dashboard 與 WebSocket Port 自動設定 Tailscale **Serve** (tailnet) 或 **Funnel** (public)。這讓 Gateway 保持綁定至 Loopback，同時由 Tailscale 提供 HTTPS, Routing, 與 Identity Headers (對於 Serve)。
+OpenClaw 可以自動配置 Tailscale **Serve**（tailnet）或 **Funnel**（公開）用於閘道儀表板和 WebSocket 埠。這使閘道保持綁定到環迴，同時 Tailscale 提供 HTTPS、路由和（用於 Serve）身分標頭。
 
-## 模式 (Modes)
+## 模式
 
-- `serve`: 透過 `tailscale serve` 進行 Tailnet-only Serve。Gateway 停留在 `127.0.0.1`。
-- `funnel`: 透過 `tailscale funnel` 進行 Public HTTPS。OpenClaw 需要共用密碼。
-- `off`: 預設值 (無 Tailscale 自動化)。
+- `serve`：透過 `tailscale serve` 的 Tailnet 限制 Serve。閘道停留在 `127.0.0.1`。
+- `funnel`：透過 `tailscale funnel` 的公開 HTTPS。OpenClaw 需要共用密碼。
+- `off`：預設（無 Tailscale 自動化）。
 
-## 認證 (Auth)
+## 驗證
 
-設定 `gateway.auth.mode` 以控制 Handshake：
+設定 `gateway.auth.mode` 以控制握手：
 
-- `token` (當 `OPENCLAW_GATEWAY_TOKEN` 設定時的預設值)
-- `password` (透過 `OPENCLAW_GATEWAY_PASSWORD` 或 Config 設定的共用密碼)
+- `token`（設定 `OPENCLAW_GATEWAY_TOKEN` 時的預設值）
+- `password`（透過 `OPENCLAW_GATEWAY_PASSWORD` 或設定的共用密碼）
 
-當 `tailscale.mode = "serve"` 且 `gateway.auth.allowTailscale` 為 `true` 時，有效的 Serve Proxy 請求可透過 Tailscale Identity Headers (`tailscale-user-login`) 進行認證，而無需提供 Token/Password。OpenClaw 透過 Local Tailscale Daemon (`tailscale whois`) 解析 `x-forwarded-for` 位址並與 Header 比對以驗證身份。OpenClaw 僅當請求來自 Loopback 且帶有 Tailscale 的 `x-forwarded-for`, `x-forwarded-proto`, 與 `x-forwarded-host` Headers 時才視為 Serve。
-
-若要要求顯式憑證，設定 `gateway.auth.allowTailscale: false` 或強制 `gateway.auth.mode: "password"`。
+當 `tailscale.mode = "serve"` 且 `gateway.auth.allowTailscale` 為 `true` 時，Control UI/WebSocket 驗證可以使用 Tailscale 身分標頭（`tailscale-user-login`）而無需提供令牌/密碼。OpenClaw 透過本機 Tailscale 精靈（`tailscale whois`）解析 `x-forwarded-for` 位址並將其與標頭比對以驗證身份。OpenClaw 僅當請求來自環迴且帶有 Tailscale 的 `x-forwarded-for`、`x-forwarded-proto` 和 `x-forwarded-host` 標頭時才將請求視為 Serve。HTTP API 端點（例如 `/v1/*`、`/tools/invoke` 和 `/api/channels/*`）仍需要令牌/密碼驗證。此無令牌流程假設閘道主機是受信任的。如果不受信任的本機程式碼可能在同一主機上執行，請停用 `gateway.auth.allowTailscale` 並改為需要令牌/密碼驗證。若要需要明確認證，請設定 `gateway.auth.allowTailscale: false` 或強制 `gateway.auth.mode: "password"`。
 
 ## 設定範例
 

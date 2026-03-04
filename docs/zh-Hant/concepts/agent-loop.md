@@ -1,8 +1,8 @@
 ---
-title: "Agent Loop（Agent 迴圈）"
 summary: "Agent 迴圈生命週期、串流和等待語義"
 read_when:
   - 您需要了解 Agent 迴圈或生命週期事件的確切流程
+title: "Agent Loop（Agent 迴圈）"
 ---
 
 # Agent Loop（OpenClaw）
@@ -75,7 +75,9 @@ OpenClaw 有兩種鉤子系統：
 
 這些運行在 Agent 迴圈或 Gateway 管線中：
 
-- **`before_agent_start`**：在執行開始前注入上下文或覆寫系統提示詞。
+- **`before_model_resolve`**：在模型解析前執行（無 `messages`），以確定性地覆寫提供者/模型。
+- **`before_prompt_build`**：在會話載入後執行（帶 `messages`），在提示詞提交前注入 `prependContext`/`systemPrompt`。
+- **`before_agent_start`**：舊版相容性鉤子，可能在任一階段執行；建議使用上述明確的鉤子。
 - **`agent_end`**：完成後檢查最終訊息列表和執行中繼資料。
 - **`before_compaction` / `after_compaction`**：觀察或標註壓縮週期。
 - **`before_tool_call` / `after_tool_call`**：攔截工具參數/結果。

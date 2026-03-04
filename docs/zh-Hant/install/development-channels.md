@@ -1,23 +1,22 @@
 ---
-title: "Development Channels（開發頻道）"
-summary: "穩定版、測試版與開發版：語義、切換與標籤"
+summary: "穩定版、Beta 版和開發版頻道：語義、切換方式和標籤規則"
 read_when:
-  - 您想在穩定版/測試版/開發版間切換
-  - 您正標記或發布預發布版本
+  - You want to switch between stable/beta/dev
+  - You are tagging or publishing prereleases
+title: "Development Channels（開發頻道）"
 ---
 
-# Development Channels
+# 開發頻道
 
 最後更新：2026-01-21
 
 OpenClaw 提供三個更新頻道：
 
-- **stable**：npm dist-tag `latest`。
-- **beta**：npm dist-tag `beta`（測試中的建置）。
-- **dev**：`main` 分支移動頭部（git）。npm dist-tag：`dev`（發布時）。
+- **穩定版（stable）**：npm dist-tag `latest`。
+- **Beta 版（beta）**：npm dist-tag `beta`（測試中的建置）。
+- **開發版（dev）**：移動中的 `main` 分支（git）。npm dist-tag：`dev`（發佈時）。
 
-我們將建置發布至 **beta**，測試後，將已驗證的建置**提升至 `latest`**
-而不變更版本號 —— dist-tags 是 npm 安裝的真實來源。
+我們會先發佈建置到 **Beta 版**，進行測試，然後**推廣經過驗證的建置至 `latest`**（不改變版本號）。npm dist-tag 是 npm 安裝的唯一信源。
 
 ## 切換頻道
 
@@ -29,8 +28,8 @@ openclaw update --channel beta
 openclaw update --channel dev
 ```
 
-- `stable`/`beta` 檢出最新的相符標籤（通常是同一標籤）。
-- `dev` 切換至 `main` 並在上游 rebase。
+- `stable`/`beta` 會 checkout 最新相符的標籤（通常是同一個標籤）。
+- `dev` 會切換到 `main` 並 rebase 上游。
 
 npm/pnpm 全域安裝：
 
@@ -40,36 +39,36 @@ openclaw update --channel beta
 openclaw update --channel dev
 ```
 
-這會透過對應的 npm dist-tag（`latest`、`beta`、`dev`）更新。
+這會通過相應的 npm dist-tag（`latest`、`beta`、`dev`）進行更新。
 
-當您**明確地**使用 `--channel` 切換頻道時，OpenClaw 也會調整
-安裝方法：
+當你**明確地**使用 `--channel` 切換頻道時，OpenClaw 也會對齐安裝方式：
 
-- `dev` 確保 git checkout（預設 `~/openclaw`，可用 `OPENCLAW_GIT_DIR` 覆蓋），
-  更新它，並從該 checkout 安裝全域 CLI。
+- `dev` 確保進行 git checkout（預設 `~/openclaw`，使用 `OPENCLAW_GIT_DIR` 覆寫），更新它，並從該 checkout 安裝全域 CLI。
 - `stable`/`beta` 使用相符的 dist-tag 從 npm 安裝。
 
-提示：若想平行執行穩定版 + 開發版，保留兩個複製並將 Gateway 指向穩定版複製。
+提示：如果想同時使用穩定版和開發版，保留兩個複製副本，將 Gateway 指向穩定版的那個。
 
-## 插件與頻道
+## 外掛程式和頻道
 
-當您使用 `openclaw update` 切換頻道時，OpenClaw 也會同步插件來源：
+當你使用 `openclaw update` 切換頻道時，OpenClaw 也會同步外掛程式來源：
 
-- `dev` 偏好 git checkout 的內建插件。
-- `stable` 和 `beta` 還原 npm 安裝的插件套件。
+- `dev` 優先使用 git checkout 中的整合外掛程式。
+- `stable` 和 `beta` 恢復 npm 安裝的外掛程式套件。
 
 ## 標籤最佳實踐
 
-- 標籤 git checkout 應著陸的發布（`vYYYY.M.D` 或 `vYYYY.M.D-<patch>`）。
+- 標籤標記你希望 git checkout 落地的版本（穩定版用 `vYYYY.M.D`，Beta 版用 `vYYYY.M.D-beta.N`）。
+- `vYYYY.M.D.beta.N` 也可被識別以支援相容性，但優先使用 `-beta.N`。
+- 舊版 `vYYYY.M.D-<patch>` 標籤仍被識別為穩定版（非 Beta）。
 - 保持標籤不可變：絕不移動或重複使用標籤。
-- npm dist-tags 保持 npm 安裝的真實來源：
+- npm dist-tag 保持為 npm 安裝的唯一信源：
   - `latest` → 穩定版
   - `beta` → 候選建置
   - `dev` → main 快照（選用）
 
-## macOS app 可用性
+## macOS 應用程式可用性
 
-Beta 和 dev 建置**可能**不包括 macOS app 發布。這是正常的：
+Beta 和開發版建置**可能不會**包含 macOS 應用程式發行。沒問題：
 
-- git 標籤和 npm dist-tag 仍可發布。
-- 在發布說明或變更日誌中說明「此 beta 無 macOS 建置」。
+- git 標籤和 npm dist-tag 仍可發佈。
+- 在發行說明或變更日誌中說明「本 Beta 版沒有 macOS 建置」。

@@ -1,35 +1,35 @@
 ---
-summary: "Gateway web 介面：Control UI、繫結模式和安全"
+summary: "閘道網路介面：Control UI、綁定模式和安全"
 read_when:
-  - 你想透過 Tailscale 存取 Gateway
-  - 你想要瀏覽器 Control UI 和設定編輯
-title: "Web（Web）"
+  - 您想透過 Tailscale 存取閘道
+  - 您想要瀏覽器 Control UI 和設定編輯
+title: "Web（網路介面）"
 ---
 
-# Web（Gateway）
+# 網路（閘道）
 
-Gateway 從與 Gateway WebSocket 相同的連接埠提供一個小的**瀏覽器 Control UI**（Vite + Lit）：
+閘道從與閘道 WebSocket 相同的埠提供小型**瀏覽器 Control UI**（Vite + Lit）：
 
-- 預設值：`http://<host>:18789/`
-- 選擇性前綴：設定 `gateway.controlUi.basePath`（例如 `/openclaw`）
+- 預設：`http://<host>:18789/`
+- 選用前綴：設定 `gateway.controlUi.basePath`（例如 `/openclaw`）
 
-功能存在於[Control UI](/zh-Hant/web/control-ui)。
-本頁面側重於繫結模式、安全和面向 Web 的介面。
+功能位於 [Control UI](/zh-Hant/web/control-ui)。
+此頁面重點介紹綁定模式、安全和面向網路的介面。
 
-## Webhook
+## Webhooks
 
-當 `hooks.enabled=true` 時，Gateway 也在相同 HTTP 伺服器上公開一個小 Webhook 端點。
-詳見[Gateway 設定](/zh-Hant/gateway/configuration) → `hooks` 了解驗證 + 負載。
+當 `hooks.enabled=true` 時，閘道也會在相同的 HTTP 伺服器上公開小型 webhook 端點。
+請參閱 [閘道設定](/zh-Hant/gateway/configuration) → `hooks` 以取得驗證 + 裝載。
 
 ## 設定（預設啟用）
 
-當資產存在時（`dist/control-ui`），Control UI **預設啟用**。
-你可以透過設定控制它：
+當資產存在時（`dist/control-ui`），Control UI 預設**啟用**。
+您可以透過設定控制它：
 
 ```json5
 {
   gateway: {
-    controlUi: { enabled: true, basePath: "/openclaw" }, // basePath 選擇性
+    controlUi: { enabled: true, basePath: "/openclaw" }, // basePath 選用
   },
 }
 ```
@@ -38,7 +38,7 @@ Gateway 從與 Gateway WebSocket 相同的連接埠提供一個小的**瀏覽器
 
 ### 整合 Serve（建議）
 
-將 Gateway 保持在迴圈上，讓 Tailscale Serve 代理它：
+將閘道保持在環迴上，讓 Tailscale Serve 代理它：
 
 ```json5
 {
@@ -49,7 +49,7 @@ Gateway 從與 Gateway WebSocket 相同的連接埠提供一個小的**瀏覽器
 }
 ```
 
-然後啟動 Gateway：
+然後啟動閘道：
 
 ```bash
 openclaw gateway
@@ -57,9 +57,9 @@ openclaw gateway
 
 開啟：
 
-- `https://<magicdns>/`（或你設定的 `gateway.controlUi.basePath`）
+- `https://<magicdns>/`（或您配置的 `gateway.controlUi.basePath`）
 
-### Tailnet 繫結 + 標記
+### Tailnet 綁定 + 令牌
 
 ```json5
 {
@@ -71,7 +71,7 @@ openclaw gateway
 }
 ```
 
-然後啟動 Gateway（非迴圈繫結需要標記）：
+然後啟動閘道（非環迴綁定需要令牌）：
 
 ```bash
 openclaw gateway
@@ -79,9 +79,9 @@ openclaw gateway
 
 開啟：
 
-- `http://<tailscale-ip>:18789/`（或你設定的 `gateway.controlUi.basePath`）
+- `http://<tailscale-ip>:18789/`（或您配置的 `gateway.controlUi.basePath`）
 
-### 公網（Funnel）
+### 公開網際網路（Funnel）
 
 ```json5
 {
@@ -93,19 +93,20 @@ openclaw gateway
 }
 ```
 
-## 安全筆記
+## 安全備註
 
-- Gateway 驗證預設需要（標記/密碼或 Tailscale 身分標頭）。
-- 非迴圈繫結仍然**需要**共享標記/密碼（`gateway.auth` 或環境）。
-- 精靈預設產生 Gateway 標記（甚至在迴圈上）。
-- Control UI 傳送 `connect.params.auth.token` 或 `connect.params.auth.password`。
-- Control UI 傳送反點擊劫持標頭，並且僅接受相同來源瀏覽器 WebSocket 連接，除非設定了 `gateway.controlUi.allowedOrigins`。
-- 使用 Serve，當 `gateway.auth.allowTailscale` 為 `true` 時，Tailscale 身分標頭可以滿足驗證（不需要標記/密碼）。設定 `gateway.auth.allowTailscale: false` 以需要明確認證。詳見[Tailscale](/zh-Hant/gateway/tailscale)和[安全](/zh-Hant/gateway/security)。
-- `gateway.tailscale.mode: "funnel"` 需要 `gateway.auth.mode: "password"`（共享密碼）。
+- 預設需要閘道驗證（令牌/密碼或 Tailscale 身分標頭）。
+- 非環迴綁定仍**需要**共用令牌/密碼（`gateway.auth` 或環境）。
+- 精靈預設產生閘道令牌（即使在環迴上）。
+- UI 傳送 `connect.params.auth.token` 或 `connect.params.auth.password`。
+- 針對非環迴 Control UI 部署，明確設定 `gateway.controlUi.allowedOrigins`（完整來源）。沒有它，閘道啟動預設會被拒絕。
+- `gateway.controlUi.dangerouslyAllowHostHeaderOriginFallback=true` 啟用主機標頭來源回退模式，但是是危險的安全降級。
+- 使用 Serve，Tailscale 身分標頭可以在 `gateway.auth.allowTailscale` 為 `true` 時滿足 Control UI/WebSocket 驗證（不需要令牌/密碼）。HTTP API 端點仍需要令牌/密碼。設定 `gateway.auth.allowTailscale: false` 以需要明確認證。請參閱 [Tailscale](/zh-Hant/gateway/tailscale) 和 [安全](/zh-Hant/gateway/security)。此無令牌流程假設閘道主機是可信的。
+- `gateway.tailscale.mode: "funnel"` 需要 `gateway.auth.mode: "password"`（共用密碼）。
 
-## 建置 UI
+## 構建 UI
 
-Gateway 從 `dist/control-ui` 提供靜態檔案。使用以下方式建置：
+閘道從 `dist/control-ui` 提供靜態檔案。使用以下方式構建它們：
 
 ```bash
 pnpm ui:build # 首次執行時自動安裝 UI 依賴項

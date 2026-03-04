@@ -1,58 +1,82 @@
 ---
-summary: "配對概覽：核准誰可以傳 DM 給您 + 哪些節點可以加入"
+summary: "配對概述：批准誰可以 DM 您 + 哪些節點可以加入"
 read_when:
-  - 設定 DM 存取控制時
-  - 配對新的 iOS/Android 節點時
-  - 檢視 OpenClaw 安全態勢時
+  - 設定 DM 存取控制
+  - 配對新的 iOS/Android 節點
+  - 檢查 OpenClaw 安全狀態
 title: "Pairing（配對）"
 ---
 
 # 配對
 
-「配對」是 OpenClaw 的明確**擁有者核准**步驟。
-用於兩個地方：
+「配對」是 OpenClaw 的明確**擁有者批准**步驟。
+它用於兩個地方：
 
-1. **DM 配對**（誰可以與機器人通話）
-2. **節點配對**（哪些裝置/節點可以加入 Gateway 網路）
+1. **DM 配對**（誰被允許與 bot 交談）
+2. **節點配對**（哪些裝置/節點被允許加入 Gateway 網路）
 
-安全語境：[安全性](/zh-Hant/gateway/security)
+安全上下文：[安全性](/zh-Hant/gateway/security)
 
-## 1) DM 配對（入站聊天存取）
+## 1) DM 配對（傳入聊天存取）
 
-當頻道配置為 DM 政策 `pairing` 時，未知的傳送者會取得短碼，其訊息在您核准前**不會被處理**。
+當頻道配置為 DM 政策 `pairing` 時，未知傳送者獲得簡短代碼，其訊息**未被處理**，直到您批准。
 
-預設 DM 政策記載於：[安全性](/zh-Hant/gateway/security)
+預設 DM 政策記錄在：[安全性](/zh-Hant/gateway/security)
 
-配對碼：
+配對代碼：
 
-- 8 個字元，大寫，無模稜兩可的字元（`0O1I`）。
-- **1 小時後過期**。機器人僅在建立新請求時傳送配對訊息（大約每小時每個傳送者一次）。
-- 每個頻道待決配對請求上限**3 個**預設；額外請求被忽略直到一個過期或被核准。
+- 8 個字元，大寫，無模稜兩可字元（`0O1I`）。
+- **在 1 小時後過期**。bot 僅在建立新請求時傳送配對訊息（大約每個傳送者每小時一次）。
+- 待機 DM 配對請求上限為**每個頻道 3 個**（預設）；額外請求被忽略，直到一個過期或被批准。
 
-### 核准傳送者
+### 批准傳送者
 
 ```bash
 openclaw pairing list telegram
 openclaw pairing approve telegram <CODE>
 ```
 
-支援頻道：`telegram`、`whatsapp`、`signal`、`imessage`、`discord`、`slack`。
+支援的頻道：`telegram`、`whatsapp`、`signal`、`imessage`、`discord`、`slack`、`feishu`。
 
-### 狀態位置
+### 狀態存放在哪裡
 
 儲存在 `~/.openclaw/credentials/` 下：
 
-- 待決請求：`<channel>-pairing.json`
-- 已核准允許清單儲存：`<channel>-allowFrom.json`
+- 待機請求：`<channel>-pairing.json`
+- 已批准的允許清單儲存：
+  - 預設帳戶：`<channel>-allowFrom.json`
+  - 非預設帳戶：`<channel>-<accountId>-allowFrom.json`
 
-視這些為敏感（它們守護對您助理的存取）。
+帳戶範圍行為：
+
+- 非預設帳戶僅讀取/寫入其範圍內的允許清單檔案。
+- 預設帳戶使用頻道範圍的無範圍允許清單檔案。
+
+將這些視為敏感（它們控制對您助手的存取）。
 
 ## 2) 節點裝置配對（iOS/Android/macOS/無頭節點）
 
-節點以 `role: node` 的**裝置**身份連接到 Gateway。Gateway
-建立必須被核准的裝置配對請求。
+節點作為**裝置**與 Gateway 連接，其 `role: node`。Gateway
+建立一個必須被批准的裝置配對請求。
 
-### 核准節點裝置
+### 透過 Telegram 配對（建議用於 iOS）
+
+如果您使用 `device-pair` 外掛程式，您可以完全從 Telegram 進行首次裝置配對：
+
+1. 在 Telegram 中，訊息您的 bot：`/pair`
+2. bot 回覆兩條訊息：一條指令訊息和一條單獨的**設定代碼**訊息（易於在 Telegram 中複製/貼上）。
+3. 在您的電話上，開啟 OpenClaw iOS 應用 → 設定 → Gateway。
+4. 貼上設定代碼並連接。
+5. 回到 Telegram：`/pair approve`
+
+設定代碼是 base64 編碼的 JSON 負載，包含：
+
+- `url`：Gateway WebSocket URL（`ws://...` 或 `wss://...`）
+- `token`：短期配對 Token
+
+當設定代碼有效時，將其視為密碼。
+
+### 批准節點裝置
 
 ```bash
 openclaw devices list
@@ -60,26 +84,27 @@ openclaw devices approve <requestId>
 openclaw devices reject <requestId>
 ```
 
-### 狀態位置
+### 節點配對狀態儲存
 
 儲存在 `~/.openclaw/devices/` 下：
 
-- `pending.json`（短期；待決請求過期）
-- `paired.json`（已配對裝置 + 令牌）
+- `pending.json`（短期；待機請求過期）
+- `paired.json`（配對裝置 + Token）
 
-### 備註
+### 註
 
-- 舊版 `node.pair.*` API（CLI：`openclaw nodes pending/approve`）是
-  個別 Gateway 擁有的配對儲存。WS 節點仍需要裝置配對。
+- 舊版 `node.pair.*` API（CLI：`openclaw nodes pending/approve`）是一個
+  單獨的 Gateway 擁有的配對儲存。WS 節點仍然需要裝置配對。
 
 ## 相關文件
 
 - 安全模型 + 提示注入：[安全性](/zh-Hant/gateway/security)
-- 安全更新（執行 doctor）：[更新](/zh-Hant/install/updating)
-- 頻道配置：
+- 安全更新（執行醫生）：[更新](/zh-Hant/install/updating)
+- 頻道設定：
   - Telegram：[Telegram](/zh-Hant/channels/telegram)
   - WhatsApp：[WhatsApp](/zh-Hant/channels/whatsapp)
   - Signal：[Signal](/zh-Hant/channels/signal)
-  - iMessage：[iMessage](/zh-Hant/channels/imessage)
+  - BlueBubbles (iMessage)：[BlueBubbles](/zh-Hant/channels/bluebubbles)
+  - iMessage (legacy)：[iMessage](/zh-Hant/channels/imessage)
   - Discord：[Discord](/zh-Hant/channels/discord)
   - Slack：[Slack](/zh-Hant/channels/slack)

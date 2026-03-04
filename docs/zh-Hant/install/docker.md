@@ -1,14 +1,14 @@
 ---
 summary: "選用 Docker 設定與 OpenClaw 上線"
 read_when:
-  - You want a containerized gateway instead of local installs
-  - You are validating the Docker flow
+  - 你想使用容器化的 gateway 而非本機安裝
+  - 你正在驗證 Docker 工作流程
 title: "Docker（Docker）"
 ---
 
-# Docker (optional)
+# Docker（選用）
 
-Docker is **optional**. Use it only if you want a containerized gateway or to validate the Docker flow.
+Docker 是**選用的**。只有在你想要容器化的 gateway 或驗證 Docker 工作流程時才需要使用。
 
 ## Is Docker right for me?
 

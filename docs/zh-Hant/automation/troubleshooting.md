@@ -1,10 +1,10 @@
 ---
-summary: "Cron 和心跳排程和傳遞的疑難排解"
+title: "Automation Troubleshooting（自動化故障排除）"
+summary: "故障排除 cron 和心跳排程和傳遞"
 read_when:
   - Cron 未執行
   - Cron 執行但未傳遞訊息
   - 心跳似乎無聲或被跳過
-title: "Automation Troubleshooting（自動化疑難排解）"
 ---
 
 # 自動化疑難排解

@@ -1,14 +1,14 @@
 ---
-summary: "Skills config schema and examples"
+summary: "Skills 設定結構及範例"
 read_when:
-  - Adding or modifying skills config
-  - Adjusting bundled allowlist or install behavior
+  - 新增或修改 Skills 設定時
+  - 調整綑綁允許清單或安裝行為時
 title: "Skills Config（Skills 設定）"
 ---
 
 # Skills Config
 
-All skills-related configuration lives under `skills` in `~/.openclaw/openclaw.json`.
+所有 Skills 相關設定位於 `~/.openclaw/openclaw.json` 中的 `skills`。
 
 ```json5
 {
@@ -26,7 +26,7 @@ All skills-related configuration lives under `skills` in `~/.openclaw/openclaw.j
     entries: {
       "nano-banana-pro": {
         enabled: true,
-        apiKey: "GEMINI_KEY_HERE",
+        apiKey: { source: "env", provider: "default", id: "GEMINI_API_KEY" }, // 或純文字字串
         env: {
           GEMINI_API_KEY: "GEMINI_KEY_HERE",
         },
@@ -38,39 +38,34 @@ All skills-related configuration lives under `skills` in `~/.openclaw/openclaw.j
 }
 ```
 
-## Fields
+## 欄位
 
-- `allowBundled`: optional allowlist for **bundled** skills only. When set, only
-  bundled skills in the list are eligible (managed/workspace skills unaffected).
-- `load.extraDirs`: additional skill directories to scan (lowest precedence).
-- `load.watch`: watch skill folders and refresh the skills snapshot (default: true).
-- `load.watchDebounceMs`: debounce for skill watcher events in milliseconds (default: 250).
-- `install.preferBrew`: prefer brew installers when available (default: true).
-- `install.nodeManager`: node installer preference (`npm` | `pnpm` | `yarn` | `bun`, default: npm).
-  This only affects **skill installs**; the Gateway runtime should still be Node
-  (Bun not recommended for WhatsApp/Telegram).
-- `entries.<skillKey>`: per-skill overrides.
+- `allowBundled`：**僅限綑綁** Skills 的選用允許清單。設定時，僅清單中的綑綁 Skills 符合資格（不影響受管／Workspace Skills）。
+- `load.extraDirs`：要掃描的額外 Skill 目錄（優先級最低）。
+- `load.watch`：監視 Skill 資料夾並重新整理 Skills 快照（預設：true）。
+- `load.watchDebounceMs`：Skill 監視器事件的去抖動毫秒數（預設：250）。
+- `install.preferBrew`：可用時偏好 brew 安裝程式（預設：true）。
+- `install.nodeManager`：Node 安裝程式偏好（`npm` | `pnpm` | `yarn` | `bun`，預設：npm）。這僅影響 **Skill 安裝**；Gateway runtime 應該仍為 Node（不建議用於 WhatsApp／Telegram 的 Bun）。
+- `entries.<skillKey>`：每個 Skill 的覆寫。
 
-Per-skill fields:
+每個 Skill 的欄位：
 
-- `enabled`: set `false` to disable a skill even if it's bundled/installed.
-- `env`: environment variables injected for the agent run (only if not already set).
-- `apiKey`: optional convenience for skills that declare a primary env var.
+- `enabled`：設定為 `false` 以停用 Skill，即使它已綑綁／安裝。
+- `env`：為 Agent 執行注入的環境變數（僅當未設定時）。
+- `apiKey`：為宣告主要環境變數的 Skills 提供的選用便利。支援純文字字串或 SecretRef 物件（`{ source, provider, id }`）。
 
-## Notes
+## 注意事項
 
-- Keys under `entries` map to the skill name by default. If a skill defines
-  `metadata.openclaw.skillKey`, use that key instead.
-- Changes to skills are picked up on the next agent turn when the watcher is enabled.
+- `entries` 下的鍵預設對應到 Skill 名稱。若 Skill 定義了 `metadata.openclaw.skillKey`，改用該鍵。
+- 當監視器啟用時，下一個 Agent 回合會選取對 Skills 的變更。
 
-### Sandboxed skills + env vars
+### 沙箱 Skills + 環境變數
 
-When a session is **sandboxed**, skill processes run inside Docker. The sandbox
-does **not** inherit the host `process.env`.
+當工作階段被**沙箱化**時，Skill 進程在 Docker 內執行。沙箱**不會**繼承主機 `process.env`。
 
-Use one of:
+使用以下之一：
 
-- `agents.defaults.sandbox.docker.env` (or per-agent `agents.list[].sandbox.docker.env`)
-- bake the env into your custom sandbox image
+- `agents.defaults.sandbox.docker.env`（或每個 Agent `agents.list[].sandbox.docker.env`）
+- 將環境烘焙到自訂沙箱映像中
 
-Global `env` and `skills.entries.<skill>.env/apiKey` apply to **host** runs only.
+全域 `env` 和 `skills.entries.<skill>.env/apiKey` 僅適用於**主機**執行。

@@ -1,22 +1,22 @@
 ---
-summary: "Reaction semantics shared across channels"
+summary: "跨通道共用的反應語意"
 read_when:
-  - Working on reactions in any channel
-title: "Reactions（Reactions 回應）"
+  - 在任何通道中處理反應時
+title: "Reactions（反應）"
 ---
 
-# Reaction tooling
+# 反應工具
 
-Shared reaction semantics across channels:
+跨通道共用的反應語意：
 
-- `emoji` is required when adding a reaction.
-- `emoji=""` removes the bot's reaction(s) when supported.
-- `remove: true` removes the specified emoji when supported (requires `emoji`).
+- 新增反應時需要 `emoji`。
+- 當支援時，`emoji=""` 移除機器人的反應。
+- 當支援時，`remove: true` 移除指定的表情符號（需要 `emoji`）。
 
-Channel notes:
+通道筆記：
 
-- **Discord/Slack**: empty `emoji` removes all of the bot's reactions on the message; `remove: true` removes just that emoji.
-- **Google Chat**: empty `emoji` removes the app's reactions on the message; `remove: true` removes just that emoji.
-- **Telegram**: empty `emoji` removes the bot's reactions; `remove: true` also removes reactions but still requires a non-empty `emoji` for tool validation.
-- **WhatsApp**: empty `emoji` removes the bot reaction; `remove: true` maps to empty emoji (still requires `emoji`).
-- **Signal**: inbound reaction notifications emit system events when `channels.signal.reactionNotifications` is enabled.
+- **Discord/Slack**：空 `emoji` 移除訊息上機器人的所有反應；`remove: true` 只移除該表情符號。
+- **Google Chat**：空 `emoji` 移除訊息上應用的反應；`remove: true` 只移除該表情符號。
+- **Telegram**：空 `emoji` 移除機器人的反應；`remove: true` 也移除反應但仍需要非空 `emoji` 進行工具驗證。
+- **WhatsApp**：空 `emoji` 移除機器人反應；`remove: true` 對應到空表情符號（仍需要 `emoji`）。
+- **Signal**：當 `channels.signal.reactionNotifications` 啟用時，入站反應通知會發出系統事件。

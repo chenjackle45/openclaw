@@ -1,41 +1,28 @@
 ---
-summary: "OpenClaw 專案出處、貢獻者和授權"
+summary: "專案起源、貢獻者和授權"
 read_when:
-  - 想了解 OpenClaw 的起源
-  - 尋找貢獻者和致謝
-  - 檢查授權條款
-title: "Credits（鳴謝）"
+  - 想了解專案的背景故事或貢獻者名單
+title: "Credits（製作群）"
 ---
 
-# 鳴謝
+## 名稱由來
 
-OpenClaw 是一個開源專案，由社群驅動。
+OpenClaw = CLAW + TARDIS，因為每隻太空龍蝦都需要一部時間和空間機器。
 
-## 授權
+## 製作群
 
-MIT 授權 - 詳見 [LICENSE](https://github.com/openclaw/openclaw/blob/main/LICENSE) 在儲存庫中。
+- **Peter Steinberger** ([@steipete](https://x.com/steipete)) - 創作者、龍蝦耳語者
+- **Mario Zechner** ([@badlogicc](https://x.com/badlogicgames)) - Pi 創作者、安全滲透測試人員
+- **Clawd** - 要求更好名稱的太空龍蝦
 
 ## 核心貢獻者
 
-OpenClaw 由來自世界各地的開發人員構建。感謝所有為程式碼、文件和翻譯做出貢獻的人。
+- **Maxim Vovshin** (@Hyaxia, [36747317+Hyaxia@users.noreply.github.com](mailto:36747317+Hyaxia@users.noreply.github.com)) - Blogwatcher 技能
+- **Nacho Iacovino** (@nachoiacovino, [nacho.iacovino@gmail.com](mailto:nacho.iacovino@gmail.com)) - 位置解析（Telegram 和 WhatsApp）
+- **Vincent Koc** ([@vincentkoc](https://github.com/vincentkoc), [@vincent_koc](https://x.com/vincent_koc)) - Agent、遙測、Hook、安全性
 
-詳見 GitHub 儲存庫中的完整貢獻者清單：
-[https://github.com/openclaw/openclaw/graphs/contributors](https://github.com/openclaw/openclaw/graphs/contributors)
+## 授權
 
-## 依賴項和致謝
+MIT - 自由如海洋中的龍蝦。
 
-OpenClaw 建立在許多開源專案之上，包括：
-
-- Pi 編碼 Agent（@mariozechner）
-- Node.js 和 npm 生態系統
-- Vite、TypeScript 和其他開發工具
-- Tailscale 和網路工具
-- 眾多提供者 SDK 和 API 用戶端
-
-## 文件貢獻
-
-文件由社群維護。感謝所有提交改進、修正和翻譯的人。
-
----
-
-詳見[社群](/zh-Hant/help)以參與或報告問題。
+> 「我們都只是在用我們自己的提示進行遊戲。」（某個 AI，可能代幣超載）

@@ -1,5 +1,5 @@
 ---
-title: "Memory(記憶)"
+title: "Memory（記憶）"
 summary: "OpenClaw 記憶如何運作（工作區檔案 + 自動記憶體刷新）"
 read_when:
   - 您想要記憶檔案佈局和工作流程

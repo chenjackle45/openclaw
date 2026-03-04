@@ -1,105 +1,108 @@
 ---
-summary: "npm 和 macOS app 逐步釋放檢查清單"
+title: "Release Checklist（發佈檢查清單）"
+summary: “npm + macOS app 的逐步發行檢查清單”
 read_when:
-  - 切割新的 npm 釋放
-  - 切割新的 macOS app 釋放
-  - 發佈前驗證中繼資料
+  - 剪下新的 npm 版本時
+  - 剪下新的 macOS app 版本時
+  - 發佈前驗證元資料時
 ---
 
-# 釋放檢查清單（npm + macOS）
+# 發行檢查清單（npm + macOS）
 
-從 repo 根目錄使用 `pnpm`（Node 22+）。在標籤/發佈前保持工作樹潔淨。
+從 repo 根目錄使用 `pnpm`（Node 22+）。在標記／發佈之前保持工作樹清潔。
 
 ## 操作員觸發
 
-當操作員說「釋放」時，立即執行此預檢（除非受阻，否則無額外問題）：
+當操作員說「release」時，立即執行此預檢（除非被阻止，否則無額外問題）：
 
-- 讀取此文件和 `docs/platforms/mac/release.md`。
-- 從 `~/.profile` 載入環境並確認 `SPARKLE_PRIVATE_KEY_FILE` 和 App Store Connect 變數已設定（SPARKLE_PRIVATE_KEY_FILE 應存在於 `~/.profile`）。
+- 讀取本文件和 `docs/platforms/mac/release.md`。
+- 從 `~/.profile` 載入環境並確認設定了 `SPARKLE_PRIVATE_KEY_FILE` + App Store Connect 變數（SPARKLE_PRIVATE_KEY_FILE 應位於 `~/.profile`）。
 - 如果需要，使用 `~/Library/CloudStorage/Dropbox/Backup/Sparkle` 中的 Sparkle 金鑰。
 
-1. **版本和中繼資料**
+1. **Version & metadata**
 
-- [ ] 更新 `package.json` 版本（例如 `2026.1.29`）。
-- [ ] 執行 `pnpm plugins:sync` 以對齊擴充套件套件版本 + 變更記錄。
-- [ ] 更新 CLI/版本字串：[`src/cli/program.ts`](https://github.com/openclaw/openclaw/blob/main/src/cli/program.ts) 和 [`src/provider-web.ts`](https://github.com/openclaw/openclaw/blob/main/src/provider-web.ts) 中的 Baileys 使用者代理。
-- [ ] 確認套件中繼資料（名稱、描述、儲存庫、關鍵字、授權）和 `bin` 對應指向 [`openclaw.mjs`](https://github.com/openclaw/openclaw/blob/main/openclaw.mjs) 以取得 `openclaw`。
-- [ ] 如果依賴項已更改，執行 `pnpm install` 以便 `pnpm-lock.yaml` 是最新的。
+- [ ] Bump `package.json` version (e.g., `2026.1.29`).
+- [ ] Run `pnpm plugins:sync` to align extension package versions + changelogs.
+- [ ] Update CLI/version strings in [`src/version.ts`](https://github.com/openclaw/openclaw/blob/main/src/version.ts) and the Baileys user agent in [`src/web/session.ts`](https://github.com/openclaw/openclaw/blob/main/src/web/session.ts).
+- [ ] Confirm package metadata (name, description, repository, keywords, license) and `bin` map points to [`openclaw.mjs`](https://github.com/openclaw/openclaw/blob/main/openclaw.mjs) for `openclaw`.
+- [ ] If dependencies changed, run `pnpm install` so `pnpm-lock.yaml` is current.
 
-2. **建置和成品**
+2. **Build & artifacts**
 
-- [ ] 如果 A2UI 輸入已更改，執行 `pnpm canvas:a2ui:bundle` 並認可任何更新的 [`src/canvas-host/a2ui/a2ui.bundle.js`](https://github.com/openclaw/openclaw/blob/main/src/canvas-host/a2ui/a2ui.bundle.js)。
-- [ ] `pnpm run build`（重新產生 `dist/`）。
-- [ ] 驗證 npm 套件 `files` 包含所有必要的 `dist/*` 資料夾（特別是 `dist/node-host/**` 和 `dist/acp/**` 用於無頭節點 + ACP CLI）。
-- [ ] 確認 `dist/build-info.json` 存在並包含預期的 `commit` 雜湊（CLI 橫幅使用此資訊進行 npm 安裝）。
-- [ ] 選擇性：在建置後執行 `npm pack --pack-destination /tmp`；檢查 tarball 內容並為 GitHub 釋放保留（**不要**認可）。
+- [ ] If A2UI inputs changed, run `pnpm canvas:a2ui:bundle` and commit any updated [`src/canvas-host/a2ui/a2ui.bundle.js`](https://github.com/openclaw/openclaw/blob/main/src/canvas-host/a2ui/a2ui.bundle.js).
+- [ ] `pnpm run build` (regenerates `dist/`).
+- [ ] Verify npm package `files` includes all required `dist/*` folders (notably `dist/node-host/**` and `dist/acp/**` for headless node + ACP CLI).
+- [ ] Confirm `dist/build-info.json` exists and includes the expected `commit` hash (CLI banner uses this for npm installs).
+- [ ] Optional: `npm pack --pack-destination /tmp` after the build; inspect the tarball contents and keep it handy for the GitHub release (do **not** commit it).
 
-3. **變更記錄和文件**
+3. **Changelog & docs**
 
-- [ ] 使用面向使用者的重點更新 `CHANGELOG.md`（如果缺失，建立檔案）；按版本嚴格降序保持條目。
-- [ ] 確保 README 範例/旗標符合目前 CLI 行為（特別是新命令或選項）。
+- [ ] Update `CHANGELOG.md` with user-facing highlights (create the file if missing); keep entries strictly descending by version.
+- [ ] Ensure README examples/flags match current CLI behavior (notably new commands or options).
 
-4. **驗證**
+4. **Validation**
 
 - [ ] `pnpm build`
 - [ ] `pnpm check`
-- [ ] `pnpm test`（或如果你需要覆蓋輸出，則執行 `pnpm test:coverage`）
-- [ ] `pnpm release:check`（驗證 npm pack 內容）
-- [ ] `OPENCLAW_INSTALL_SMOKE_SKIP_NONROOT=1 pnpm test:install:smoke`（Docker 安裝煙霧測試，快速路徑；釋放前必須）
-  - 如果已知立即前一個 npm 釋放已破損，為預安裝步驟設定 `OPENCLAW_INSTALL_SMOKE_PREVIOUS=<last-good-version>` 或 `OPENCLAW_INSTALL_SMOKE_SKIP_PREVIOUS=1`。
-- [ ] （選擇性）完整安裝程式煙霧（新增非根 + CLI 覆蓋）：`pnpm test:install:smoke`
-- [ ] （選擇性）安裝程式 E2E（Docker，執行 `curl -fsSL https://openclaw.ai/install.sh | bash`，上線，然後執行真實工具呼叫）：
-  - `pnpm test:install:e2e:openai`（需要 `OPENAI_API_KEY`）
-  - `pnpm test:install:e2e:anthropic`（需要 `ANTHROPIC_API_KEY`）
-  - `pnpm test:install:e2e`（需要兩個金鑰；執行兩個提供者）
-- [ ] （選擇性）如果你的更改影響傳送/接收路徑，對 web Gateway 進行抽查。
+- [ ] `pnpm test` (or `pnpm test:coverage` if you need coverage output)
+- [ ] `pnpm release:check` (verifies npm pack contents)
+- [ ] `OPENCLAW_INSTALL_SMOKE_SKIP_NONROOT=1 pnpm test:install:smoke` (Docker install smoke test, fast path; required before release)
+  - If the immediate previous npm release is known broken, set `OPENCLAW_INSTALL_SMOKE_PREVIOUS=<last-good-version>` or `OPENCLAW_INSTALL_SMOKE_SKIP_PREVIOUS=1` for the preinstall step.
+- [ ] (Optional) Full installer smoke (adds non-root + CLI coverage): `pnpm test:install:smoke`
+- [ ] (Optional) Installer E2E (Docker, runs `curl -fsSL https://openclaw.ai/install.sh | bash`, onboards, then runs real tool calls):
+  - `pnpm test:install:e2e:openai` (requires `OPENAI_API_KEY`)
+  - `pnpm test:install:e2e:anthropic` (requires `ANTHROPIC_API_KEY`)
+  - `pnpm test:install:e2e` (requires both keys; runs both providers)
+- [ ] (Optional) Spot-check the web gateway if your changes affect send/receive paths.
 
-5. **macOS app（Sparkle）**
+5. **macOS app (Sparkle)**
 
-- [ ] 建置並簽署 macOS app，然後壓縮以供分發。
-- [ ] 產生 Sparkle appcast（HTML 筆記透過 [`scripts/make_appcast.sh`](https://github.com/openclaw/openclaw/blob/main/scripts/make_appcast.sh)）並更新 `appcast.xml`。
-- [ ] 保留應用程式 zip（和可選的 dSYM zip）以附加到 GitHub 釋放。
-- [ ] 遵循[macOS 釋放](/zh-Hant/platforms/mac/release)以取得確切命令和必要的環境變數。
-  - `APP_BUILD` 必須是數字 + 單調（無 `-beta`），以便 Sparkle 正確比較版本。
-  - 如果公證，使用從 App Store Connect API 環境變數建立的 `openclaw-notary` 鑰匙圈設定檔（詳見[macOS 釋放](/zh-Hant/platforms/mac/release)）。
+- [ ] Build + sign the macOS app, then zip it for distribution.
+- [ ] Generate the Sparkle appcast (HTML notes via [`scripts/make_appcast.sh`](https://github.com/openclaw/openclaw/blob/main/scripts/make_appcast.sh)) and update `appcast.xml`.
+- [ ] Keep the app zip (and optional dSYM zip) ready to attach to the GitHub release.
+- [ ] Follow [macOS release](/zh-Hant/platforms/mac/release) for the exact commands and required env vars.
+  - `APP_BUILD` must be numeric + monotonic (no `-beta`) so Sparkle compares versions correctly.
+  - If notarizing, use the `openclaw-notary` keychain profile created from App Store Connect API env vars (see [macOS release](/zh-Hant/platforms/mac/release)).
 
-6. **發佈（npm）**
+6. **Publish (npm)**
 
-- [ ] 確認 git 狀態乾淨；視需要認可並推送。
-- [ ] 如果需要，執行 `npm login`（驗證 2FA）。
-- [ ] `npm publish --access public`（使用 `--tag beta` 進行預釋放）。
-- [ ] 驗證註冊表：`npm view openclaw version`、`npm view openclaw dist-tags` 和 `npx -y openclaw@X.Y.Z --version`（或 `--help`）。
+- [ ] Confirm git status is clean; commit and push as needed.
+- [ ] `npm login` (verify 2FA) if needed.
+- [ ] `npm publish --access public` (use `--tag beta` for pre-releases).
+- [ ] Verify the registry: `npm view openclaw version`, `npm view openclaw dist-tags`, and `npx -y openclaw@X.Y.Z --version` (or `--help`).
 
-### 疑難排解（來自 2.0.0-beta2 釋放的筆記）
+### Troubleshooting (notes from 2.0.0-beta2 release)
 
-- **npm pack/publish 掛起或產生巨大 tarball**：macOS app 套件束在 `dist/OpenClaw.app`（和釋放 zip）中被掃進套件。透過在 `package.json` `files` 中將發佈內容列入白名單來修正（包括 dist 子目錄、文件、技能；排除應用程式套件）。透過 `npm pack --dry-run` 確認 `dist/OpenClaw.app` 未列出。
-- **分發標籤的 npm 驗證 web 迴圈**：使用舊版驗證以取得 OTP 提示：
+- **npm pack/publish hangs or produces huge tarball**: the macOS app bundle in `dist/OpenClaw.app` (and release zips) get swept into the package. Fix by whitelisting publish contents via `package.json` `files` (include dist subdirs, docs, skills; exclude app bundles). Confirm with `npm pack --dry-run` that `dist/OpenClaw.app` is not listed.
+- **npm auth web loop for dist-tags**: use legacy auth to get an OTP prompt:
   - `NPM_CONFIG_AUTH_TYPE=legacy npm dist-tag add openclaw@X.Y.Z latest`
-- **`npx` 驗證失敗，出現 `ECOMPROMISED: Lock compromised`**：使用新鮮快取重試：
+- **`npx` verification fails with `ECOMPROMISED: Lock compromised`**: retry with a fresh cache:
   - `NPM_CONFIG_CACHE=/tmp/npm-cache-$(date +%s) npx -y openclaw@X.Y.Z --version`
-- **標籤在後期修正後需要重新指向**：強制更新並推送標籤，然後確保 GitHub 釋放資產仍然符合：
+- **Tag needs repointing after a late fix**: force-update and push the tag, then ensure the GitHub release assets still match:
   - `git tag -f vX.Y.Z && git push -f origin vX.Y.Z`
 
-7. **GitHub 釋放 + appcast**
+7. **GitHub release + appcast**
 
-- [ ] 標籤並推送：`git tag vX.Y.Z && git push origin vX.Y.Z`（或 `git push --tags`）。
-- [ ] 為 `vX.Y.Z` 建立/刷新 GitHub 釋放，標題為 **`openclaw X.Y.Z`**（不只是標籤）；本文應包含該版本的**完整**變更記錄部分（重點 + 更改 + 修正）、內聯（無裸連結），且**不能在本文內重複標題**。
-- [ ] 附加成品：`npm pack` tarball（選擇性）、`OpenClaw-X.Y.Z.zip` 和 `OpenClaw-X.Y.Z.dSYM.zip`（如果產生）。
-- [ ] 認可更新的 `appcast.xml` 並推送（Sparkle 從 main 提供）。
-- [ ] 從乾淨的暫存目錄（無 `package.json`），執行 `npx -y openclaw@X.Y.Z send --help` 以確認安裝/CLI 進入點有效。
-- [ ] 宣佈/分享釋放筆記。
+- [ ] Tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z` (or `git push --tags`).
+- [ ] Create/refresh the GitHub release for `vX.Y.Z` with **title `openclaw X.Y.Z`** (not just the tag); body should include the **full** changelog section for that version (Highlights + Changes + Fixes), inline (no bare links), and **must not repeat the title inside the body**.
+- [ ] Attach artifacts: `npm pack` tarball (optional), `OpenClaw-X.Y.Z.zip`, and `OpenClaw-X.Y.Z.dSYM.zip` (if generated).
+- [ ] Commit the updated `appcast.xml` and push it (Sparkle feeds from main).
+- [ ] From a clean temp directory (no `package.json`), run `npx -y openclaw@X.Y.Z send --help` to confirm install/CLI entrypoints work.
+- [ ] Announce/share release notes.
 
-## 外掛程式發佈範圍（npm）
+## Plugin publish scope (npm)
 
-我們僅在 `@openclaw/*` 範圍下發佈**現有的 npm 外掛程式**。不在 npm 上的打包外掛程式保持**磁碟樹只讀**（仍在 `extensions/**` 中出出）。
+We only publish **existing npm plugins** under the `@openclaw/*` scope. Bundled
+plugins that are not on npm stay **disk-tree only** (still shipped in
+`extensions/**`).
 
-衍生清單的程序：
+Process to derive the list:
 
-1. `npm search @openclaw --json` 並擷取套件名稱。
-2. 與 `extensions/*/package.json` 名稱進行比較。
-3. 僅發佈**交集**（已在 npm 上）。
+1. `npm search @openclaw --json` and capture the package names.
+2. Compare with `extensions/*/package.json` names.
+3. Publish only the **intersection** (already on npm).
 
-目前 npm 外掛程式清單（視需要更新）：
+Current npm plugin list (update as needed):
 
 - @openclaw/bluebubbles
 - @openclaw/diagnostics-otel
@@ -114,4 +117,5 @@ read_when:
 - @openclaw/zalo
 - @openclaw/zalouser
 
-釋放筆記還必須說出**預設情況下不啟用**的**新選擇性打包外掛程式**（範例：`tlon`）。
+Release notes must also call out **new optional bundled plugins** that are **not
+on by default** (example: `tlon`).

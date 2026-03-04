@@ -1,14 +1,14 @@
 ---
-title: "Vercel AI Gateway（Vercel AI Gateway 閘道）"
+title: "Vercel AI Gateway（Vercel AI Gateway）"
 summary: "Vercel AI Gateway 設定（認證 + 模型選擇）"
 read_when:
-  - 你想使用 Vercel AI Gateway 與 OpenClaw
-  - 你需要 API 鑰匙環境變數或 CLI 認證選項
+  - You want to use Vercel AI Gateway with OpenClaw
+  - You need the API key env var or CLI auth choice
 ---
 
 # Vercel AI Gateway
 
-[Vercel AI Gateway](https://vercel.com/ai-gateway) 提供一個統一的 API 來透過單一端點存取數百個模型。
+[Vercel AI Gateway](https://vercel.com/ai-gateway) 提供統一 API 以透過單一端點存取數百個模型。
 
 - 提供者：`vercel-ai-gateway`
 - 認證：`AI_GATEWAY_API_KEY`
@@ -16,7 +16,7 @@ read_when:
 
 ## 快速開始
 
-1. 設定 API 鑰匙（推薦：為 Gateway 儲存）：
+1. 設定 API 鑰（建議：為 Gateway 儲存）：
 
 ```bash
 openclaw onboard --auth-choice ai-gateway-api-key
@@ -34,7 +34,7 @@ openclaw onboard --auth-choice ai-gateway-api-key
 }
 ```
 
-## 非互動式範例
+## 非互動範例
 
 ```bash
 openclaw onboard --non-interactive \
@@ -43,8 +43,14 @@ openclaw onboard --non-interactive \
   --ai-gateway-api-key "$AI_GATEWAY_API_KEY"
 ```
 
-## 環境注意
+## 環境註記
 
-若 Gateway 以 daemon（launchd/systemd）執行，確保 `AI_GATEWAY_API_KEY`
-對該程序可用（例如，在 `~/.openclaw/.env` 中或透過
-`env.shellEnv`）。
+如果 Gateway 作為守護程式執行（launchd / systemd），確保 `AI_GATEWAY_API_KEY`
+對該程序可用（例如，在 `~/.openclaw/.env` 或透過 `env.shellEnv`）。
+
+## 模型 ID 速寫
+
+OpenClaw 接受 Vercel Claude 速寫模型參考並在執行時規範化：
+
+- `vercel-ai-gateway/claude-opus-4.6` -> `vercel-ai-gateway/anthropic/claude-opus-4.6`
+- `vercel-ai-gateway/opus-4.6` -> `vercel-ai-gateway/anthropic/claude-opus-4-6`

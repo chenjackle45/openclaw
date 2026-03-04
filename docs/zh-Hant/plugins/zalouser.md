@@ -1,26 +1,28 @@
 ---
-title: "Zalo Personal Plugin（Zalo Personal 外掛）"
-summary: "Zalo Personal Plugin：QR 登入 + 透過 zca-cli 訊息傳遞（Plugin 安裝 + Channel Config + CLI + Tool）"
+summary: "Zalo Personal plugin: QR login + messaging via native zca-js (plugin install + channel config + tool)"
 read_when:
-  - 您想在 OpenClaw 中使用 Zalo Personal（非官方）支援
-  - 您正在設定或開發 zalouser Plugin
+  - You want Zalo Personal (unofficial) support in OpenClaw
+  - You are configuring or developing the zalouser plugin
+title: "Zalo Personal Plugin（Zalo 個人外掛程式）"
 ---
 
-# Zalo Personal (Plugin)
+# Zalo 個人（外掛）
 
-透過 Plugin 為 OpenClaw 提供 Zalo Personal 支援，使用 `zca-cli` 自動化普通 Zalo 使用者帳號。
+OpenClaw 透過外掛支援 Zalo Personal，使用原生 `zca-js` 來自動化普通 Zalo 使用者帳戶。
 
-> **警告：** 非官方自動化可能導致帳號暫停/封鎖。使用風險自負。
+> **警告：** 非官方自動化可能導致帳戶暫停/禁用。自行承擔風險。
 
 ## 命名
 
-Channel ID 是 `zalouser`，以明確表示這是自動化**個人 Zalo 使用者帳號**（非官方）。我們保留 `zalo` 給未來可能的官方 Zalo API 整合。
+通道 ID 是 `zalouser`，以明確此自動化一個**個人 Zalo 使用者帳戶**（非官方）。我們保留 `zalo` 作為潛在的未來官方 Zalo API 整合。
 
 ## 執行位置
 
-此 Plugin 在 **Gateway Process 內執行**。
+此外掛在**閘道程序內**執行。
 
-如果您使用 Remote Gateway，請在**執行 Gateway 的機器**上安裝/設定它，然後重新啟動 Gateway。
+如果你使用遠端閘道，在**執行閘道的機器上**安裝/設定它，然後重新啟動閘道。
+
+不需要外部 `zca`/`openzca` CLI 二進位檔。
 
 ## 安裝
 
@@ -30,28 +32,20 @@ Channel ID 是 `zalouser`，以明確表示這是自動化**個人 Zalo 使用�
 openclaw plugins install @openclaw/zalouser
 ```
 
-之後重新啟動 Gateway。
+之後重新啟動閘道。
 
-### 選項 B：從 Local 資料夾安裝（開發）
+### 選項 B：從本機資料夾安裝（開發）
 
 ```bash
 openclaw plugins install ./extensions/zalouser
 cd ./extensions/zalouser && pnpm install
 ```
 
-之後重新啟動 Gateway。
+之後重新啟動閘道。
 
-## 先決條件：zca-cli
+## 設定
 
-Gateway 機器必須在 `PATH` 上有 `zca`：
-
-```bash
-zca --version
-```
-
-## Config
-
-Channel Config 位於 `channels.zalouser` 下（非 `plugins.entries.*`）：
+通道設定位於 `channels.zalouser`（不是 `plugins.entries.*`）：
 
 ```json5
 {
@@ -74,8 +68,10 @@ openclaw message send --channel zalouser --target <threadId> --message "Hello fr
 openclaw directory peers list --channel zalouser --query "name"
 ```
 
-## Agent Tool
+## 代理工具
 
-Tool 名稱：`zalouser`
+工具名稱：`zalouser`
 
-動作：`send`、`image`、`link`、`friends`、`groups`、`me`、`status`
+操作：`send`、`image`、`link`、`friends`、`groups`、`me`、`status`
+
+通道訊息操作也支援 `react` 以用於訊息反應。

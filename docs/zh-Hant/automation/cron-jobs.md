@@ -1,6 +1,6 @@
 ---
-title: "Cron Jobs（排程任務）"
-summary: "Gateway 排程器的任務排程與喚醒機制"
+title: "Cron Jobs（Cron 工作）"
+summary: "Cron 工作 + 喚醒 Gateway 排程器"
 read_when:
   - 安排背景任務或喚醒時
   - 設定應隨同心跳執行的自動化流程時

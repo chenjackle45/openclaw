@@ -1,119 +1,151 @@
 ---
-summary: "參考：特定提供者的文字記錄清理和修復規則"
-read_when:
-  - 你正在調試與文字記錄形狀相關的提供者請求拒絕
-  - 你正在更改文字記錄清理或工具呼叫修復邏輯
-  - 你正在調查提供者之間的工具呼叫 ID 不匹配
 title: "Transcript Hygiene（文字記錄衛生）"
+summary: "參考：提供商特定的文字記錄清理和修復規則"
+read_when:
+  - 除錯與文字記錄形狀相關的提供商請求拒絕時
+  - 變更文字記錄清理或工具呼叫修復邏輯時
+  - 調查提供商間工具呼叫 ID 不匹配時
 ---
 
-# 文字記錄衛生（提供者修正）
+# 文字記錄衛生（提供商修復）
 
-本文件描述在執行前（建置模型內容）應用於文字記錄的**特定提供者的修正**。這些是用於滿足嚴格提供者要求的**記憶體內**調整。這些衛生步驟**不會**重寫磁碟上儲存的 JSONL 文字記錄；但是，單獨的會話檔修復傳遞可能會透過在載入會話前刪除無效行來重寫格式不正確的 JSONL 檔案。當修復發生時，原始檔案會與會話檔案一起備份。
+This document describes **provider-specific fixes** applied to transcripts before a run
+(building model context). These are **in-memory** adjustments used to satisfy strict
+provider requirements. These hygiene steps do **not** rewrite the stored JSONL transcript
+on disk; however, a separate session-file repair pass may rewrite malformed JSONL files
+by dropping invalid lines before the session is loaded. When a repair occurs, the original
+file is backed up alongside the session file.
 
-範圍包括：
+Scope includes:
 
-- 工具呼叫 ID 清理
-- 工具呼叫輸入驗證
-- 工具結果配對修復
-- 轉換驗證 / 排序
-- 思考簽名清理
-- 影像有效負載清理
+- Tool call id sanitization
+- Tool call input validation
+- Tool result pairing repair
+- Turn validation / ordering
+- Thought signature cleanup
+- Image payload sanitization
+- User-input provenance tagging (for inter-session routed prompts)
 
-如果你需要文字記錄存儲詳情，詳見：
+If you need transcript storage details, see:
 
 - [/reference/session-management-compaction](/zh-Hant/reference/session-management-compaction)
 
 ---
 
-## 這在哪裡執行
+## Where this runs
 
-所有文字記錄衛生集中在嵌入式執行程式中：
+All transcript hygiene is centralized in the embedded runner:
 
-- 原則選擇：`src/agents/transcript-policy.ts`
-- 清理/修復應用：`src/agents/pi-embedded-runner/google.ts` 中的 `sanitizeSessionHistory`
+- Policy selection: `src/agents/transcript-policy.ts`
+- Sanitization/repair application: `sanitizeSessionHistory` in `src/agents/pi-embedded-runner/google.ts`
 
-原則使用 `provider`、`modelApi` 和 `modelId` 來決定要套用什麼。
+The policy uses `provider`, `modelApi`, and `modelId` to decide what to apply.
 
-與文字記錄衛生分開，會話檔在載入前會被修復（如果需要）：
+Separate from transcript hygiene, session files are repaired (if needed) before load:
 
-- `src/agents/session-file-repair.ts` 中的 `repairSessionFileIfNeeded`
-- 從 `run/attempt.ts` 和 `compact.ts`（嵌入式執行程式）呼叫
-
----
-
-## 全域規則：影像清理
-
-影像有效負載始終被清理以防止因大小限制而導致的提供者端拒絕（縮小/重新壓縮超大 base64 影像）。
-
-實作：
-
-- `src/agents/pi-embedded-helpers/images.ts` 中的 `sanitizeSessionMessagesImages`
-- `src/agents/tool-images.ts` 中的 `sanitizeContentBlocksImages`
+- `repairSessionFileIfNeeded` in `src/agents/session-file-repair.ts`
+- Called from `run/attempt.ts` and `compact.ts` (embedded runner)
 
 ---
 
-## 全域規則：格式不正確的工具呼叫
+## Global rule: image sanitization
 
-遺漏 `input` 和 `arguments` 的助手工具呼叫區塊在建置模型內容前會被刪除。這可防止來自部分持久化工具呼叫的提供者拒絕（例如，在費率限制失敗後）。
+Image payloads are always sanitized to prevent provider-side rejection due to size
+limits (downscale/recompress oversized base64 images).
 
-實作：
+This also helps control image-driven token pressure for vision-capable models.
+Lower max dimensions generally reduce token usage; higher dimensions preserve detail.
 
-- `src/agents/session-transcript-repair.ts` 中的 `sanitizeToolCallInputs`
-- 在 `src/agents/pi-embedded-runner/google.ts` 中的 `sanitizeSessionHistory` 中應用
+Implementation:
+
+- `sanitizeSessionMessagesImages` in `src/agents/pi-embedded-helpers/images.ts`
+- `sanitizeContentBlocksImages` in `src/agents/tool-images.ts`
+- Max image side is configurable via `agents.defaults.imageMaxDimensionPx` (default: `1200`).
 
 ---
 
-## 提供者矩陣（目前行為）
+## Global rule: malformed tool calls
+
+Assistant tool-call blocks that are missing both `input` and `arguments` are dropped
+before model context is built. This prevents provider rejections from partially
+persisted tool calls (for example, after a rate limit failure).
+
+Implementation:
+
+- `sanitizeToolCallInputs` in `src/agents/session-transcript-repair.ts`
+- Applied in `sanitizeSessionHistory` in `src/agents/pi-embedded-runner/google.ts`
+
+---
+
+## Global rule: inter-session input provenance
+
+When an agent sends a prompt into another session via `sessions_send` (including
+agent-to-agent reply/announce steps), OpenClaw persists the created user turn with:
+
+- `message.provenance.kind = "inter_session"`
+
+This metadata is written at transcript append time and does not change role
+(`role: "user"` remains for provider compatibility). Transcript readers can use
+this to avoid treating routed internal prompts as end-user-authored instructions.
+
+During context rebuild, OpenClaw also prepends a short `[Inter-session message]`
+marker to those user turns in-memory so the model can distinguish them from
+external end-user instructions.
+
+---
+
+## Provider matrix (current behavior)
 
 **OpenAI / OpenAI Codex**
 
-- 僅影像清理。
-- 在模型切換到 OpenAI Responses/Codex 時，刪除孤立的推理簽名（不後跟內容區塊的獨立推理項目）。
-- 無工具呼叫 ID 清理。
-- 無工具結果配對修復。
-- 無轉換驗證或重新排序。
-- 無合成工具結果。
-- 無思考簽名去除。
+- Image sanitization only.
+- Drop orphaned reasoning signatures (standalone reasoning items without a following content block) for OpenAI Responses/Codex transcripts.
+- No tool call id sanitization.
+- No tool result pairing repair.
+- No turn validation or reordering.
+- No synthetic tool results.
+- No thought signature stripping.
 
-**Google（生成式 AI / Gemini CLI / Antigravity）**
+**Google (Generative AI / Gemini CLI / Antigravity)**
 
-- 工具呼叫 ID 清理：嚴格英數字。
-- 工具結果配對修復和合成工具結果。
-- 轉換驗證（Gemini 風格轉換交替）。
-- Google 轉換排序修正（如果歷史以助手開始，則前置一個微小使用者引導程序）。
-- Antigravity Claude：規範化思考簽名；刪除未簽名的思考區塊。
+- Tool call id sanitization: strict alphanumeric.
+- Tool result pairing repair and synthetic tool results.
+- Turn validation (Gemini-style turn alternation).
+- Google turn ordering fixup (prepend a tiny user bootstrap if history starts with assistant).
+- Antigravity Claude: normalize thinking signatures; drop unsigned thinking blocks.
 
-**Anthropic / Minimax（Anthropic 相容）**
+**Anthropic / Minimax (Anthropic-compatible)**
 
-- 工具結果配對修復和合成工具結果。
-- 轉換驗證（合併連續使用者轉換以滿足嚴格交替）。
+- Tool result pairing repair and synthetic tool results.
+- Turn validation (merge consecutive user turns to satisfy strict alternation).
 
-**Mistral（包括基於模型 ID 的檢測）**
+**Mistral (including model-id based detection)**
 
-- 工具呼叫 ID 清理：strict9（英數字長度 9）。
+- Tool call id sanitization: strict9 (alphanumeric length 9).
 
 **OpenRouter Gemini**
 
-- 思考簽名清理：去除非 base64 `thought_signature` 值（保留 base64）。
+- Thought signature cleanup: strip non-base64 `thought_signature` values (keep base64).
 
-**其他所有項目**
+**Everything else**
 
-- 僅影像清理。
+- Image sanitization only.
 
 ---
 
-## 歷史行為（2026.1.22 之前）
+## Historical behavior (pre-2026.1.22)
 
-在 2026.1.22 版本之前，OpenClaw 應用多層文字記錄衛生：
+Before the 2026.1.22 release, OpenClaw applied multiple layers of transcript hygiene:
 
-- **文字記錄清理擴充套件**在每個內容建置上執行，可以：
-  - 修復工具使用/結果配對。
-  - 清理工具呼叫 ID（包括保留 `_`/`-` 的非嚴格模式）。
-- 執行程式也執行了提供者特定的清理，這複製了工作。
-- 其他變更發生在提供者原則之外，包括：
-  - 在持久化前從助手文字去除 `<final>` 標籤。
-  - 刪除空的助手錯誤轉換。
-  - 在工具呼叫後修剪助手內容。
+- A **transcript-sanitize extension** ran on every context build and could:
+  - Repair tool use/result pairing.
+  - Sanitize tool call ids (including a non-strict mode that preserved `_`/`-`).
+- The runner also performed provider-specific sanitization, which duplicated work.
+- Additional mutations occurred outside the provider policy, including:
+  - Stripping `<final>` tags from assistant text before persistence.
+  - Dropping empty assistant error turns.
+  - Trimming assistant content after tool calls.
 
-這種複雜性導致跨提供者回歸（特別是 `openai-responses` `call_id|fc_id` 配對）。2026.1.22 清理移除了擴充套件，集中了執行程式中的邏輯，使 OpenAI 在影像清理之外**無需觸及**。
+This complexity caused cross-provider regressions (notably `openai-responses`
+`call_id|fc_id` pairing). The 2026.1.22 cleanup removed the extension, centralized
+logic in the runner, and made OpenAI **no-touch** beyond image sanitization.

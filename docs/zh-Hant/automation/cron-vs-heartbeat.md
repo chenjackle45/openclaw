@@ -1,6 +1,6 @@
 ---
-title: "Cron vs Heartbeat（Cron 與 Heartbeat 比較）"
-summary: "為自動化選擇心跳和 Cron 任務的指引"
+title: "Cron vs Heartbeat（Cron vs 心跳）"
+summary: "選擇心跳和 cron 工作的自動化指南"
 read_when:
   - 決定如何排程定期任務時
   - 設定背景監控或通知時

@@ -1,43 +1,38 @@
 ---
-summary: "macOS app 如何嵌入 Gateway WebChat 以及如何除錯"
+summary: “macOS app 如何嵌入 Gateway WebChat 以及如何除錯”
 read_when:
-  - Debugging mac WebChat view or loopback port
-title: "WebChat（WebChat）"
+  - 除錯 macOS WebChat 檢視或迴路埠
+title: "WebChat"
 ---
 
 # WebChat (macOS app)
 
-The macOS menu bar app embeds the WebChat UI as a native SwiftUI view. It
-connects to the Gateway and defaults to the **main session** for the selected
-agent (with a session switcher for other sessions).
+macOS 選單欄應用程式將 WebChat UI 嵌入為原生 SwiftUI 檢視。它連線到 Gateway 並預設為所選 Agent 的**主要工作階段**（使用工作階段切換器切換至其他工作階段）。
 
-- **Local mode**: connects directly to the local Gateway WebSocket.
-- **Remote mode**: forwards the Gateway control port over SSH and uses that
-  tunnel as the data plane.
+- **本地模式**：直接連線到本地 Gateway WebSocket。
+- **遠端模式**：通過 SSH 轉發 Gateway 控制埠並使用該隧道作為資料平面。
 
-## Launch & debugging
+## 啟動與除錯
 
-- Manual: Lobster menu → “Open Chat”.
-- Auto‑open for testing:
+- 手動：Lobster 選單 → 「開啟聊天」。
+- 自動開啟以進行測試：
 
   ```bash
   dist/OpenClaw.app/Contents/MacOS/OpenClaw --webchat
   ```
 
-- Logs: `./scripts/clawlog.sh` (subsystem `bot.molt`, category `WebChatSwiftUI`).
+- 日誌：`./scripts/clawlog.sh`（子系統 `ai.openclaw`，類別 `WebChatSwiftUI`）。
 
-## How it’s wired
+## 如何連線
 
-- Data plane: Gateway WS methods `chat.history`, `chat.send`, `chat.abort`,
-  `chat.inject` and events `chat`, `agent`, `presence`, `tick`, `health`.
-- Session: defaults to the primary session (`main`, or `global` when scope is
-  global). The UI can switch between sessions.
-- Onboarding uses a dedicated session to keep first‑run setup separate.
+- 資料平面：Gateway WS 方法 `chat.history`、`chat.send`、`chat.abort`、`chat.inject` 和事件 `chat`、`agent`、`presence`、`tick`、`health`。
+- 工作階段：預設為主要工作階段（`main`，或當範圍是全域時為 `global`）。UI 可以在工作階段之間切換。
+- 上線使用專用工作階段以將首次執行設置分離。
 
-## Security surface
+## 安全表面
 
-- Remote mode forwards only the Gateway WebSocket control port over SSH.
+- 遠端模式只通過 SSH 轉發 Gateway WebSocket 控制埠。
 
-## Known limitations
+## 已知限制
 
-- The UI is optimized for chat sessions (not a full browser sandbox).
+- UI 針對聊天工作階段進行最佳化（不是完整的瀏覽器沙箱）。

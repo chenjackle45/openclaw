@@ -1,6 +1,6 @@
 ---
-title: "Webhooks"
-summary: "Webhook 接入：用於喚醒與隔離的 Agent 執行任務"
+title: "Webhooks（Webhooks）"
+summary: "Webhook 內進用於喚醒和隔離代理執行"
 read_when:
   - 新增或變更 Webhook 端點時
   - 將外部系統接入 OpenClaw 時

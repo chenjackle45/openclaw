@@ -1,34 +1,34 @@
 ---
-title: "Uninstall（卸載）"
-summary: "完全卸載 OpenClaw（CLI、服務、狀態、工作區）"
+summary: "完全解除安裝 OpenClaw（CLI、服務、狀態、工作區）"
 read_when:
-  - 您想從機器移除 OpenClaw
-  - Gateway 服務卸載後仍執行
+  - You want to remove OpenClaw from a machine
+  - The gateway service is still running after uninstall
+title: "Uninstall（解除安裝）"
 ---
 
-# 卸載
+# 解除安裝
 
-兩條路徑：
+兩個路徑：
 
-- **簡單路徑**若 `openclaw` 仍安裝。
-- **手動服務移除**若 CLI 已去但服務仍執行。
+- **簡易路徑**如果 `openclaw` 仍已安裝。
+- **手動服務移除**如果 CLI 已刪除但服務仍在執行。
 
-## 簡單路徑（CLI 仍安裝）
+## 簡易路徑（CLI 仍已安裝）
 
-建議：使用內建卸載工具：
+推薦：使用內置解除安裝程式：
 
 ```bash
 openclaw uninstall
 ```
 
-非互動式（自動化 / npx）：
+非互動（自動化 / npx）：
 
 ```bash
 openclaw uninstall --all --yes --non-interactive
 npx -y openclaw uninstall --all --yes --non-interactive
 ```
 
-手動步驟（相同結果）：
+手動步驟（同樣結果）：
 
 1. 停止 Gateway 服務：
 
@@ -36,27 +36,27 @@ npx -y openclaw uninstall --all --yes --non-interactive
 openclaw gateway stop
 ```
 
-2. 卸載 Gateway 服務（launchd/systemd/schtasks）：
+2. 解除安裝 Gateway 服務（launchd/systemd/schtasks）：
 
 ```bash
 openclaw gateway uninstall
 ```
 
-3. 刪除狀態 + 配置：
+3. 刪除狀態 + 設定：
 
 ```bash
 rm -rf "${OPENCLAW_STATE_DIR:-$HOME/.openclaw}"
 ```
 
-若在狀態目錄外設定 `OPENCLAW_CONFIG_PATH` 至自訂位置，也刪除該檔案。
+如果設定了 `OPENCLAW_CONFIG_PATH` 至狀態目錄外的自訂位置，也刪除該檔案。
 
-4. 刪除工作區（可選，移除代理檔案）：
+4. 刪除你的工作區（選用，移除代理檔案）：
 
 ```bash
 rm -rf ~/.openclaw/workspace
 ```
 
-5. 移除 CLI 安裝（挑選您使用的）：
+5. 移除 CLI 安裝（選擇你使用的那個）：
 
 ```bash
 npm rm -g openclaw
@@ -64,35 +64,35 @@ pnpm remove -g openclaw
 bun remove -g openclaw
 ```
 
-6. 若安裝 macOS app：
+6. 如果已安裝 macOS 應用程式：
 
 ```bash
 rm -rf /Applications/OpenClaw.app
 ```
 
-備註：
+注意：
 
-- 使用設定檔（`--profile` / `OPENCLAW_PROFILE`），重複步驟 3 各狀態目錄（預設 `~/.openclaw-<profile>`）。
-- 遠端模式，狀態目錄位於**Gateway 主機**，也在那裡執行步驟 1-4。
+- 如果使用了設定檔（`--profile` / `OPENCLAW_PROFILE`），針對每個狀態目錄重複步驟 3（預設為 `~/.openclaw-<profile>`）。
+- 在遠端模式中，狀態目錄位於 **Gateway 主機**上，所以也要在那裡執行步驟 1-4。
 
 ## 手動服務移除（CLI 未安裝）
 
-Gateway 服務保持執行但 `openclaw` 遺漏時使用。
+如果 Gateway 服務繼續執行但 `openclaw` 缺失，使用此方式。
 
-### macOS（launchd）
+### macOS (launchd)
 
-預設標籤是 `bot.molt.gateway`（或 `bot.molt.<profile>`；舊版 `com.openclaw.*` 可能仍存在）：
+預設標籤是 `ai.openclaw.gateway`（或 `ai.openclaw.<profile>`；舊版 `com.openclaw.*` 可能仍存在）：
 
 ```bash
-launchctl bootout gui/$UID/bot.molt.gateway
-rm -f ~/Library/LaunchAgents/bot.molt.gateway.plist
+launchctl bootout gui/$UID/ai.openclaw.gateway
+rm -f ~/Library/LaunchAgents/ai.openclaw.gateway.plist
 ```
 
-使用設定檔，以 `bot.molt.<profile>` 替換標籤和 plist 名。移除任何舊版 `com.openclaw.*` plist 若存在。
+如果使用了設定檔，使用 `ai.openclaw.<profile>` 替換標籤和 plist 名稱。如果有舊版 `com.openclaw.*` plist，也移除。
 
-### Linux（systemd 使用者單位）
+### Linux (systemd user unit)
 
-預設單位名是 `openclaw-gateway.service`（或 `openclaw-gateway-<profile>.service`）：
+預設單位名稱是 `openclaw-gateway.service`（或 `openclaw-gateway-<profile>.service`）：
 
 ```bash
 systemctl --user disable --now openclaw-gateway.service
@@ -100,29 +100,29 @@ rm -f ~/.config/systemd/user/openclaw-gateway.service
 systemctl --user daemon-reload
 ```
 
-### Windows（排程任務）
+### Windows (Scheduled Task)
 
-預設任務名是 `OpenClaw Gateway`（或 `OpenClaw Gateway(<profile>)`）。
-任務指令碼位於狀態目錄。
+預設任務名稱是 `OpenClaw Gateway`（或 `OpenClaw Gateway (<profile>)`）。
+任務腳本位在你的狀態目錄下。
 
 ```powershell
 schtasks /Delete /F /TN "OpenClaw Gateway"
 Remove-Item -Force "$env:USERPROFILE\.openclaw\gateway.cmd"
 ```
 
-使用設定檔，刪除相符任務名和 `~\.openclaw-<profile>\gateway.cmd`。
+如果使用了設定檔，刪除相符的任務名稱和 `~\.openclaw-<profile>\gateway.cmd`。
 
-## 正常安裝 vs 源代碼檢出
+## 標準安裝 vs 源程式碼 checkout
 
-### 正常安裝（install.sh / npm / pnpm / bun）
+### 標準安裝（install.sh / npm / pnpm / bun）
 
-使用 `https://openclaw.ai/install.sh` 或 `install.ps1`，CLI 用 `npm install -g openclaw@latest` 安裝。
-用 `npm rm -g openclaw` 移除（或 `pnpm remove -g` / `bun remove -g` 若那樣安裝）。
+如果使用 `https://openclaw.ai/install.sh` 或 `install.ps1`，CLI 用 `npm install -g openclaw@latest` 安裝。
+使用 `npm rm -g openclaw`（或 `pnpm remove -g` / `bun remove -g`（如果你用那種方式安裝））移除。
 
-### 源代碼檢出（git clone）
+### 源程式碼 checkout (git clone)
 
-從 repo 檢出執行（`git clone` + `openclaw …` / `bun run openclaw …`）：
+如果從 repo checkout 執行（`git clone` + `openclaw ...` / `bun run openclaw ...`）：
 
-1. 卸載 Gateway 服務**在**刪除 repo 前（使用簡單路徑或手動服務移除）。
+1. **在刪除 repo 之前**解除安裝 Gateway 服務（使用上面的簡易路徑或手動服務移除）。
 2. 刪除 repo 目錄。
-3. 移除狀態 + 工作區如上所示。
+3. 按上面所示移除狀態 + 工作區。

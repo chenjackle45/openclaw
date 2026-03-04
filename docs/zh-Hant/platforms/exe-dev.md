@@ -1,75 +1,70 @@
 ---
-summary: "在 exe.dev VM 上執行 OpenClaw Gateway（VM + HTTPS proxy）以進行遠端存取"
+summary: "在 exe.dev（VM + HTTPS 代理）上執行 OpenClaw Gateway 以進行遠端訪問"
 read_when:
-  - You want a cheap always-on Linux host for the Gateway
-  - You want remote Control UI access without running your own VPS
+  - 你想要廉價的常駐 Linux 主機來執行 Gateway
+  - 你想要遠端控制 UI 訪問而不執行自己的 VPS
 title: "exe.dev（exe.dev）"
 ---
 
 # exe.dev
 
-Goal: OpenClaw Gateway running on an exe.dev VM, reachable from your laptop via: `https://<vm-name>.exe.xyz`
+目標：OpenClaw Gateway 執行在 exe.dev VM 上，可從你的筆記型電腦通過 `https://<vm-name>.exe.xyz` 訪問。
 
-This page assumes exe.dev's default **exeuntu** image. If you picked a different distro, map packages accordingly.
+此頁面假設 exe.dev 的預設 **exeuntu** 映像。如果你選擇了不同的發行版，相應地映射套件。
 
-## Beginner quick path
+## 初級快速路徑
 
 1. [https://exe.new/openclaw](https://exe.new/openclaw)
-2. Fill in your auth key/token as needed
-3. Click on "Agent" next to your VM, and wait...
+2. 填入你的身分驗證金鑰/令牌（如需要）
+3. 按一下你的 VM 旁的「Agent」，然後等待...
 4. ???
-5. Profit
+5. 利潤
 
-## What you need
+## 你需要什麼
 
-- exe.dev account
-- `ssh exe.dev` access to [exe.dev](https://exe.dev) virtual machines (optional)
+- exe.dev 帳號
+- 對 [exe.dev](https://exe.dev) 虛擬機的 `ssh exe.dev` 訪問（選用）
 
-## Automated Install with Shelley
+## 使用 Shelley 的自動安裝
 
-Shelley, [exe.dev](https://exe.dev)'s agent, can install OpenClaw instantly with our
-prompt. The prompt used is as below:
+Shelley 是 [exe.dev](https://exe.dev) 的 agent，可以使用我們的提示快速安裝 OpenClaw。
 
-```
-Set up OpenClaw (https://docs.openclaw.ai/install) on this VM. Use the non-interactive and accept-risk flags for openclaw onboarding. Add the supplied auth or token as needed. Configure nginx to forward from the default port 18789 to the root location on the default enabled site config, making sure to enable Websocket support. Pairing is done by "openclaw devices list" and "openclaw device approve <request id>". Make sure the dashboard shows that OpenClaw's health is OK. exe.dev handles forwarding from port 8000 to port 80/443 and HTTPS for us, so the final "reachable" should be <vm-name>.exe.xyz, without port specification.
-```
+## 手動安裝
 
-## Manual installation
+### 1) 建立 VM
 
-## 1) Create the VM
-
-From your device:
+從你的設備：
 
 ```bash
 ssh exe.dev new
 ```
 
-Then connect:
+然後連線：
 
 ```bash
 ssh <vm-name>.exe.xyz
 ```
 
-Tip: keep this VM **stateful**. OpenClaw stores state under `~/.openclaw/` and `~/.openclaw/workspace/`.
+提示：保持此 VM **有狀態**。OpenClaw 將狀態儲存在 `~/.openclaw/` 和 `~/.openclaw/workspace/`。
 
-## 2) Install prerequisites (on the VM)
+### 2) 安裝先決條件（在 VM 上）
 
 ```bash
 sudo apt-get update
 sudo apt-get install -y git curl jq ca-certificates openssl
 ```
 
-## 3) Install OpenClaw
+### 3) 安裝 OpenClaw
 
-Run the OpenClaw install script:
+執行 OpenClaw 安裝指令碼：
 
 ```bash
 curl -fsSL https://openclaw.ai/install.sh | bash
 ```
 
-## 4) Setup nginx to proxy OpenClaw to port 8000
+### 4) 設定 nginx 以將 OpenClaw 代理到埠 8000
 
-Edit `/etc/nginx/sites-enabled/default` with
+使用以下內容編輯 `/etc/nginx/sites-enabled/default`
 
 ```
 server {
@@ -84,37 +79,32 @@ server {
         proxy_pass http://127.0.0.1:18789;
         proxy_http_version 1.1;
 
-        # WebSocket support
+        # WebSocket 支援
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
 
-        # Standard proxy headers
+        # 標準代理標頭
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
 
-        # Timeout settings for long-lived connections
+        # 長生命週期連線的逾時設定
         proxy_read_timeout 86400s;
         proxy_send_timeout 86400s;
     }
 }
 ```
 
-## 5) Access OpenClaw and grant privileges
+### 5) 訪問 OpenClaw 並授予特權
 
-Access `https://<vm-name>.exe.xyz/` (see the Control UI output from onboarding). If it prompts for auth, paste the
-token from `gateway.auth.token` on the VM (retrieve with `openclaw config get gateway.auth.token`, or generate one
-with `openclaw doctor --generate-gateway-token`). Approve devices with `openclaw devices list` and
-`openclaw devices approve <requestId>`. When in doubt, use Shelley from your browser!
+訪問 `https://<vm-name>.exe.xyz/`（見上線精靈的控制 UI 輸出）。如果它提示身分驗證，從 VM 上的 `gateway.auth.token` 貼上令牌（使用 `openclaw config get gateway.auth.token` 檢索，或使用 `openclaw doctor --generate-gateway-token` 生成一個）。使用 `openclaw devices list` 和 `openclaw devices approve <requestId>` 批准設備。
 
-## Remote Access
+## 遠端訪問
 
-Remote access is handled by [exe.dev](https://exe.dev)'s authentication. By
-default, HTTP traffic from port 8000 is forwarded to `https://<vm-name>.exe.xyz`
-with email auth.
+遠端訪問由 [exe.dev](https://exe.dev) 的身分驗證處理。預設情況下，埠 8000 的 HTTP 流量被轉發到 `https://<vm-name>.exe.xyz`，使用電子郵件身分驗證。
 
-## Updating
+## 更新
 
 ```bash
 npm i -g openclaw@latest
@@ -123,4 +113,4 @@ openclaw gateway restart
 openclaw health
 ```
 
-Guide: [Updating](/zh-Hant/install/updating)
+指南：[更新](/zh-Hant/install/updating)
