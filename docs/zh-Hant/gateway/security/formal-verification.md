@@ -1,5 +1,5 @@
 ---
-title: "Formal verification(形式化驗證)"
+title: "Formal verification（形式化驗證）"
 summary: OpenClaw 最高風險路徑的機器檢查安全模型。
 permalink: /security/formal-verification/
 ---
@@ -15,6 +15,7 @@ permalink: /security/formal-verification/
 ## 為什麼需要形式化驗證？
 
 OpenClaw Gateway 是一個並行系統，管理：
+
 - 多個不可信的 Clients (Sessions)
 - 共用資源 (The Host, Docker Daemon, GPU Models)
 - 複雜的狀態轉換 (Session Lifecycle, Sandbox Lifecycle)
@@ -28,24 +29,25 @@ OpenClaw Gateway 是一個並行系統，管理：
 
 ### 1. Session Lifecycle & Isolation (`SessionLifecycle.tla`)
 
-*狀態：探索性*
+_狀態：探索性_
 
 模擬 Session 的建立、使用、閒置逾時與垃圾回收 (GC)。
 **關鍵屬性 (Invariants) 檢查：**
+
 - **Isolation**: 資料絕不從一個 Session 洩漏到另一個 Session (除非明確共用)。
 - **Liveness**: 閒置的 Sessions 最終會被回收。
 - **Safety**: 銷毀中的 Session 無法被存取。
 
 ### 2. Sandbox State Machine (`Sandbox.tla`)
 
-*狀態：規劃中*
+_狀態：規劃中_
 
 模擬 Docker Container 的生命週期（Created, Running, Paused, Dead, Removed）與 Host 的同步。
 **目標：** 確保 Agent 絕不會在 Sandbox **之外** 執行指令（當政策要求 Sandbox 時）。
 
 ### 3. Tool Authorization (`Authz.tla`)
 
-*狀態：探索性*
+_狀態：探索性_
 
 模擬 Tool Request 的決策邏輯：
 `Request -> (Global Policy) -> (Agent Policy) -> (Session Policy) -> (Extension Hooks) -> Decision`

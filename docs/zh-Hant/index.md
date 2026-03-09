@@ -4,6 +4,7 @@ read_when:
   - 介紹 OpenClaw 給新手
 title: "OpenClaw"
 ---
+
 # OpenClaw 🦞
 
 <p align="center">
@@ -33,7 +34,7 @@ title: "OpenClaw"
 
 這個中文網站是由 **[陳泰呈（Jackle）](https://www.facebook.com/jackle45/)** 因為自己要研究而順手翻譯的。未來不一定會即時更新，也不保證翻譯內容的正確性，純粹就是分享。如需最新且正確的資訊，請參考 [官方英文文件](https://docs.openclaw.ai)。
 
-**對應版本：`v2026.3.2`** · 翻譯更新日期：2026-03-04
+**對應版本：`v2026.3.8`** · 翻譯更新日期：2026-03-09
 
 <CardGroup cols={3}>
   <Card title="Jackle 部落格" href="https://jackle.pro/about" icon="globe">
@@ -160,10 +161,10 @@ Gateway 啟動後開啟瀏覽器 Control UI。
   channels: {
     whatsapp: {
       allowFrom: ["+15555550123"],
-      groups: { "*": { requireMention: true } }
-    }
+      groups: { "*": { requireMention: true } },
+    },
   },
-  messages: { groupChat: { mentionPatterns: ["@openclaw"] } }
+  messages: { groupChat: { mentionPatterns: ["@openclaw"] } },
 }
 ```
 

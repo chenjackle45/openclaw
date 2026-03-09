@@ -101,7 +101,7 @@ WhatsApp runs through the gateway's web channel (Baileys Web). It starts automat
       allowFrom: ["+15555550123", "+447700900123"],
       textChunkLimit: 4000,
       chunkMode: "length", // length | newline
-      mediaMaxMb: 50,
+      mediaMaxMb: 100,
       sendReadReceipts: true, // blue ticks (false in self-chat mode)
       groups: {
         "*": { requireMention: true },
@@ -208,6 +208,8 @@ WhatsApp runs through the gateway's web channel (Baileys Web). It starts automat
 - `configWrites: false` blocks Telegram-initiated config writes (supergroup ID migrations, `/config set|unset`).
 - Telegram stream previews use `sendMessage` + `editMessageText` (works in direct and group chats).
 - Retry policy: see [Retry policy](/zh-Hant/concepts/retry).
+- 在多帳號設定（2+ 個帳號 ID）中，請設定明確的預設值（`channels.telegram.defaultAccount` 或 `channels.telegram.accounts.default`）以避免備援路由；當缺少或無效時，`openclaw doctor` 會發出警告。
+- 最頂層的 `bindings[]` 項目中，`type: "acp"` 可設定論壇主題的永久 ACP 綁定（在 `match.peer.id` 中使用規範化的 `chatId:topic:topicId`）。欄位語義請參閱 [ACP Agents](/zh-Hant/tools/acp-agents#channel-specific-settings)。
 
 ### Discord
 
@@ -304,7 +306,7 @@ WhatsApp runs through the gateway's web channel (Baileys Web). It starts automat
 - Optional `channels.discord.defaultAccount` overrides default account selection when it matches a configured account id.
 - Use `user:<id>` (DM) or `channel:<id>` (guild channel) for delivery targets; bare numeric IDs are rejected.
 - Guild slugs are lowercase with spaces replaced by `-`; channel keys use the slugged name (no `#`). Prefer guild IDs.
-- Bot-authored messages are ignored by default. `allowBots: true` enables them (own messages still filtered).
+- Bot-authored messages are ignored by default. `allowBots: true` enables them; use `allowBots: "mentions"` to only accept bot messages that mention the bot (own messages still filtered).
 - `maxLinesPerMessage` (default 17) splits tall messages even when under 2000 chars.
 - `channels.discord.threadBindings` controls Discord thread-bound routing:
   - `enabled`: Discord override for thread-bound session features (`/focus`, `/unfocus`, `/agents`, `/session idle`, `/session max-age`, and bound delivery/routing)
@@ -317,6 +319,9 @@ WhatsApp runs through the gateway's web channel (Baileys Web). It starts automat
 - OpenClaw additionally attempts voice receive recovery by leaving/rejoining a voice session after repeated decrypt failures.
 - `channels.discord.streaming` is the canonical stream mode key. Legacy `streamMode` and boolean `streaming` values are auto-migrated.
 - `channels.discord.dangerouslyAllowNameMatching` re-enables mutable name/tag matching (break-glass compatibility mode).
+- `channels.discord.guilds.<id>.ignoreOtherMentions`（及頻道覆蓋）會丟棄提及其他使用者或身份組但未提及 Bot 的訊息（排除 @everyone/@here）。
+- 最頂層的 `bindings[]` 項目中，`type: "acp"` 可設定頻道和討論串的永久 ACP 綁定（在 `match.peer.id` 中使用頻道/討論串 ID）。欄位語義請參閱 [ACP Agents](/zh-Hant/tools/acp-agents#channel-specific-settings)。
+- `channels.discord.autoPresence` 將執行期可用性對應到 Bot 狀態（健康 => 上線、降級 => 閒置、耗盡 => 請勿打擾），並允許選用性的狀態文字覆蓋。
 
 **Reaction notification modes:** `off` (none), `own` (bot's messages, default), `all` (all messages), `allowlist` (from `guilds.<id>.users` on all messages).
 
@@ -404,6 +409,7 @@ WhatsApp runs through the gateway's web channel (Baileys Web). It starts automat
       chunkMode: "length",
       streaming: "partial", // off | partial | block | progress (preview mode)
       nativeStreaming: true, // use Slack native streaming API when streaming=partial
+      typingReaction: "hourglass_flowing_sand",
       mediaMaxMb: 20,
     },
   },
@@ -416,6 +422,7 @@ WhatsApp runs through the gateway's web channel (Baileys Web). It starts automat
 - Optional `channels.slack.defaultAccount` overrides default account selection when it matches a configured account id.
 - `channels.slack.streaming` is the canonical stream mode key. Legacy `streamMode` and boolean `streaming` values are auto-migrated.
 - Use `user:<id>` (DM) or `channel:<id>` for delivery targets.
+- `typingReaction` 在回覆執行時對入站 Slack 訊息新增暫時反應，完成後移除。使用 Slack emoji 短代碼，例如 `"hourglass_flowing_sand"`。
 
 **Reaction notification modes:** `off`, `own` (default), `all`, `allowlist` (from `reactionAllowlist`).
 
@@ -445,6 +452,12 @@ Mattermost ships as a plugin: `openclaw plugins install @openclaw/mattermost`.
       oncharPrefixes: [">", "!"],
       textChunkLimit: 4000,
       chunkMode: "length",
+      commands: {
+        native: true, // opt-in
+        nativeSkills: true,
+        callbackPath: "/api/channels/mattermost/command",
+        callbackUrl: "https://gateway.example.com/api/channels/mattermost/command",
+      },
     },
   },
 }
@@ -455,6 +468,10 @@ Chat modes: `oncall` (respond on @-mention, default), `onmessage` (every message
 - `channels.mattermost.configWrites`: allow or deny Mattermost-initiated config writes.
 - `channels.mattermost.requireMention`: require `@mention` before replying in channels.
 - Optional `channels.mattermost.defaultAccount` overrides default account selection when it matches a configured account id.
+- `channels.mattermost.commands.native: true` 啟用 Mattermost slash command 整合（預設關閉，須選擇性啟用）。
+- `channels.mattermost.commands.nativeSkills: true` 將已安裝的 skills 作為 native slash commands 暴露。
+- `channels.mattermost.commands.callbackPath`：OpenClaw Gateway 的 slash command 回呼路徑（預設 `/api/channels/mattermost/command`）。
+- `channels.mattermost.commands.callbackUrl`：Mattermost 伺服器用於呼叫 OpenClaw 的完整 URL（需在 Mattermost 系統設定的 `AllowedUntrustedInternalConnections` 中加入 Gateway 主機名稱或 IP）。
 
 ### Signal
 
@@ -722,7 +739,7 @@ Include your own number in `allowFrom` to enable self-chat mode (ignores native 
 - Override per channel: `channels.discord.commands.native` (bool or `"auto"`). `false` clears previously registered commands.
 - `channels.telegram.customCommands` adds extra Telegram bot menu entries.
 - `bash: true` enables `! <cmd>` for host shell. Requires `tools.elevated.enabled` and sender in `tools.elevated.allowFrom.<channel>`.
-- `config: true` enables `/config` (reads/writes `openclaw.json`).
+- `config: true` enables `/config` (reads/writes `openclaw.json`)。對於 gateway `chat.send` 用戶端，永久性的 `/config set|unset` 寫入也需要 `operator.admin`；唯讀的 `/config show` 仍對一般寫入範圍的 operator 用戶端開放。
 - `channels.<provider>.configWrites` gates config mutations per channel (default: true).
 - `allowFrom` is per-provider. When set, it is the **only** authorization source (channel allowlists/pairing and `useAccessGroups` are ignored).
 - `useAccessGroups: false` allows commands to bypass access-group policies when `allowFrom` is not set.
@@ -780,6 +797,20 @@ Max total characters injected across all workspace bootstrap files. Default: `15
 ```json5
 {
   agents: { defaults: { bootstrapTotalMaxChars: 150000 } },
+}
+```
+
+### `agents.defaults.bootstrapPromptTruncationWarning`
+
+控制當 bootstrap 內容被截斷時，Agent 可見的警告文字。預設值：`"once"`。
+
+- `"off"`：永不將警告文字注入系統提示詞。
+- `"once"`：每個唯一截斷特徵碼注入一次（建議）。
+- `"always"`：截斷存在時每次執行都注入警告。
+
+```json5
+{
+  agents: { defaults: { bootstrapPromptTruncationWarning: "once" } }, // off | once | always
 }
 ```
 
@@ -872,14 +903,15 @@ Time format in system prompt. Default: `auto` (OS preference).
 
 **Built-in alias shorthands** (only apply when the model is in `agents.defaults.models`):
 
-| Alias          | Model                           |
-| -------------- | ------------------------------- |
-| `opus`         | `anthropic/claude-opus-4-6`     |
-| `sonnet`       | `anthropic/claude-sonnet-4-5`   |
-| `gpt`          | `openai/gpt-5.2`                |
-| `gpt-mini`     | `openai/gpt-5-mini`             |
-| `gemini`       | `google/gemini-3-pro-preview`   |
-| `gemini-flash` | `google/gemini-3-flash-preview` |
+| Alias               | Model                                  |
+| ------------------- | -------------------------------------- |
+| `opus`              | `anthropic/claude-opus-4-6`            |
+| `sonnet`            | `anthropic/claude-sonnet-4-6`          |
+| `gpt`               | `openai/gpt-5.4`                       |
+| `gpt-mini`          | `openai/gpt-5-mini`                    |
+| `gemini`            | `google/gemini-3.1-pro-preview`        |
+| `gemini-flash`      | `google/gemini-3-flash-preview`        |
+| `gemini-flash-lite` | `google/gemini-3.1-flash-lite-preview` |
 
 Your configured aliases always win over defaults.
 
@@ -940,6 +972,7 @@ Periodic heartbeat runs.
         prompt: "Read HEARTBEAT.md if it exists...",
         ackMaxChars: 300,
         suppressToolErrorWarnings: false,
+        lightContext: false, // default: false; true keeps only HEARTBEAT.md from workspace bootstrap files
       },
     },
   },
@@ -948,6 +981,7 @@ Periodic heartbeat runs.
 
 - `every`: duration string (ms/s/m/h). Default: `30m`.
 - `suppressToolErrorWarnings`: when true, suppresses tool error warning payloads during heartbeat runs.
+- `lightContext`：為 true 時，heartbeat 執行使用輕量 bootstrap 內容，僅保留工作區 bootstrap 檔案中的 `HEARTBEAT.md`。
 - `directPolicy`: direct/DM delivery policy. `allow` (default) permits direct-target delivery. `block` suppresses direct-target delivery and emits `reason=dm-blocked`.
 - Per-agent: set `agents.list[].heartbeat`. When any agent defines `heartbeat`, **only those agents** run heartbeats.
 - Heartbeats run full agent turns — shorter intervals burn more tokens.
@@ -963,6 +997,8 @@ Periodic heartbeat runs.
         reserveTokensFloor: 24000,
         identifierPolicy: "strict", // strict | off | custom
         identifierInstructions: "Preserve deployment IDs, ticket IDs, and host:port pairs exactly.", // used when identifierPolicy=custom
+        postCompactionSections: ["Session Startup", "Red Lines"],
+        model: "openrouter/anthropic/claude-sonnet-4-5",
         memoryFlush: {
           enabled: true,
           softThresholdTokens: 6000,
@@ -978,6 +1014,8 @@ Periodic heartbeat runs.
 - `mode`: `default` or `safeguard` (chunked summarization for long histories). See [Compaction](/zh-Hant/concepts/compaction).
 - `identifierPolicy`: `strict` (default), `off`, or `custom`. `strict` prepends built-in opaque identifier retention guidance during compaction summarization.
 - `identifierInstructions`: optional custom identifier-preservation text used when `identifierPolicy=custom`.
+- `postCompactionSections`：選用的 AGENTS.md H2/H3 章節名稱，壓縮後重新注入。預設為 `["Session Startup", "Red Lines"]`；設為 `[]` 可停用重新注入。未設定或明確設定為該預設組合時，舊版 `Every Session`/`Safety` 標題也被接受為向後相容回退。
+- `model`：選用的 `provider/model-id` 覆蓋，僅用於壓縮摘要。當主要 session 應保留某個模型但壓縮摘要應在另一個模型上執行時使用；未設定時，壓縮使用 session 的主要模型。
 - `memoryFlush`: silent agentic turn before auto-compaction to store durable memories. Skipped when workspace is read-only.
 
 ### `agents.defaults.contextPruning`
@@ -1245,6 +1283,15 @@ scripts/sandbox-browser-setup.sh   # optional browser image
           deny: ["canvas"],
           elevated: { enabled: true },
         },
+        runtime: {
+          type: "acp",
+          acp: {
+            agent: "codex",
+            backend: "acpx",
+            mode: "persistent",
+            cwd: "/workspace/openclaw",
+          },
+        },
       },
     ],
   },
@@ -1258,6 +1305,7 @@ scripts/sandbox-browser-setup.sh   # optional browser image
 - `identity.avatar`: workspace-relative path, `http(s)` URL, or `data:` URI.
 - `identity` derives defaults: `ackReaction` from `emoji`, `mentionPatterns` from `name`/`emoji`.
 - `subagents.allowAgents`: allowlist of agent ids for `sessions_spawn` (`["*"]` = any; default: same agent only).
+- `runtime`：選用的個別 Agent 執行期描述符。當 Agent 應預設為 ACP 工作區 session 時，使用 `type: "acp"` 搭配 `runtime.acp` 預設值（`agent`、`backend`、`mode`、`cwd`）。
 - Sandbox inheritance guard: if the requester session is sandboxed, `sessions_spawn` rejects targets that would run unsandboxed.
 
 ---
@@ -1283,9 +1331,11 @@ Run multiple isolated agents inside one Gateway. See [Multi-Agent](/zh-Hant/conc
 
 ### Binding match fields
 
+- `type`（選用）：`route` 表示一般路由（缺少 type 時預設為 route），`acp` 表示永久 ACP 對話綁定。
 - `match.channel` (required)
 - `match.accountId` (optional; `*` = any account; omitted = default account)
 - `match.peer` (optional; `{ kind: direct|group|channel, id }`)
+- `acp`（選用；僅適用於 `type: "acp"`）：`{ mode, label, cwd, backend }`
 - `match.guildId` / `match.teamId` (optional; channel-specific)
 
 **Deterministic match order:**
@@ -1298,6 +1348,8 @@ Run multiple isolated agents inside one Gateway. See [Multi-Agent](/zh-Hant/conc
 6. Default agent
 
 Within each tier, the first matching `bindings` entry wins.
+
+對於 `type: "acp"` 條目，OpenClaw 透過精確的對話身份（`match.channel` + 帳號 + `match.peer.id`）進行解析，不使用上述路由綁定層次順序。
 
 ### Per-agent access profiles
 
@@ -1569,6 +1621,7 @@ Batches rapid text-only messages from the same sender into a single agent turn. 
       },
       openai: {
         apiKey: "openai_api_key",
+        baseUrl: "https://api.openai.com/v1",
         model: "gpt-4o-mini-tts",
         voice: "alloy",
       },
@@ -1581,6 +1634,8 @@ Batches rapid text-only messages from the same sender into a single agent turn. 
 - `summaryModel` overrides `agents.defaults.model.primary` for auto-summary.
 - `modelOverrides` is enabled by default; `modelOverrides.allowProvider` defaults to `false` (opt-in).
 - API keys fall back to `ELEVENLABS_API_KEY`/`XI_API_KEY` and `OPENAI_API_KEY`.
+- `openai.baseUrl` 覆蓋 OpenAI TTS 端點。解析順序為設定值、`OPENAI_TTS_BASE_URL`，然後 `https://api.openai.com/v1`。
+- 當 `openai.baseUrl` 指向非 OpenAI 端點時，OpenClaw 將其視為 OpenAI 相容的 TTS 伺服器，並放寬模型/語音驗證。
 
 ---
 
@@ -1600,6 +1655,7 @@ Defaults for Talk mode (macOS/iOS/Android).
     outputFormat: "mp3_44100_128",
     apiKey: "elevenlabs_api_key",
     interruptOnSpeech: true,
+    silenceTimeoutMs: 1500,
   },
 }
 ```
@@ -1608,6 +1664,7 @@ Defaults for Talk mode (macOS/iOS/Android).
 - `apiKey` and `providers.*.apiKey` accept plaintext strings or SecretRef objects.
 - `ELEVENLABS_API_KEY` fallback applies only when no Talk API key is configured.
 - `voiceAliases` lets Talk directives use friendly names.
+- `silenceTimeoutMs` 控制 Talk 模式在使用者靜音後等待多長時間再發送轉錄內容。未設定時保持平台預設暫停視窗（`macOS 和 Android 上為 700 毫秒，iOS 上為 900 毫秒`）。
 
 ---
 
@@ -1617,7 +1674,7 @@ Defaults for Talk mode (macOS/iOS/Android).
 
 `tools.profile` sets a base allowlist before `tools.allow`/`tools.deny`:
 
-Local onboarding defaults new local configs to `tools.profile: "messaging"` when unset (existing explicit profiles are preserved).
+本機 onboarding 在未設定時，預設新的本機設定使用 `tools.profile: "coding"`（現有的明確設定不變）。
 
 | Profile     | Includes                                                                                  |
 | ----------- | ----------------------------------------------------------------------------------------- |
@@ -1945,7 +2002,9 @@ OpenClaw uses the pi-coding-agent model catalog. Add custom providers via `model
 - Use `authHeader: true` + `headers` for custom auth needs.
 - Override agent config root with `OPENCLAW_AGENT_DIR` (or `PI_CODING_AGENT_DIR`).
 - Merge precedence for matching provider IDs:
-  - Non-empty agent `models.json` `apiKey`/`baseUrl` win.
+  - 非空的 agent `models.json` `baseUrl` 值優先。
+  - 非空的 agent `apiKey` 值只有在該供應商不受目前設定/auth-profile 內容的 SecretRef 管理時才優先。
+  - 受 SecretRef 管理的供應商 `apiKey` 值從來源標記刷新（env refs 為 `ENV_VAR_NAME`，file/exec refs 為 `secretref-managed`），而非持久化已解析的 secret。
   - Empty or missing agent `apiKey`/`baseUrl` fall back to `models.providers` in config.
   - Matching model `contextWindow`/`maxTokens` use the higher value between explicit config and implicit catalog values.
   - Use `models.mode: "replace"` when you want config to fully rewrite `models.json`.
@@ -2251,7 +2310,9 @@ See [Local Models](/zh-Hant/gateway/local-models). TL;DR: run MiniMax M2.5 via L
 - `plugins.entries.<id>.apiKey`: plugin-level API key convenience field (when supported by the plugin).
 - `plugins.entries.<id>.env`: plugin-scoped env var map.
 - `plugins.entries.<id>.config`: plugin-defined config object (validated by plugin schema).
+- `plugins.entries.<id>.hooks.allowPromptInjection`：為 `false` 時，核心封鎖 `before_prompt_build` 並忽略舊版 `before_agent_start` 中的提示詞修改欄位，同時保留舊版 `modelOverride` 和 `providerOverride`。
 - `plugins.slots.memory`: pick the active memory plugin id, or `"none"` to disable memory plugins.
+- `plugins.slots.contextEngine`：選擇作用中的 context engine 外掛 ID；預設為 `"legacy"`，除非你安裝並選擇其他引擎。
 - `plugins.installs`: CLI-managed install metadata used by `openclaw plugins update`.
   - Includes `source`, `spec`, `sourcePath`, `installPath`, `version`, `resolvedName`, `resolvedVersion`, `resolvedSpec`, `integrity`, `shasum`, `resolvedAt`, `installedAt`.
   - Treat `plugins.installs.*` as managed state; prefer CLI commands over manual edits.
@@ -2285,6 +2346,7 @@ See [Plugins](/zh-Hant/tools/plugin).
     // extraArgs: [],
     // executablePath: "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
     // attachOnly: false,
+    // relayBindHost: "0.0.0.0", // only when the extension relay must be reachable across namespaces (for example WSL2)
   },
 }
 ```
@@ -2299,6 +2361,7 @@ See [Plugins](/zh-Hant/tools/plugin).
 - Control service: loopback only (port derived from `gateway.port`, default `18791`).
 - `extraArgs` appends extra launch flags to local Chromium startup (for example
   `--disable-gpu`, window sizing, or debug flags).
+- `relayBindHost` 變更 Chrome 擴充功能 relay 的監聽位置。保持未設定以限制僅 loopback 存取；僅當 relay 需要跨越命名空間邊界（例如 WSL2）且主機網路已受信任時，才設定明確的非 loopback 綁定位址（例如 `0.0.0.0`）。
 
 ---
 
@@ -2388,6 +2451,7 @@ See [Plugins](/zh-Hant/tools/plugin).
 - `gateway.auth.rateLimit`: optional failed-auth limiter. Applies per client IP and per auth scope (shared-secret and device-token are tracked independently). Blocked attempts return `429` + `Retry-After`.
   - `gateway.auth.rateLimit.exemptLoopback` defaults to `true`; set `false` when you intentionally want localhost traffic rate-limited too (for test setups or strict proxy deployments).
 - Browser-origin WS auth attempts are always throttled with loopback exemption disabled (defense-in-depth against browser-based localhost brute force).
+- 如果 `gateway.auth.token` 和 `gateway.auth.password` 都已設定（包括 SecretRefs），請明確設定 `gateway.auth.mode` 為 `token` 或 `password`。當兩者都已設定且 mode 未設定時，啟動和服務安裝/修復流程會失敗。
 - `tailscale.mode`: `serve` (tailnet only, loopback bind) or `funnel` (public, requires auth).
 - `controlUi.allowedOrigins`: explicit browser-origin allowlist for Gateway WebSocket connects. Required when browser clients are expected from non-loopback origins.
 - `controlUi.dangerouslyAllowHostHeaderOriginFallback`: dangerous mode that enables Host-header origin fallback for deployments that intentionally rely on Host-header origin policy.

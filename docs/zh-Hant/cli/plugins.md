@@ -1,73 +1,98 @@
 ---
-title: "plugins（外掛管理）"
-summary: "`openclaw plugins` CLI 參考（列表、安裝、啟用/停用與診斷）"
+summary: "`openclaw plugins` CLI 參考（列表、安裝、解除安裝、啟用/停用、診斷）"
 read_when:
-  - 想要安裝或管理 Gateway 外掛時
-  - 想要偵錯外掛加載失敗的問題時
+  - 想要安裝或管理 Gateway 進程內 plugins 時
+  - 想要偵錯 plugin 載入失敗時
+title: "plugins（Plugin 管理）"
 ---
 
 # `openclaw plugins`
 
-管理 Gateway 外掛與擴充功能（這些功能會直接在 Gateway 進程中加載）。
+管理 Gateway plugins/extensions（在進程內載入）。
 
 相關資訊：
 
-- 外掛系統總覽：[外掛 (Plugins)](/zh-Hant/plugin)
-- 外掛定義與規格：[外掛清單 (Plugin manifest)](/zh-Hant/plugins/manifest)
-- 安全性加固：[安全性 (Security)](/zh-Hant/gateway/security)
+- Plugin 系統：[Plugins](/zh-Hant/tools/plugin)
+- Plugin manifest + schema：[Plugin manifest](/zh-Hant/plugins/manifest)
+- 安全性強化：[Security](/zh-Hant/gateway/security)
 
-## 指令說明
+## 指令
 
 ```bash
-# 列出所有外掛
 openclaw plugins list
-
-# 查看特定外掛的詳細資訊
-openclaw plugins info <外掛ID>
-
-# 啟用或停用外掛
-openclaw plugins enable <外掛ID>
-openclaw plugins disable <外掛ID>
-
-# 執行外掛系統診斷
+openclaw plugins info <id>
+openclaw plugins enable <id>
+openclaw plugins disable <id>
+openclaw plugins uninstall <id>
 openclaw plugins doctor
-
-# 更新外掛（單一或全部）
-openclaw plugins update <外掛ID>
+openclaw plugins update <id>
 openclaw plugins update --all
 ```
 
-OpenClaw 內建了一些外掛，但預設為停用狀態。請使用 `plugins enable` 來啟用它們。
+內建 plugins 隨 OpenClaw 一起發布但預設停用。使用 `plugins enable` 來
+啟用它們。
 
-所有外掛都必須包含一個 `openclaw.plugin.json` 檔案，並定義對應的 JSON Schema (`configSchema`)，即使該 Schema 為空。缺少或無效的資訊清單或 Schema 會導致外掛無法加載，並造成配置驗證失敗。
+所有 plugins 必須包含一個帶有內聯 JSON Schema 的 `openclaw.plugin.json` 檔案
+（`configSchema`，即使為空）。缺少/無效的 manifests 或 schemas 會阻止
+plugin 載入並導致 config 驗證失敗。
 
-### 安裝外掛
+### 安裝
 
 ```bash
-openclaw plugins install <路徑或規格>
+openclaw plugins install <path-or-spec>
+openclaw plugins install <npm-spec> --pin
 ```
 
-**安全提醒**：安裝外掛等同於執行來源不明的程式碼，建議優先選用已鎖定版本的官方或受信任外掛。
+安全注意事項：將 plugin 安裝視同執行程式碼。建議優先使用固定版本。
 
-支援格式：`.zip`, `.tgz`, `.tar.gz`, `.tar`。
+npm specs 僅限**registry**（套件名稱 + 可選的**確切版本**或
+**dist-tag**）。Git/URL/file specs 和 semver ranges 均被拒絕。依賴安裝使用 `--ignore-scripts` 以確保安全。
 
-使用 `--link` 旗標可連結本地目錄而不進行複製（這會將該路徑加入 `plugins.load.paths`）：
+bare specs 和 `@latest` 保持在穩定軌道。若 npm 將其中任一解析為預發布版本，OpenClaw 會停止並要求您使用預發布標籤（如 `@beta`/`@rc`）或確切的預發布版本（如
+`@1.2.3-beta.4`）明確選擇。
+
+若 bare install spec 匹配到內建 plugin ID（例如 `diffs`），OpenClaw
+會直接安裝內建 plugin。若要安裝同名的 npm 套件，
+請使用明確的 scoped spec（例如 `@scope/diffs`）。
+
+支援的封存格式：`.zip`、`.tgz`、`.tar.gz`、`.tar`。
+
+使用 `--link` 以避免複製本地目錄（加入至 `plugins.load.paths`）：
 
 ```bash
 openclaw plugins install -l ./my-plugin
 ```
 
-### 更新外掛
+使用 `--pin` 於 npm 安裝以將解析後的確切 spec（`name@version`）儲存至
+`plugins.installs`，同時保持預設行為未固定。
+
+### 解除安裝
 
 ```bash
-# 更新特定外掛
-openclaw plugins update <外掛ID>
-
-# 更新所有追蹤的外掛
-openclaw plugins update --all
-
-# 執行乾跑 (Dry-run)，僅預覽變更而不寫入
-openclaw plugins update <外掛ID> --dry-run
+openclaw plugins uninstall <id>
+openclaw plugins uninstall <id> --dry-run
+openclaw plugins uninstall <id> --keep-files
 ```
 
-**注意**：更新功能僅適用於透過 npm 安裝的外掛（這些外掛被記錄在 `plugins.installs` 中）。
+`uninstall` 從 `plugins.entries`、`plugins.installs`、
+plugin 允許清單及適用時的鏈接 `plugins.load.paths` 條目中移除 plugin 記錄。
+對於目前啟用的記憶體 plugins，記憶體插槽會重設為 `memory-core`。
+
+預設情況下，解除安裝也會移除目前狀態目錄 extensions 根目錄下的 plugin 安裝目錄（`$OPENCLAW_STATE_DIR/extensions/<id>`）。使用
+`--keep-files` 可在磁碟上保留檔案。
+
+`--keep-config` 作為 `--keep-files` 的已棄用別名仍受支援。
+
+### 更新
+
+```bash
+openclaw plugins update <id>
+openclaw plugins update --all
+openclaw plugins update <id> --dry-run
+```
+
+更新僅適用於從 npm 安裝的 plugins（追蹤在 `plugins.installs` 中）。
+
+當存在已儲存的完整性雜湊且取得的 artifact 雜湊發生變化時，
+OpenClaw 會印出警告並在繼續前要求確認。在 CI/非互動式執行中使用
+全域 `--yes` 以略過提示。

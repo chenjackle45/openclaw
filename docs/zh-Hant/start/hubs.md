@@ -15,7 +15,7 @@ title: "Docs Hubs（文件中樞）"
 
 ## 從這裡開始
 
-- [首頁](/)
+- [首頁](/zh-Hant/)
 - [開始使用](/zh-Hant/start/getting-started)
 - [快速開始](/zh-Hant/start/quickstart)
 - [入門](/zh-Hant/start/onboarding)

@@ -7,135 +7,138 @@ title: "Agent Loop（Agent 迴圈）"
 
 # Agent Loop（OpenClaw）
 
-Agent 迴圈是 Agent 的一次完整「真實」執行過程：輸入 → 上下文組裝 → 模型推理 → 工具執行 → 串流回覆 → 持久化。這是將訊息轉化為行動和最終回覆的主權路徑，同時保持會話狀態的一致性。
+Agentic 迴圈是 agent 的完整「真實」執行過程：接收 → 上下文組裝 → 模型推理 → 工具執行 → 串流回覆 → 持久化。這是將訊息轉化為動作和最終回覆的權威路徑，同時保持工作階段狀態一致。
 
-在 OpenClaw 中，迴圈是每個會話單個、序列化的執行，在模型思考、呼叫工具和串流輸出時發送生命週期和串流事件。本文件解釋了這個真實迴圈是如何端到端連接的。
+在 OpenClaw 中，一個迴圈是每個工作階段的單一、序列化執行，在模型思考、呼叫工具和串流輸出時發出生命週期和串流事件。本文件說明該真實迴圈如何端到端串接。
 
 ## 進入點
 
 - Gateway RPC：`agent` 和 `agent.wait`。
-- CLI：`agent` 命令。
+- CLI：`agent` 指令。
 
-## 運作方式（高層級）
+## 工作原理（高層次）
 
-1. `agent` RPC 驗證參數、解析會話（sessionKey/sessionId）、持久化會話中繼資料，並立即返回 `{ runId, acceptedAt }`。
-2. `agentCommand` 執行 Agent：
-   - 解析模型 + 思考/詳細模式預設值
+1. `agent` RPC 驗證參數，解析工作階段（sessionKey/sessionId），持久化工作階段 metadata，立即返回 `{ runId, acceptedAt }`。
+2. `agentCommand` 執行 agent：
+   - 解析模型 + thinking/verbose 預設
    - 載入技能快照
-   - 呼叫 `runEmbeddedPiAgent` (pi-agent-core 執行環境)
-   - 如果內嵌迴圈未發送，則發送 **lifecycle end/error**
+   - 呼叫 `runEmbeddedPiAgent`（pi-agent-core 執行時）
+   - 若嵌入式迴圈未發出生命週期 end/error，則發出**生命週期 end/error**
 3. `runEmbeddedPiAgent`：
-   - 透過每會話 + 全域佇列序列化執行
-   - 解析模型 + 驗證設定檔並建構 pi 會話
-   - 訂閱 pi 事件並串流助手/工具增量
-   - 強制執行逾時 -> 超過則中止執行
-   - 返回負載 + 使用量中繼資料
+   - 透過每個工作階段 + 全域佇列序列化執行
+   - 解析模型 + 驗證設定檔並建立 pi 工作階段
+   - 訂閱 pi 事件並串流助理/工具 delta
+   - 強制執行逾時 -> 超時時中止執行
+   - 返回 payload + 使用 metadata
 4. `subscribeEmbeddedPiSession` 將 pi-agent-core 事件橋接到 OpenClaw `agent` 串流：
    - 工具事件 => `stream: "tool"`
-   - 助手增量 => `stream: "assistant"`
-   - 生命週期事件 => `stream: "lifecycle"` (`phase: "start" | "end" | "error"`)
+   - 助理 delta => `stream: "assistant"`
+   - 生命週期事件 => `stream: "lifecycle"`（`phase: "start" | "end" | "error"`）
 5. `agent.wait` 使用 `waitForAgentJob`：
-   - 等待 `runId` 的 **lifecycle end/error**
+   - 等待 `runId` 的**生命週期 end/error**
    - 返回 `{ status: ok|error|timeout, startedAt, endedAt, error? }`
 
-## 佇列與並行性
+## 佇列 + 並發
 
-- 執行按會話鍵（會話車道）以及可選的全域車道進行序列化。
-- 這可以防止工具/會話競爭，並保持會話歷史一致。
-- 傳訊頻道可以選擇佇列模式（collect/steer/followup），該模式會餵入此車道系統。請參閱 [Command Queue](/zh-Hant/concepts/queue)。
+- 執行按工作階段金鑰（工作階段通道）序列化，並可選擇透過全域通道。
+- 這防止工具/工作階段競爭並保持工作階段歷史一致。
+- 訊息頻道可以選擇佇列模式（collect/steer/followup）來饋送這個通道系統。
+  請參閱 [Command Queue](/zh-Hant/concepts/queue)。
 
-## 會話與工作區準備
+## 工作階段 + 工作區準備
 
-- 工作區會被解析並建立；沙盒化執行可能會重定向到沙盒工作區根路徑。
-- 技能會被載入（或從快照重用）並注入環境與提示詞中。
-- 啟動/上下文檔案會被解析並注入系統提示詞報告。
-- 會話寫入鎖被獲取；在串流前開啟並準備 `SessionManager`。
+- 工作區被解析並建立；沙盒執行可能重定向到沙盒工作區根目錄。
+- 技能被載入（或從快照重用）並注入到環境和 prompt 中。
+- Bootstrap/上下文檔案被解析並注入到 system prompt 報告中。
+- 獲取工作階段寫入鎖；`SessionManager` 在串流前開啟並準備。
 
-## 提示詞組裝與系統提示詞
+## Prompt 組裝 + system prompt
 
-- 系統提示詞由 OpenClaw 基礎提示詞、技能提示詞、啟動上下文和每次執行的覆寫組裝而成。
-- 模型特定的限制和壓縮保留權杖會被強制執行。
-- 請參閱 [System Prompt](/zh-Hant/concepts/system-prompt) 了解模型看到的內容。
+- System prompt 由 OpenClaw 的基礎 prompt、技能 prompt、bootstrap 上下文和每執行覆蓋建構。
+- 強制執行模型特定限制和壓縮保留 token。
+- 請參閱 [System prompt](/zh-Hant/concepts/system-prompt) 了解模型看到什麼。
 
-## 鉤子點（您可以攔截的地方）
+## Hook 點（可以攔截的地方）
 
-OpenClaw 有兩種鉤子系統：
+OpenClaw 有兩個 hook 系統：
 
-- **內部鉤子** (Gateway hooks)：用於命令和生命週期事件的事件驅動腳本。
-- **外掛鉤子**：Agent/工具生命週期和 Gateway 管線中的擴充點。
+- **內部 hooks**（Gateway hooks）：用於指令和生命週期事件的事件驅動指令碼。
+- **外掛程式 hooks**：agent/工具生命週期和 gateway 管線中的擴展點。
 
-### 內部鉤子 (Gateway hooks)
+### 內部 hooks（Gateway hooks）
 
-- **`agent:bootstrap`**：在最終確定系統提示詞前建立啟動檔案時執行。用於新增/移除啟動上下文檔案。
-- **命令鉤子**：`/new`、`/reset`、`/stop` 和其他命令事件。
+- **`agent:bootstrap`**：在 system prompt 最終確定前建構 bootstrap 檔案時執行。
+  用於新增/移除 bootstrap 上下文檔案。
+- **指令 hooks**：`/new`、`/reset`、`/stop` 和其他指令事件（見 Hooks 文件）。
 
-請參閱 [Hooks](/zh-Hant/automation/hooks) 了解設定與範例。
+請參閱 [Hooks](/zh-Hant/automation/hooks) 了解設定和範例。
 
-### 外掛鉤子（Agent + Gateway 生命週期）
+### 外掛程式 hooks（agent + gateway 生命週期）
 
-這些運行在 Agent 迴圈或 Gateway 管線中：
+這些在 agent 迴圈或 gateway 管線內執行：
 
-- **`before_model_resolve`**：在模型解析前執行（無 `messages`），以確定性地覆寫提供者/模型。
-- **`before_prompt_build`**：在會話載入後執行（帶 `messages`），在提示詞提交前注入 `prependContext`/`systemPrompt`。
-- **`before_agent_start`**：舊版相容性鉤子，可能在任一階段執行；建議使用上述明確的鉤子。
-- **`agent_end`**：完成後檢查最終訊息列表和執行中繼資料。
+- **`before_model_resolve`**：在 pre-session（無 `messages`）執行，以在模型解析前確定性覆蓋 provider/模型。
+- **`before_prompt_build`**：在工作階段載入後（帶有 `messages`）執行，在 prompt 提交前注入 `prependContext`、`systemPrompt`、`prependSystemContext` 或 `appendSystemContext`。對每回合動態文字使用 `prependContext`，對應在 system prompt 空間的穩定指引使用 system-context 欄位。
+- **`before_agent_start`**：舊版相容 hook，可能在任一階段執行；優先使用上面的明確 hooks。
+- **`agent_end`**：在完成後檢查最終訊息列表和執行 metadata。
 - **`before_compaction` / `after_compaction`**：觀察或標註壓縮週期。
 - **`before_tool_call` / `after_tool_call`**：攔截工具參數/結果。
-- **`tool_result_persist`**：在工具結果寫入會話轉錄前，同步對其進行轉換。
-- **`message_received` / `message_sending` / `message_sent`**：入站 + 出站訊息鉤子。
-- **`session_start` / `session_end`**：會話生命週期邊界。
-- **`gateway_start` / `gateway_stop`**：Gateway 生命週期事件。
+- **`tool_result_persist`**：在工具結果寫入工作階段轉錄前同步轉換它們。
+- **`message_received` / `message_sending` / `message_sent`**：入站 + 出站訊息 hooks。
+- **`session_start` / `session_end`**：工作階段生命週期邊界。
+- **`gateway_start` / `gateway_stop`**：gateway 生命週期事件。
 
-請參閱 [Plugins](/zh-Hant/tools/plugin#plugin-hooks) 了解鉤子 API 和註冊細節。
+請參閱 [Plugins](/zh-Hant/tools/plugin#plugin-hooks) 了解 hook API 和註冊詳情。
 
-## 串流與部分回覆
+## 串流 + 部分回覆
 
-- 助手增量從 pi-agent-core 串流傳輸，並作為 `assistant` 事件發送。
-- 區塊串流可以在 `text_end` 或 `message_end` 時發送部分回覆。
-- 推理 (Reasoning) 串流可以作為單獨的串流或區塊回覆發送。
+- 助理 delta 從 pi-agent-core 串流並作為 `assistant` 事件發出。
+- 區塊串流可以在 `text_end` 或 `message_end` 時發出部分回覆。
+- 推理串流可以作為單獨串流或區塊回覆發出。
 - 請參閱 [Streaming](/zh-Hant/concepts/streaming) 了解分塊和區塊回覆行為。
 
-## 工具執行與傳訊工具
+## 工具執行 + 訊息工具
 
-- 工具開始/更新/結束事件在 `tool` 串流中發送。
-- 工具結果在記錄/發送前會針對大小和圖片負載進行清理。
-- 傳訊工具的發送會被追蹤，以抑制重複的助手確認訊息。
+- 工具 start/update/end 事件在 `tool` 串流上發出。
+- 工具結果在記錄/發出前對大小和圖片 payload 進行清理。
+- 訊息工具傳送被追蹤以抑制重複的助理確認。
 
-## 回覆整形與抑制
+## 回覆塑形 + 抑制
 
-- 最終負載由以下內容組裝而成：
-  - 助手文字（和可選的推理過程）
-  - 行內工具摘要（詳細模式 + 允許時）
-  - 模型出錯時的助手錯誤文字
-- `NO_REPLY` 被視為靜默權杖，並從傳出的負載中過濾掉。
-- 傳訊工具的重複內容會從最終負載列表中移除。
-- 如果沒有剩餘可渲染的負載且工具出錯，則發送回退工具錯誤回覆（除非傳訊工具已發送了使用者可見的回覆）。
+- 最終 payload 從以下組裝：
+  - 助理文字（和選用推理）
+  - 內聯工具摘要（當 verbose + 允許時）
+  - 當模型出錯時的助理錯誤文字
+- `NO_REPLY` 被視為靜默 token 並從傳出 payload 過濾。
+- 訊息工具重複從最終 payload 列表移除。
+- 若沒有可渲染的 payload 且工具出錯，會發出備用工具錯誤回覆
+  （除非訊息工具已傳送了用戶可見的回覆）。
 
-## 壓縮與重試
+## 壓縮 + 重試
 
-- 自動壓縮會發送 `compaction` 串流事件並可能觸發重試。
-- 重試時，記憶體緩衝區和工具摘要會重置以避免重複輸出。
+- 自動壓縮發出 `compaction` 串流事件並可觸發重試。
+- 重試時，記憶體緩衝區和工具摘要被重置以避免重複輸出。
 - 請參閱 [Compaction](/zh-Hant/concepts/compaction) 了解壓縮管線。
 
-## 事件串流（目前）
+## 事件串流（當前）
 
-- `lifecycle`：由 `subscribeEmbeddedPiSession` 發送（或作為 `agentCommand` 的回退）
-- `assistant`：來自 pi-agent-core 的串流增量
-- `tool`：來自 pi-agent-core 的串流工具事件
+- `lifecycle`：由 `subscribeEmbeddedPiSession` 發出（以及由 `agentCommand` 作為備用）
+- `assistant`：從 pi-agent-core 串流的 delta
+- `tool`：從 pi-agent-core 串流的工具事件
 
 ## 聊天頻道處理
 
-- 助手增量被緩衝到聊天的 `delta` 訊息中。
-- 在 **lifecycle end/error** 時發送聊天的 `final` 訊息。
+- 助理 delta 被緩衝到聊天 `delta` 訊息中。
+- 在**生命週期 end/error** 時發出聊天 `final`。
 
 ## 逾時
 
-- `agent.wait` 預設：30 秒（僅等待）。`timeoutMs` 參數可覆寫。
-- Agent 執行時間：`agents.defaults.timeoutSeconds` 預設 600 秒；在 `runEmbeddedPiAgent` 的中止計時器中強制執行。
+- `agent.wait` 預設：30 秒（僅等待）。`timeoutMs` 參數覆蓋。
+- Agent 執行時：`agents.defaults.timeoutSeconds` 預設 600 秒；在 `runEmbeddedPiAgent` 中透過中止計時器強制執行。
 
 ## 可能提前結束的地方
 
 - Agent 逾時（中止）
 - AbortSignal（取消）
-- Gateway 斷開連接或 RPC 逾時
-- `agent.wait` 逾時（僅等待，不停止 Agent）
+- Gateway 斷開或 RPC 逾時
+- `agent.wait` 逾時（僅等待，不停止 agent）

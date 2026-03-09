@@ -1,78 +1,81 @@
 ---
-title: "models（模型配置）"
-summary: "`openclaw models` CLI 參考（狀態、列表、設定、掃描、別名、退回機制與認證）"
+summary: "`openclaw models` CLI 參考（狀態、列表、設定、掃描、別名、fallbacks、認證）"
 read_when:
   - 想要變更預設模型或查看供應商認證狀態時
-  - 想要掃描可用模型/供應商或對認證配置檔進行偵錯時
+  - 想要掃描可用模型/供應商並偵錯認證設定檔時
+title: "models（模型配置）"
 ---
 
 # `openclaw models`
 
-模型的發現、掃描與配置（包含預設模型、退回機制與認證配置檔）。
+模型探索、掃描和配置（預設模型、fallbacks、認證設定檔）。
 
 相關資訊：
 
-- 供應商與模型概念：[模型 (Models)](/zh-Hant/providers/models)
-- 供應商認證設定：[馬上開始 (Getting started)](/zh-Hant/start/getting-started)
+- 供應商 + 模型：[Models](/zh-Hant/providers/models)
+- 供應商認證設定：[Getting started](/zh-Hant/start/getting-started)
 
 ## 常見指令
 
 ```bash
-# 查看目前的預設模型、退回機制與認證總覽
 openclaw models status
-
-# 列出所有可用的模型
 openclaw models list
-
-# 設定全域預設模型
-openclaw models set <模型ID或別名>
-
-# 掃描供應商以發現新模型
+openclaw models set <model-or-alias>
 openclaw models scan
 ```
 
-`openclaw models status` 會顯示解析後的預設模型、退回清單以及認證狀態。
-若供應商的使用量快照功能可用，認證狀態區塊將包含使用量統計。加上 `--probe` 可針對每個已配置的供應商配置檔執行實時認證探測（請注意：探針會發送真實請求，可能會消耗 Token 並觸發速率限制）。
+`openclaw models status` 顯示解析後的預設/fallbacks 及認證總覽。
+當供應商使用量快照可用時，OAuth/token 狀態區段包含
+供應商使用量標頭。
+加上 `--probe` 可針對每個已配置的供應商設定檔執行實時認證探測。
+探測是真實請求（可能消耗 tokens 並觸發速率限制）。
+使用 `--agent <id>` 查看已配置 agent 的模型/認證狀態。若省略，
+指令使用 `OPENCLAW_AGENT_DIR`/`PI_CODING_AGENT_DIR`（若已設定），否則使用
+已配置的預設 agent。
 
-**注意事項**：
+注意事項：
 
-- `models set` 接受 `供應商/模型` 格式或別名。
-- 模型 ID 的解析是以**第一個** `/` 為準。若模型 ID 本身包含斜線（例如 OpenRouter 格式），請務必包含供應商前綴（範例：`openrouter/moonshotai/kimi-k2`）。
-- 若省略供應商，OpenClaw 將視為別名或**預設供應商**的模型。
+- `models set <model-or-alias>` 接受 `provider/model` 或別名。
+- 模型 refs 以**第一個** `/` 分割解析。若模型 ID 包含 `/`（OpenRouter 格式），請包含供應商前綴（例如：`openrouter/moonshotai/kimi-k2`）。
+- 若省略供應商，OpenClaw 將輸入視為別名或**預設供應商**的模型（僅在模型 ID 不含 `/` 時有效）。
+- `models status` 可能在認證輸出中顯示 `marker(<value>)`，用於非機密佔位符（例如 `OPENAI_API_KEY`、`secretref-managed`、`minimax-oauth`、`qwen-oauth`、`ollama-local`），而非將其遮罩為機密。
 
-### `models status` 選項
+### `models status`
 
-- `--json` / `--plain`：輸出格式。
-- `--check`：檢查認證狀態（退出代碼 1=過期/缺失，2=即將過期）。
-- `--probe`：對配置檔執行實時探測。
-- `--probe-provider <name>`：僅探測特定供應商。
-- `--probe-concurrency <n>`：設定探測的併發數。
+選項：
 
-## 別名與退回機制 (Aliases & fallbacks)
+- `--json`
+- `--plain`
+- `--check`（退出 1=過期/缺失，2=即將過期）
+- `--probe`（對已配置的認證設定檔進行實時探測）
+- `--probe-provider <name>`（探測單一供應商）
+- `--probe-profile <id>`（重複或逗號分隔的設定檔 IDs）
+- `--probe-timeout <ms>`
+- `--probe-concurrency <n>`
+- `--probe-max-tokens <n>`
+- `--agent <id>`（已配置的 agent ID；覆寫 `OPENCLAW_AGENT_DIR`/`PI_CODING_AGENT_DIR`）
+
+## 別名 + Fallbacks
 
 ```bash
-# 管理模型別名
 openclaw models aliases list
-
-# 管理模型退回清單
 openclaw models fallbacks list
 ```
 
-## 認證配置檔 (Auth profiles)
+## 認證設定檔
 
 ```bash
-# 互動式新增認證
 openclaw models auth add
-
-# 執行特定供應商的登入流程 (OAuth 或 API Key)
-openclaw models auth login --provider <ID>
-
-# 設定或貼上認證權仗
+openclaw models auth login --provider <id>
 openclaw models auth setup-token
 openclaw models auth paste-token
 ```
 
-`models auth login` 會啟動供應商外掛的認證流程。使用 `openclaw plugins list` 可查看已安裝的供應商外掛。
+`models auth login` 執行供應商 plugin 的認證流程（OAuth/API key）。使用
+`openclaw plugins list` 查看已安裝的供應商。
 
-- `setup-token`：提示輸入安裝權杖。
-- `paste-token`：接受由自動化流程生成的權杖字串。
+注意事項：
+
+- `setup-token` 提示輸入 setup-token 值（在任何機器上使用 `claude setup-token` 生成）。
+- `paste-token` 接受在其他地方或自動化生成的 token 字串。
+- Anthropic 政策注意：setup-token 支援是技術相容性。Anthropic 過去已封鎖部分在 Claude Code 以外的訂閱使用，請在廣泛使用前確認目前的條款。

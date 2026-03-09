@@ -548,7 +548,7 @@ claude setup-token
 
 ### codex-驗證如何運作
 
-OpenClaw 透過 OAuth（ChatGPT 登入）支援 **OpenAI Code (Codex)**。精靈可以執行 OAuth 流程，並在適當時將預設模型設為 `openai-codex/gpt-5.2`。參閱 [模型供應商](/zh-Hant/concepts/model-providers) 和 [精靈](/zh-Hant/start/wizard)。
+OpenClaw 透過 OAuth（ChatGPT 登入）支援 **OpenAI Code (Codex)**。精靈可以執行 OAuth 流程，並在適當時將預設模型設為 `openai-codex/gpt-5.4`。參閱 [模型供應商](/zh-Hant/concepts/model-providers) 和 [精靈](/zh-Hant/start/wizard)。
 
 ### 支援-openai-訂閱驗證codex-oauth嗎
 
@@ -1661,7 +1661,7 @@ OpenClaw 透過在啟動時立即綁定 WebSocket 監聽器（預設 `ws://127.0
 
 事實（來自程式碼）：
 
-- Control UI 將 token 儲存在瀏覽器 localStorage 金鑰 `openclaw.control.settings.v1`。
+- Control UI 將 token 保存在當前分頁的記憶體中；不再將 gateway token 持久化儲存在瀏覽器 localStorage。
 - UI 可以匯入 `?token=...`（和/或 `?password=...`）一次，然後從 URL 中移除。
 
 修復：

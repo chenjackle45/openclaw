@@ -1,73 +1,70 @@
 ---
-summary: "技能：受管 vs 工作區、閘控規則及設定/env 接線"
+summary: "Skills：受管 vs 工作區、閘控規則及設定/env 接線"
 read_when:
-  - Adding or modifying skills
-  - Changing skill gating or load rules
+  - 新增或修改 skills
+  - 變更 skill 閘控或載入規則
 title: "Skills（技能）"
 ---
 
-# Skills（技能）
+# Skills (OpenClaw)
 
-OpenClaw 使用 **[AgentSkills](https://agentskills.io)-相容**技能資料夾教代理如何使用工具。每個技能是一個包含帶 YAML frontmatter 的 `SKILL.md` 的目錄及指導。OpenClaw 載入**捆綁技能**加可選本地覆蓋，及在載入時根據環境、設定及二進位存在篩選它們。
+OpenClaw 使用**[AgentSkills](https://agentskills.io) 相容**的 skill 資料夾，教導 agent 如何使用工具。每個 skill 是一個包含帶有 YAML frontmatter 和說明的 `SKILL.md` 的目錄。OpenClaw 載入**內建 skills** 加上可選的本地覆寫，並在載入時根據環境、設定和二進位檔案的存在進行篩選。
 
-## 位置及優先順序
+## 位置和優先順序
 
-技能從**三個**地方載入：
+Skills 從**三個**地方載入：
 
-1. **捆綁技能**：隨安裝一起提供（npm 套件或 OpenClaw.app）
-2. **受管/本地技能**：`~/.openclaw/skills`
-3. **工作區技能**：`<workspace>/skills`
+1. **內建 skills**：隨安裝附帶（npm 套件或 OpenClaw.app）
+2. **受管/本地 skills**：`~/.openclaw/skills`
+3. **工作區 skills**：`<workspace>/skills`
 
-如技能名衝突，優先順序是：
+若 skill 名稱衝突，優先順序為：
 
-`<workspace>/skills`（最高）→ `~/.openclaw/skills` → 捆綁技能（最低）
+`<workspace>/skills`（最高）→ `~/.openclaw/skills` → 內建 skills（最低）
 
-此外，可配置額外技能資料夾（最低優先順序）透過
-`skills.load.extraDirs` 在 `~/.openclaw/openclaw.json`。
+此外，你可以透過 `~/.openclaw/openclaw.json` 中的 `skills.load.extraDirs` 設定額外的 skill 資料夾（最低優先順序）。
 
-## 每個代理 vs 共享技能
+## 每個 agent vs 共用 skills
 
-在**多代理**設定中，每個代理有自己的工作區。這表示：
+在**多 agent** 設定中，每個 agent 有自己的工作區。這意味著：
 
-- **每個代理技能**在 `<workspace>/skills` 針對該代理僅。
-- **共享技能**在 `~/.openclaw/skills`（受管/本地）及對同一機器上的**所有代理**可見。
-- **共享資料夾**也可透過 `skills.load.extraDirs`（最低優先順序）新增，如想要多個代理使用的常見技能包。
+- **每個 agent 的 skills** 位於僅適用於該 agent 的 `<workspace>/skills`。
+- **共用 skills** 位於 `~/.openclaw/skills`（受管/本地），對同一機器上的**所有 agent** 可見。
+- 若你希望多個 agent 使用共同的 skills 套件，也可以透過 `skills.load.extraDirs`（最低優先順序）新增**共用資料夾**。
 
-如相同技能名在多個地方存在，通常優先順序
-適用：工作區贏，接著受管/本地，接著捆綁。
+若相同的 skill 名稱存在於多個地方，則套用一般優先順序：工作區優先，然後是受管/本地，再來是內建。
 
-## 外掛＋技能
+## Plugins + skills
 
-外掛可在 `openclaw.plugin.json` 中列出 `skills` 目錄來運送它們自己的技能
-（相對於外掛根的路徑）。當外掛啟用及參與通常技能優先順序規則時外掛技能載入。
-可透過 `metadata.openclaw.requires.config` 在外掛的設定項上閘控它們。見 [Plugins](/zh-Hant/tools/plugin) 發現/設定及 [Tools](/zh-Hant/tools) 用於那些技能教的工具表面。
+Plugins 可以透過在 `openclaw.plugin.json` 中列出 `skills` 目錄來附帶自己的 skills（路徑相對於 plugin 根目錄）。Plugin skills 在 plugin 啟用時載入，並參與正常的 skill 優先順序規則。你可以透過 plugin 設定條目上的 `metadata.openclaw.requires.config` 進行閘控。請參閱 [Plugins](/zh-Hant/tools/plugin) 了解探索/設定，以及 [Tools](/zh-Hant/tools) 了解這些 skills 所教授的工具介面。
 
-## ClawHub（安裝＋同步）
+## ClawHub（安裝 + 同步）
 
-ClawHub 是 OpenClaw 的公開技能登錄。瀏覽 [https://clawhub.com](https://clawhub.com)。使用發現、安裝、更新及備份技能。
+ClawHub 是 OpenClaw 的公開 skills 登錄中心。瀏覽 [https://clawhub.com](https://clawhub.com)。使用它來探索、安裝、更新和備份 skills。
 完整指南：[ClawHub](/zh-Hant/tools/clawhub)。
 
 常見流程：
 
-- 安裝技能至工作區：
+- 安裝 skill 至你的工作區：
   - `clawhub install <skill-slug>`
-- 更新所有安裝技能：
+- 更新所有已安裝的 skills：
   - `clawhub update --all`
-- 同步（掃描＋發佈更新）：
+- 同步（掃描 + 發布更新）：
   - `clawhub sync --all`
 
-預設，`clawhub` 安裝到你現在工作目錄下的 `./skills`（或退回至已設定 OpenClaw 工作區）。OpenClaw 在下個工作階段挑選它作 `<workspace>/skills`。
+預設情況下，`clawhub` 安裝至你目前工作目錄下的 `./skills`（或退而使用設定的 OpenClaw 工作區）。OpenClaw 在下次 session 時將其作為 `<workspace>/skills` 載入。
 
-## 安全注
+## 安全注意事項
 
-- 將第三方技能當作**不可信代碼**。在啟用前讀它們。
-- 針對不可信輸入及危險工具，優先使用沙箱執行。見 [Sandboxing](/zh-Hant/gateway/sandboxing)。
-- `skills.entries.*.env` 及 `skills.entries.*.apiKey` 注入秘密至**主機**程序，用於該代理轉（不沙箱）。保持秘密不超出提示及記錄。
-- 用於更廣威脅模型及檢查清單，見 [Security](/zh-Hant/gateway/security)。
+- 將第三方 skills 視為**不受信任的程式碼**。啟用前請先閱讀它們。
+- 對不受信任的輸入和高風險工具優先使用沙箱化執行。請參閱 [Sandboxing](/zh-Hant/gateway/sandboxing)。
+- 工作區和 extra-dir skill 探索只接受 skill 根目錄，且 `SKILL.md` 檔案的解析實際路徑必須保持在設定的根目錄內。
+- `skills.entries.*.env` 和 `skills.entries.*.apiKey` 會在該 agent 輪次的**主機**行程注入密鑰（而非沙箱）。請勿在提示和日誌中使用密鑰。
+- 更廣泛的威脅模型和檢查清單，請參閱 [Security](/zh-Hant/gateway/security)。
 
-## 格式（AgentSkills + Pi-相容）
+## 格式（AgentSkills + Pi 相容）
 
-`SKILL.md` 必須包含至少：
+`SKILL.md` 至少必須包含：
 
 ```markdown
 ---
@@ -76,26 +73,26 @@ description: Generate or edit images via Gemini 3 Pro Image
 ---
 ```
 
-註：
+注意事項：
 
-- 我們遵循 AgentSkills 規格用於佈局/意圖。
-- 嵌入代理使用的解析器僅支援**單行** frontmatter 鑰。
-- `metadata` 應是**單行 JSON 物件**。
-- 在指導中使用 `{baseDir}` 參考技能資料夾路徑。
-- 可選 frontmatter 鑰：
-  - `homepage` — URL 在 macOS Skills UI 中作"Website"出現（也透過 `metadata.openclaw.homepage` 支援）。
-  - `user-invocable` — `true|false`（預設：`true`）。當 `true` 時，技能暴露作使用者斜線命令。
-  - `disable-model-invocation` — `true|false`（預設：`false`）。當 `true` 時，技能從模型提示排除（仍可透過使用者調用）。
-  - `command-dispatch` — `tool`（可選）。當設至 `tool` 時，斜線命令繞過模型及直接分派至工具。
-  - `command-tool` — 當設定 `command-dispatch: tool` 時調用的工具名。
-  - `command-arg-mode` — `raw`（預設）。用於工具分派，轉發原始 args 字串至工具（無核心解析）。
+- 我們遵循 AgentSkills 規格的佈局/意圖。
+- 嵌入式 agent 使用的解析器僅支援**單行** frontmatter 鍵。
+- `metadata` 應為**單行 JSON 物件**。
+- 在說明中使用 `{baseDir}` 來參考 skill 資料夾路徑。
+- 可選的 frontmatter 鍵：
+  - `homepage` — URL 在 macOS Skills UI 中顯示為「Website」（也可透過 `metadata.openclaw.homepage` 支援）。
+  - `user-invocable` — `true|false`（預設：`true`）。當為 `true` 時，skill 公開為使用者斜線命令。
+  - `disable-model-invocation` — `true|false`（預設：`false`）。當為 `true` 時，skill 從模型提示中排除（仍可透過使用者呼叫使用）。
+  - `command-dispatch` — `tool`（可選）。設為 `tool` 時，斜線命令繞過模型直接分派至工具。
+  - `command-tool` — 設定 `command-dispatch: tool` 時要呼叫的工具名稱。
+  - `command-arg-mode` — `raw`（預設）。對於工具分派，將原始 args 字串轉發至工具（無核心解析）。
 
-    工具使用參數調用：
+    工具以以下參數呼叫：
     `{ command: "<raw args>", commandName: "<slash command>", skillName: "<skill name>" }`。
 
-## 閘控（載入時篩選）
+## 閘控（載入時篩選器）
 
-OpenClaw **在載入時用 `metadata`（單行 JSON）篩選技能**：
+OpenClaw 使用 `metadata`（單行 JSON）**在載入時篩選 skills**：
 
 ```markdown
 ---
@@ -114,28 +111,27 @@ metadata:
 
 `metadata.openclaw` 下的欄位：
 
-- `always: true` — 總是包含技能（跳過其他閘控）。
+- `always: true` — 始終包含此 skill（跳過其他閘控）。
 - `emoji` — macOS Skills UI 使用的可選 emoji。
-- `homepage` — macOS Skills UI 中作"Website"顯示的可選 URL。
-- `os` — 平台的可選列表（`darwin`、`linux`、`win32`）。如設定，技能僅在那些 OS 上合格。
-- `requires.bins` — 列表；各必須存在 `PATH`。
-- `requires.anyBins` — 列表；至少一個必須存在 `PATH`。
+- `homepage` — macOS Skills UI 中顯示為「Website」的可選 URL。
+- `os` — 可選的平台列表（`darwin`、`linux`、`win32`）。若設定，skill 僅在這些作業系統上有效。
+- `requires.bins` — 列表；每項必須存在於 `PATH`。
+- `requires.anyBins` — 列表；至少一項必須存在於 `PATH`。
 - `requires.env` — 列表；env var 必須存在**或**在設定中提供。
-- `requires.config` — `openclaw.json` 路徑列表，必須是 truthy。
-- `primaryEnv` — env var 名關聯 `skills.entries.<name>.apiKey`。
-- `install` — macOS Skills UI 使用的可選安裝程式規格陣列（brew/node/go/uv/download）。
+- `requires.config` — 必須為 truthy 的 `openclaw.json` 路徑列表。
+- `primaryEnv` — 與 `skills.entries.<name>.apiKey` 關聯的 env var 名稱。
+- `install` — macOS Skills UI 使用的可選安裝器規格陣列（brew/node/go/uv/download）。
 
-沙箱化上的註：
+沙箱化注意事項：
 
-- `requires.bins` 在技能載入時檢查**主機**。
-- 如代理沙箱化，二進位也必須在**容器內**存在。
+- `requires.bins` 在 skill 載入時於**主機**上檢查。
+- 若 agent 已沙箱化，二進位檔案也必須存在於**容器內部**。
   透過 `agents.defaults.sandbox.docker.setupCommand`（或自訂映像）安裝它。
-  `setupCommand` 在建立容器後執行一次。
-  套件安裝也需要網路出口、可寫根 FS 及沙箱中的根使用者。
-  例：`summarize` 技能（`skills/summarize/SKILL.md`）需要 `summarize` CLI
-  在沙箱容器中執行。
+  `setupCommand` 在容器建立後執行一次。
+  套件安裝還需要網路輸出、可寫入的根 FS 和沙箱中的 root 使用者。
+  範例：`summarize` skill（`skills/summarize/SKILL.md`）需要沙箱容器中的 `summarize` CLI 才能在那裡執行。
 
-安裝程式例子：
+安裝器範例：
 
 ```markdown
 ---
@@ -162,21 +158,21 @@ metadata:
 ---
 ```
 
-註：
+注意事項：
 
-- 列出多個安裝程式時，gateway 選擇**單個**偏好選項（當可用時 brew，否則 node）。
-- 如所有安裝程式是 `download`，OpenClaw 列出各項，所以可見可用成品。
-- 安裝程式規格可包含 `os: ["darwin"|"linux"|"win32"]` 按平台篩選選項。
-- Node 安裝遵守 `skills.install.nodeManager` 在 `openclaw.json`（預設：npm；選項：npm/pnpm/yarn/bun）。
-  這僅影響**技能安裝**；Gateway 執行時應仍是 Node（不推薦 Bun 用於 WhatsApp/Telegram）。
-- Go 安裝：如 `go` 遺失且 `brew` 可用，gateway 首先透過 Homebrew 安裝 Go 及可能時設定 `GOBIN` 至 Homebrew 的 `bin`。
-- 下載安裝：`url`（必需）、`archive`（`tar.gz` | `tar.bz2` | `zip`）、`extract`（預設：當偵測到存檔時自動）、`stripComponents`、`targetDir`（預設：`~/.openclaw/tools/<skillKey>`）。
+- 若列出多個安裝器，gateway 會選取**單一**首選選項（可用時為 brew，否則為 node）。
+- 若所有安裝器都是 `download`，OpenClaw 會列出每個條目，讓你查看可用的 artifacts。
+- 安裝器規格可包含 `os: ["darwin"|"linux"|"win32"]` 以按平台篩選選項。
+- Node 安裝遵循 `openclaw.json` 中的 `skills.install.nodeManager`（預設：npm；選項：npm/pnpm/yarn/bun）。
+  這僅影響 **skill 安裝**；Gateway 執行期仍應使用 Node（不建議 WhatsApp/Telegram 使用 Bun）。
+- Go 安裝：若缺少 `go` 且 `brew` 可用，gateway 會先透過 Homebrew 安裝 Go，並在可能時將 `GOBIN` 設為 Homebrew 的 `bin`。
+- Download 安裝：`url`（必填）、`archive`（`tar.gz` | `tar.bz2` | `zip`）、`extract`（預設：偵測到 archive 時自動）、`stripComponents`、`targetDir`（預設：`~/.openclaw/tools/<skillKey>`）。
 
-如沒 `metadata.openclaw`，技能總是合格（除非在設定中停用或透過 `skills.allowBundled` 針對捆綁技能被阻止）。
+若不存在 `metadata.openclaw`，skill 始終有效（除非在設定中停用，或被內建 skills 的 `skills.allowBundled` 封鎖）。
 
-## 設定覆蓋（`~/.openclaw/openclaw.json`）
+## 設定覆寫（`~/.openclaw/openclaw.json`）
 
-捆綁/受管技能可被切換及供應 env 值：
+內建/受管 skills 可以切換並提供 env 值：
 
 ```json5
 {
@@ -184,7 +180,7 @@ metadata:
     entries: {
       "nano-banana-pro": {
         enabled: true,
-        apiKey: "GEMINI_KEY_HERE",
+        apiKey: { source: "env", provider: "default", id: "GEMINI_API_KEY" }, // or plaintext string
         env: {
           GEMINI_API_KEY: "GEMINI_KEY_HERE",
         },
@@ -200,47 +196,45 @@ metadata:
 }
 ```
 
-註：如技能名包含連字號，引用鑰（JSON5 允許引用鑰）。
+注意：若 skill 名稱包含連字號，請將鍵加上引號（JSON5 允許引號鍵）。
 
-設定鑰預設符合**技能名**。如技能定義
-`metadata.openclaw.skillKey`，使用 `skills.entries` 下該鑰。
+設定鍵預設與 **skill 名稱**相符。若 skill 定義了 `metadata.openclaw.skillKey`，請在 `skills.entries` 下使用該鍵。
 
 規則：
 
-- `enabled: false` 停用技能即使它的捆綁/安裝。
-- `env`：注入**僅如果**變數不已在程序中設定。
-- `apiKey`：聲明 `metadata.openclaw.primaryEnv` 的技能便利。
-- `config`：可選行包自訂每個技能欄位；自訂鑰必須住這裡。
-- `allowBundled`：可選 allowlist 針對**捆綁**技能僅。如設定，僅
-  列表中的捆綁技能合格（受管/工作區技能不受影響）。
+- `enabled: false` 會停用 skill，即使它是內建/已安裝的。
+- `env`：**僅在**變數尚未在行程中設定時注入。
+- `apiKey`：適用於宣告 `metadata.openclaw.primaryEnv` 的 skills 的便利設定。
+  支援明文字串或 SecretRef 物件（`{ source, provider, id }`）。
+- `config`：可選的每個 skill 自訂欄位容器；自訂鍵必須放在這裡。
+- `allowBundled`：僅限**內建** skills 的可選允許清單。若設定，只有清單中的內建 skills 有效（受管/工作區 skills 不受影響）。
 
-## 環境注入（每個代理執行）
+## 環境注入（每次 agent 執行）
 
-當代理執行開始，OpenClaw：
+當 agent 執行開始時，OpenClaw：
 
-1. 讀技能元資料。
-2. 套用任何 `skills.entries.<key>.env` 或 `skills.entries.<key>.apiKey`
-   至 `process.env`。
-3. 用**合格**技能建立系統提示。
-4. 代理執行結束後恢復原始環境。
+1. 讀取 skill 元資料。
+2. 將任何 `skills.entries.<key>.env` 或 `skills.entries.<key>.apiKey` 套用至 `process.env`。
+3. 使用**有效的** skills 建構 system prompt。
+4. 在執行結束後還原原始環境。
 
-這是**範圍至代理執行**，不全域 shell 環境。
+這**限定於 agent 執行範圍**，不是全域 shell 環境。
 
-## 工作階段快照（效能）
+## Session 快照（效能）
 
-OpenClaw 快照符合技能**當工作階段開始**及重用該列表於隨後同一工作階段中的轉。技能或設定變更在下個新工作階段生效。
+OpenClaw 在 **session 開始時**快照有效的 skills，並將該清單重複用於同一 session 的後續輪次。Skills 或設定的變更在下一個新 session 時生效。
 
-技能也可在工作階段中間刷新當技能監視程式啟用或當新符合遠端節點出現（見下）時。把這看作**熱重載**：刷新列表在下個代理轉被挑選。
+Skills 也可以在啟用 skills 監視器時或出現新的有效遠端節點時（見下文）在 session 中間重新整理。這可視為**熱重載**：重新整理後的清單在下一個 agent 輪次時被採用。
 
 ## 遠端 macOS 節點（Linux gateway）
 
-如 Gateway 執行在 Linux 但一個**macOS 節點**連接**帶 `system.run` 允許**（Exec approvals security 未設至 `deny`），OpenClaw 可視 macOS-only 技能在該節點上存在必需二進位時符合。代理應透過 `nodes` 工具執行那些技能（通常 `nodes.run`）。
+若 Gateway 在 Linux 上執行，但有 **macOS 節點**連接（且已允許 `system.run`，即 Exec 審批安全性未設為 `deny`），當所需的二進位檔案存在於該節點時，OpenClaw 可以將僅限 macOS 的 skills 視為有效。Agent 應透過 `nodes` 工具（通常是 `nodes.run`）執行這些 skills。
 
-這依賴該節點報告它的命令支援及透過 `system.run` 的 bin 探測。如 macOS 節點稍後離線，技能保持可見；調用可能失敗直到節點重連。
+這依賴節點回報其命令支援以及透過 `system.run` 進行的二進位探測。若 macOS 節點稍後離線，skills 仍然可見；在節點重新連接前，呼叫可能會失敗。
 
-## 技能監視程式（自動刷新）
+## Skills 監視器（自動重新整理）
 
-預設，OpenClaw 監視技能資料夾並在 `SKILL.md` 檔案改變時凹陷技能快照。在 `skills.load` 下設定此項：
+預設情況下，OpenClaw 監視 skill 資料夾，並在 `SKILL.md` 檔案變更時更新 skills 快照。在 `skills.load` 下設定此項：
 
 ```json5
 {
@@ -253,32 +247,34 @@ OpenClaw 快照符合技能**當工作階段開始**及重用該列表於隨後�
 }
 ```
 
-## 令牌影響（技能列表）
+## Token 影響（skills 清單）
 
-當技能符合時，OpenClaw 注入緊湊 XML 符合技能列表至系統提示（透過 pi-coding-agent 中的 `formatSkillsForPrompt`）。成本是決定性的：
+當 skills 有效時，OpenClaw 會將可用 skills 的緊湊 XML 清單注入 system prompt（透過 `pi-coding-agent` 中的 `formatSkillsForPrompt`）。成本是確定性的：
 
-- **僅當 ≥1 技能時的基礎開銷**：195 字元。
-- **每個技能**：97 字元＋ XML-escap `<name>`、`<description>` 及 `<location>` 值的長度。
+- **基礎開銷（僅在 ≥1 個 skill 時）：** 195 個字元。
+- **每個 skill：** 97 個字元 + XML 跳脫後的 `<name>`、`<description>` 和 `<location>` 值的長度。
 
 公式（字元）：
 
 ```
-總 = 195 + Σ (97 + len(name_escaped) + len(description_escaped) + len(location_escaped))
+total = 195 + Σ (97 + len(name_escaped) + len(description_escaped) + len(location_escaped))
 ```
 
-註：
+注意事項：
 
-- XML 逃逸擴展 `& < > " '` 至實體（`&amp;`、`&lt;` 等），增加長度。
-- 令牌計數由模型分詞器變化。粗 OpenAI 型估計大約 4 字元/令牌，所以**97 字元 ≈ 24 令牌**每個技能加你實際欄位長度。
+- XML 跳脫將 `& < > " '` 擴展為實體（`&amp;`、`&lt;` 等），增加長度。
+- Token 計數因模型的 tokenizer 而異。粗略的 OpenAI 風格估計約為 4 個字元/token，因此每個 skill **97 個字元 ≈ 24 個 token** 加上你的實際欄位長度。
 
-## 受管技能生命週期
+## 受管 skills 生命週期
 
-OpenClaw 運送基線技能集作為**捆綁技能**作為安裝部分（npm 套件或 OpenClaw.app）。`~/.openclaw/skills` 存在用於本地覆蓋（例如，固定/補丁技能無需改變捆綁複本）。工作區技能是使用者擁有且覆蓋兩者名衝突。
+OpenClaw 作為安裝的一部分（npm 套件或 OpenClaw.app）附帶一組基礎 skills，作為**內建 skills**。`~/.openclaw/skills` 用於本地覆寫（例如，固定/修補 skill 而不更改內建副本）。工作區 skills 由使用者擁有，在名稱衝突時覆寫兩者。
 
 ## 設定參考
 
-見 [Skills config](/zh-Hant/tools/skills-config) 用於完整設定架構。
+請參閱 [Skills config](/zh-Hant/tools/skills-config) 了解完整的設定 schema。
 
-## 想要更多技能？
+## 尋找更多 skills？
 
 瀏覽 [https://clawhub.com](https://clawhub.com)。
+
+---

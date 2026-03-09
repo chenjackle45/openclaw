@@ -1,10 +1,11 @@
 ---
-title: "USER.dev(Dev Agent 使用者檔案)"
+title: "USER.dev（Dev Agent 使用者檔案）"
 summary: "Dev Agent 使用者個人資料（C-3PO）"
 read_when:
   - 使用 Dev Gateway 模板
   - 更新預設 Dev Agent 身份
 ---
+
 # USER.md - 使用者個人資料
 
 - **名字：**The Clawdributors

@@ -1,132 +1,131 @@
 ---
-summary: "審計什麼可以花錢、使用哪些金鑰以及如何查看使用情況"
+summary: "稽核可能花費金錢的功能、使用了哪些金鑰，以及如何查看用量"
 read_when:
-  - 想了解哪些功能可能呼叫付費 API 時
-  - 需要審計金鑰、成本和使用可見性時
-  - 解釋 /status 或 /usage 成本報告時
-title: "API Usage and Costs（API 使用和成本）"
+  - 想了解哪些功能可能呼叫付費 API
+  - 需要稽核金鑰、費用與用量可見性
+  - 正在說明 /status 或 /usage 費用回報
+title: "API Usage and Costs（API 用量與費用）"
 ---
 
-# API 使用和成本
+# API 用量與費用
 
-本文件列出**可以呼叫 API 金鑰的功能**以及它們的成本在哪裡顯示。它聚焦於可以產生提供商使用或付費 API 呼叫的 OpenClaw 功能。
+本文列出**可能呼叫 API 金鑰的功能**，以及費用顯示在哪裡。重點說明 OpenClaw 中可能產生提供商用量或付費 API 呼叫的功能。
 
-## 成本顯示的位置（聊天 + CLI）
+## 費用顯示位置（聊天 + CLI）
 
-**每個工作階段成本快照**
+**每個 session 的費用快照**
 
-- `/status` 顯示當前工作階段模型、上下文使用情況和最後一個回應令牌。
-- 如果模型使用 **API 金鑰認證**，`/status` 也會顯示最後一個回應的**預估成本**。
+- `/status` 顯示目前 session 的模型、上下文用量，以及上一則回應的 token 數。
+- 若模型使用 **API 金鑰驗證**，`/status` 也會顯示上一則回應的**預估費用**。
 
-**每個訊息成本頁尾**
+**每則訊息的費用頁尾**
 
-- `/usage full` 為每個回應附加使用頁尾，包括**預估成本**（僅限 API 金鑰）。
-- `/usage tokens` 僅顯示令牌；OAuth 流隱藏美元成本。
+- `/usage full` 在每則回應後附上用量頁尾，包含**預估費用**（僅限 API 金鑰）。
+- `/usage tokens` 僅顯示 token 數；OAuth 流程隱藏金額。
 
-**CLI 使用視窗（提供商配額）**
+**CLI 用量視窗（提供商配額）**
 
-- `openclaw status --usage` 和 `openclaw channels list` 顯示提供商**使用視窗**（配額快照，不是每個訊息成本）。
+- `openclaw status --usage` 和 `openclaw channels list` 顯示提供商的**用量視窗**（配額快照，非每則訊息費用）。
 
-詳細資訊和範例參閱[令牌使用和成本](/zh-Hant/reference/token-use)。
+詳細說明與範例請見 [Token 用量與費用](/zh-Hant/reference/token-use)。
 
-## 如何發現金鑰
+## 金鑰的發現方式
 
-OpenClaw 可以從以下位置取得認證：
+OpenClaw 可從以下來源取得憑證：
 
-- **認證設定檔**（每個 Agent，儲存在 `auth-profiles.json`）。
+- **Auth profiles**（每個 agent，儲存於 `auth-profiles.json`）。
 - **環境變數**（例如 `OPENAI_API_KEY`、`BRAVE_API_KEY`、`FIRECRAWL_API_KEY`）。
-- **設定**（`models.providers.*.apiKey`、`tools.web.search.*`、`tools.web.fetch.firecrawl.*`、`memorySearch.*`、`talk.apiKey`）。
-- **Skills**（`skills.entries.<name>.apiKey`），可能將金鑰匯出到技能進程環境。
+- **Config**（`models.providers.*.apiKey`、`tools.web.search.*`、`tools.web.fetch.firecrawl.*`、`memorySearch.*`、`talk.apiKey`）。
+- **Skills**（`skills.entries.<name>.apiKey`），可將金鑰匯出至 skill 程序的環境變數。
 
-## 可以花費金鑰的功能
+## 可能花費金鑰的功能
 
-### 1) 核心模型回應（聊天 + 工具）
+### 1）核心模型回應（聊天 + 工具）
 
-每個回應或工具呼叫都使用**當前模型提供商**（OpenAI、Anthropic 等）。這是使用和成本的主要來源。
+每次回應或工具呼叫都會使用**目前的模型提供商**（OpenAI、Anthropic 等）。這是用量與費用的主要來源。
 
-詳見[模型](/zh-Hant/providers/models)以了解定價設定和[令牌使用和成本](/zh-Hant/reference/token-use)以了解顯示。
+定價設定請見 [Models](/zh-Hant/providers/models)，顯示方式請見 [Token 用量與費用](/zh-Hant/reference/token-use)。
 
-### 2) 媒體理解（音訊／影像／視訊）
+### 2）媒體理解（音訊／影像／影片）
 
-入站媒體可在回應執行前進行總結／轉錄。這使用模型／提供商 API。
+收到的媒體在回應流程執行前可先進行摘要／轉錄。這會使用模型／提供商的 API。
 
-- 音訊：OpenAI／Groq／Deepgram（現在**在存在金鑰時自動啟用**）。
-- 影像：OpenAI／Anthropic／Google。
-- 視訊：Google。
+- 音訊：OpenAI / Groq / Deepgram（金鑰存在時現已**自動啟用**）。
+- 影像：OpenAI / Anthropic / Google。
+- 影片：Google。
 
-詳見[媒體理解](/zh-Hant/nodes/media-understanding)。
+請見 [媒體理解](/zh-Hant/nodes/media-understanding)。
 
-### 3) 記憶嵌入 + 語義搜尋
+### 3）記憶嵌入 + 語意搜尋
 
-語義記憶搜尋在為遠端提供商配置時使用**嵌入 API**：
+當設定為遠端提供商時，語意記憶搜尋會使用 **Embedding API**：
 
-- `memorySearch.provider = "openai"` → OpenAI 嵌入
-- `memorySearch.provider = "gemini"` → Gemini 嵌入
-- `memorySearch.provider = "voyage"` → Voyage 嵌入
-- `memorySearch.provider = "mistral"` → Mistral 嵌入
-- `memorySearch.provider = "ollama"` → Ollama 嵌入（本地／自託管；通常無託管 API 計費）
-- 如果本地嵌入失敗，可選擇回落至遠端提供商
+- `memorySearch.provider = "openai"` → OpenAI embeddings
+- `memorySearch.provider = "gemini"` → Gemini embeddings
+- `memorySearch.provider = "voyage"` → Voyage embeddings
+- `memorySearch.provider = "mistral"` → Mistral embeddings
+- `memorySearch.provider = "ollama"` → Ollama embeddings（本地／自行託管；通常不計費）
+- 可選擇在本地 embeddings 失敗時退回至遠端提供商
 
-你可以使用 `memorySearch.provider = "local"` 將其保持在本地（無 API 使用）。
+使用 `memorySearch.provider = "local"` 可保持本地運作（不使用 API）。
 
-詳見[記憶](/zh-Hant/concepts/memory)。
+請見 [記憶](/zh-Hant/concepts/memory)。
 
-### 4) Web 搜尋工具（Brave／透過 OpenRouter 的 Perplexity）
+### 4）網路搜尋工具
 
-`web_search` 使用 API 金鑰，可能會產生使用費用：
+`web_search` 使用 API 金鑰，依提供商不同可能產生用量費用：
 
 - **Brave Search API**：`BRAVE_API_KEY` 或 `tools.web.search.apiKey`
-- **Perplexity**（透過 OpenRouter）：`PERPLEXITY_API_KEY` 或 `OPENROUTER_API_KEY`
+- **Gemini（Google 搜尋）**：`GEMINI_API_KEY`
+- **Grok（xAI）**：`XAI_API_KEY`
+- **Kimi（Moonshot）**：`KIMI_API_KEY` 或 `MOONSHOT_API_KEY`
+- **Perplexity Search API**：`PERPLEXITY_API_KEY`
 
-**Brave 免費級別（大方）：**
+**Brave Search 免費額度：** 每個 Brave 方案每月附贈 $5 美元免費額度（每月重置）。Search 方案費率為每 1,000 次 $5 美元，因此免費額度涵蓋每月 1,000 次查詢。請在 Brave 儀表板設定用量上限，以避免意外收費。
 
-- **2,000 個請求／月**
-- **1 個請求／秒**
-- **驗證需要信用卡**（除非升級否則無費用）
+請見 [網路工具](/zh-Hant/tools/web)。
 
-詳見 [Web 工具](/zh-Hant/tools/web)。
+### 5）網頁擷取工具（Firecrawl）
 
-### 5) Web 擷取工具（Firecrawl）
-
-當存在 API 金鑰時，`web_fetch` 可以呼叫 **Firecrawl**：
+`web_fetch` 在有 API 金鑰時可呼叫 **Firecrawl**：
 
 - `FIRECRAWL_API_KEY` 或 `tools.web.fetch.firecrawl.apiKey`
 
-如果未設定 Firecrawl，工具會回落至直接擷取 + 可讀性（無付費 API）。
+若未設定 Firecrawl，該工具會退回至直接擷取 + readability（無付費 API）。
 
-詳見 [Web 工具](/zh-Hant/tools/web)。
+請見 [網路工具](/zh-Hant/tools/web)。
 
-### 6) 提供商使用快照（狀態／健康）
+### 6）提供商用量快照（status/health）
 
-某些狀態命令呼叫**提供商使用端點**以顯示配額視窗或認證健康。這些通常是低量呼叫但仍然觸擊提供商 API：
+部分 status 指令會呼叫**提供商用量端點**以顯示配額視窗或驗證健康狀態。這些通常是低頻呼叫，但仍會使用提供商 API：
 
 - `openclaw status --usage`
 - `openclaw models status --json`
 
-詳見[模型 CLI](/zh-Hant/cli/models)。
+請見 [Models CLI](/zh-Hant/cli/models)。
 
-### 7) 壓縮保障總結
+### 7）壓縮保護摘要
 
-壓縮保障可以使用**當前模型**總結工作階段歷史，在執行時呼叫提供商 API。
+壓縮保護功能可使用**目前模型**對 session 歷程進行摘要，執行時會呼叫提供商 API。
 
-詳見[工作階段管理 + 壓縮](/zh-Hant/reference/session-management-compaction)。
+請見 [Session 管理 + 壓縮](/zh-Hant/reference/session-management-compaction)。
 
-### 8) 模型掃描／探測
+### 8）模型掃描／探測
 
-`openclaw models scan` 可以探測 OpenRouter 模型，並在啟用探測時使用 `OPENROUTER_API_KEY`。
+`openclaw models scan` 可探測 OpenRouter 模型，啟用探測時會使用 `OPENROUTER_API_KEY`。
 
-詳見[模型 CLI](/zh-Hant/cli/models)。
+請見 [Models CLI](/zh-Hant/cli/models)。
 
-### 9) Talk（語音）
+### 9）Talk（語音）
 
-Talk 模式在配置時可以呼叫 **ElevenLabs**：
+Talk 模式在設定後可呼叫 **ElevenLabs**：
 
 - `ELEVENLABS_API_KEY` 或 `talk.apiKey`
 
-詳見 [Talk 模式](/zh-Hant/nodes/talk)。
+請見 [Talk 模式](/zh-Hant/nodes/talk)。
 
-### 10) Skills（第三方 API）
+### 10）Skills（第三方 API）
 
-Skills 可以在 `skills.entries.<name>.apiKey` 中儲存 `apiKey`。如果技能為外部 API 使用該金鑰，可能會根據技能的提供商產生成本。
+Skills 可在 `skills.entries.<name>.apiKey` 中儲存 `apiKey`。若某個 skill 使用該金鑰呼叫外部 API，將依該 skill 的提供商計費。
 
-詳見 [Skills](/zh-Hant/tools/skills)。
+請見 [Skills](/zh-Hant/tools/skills)。

@@ -1,24 +1,24 @@
 ---
-title: "Gateway Protocol（Gateway 協議）"
 summary: "Gateway WebSocket 協議：握手、訊框、版本控制"
 read_when:
-  - 實作或更新 Gateway WS 用戶端時
-  - 除錯協議不匹配或連線失敗時
-  - 重新產生協議結構／模型時
+  - 實作或更新 Gateway WS client 時
+  - 除錯協議不符或連線失敗時
+  - 重新生成協議 schema/models 時
+title: "Gateway Protocol（Gateway 協議）"
 ---
 
-# Gateway Protocol (WebSocket)
+# Gateway 協議（WebSocket）
 
-Gateway WS 協議是 OpenClaw 的**單一控制平面 + 節點傳輸**。所有用戶端（CLI、Web UI、macOS app、iOS／Android 節點、Headless 節點）透過 WebSocket 連線並在握手時宣告其**角色** + **範圍**。
+Gateway WS 協議是 OpenClaw 的**單一控制平面 + 節點傳輸**。所有 client（CLI、Web UI、macOS app、iOS/Android 節點、無頭節點）透過 WebSocket 連線，並在握手時宣告其**角色** + **範圍**。
 
 ## 傳輸
 
-- WebSocket，帶有 JSON 承載的文字訊框。
+- WebSocket，帶有 JSON 酬載的文字訊框。
 - 第一個訊框**必須**是 `connect` 請求。
 
-## 握手（連線）
+## 握手（connect）
 
-Gateway → 用戶端（預連線挑戰）：
+Gateway → Client（連線前挑戰）：
 
 ```json
 {
@@ -28,7 +28,7 @@ Gateway → 用戶端（預連線挑戰）：
 }
 ```
 
-用戶端 → Gateway：
+Client → Gateway：
 
 ```json
 {
@@ -63,7 +63,7 @@ Gateway → 用戶端（預連線挑戰）：
 }
 ```
 
-Gateway → 用戶端：
+Gateway → Client：
 
 ```json
 {
@@ -74,7 +74,7 @@ Gateway → 用戶端：
 }
 ```
 
-當發行設備令牌時，`hello-ok` 也包括：
+當發出 device token 時，`hello-ok` 也包含：
 
 ```json
 {
@@ -121,22 +121,22 @@ Gateway → 用戶端：
 }
 ```
 
-## 訊框
+## 訊框格式
 
 - **請求**：`{type:"req", id, method, params}`
 - **回應**：`{type:"res", id, ok, payload|error}`
 - **事件**：`{type:"event", event, payload, seq?, stateVersion?}`
 
-有副作用的方法需要**等冪鍵**（參閱結構）。
+具有副作用的方法需要**冪等性鍵**（參見 schema）。
 
 ## 角色 + 範圍
 
 ### 角色
 
-- `operator` = 控制平面用戶端（CLI／UI／自動化）。
-- `node` = 能力主機（攝影機／畫面／畫布／system.run）。
+- `operator` = 控制平面 client（CLI/UI/自動化）。
+- `node` = 功能主機（相機/螢幕/畫布/system.run）。
 
-### 範圍（操作員）
+### 範圍（operator）
 
 常見範圍：
 
@@ -146,91 +146,94 @@ Gateway → 用戶端：
 - `operator.approvals`
 - `operator.pairing`
 
-### Caps／Commands／Permissions（節點）
+方法範圍只是第一道關卡。透過 `chat.send` 執行的部分斜線指令會在上面套用更嚴格的指令級別檢查。例如，持久性的 `/config set` 和 `/config unset` 寫入需要 `operator.admin`。
 
-節點在連線時宣告能力聲明：
+### Caps/commands/permissions（節點）
 
-- `caps`：高階能力類別。
-- `commands`：invoke 的命令允許清單。
-- `permissions`：細粒度切換（例如 `screen.record`、`camera.capture`）。
+節點在連線時宣告功能聲明：
 
-Gateway 將這些視為**聲明**並強制伺服器端允許清單。
+- `caps`：高層次功能類別。
+- `commands`：invoke 的指令 allowlist。
+- `permissions`：細粒度開關（例如 `screen.record`、`camera.capture`）。
 
-## 狀態
+Gateway 將這些視為**聲明**並強制執行伺服器端 allowlists。
 
-- `system-presence` 傳回以設備身分為鍵的項目。
-- 狀態項目包括 `deviceId`、`roles` 和 `scopes`，以便 UI 即使在設備同時作為**操作員**和**節點**連線時也能顯示單一列。
+## Presence
 
-### 節點協助方法
+- `system-presence` 返回以設備身份為鍵的項目。
+- Presence 項目包含 `deviceId`、`roles` 和 `scopes`，讓 UI 可以為每個設備顯示一行，即使它以 **operator** 和 **node** 兩種身份連線。
 
-- 節點可呼叫 `skills.bins` 以取得目前的技能可執行檔清單以進行自動允許檢查。
+### 節點輔助方法
 
-### 操作員協助方法
+- 節點可以呼叫 `skills.bins` 以獲取目前的 skill 執行檔列表，用於自動允許檢查。
 
-- 操作員可呼叫 `tools.catalog`（`operator.read`）以取得 Agent 的執行階段工具目錄。回應包括分組工具和出處元資料：
+### Operator 輔助方法
+
+- Operator 可以呼叫 `tools.catalog`（`operator.read`）以獲取 agent 的執行環境工具目錄。回應包含分組的工具和來源中繼資料：
   - `source`：`core` 或 `plugin`
-  - `pluginId`：當 `source="plugin"` 時的外掛所有者
-  - `optional`：外掛工具是否選用
+  - `pluginId`：`source="plugin"` 時的插件擁有者
+  - `optional`：plugin 工具是否為選用
 
 ## Exec 核准
 
-- 當 exec 請求需要核准時，Gateway 廣播 `exec.approval.requested`。
-- 操作員用戶端透過呼叫 `exec.approval.resolve` 來解決（需要 `operator.approvals` 範圍）。
-- 對於 `host=node`，`exec.approval.request` 必須包括 `systemRunPlan`（標準 `argv`／`cwd`／`rawCommand`／工作階段元資料）。遺漏 `systemRunPlan` 的請求會被拒絕。
+- 當 exec 請求需要核准時，gateway 廣播 `exec.approval.requested`。
+- Operator client 透過呼叫 `exec.approval.resolve` 解決（需要 `operator.approvals` 範圍）。
+- 對於 `host=node`，`exec.approval.request` 必須包含 `systemRunPlan`（規範的 `argv`/`cwd`/`rawCommand`/session 中繼資料）。缺少 `systemRunPlan` 的請求會被拒絕。
 
 ## 版本控制
 
 - `PROTOCOL_VERSION` 位於 `src/gateway/protocol/schema.ts`。
-- 用戶端傳送 `minProtocol` + `maxProtocol`；伺服器拒絕不符者。
-- 結構和模型從 TypeBox 定義產生：
+- Client 傳送 `minProtocol` + `maxProtocol`；伺服器拒絕不符的情況。
+- Schema + models 從 TypeBox 定義生成：
   - `pnpm protocol:gen`
   - `pnpm protocol:gen:swift`
   - `pnpm protocol:check`
 
 ## 認證
 
-- 若設定了 `OPENCLAW_GATEWAY_TOKEN`（或 `--token`），`connect.params.auth.token` 必須相符，否則通訊端會關閉。
-- 配對後，Gateway 發行範圍為連線角色 + 範圍的**設備令牌**。它在 `hello-ok.auth.deviceToken` 中傳回，用戶端應持久化它以供未來連線。
-- 設備令牌可透過 `device.token.rotate` 和 `device.token.revoke` 輪替／撤銷（需要 `operator.pairing` 範圍）。
+- 若設定了 `OPENCLAW_GATEWAY_TOKEN`（或 `--token`），`connect.params.auth.token`
+  必須符合，否則 socket 被關閉。
+- 配對後，Gateway 發出**device token**，範圍限定於連線角色 + 範圍。它在 `hello-ok.auth.deviceToken` 中返回，client 應持久化以供未來連線使用。
+- Device token 可透過 `device.token.rotate` 和 `device.token.revoke` 輪換/撤銷（需要 `operator.pairing` 範圍）。
 
-## 設備身分 + 配對
+## 設備身份 + 配對
 
-- 節點應包括從金鑰對指紋衍生的穩定設備身分（`device.id`）。
-- Gateway 發行每個設備 + 角色的令牌。
-- 除非啟用本地自動核准，否則新的設備 ID 需要配對核准。
-- **本地**連線包括迴路和 Gateway 主機自己的 tailnet 位址（因此相同主機的 tailnet 綁定仍可自動核准）。
-- 所有 WS 用戶端在 `connect` 時必須包括 `device` 身分（操作員 + 節點）。
-- 控制 UI 只有在啟用 `gateway.controlUi.dangerouslyDisableDeviceAuth` 以進行緊急情況時才能省略它。
+- 節點應包含從金鑰對指紋衍生的穩定設備身份（`device.id`）。
+- Gateway 按設備 + 角色發出 token。
+- 除非啟用本地自動核准，否則新設備 ID 需要配對核准。
+- **本地**連線包含 loopback 和 gateway 主機自身的 tailnet 地址（讓相同主機的 tailnet 綁定仍可自動核准）。
+- 所有 WS client 在 `connect` 時必須包含 `device` 身份（operator + node）。
+  Control UI 僅在啟用 `gateway.controlUi.dangerouslyDisableDeviceAuth` 時可以省略（緊急情況）。
 - 所有連線必須簽署伺服器提供的 `connect.challenge` nonce。
 
 ### 設備認證遷移診斷
 
-對於仍使用預挑戰簽署行為的舊版用戶端，`connect` 現在會在 `error.details.code` 下傳回 `DEVICE_AUTH_*` 詳細代碼，並在 `error.details.reason` 中傳回穩定的原因。
+對於仍使用舊版預挑戰簽名行為的 client，`connect` 現在在 `error.details.code` 下返回 `DEVICE_AUTH_*` 詳細代碼，並帶有穩定的 `error.details.reason`。
 
-常見遷移失敗：
+常見的遷移失敗：
 
-| 訊息                        | details.code                     | details.reason           | 含義                                        |
-| --------------------------- | -------------------------------- | ------------------------ | ------------------------------------------- |
-| `device nonce required`     | `DEVICE_AUTH_NONCE_REQUIRED`     | `device-nonce-missing`   | 用戶端省略了 `device.nonce`（或傳送空白）。 |
-| `device nonce mismatch`     | `DEVICE_AUTH_NONCE_MISMATCH`     | `device-nonce-mismatch`  | 用戶端使用過時／錯誤的 nonce 簽署。         |
-| `device signature invalid`  | `DEVICE_AUTH_SIGNATURE_INVALID`  | `device-signature`       | 簽署承載與 v2 承載不符。                    |
-| `device signature expired`  | `DEVICE_AUTH_SIGNATURE_EXPIRED`  | `device-signature-stale` | 已簽署的時間戳超出允許的誤差。              |
-| `device identity mismatch`  | `DEVICE_AUTH_DEVICE_ID_MISMATCH` | `device-id-mismatch`     | `device.id` 與公開金鑰指紋不符。            |
-| `device public key invalid` | `DEVICE_AUTH_PUBLIC_KEY_INVALID` | `device-public-key`      | 公開金鑰格式／規範化失敗。                  |
+| 訊息                        | details.code                     | details.reason           | 含義                                         |
+| --------------------------- | -------------------------------- | ------------------------ | -------------------------------------------- |
+| `device nonce required`     | `DEVICE_AUTH_NONCE_REQUIRED`     | `device-nonce-missing`   | Client 省略了 `device.nonce`（或傳送空白）。 |
+| `device nonce mismatch`     | `DEVICE_AUTH_NONCE_MISMATCH`     | `device-nonce-mismatch`  | Client 使用過期/錯誤的 nonce 簽名。          |
+| `device signature invalid`  | `DEVICE_AUTH_SIGNATURE_INVALID`  | `device-signature`       | 簽名酬載與 v2 酬載不符。                     |
+| `device signature expired`  | `DEVICE_AUTH_SIGNATURE_EXPIRED`  | `device-signature-stale` | 簽名時間戳超出允許的偏差。                   |
+| `device identity mismatch`  | `DEVICE_AUTH_DEVICE_ID_MISMATCH` | `device-id-mismatch`     | `device.id` 與公鑰指紋不符。                 |
+| `device public key invalid` | `DEVICE_AUTH_PUBLIC_KEY_INVALID` | `device-public-key`      | 公鑰格式/規範化失敗。                        |
 
 遷移目標：
 
 - 始終等待 `connect.challenge`。
-- 簽署包括伺服器 nonce 的 v2 承載。
+- 簽署包含伺服器 nonce 的 v2 酬載。
 - 在 `connect.params.device.nonce` 中傳送相同的 nonce。
-- 偏好的簽署承載是 `v3`，它除了 device／client／role／scopes／token／nonce 欄位外，還繫結 `platform` 和 `deviceFamily`。
-- 為了相容性，仍接受舊版 `v2` 簽署，但配對設備元資料釘選仍會控制重新連線時的命令原則。
+- 首選簽名酬載為 `v3`，在設備/client/角色/範圍/token/nonce 欄位之外還綁定 `platform` 和 `deviceFamily`。
+- 舊版 `v2` 簽名仍被接受以保持相容性，但配對設備的中繼資料固定仍在重新連線時控制指令政策。
 
-## TLS + 釘選
+## TLS + 固定
 
 - WS 連線支援 TLS。
-- 用戶端可選擇釘選 Gateway cert 指紋（參閱 `gateway.tls` 設定加上 `gateway.remote.tlsFingerprint` 或 CLI `--tls-fingerprint`）。
+- Client 可以選用固定 gateway 憑證指紋（參見 `gateway.tls` 設定以及 `gateway.remote.tlsFingerprint` 或 CLI `--tls-fingerprint`）。
 
 ## 範圍
 
-此協議暴露**完整的 Gateway API**（狀態、通道、模型、聊天、Agent、工作階段、節點、核准等）。確切的表面由 `src/gateway/protocol/schema.ts` 中的 TypeBox 結構定義。
+此協議暴露**完整的 gateway API**（狀態、頻道、模型、聊天、agent、sessions、節點、核准等）。確切的介面由 `src/gateway/protocol/schema.ts` 中的 TypeBox schema 定義。

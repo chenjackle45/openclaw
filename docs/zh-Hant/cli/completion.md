@@ -3,7 +3,7 @@ summary: "CLI 參考用於 `openclaw completion`（產生/安裝 shell 完成指
 read_when:
   - 您想要 zsh/bash/fish/PowerShell 的 shell 完成
   - 您需要在 OpenClaw 狀態下快取完成指令碼
-title: "completion"
+title: "completion（Shell 補全）"
 ---
 
 # `openclaw completion`

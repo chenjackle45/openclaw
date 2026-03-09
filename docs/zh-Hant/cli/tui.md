@@ -1,28 +1,30 @@
 ---
-title: "tui（終端機介面）"
-summary: "`openclaw tui` CLI 參考（連線至 Gateway 的終端機 UI）"
+summary: "`openclaw tui` CLI 參考（連接至 Gateway 的終端機 UI）"
 read_when:
-  - 想要使用 Gateway 的終端機介面（對遠端連線友善）時
-  - 想要從腳本中傳遞 URL、權杖 (Token) 或會話 (Session) 時
+  - 想要使用連接至 Gateway 的終端機 UI（適合遠端使用）時
+  - 想要從腳本傳遞 url/token/session 時
+title: "tui（終端機介面）"
 ---
 
 # `openclaw tui`
 
-開啟連線至 Gateway 的終端機 UI (TUI)。
+開啟連接至 Gateway 的終端機 UI。
 
 相關資訊：
 
-- TUI 概念手冊：[TUI 指南](/zh-Hant/tui)
+- TUI 指南：[TUI](/zh-Hant/web/tui)
 
-## 指令範例
+注意事項：
+
+- `tui` 在可能時解析配置的 gateway 認證 SecretRefs 以進行 token/密碼認證（`env`/`file`/`exec` 供應商）。
+- 從已配置的 agent 工作區目錄啟動時，TUI 會自動選擇該 agent 作為會話金鑰預設值（除非 `--session` 明確為 `agent:<id>:...`）。
+
+## 範例
 
 ```bash
-# 開啟預設的 TUI
 openclaw tui
-
-# 指定遠端 URL 與權杖開啟 TUI
-openclaw tui --url ws://127.0.0.1:18789 --token <權杖內容>
-
-# 指定會話並啟用回應遞送
+openclaw tui --url ws://127.0.0.1:18789 --token <token>
 openclaw tui --session main --deliver
+# 從 agent 工作區目錄執行時，自動推斷該 agent
+openclaw tui --session bugfix
 ```

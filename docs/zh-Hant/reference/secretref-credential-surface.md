@@ -1,28 +1,29 @@
 ---
-summary: "Canonical supported vs unsupported SecretRef credential surface"
+summary: "SecretRef 憑證範圍的正式支援與不支援清單"
 read_when:
-  - Verifying SecretRef credential coverage
-  - Auditing whether a credential is eligible for `secrets configure` or `secrets apply`
-  - Verifying why a credential is outside the supported surface
-title: "SecretRef Credential Surface（SecretRef 認證表面）"
+  - 驗證 SecretRef 憑證覆蓋範圍
+  - 稽核憑證是否符合 `secrets configure` 或 `secrets apply` 的資格
+  - 了解為什麼某個憑證超出支援範圍
+title: "SecretRef Credential Surface（SecretRef 憑證範圍）"
 ---
 
-# SecretRef credential surface
+# SecretRef 憑證範圍
 
-This page defines the canonical SecretRef credential surface.
+本頁定義 SecretRef 憑證範圍的正式規範。
 
-Scope intent:
+範圍意圖：
 
-- In scope: strictly user-supplied credentials that OpenClaw does not mint or rotate.
-- Out of scope: runtime-minted or rotating credentials, OAuth refresh material, and session-like artifacts.
+- 納入範圍：嚴格限定為使用者提供的憑證，OpenClaw 不自行建立或輪換。
+- 排除範圍：執行階段建立或輪換的憑證、OAuth 更新材料，以及類 session 的工件。
 
-## Supported credentials
+## 支援的憑證
 
-### `openclaw.json` targets (`secrets configure` + `secrets apply` + `secrets audit`)
+### `openclaw.json` 目標（`secrets configure` + `secrets apply` + `secrets audit`）
 
-<!-- secretref-supported-list-start -->
+[//]: # "secretref-supported-list-start"
 
 - `models.providers.*.apiKey`
+- `models.providers.*.headers.*`
 - `skills.entries.*.apiKey`
 - `agents.defaults.memorySearch.remote.apiKey`
 - `agents.list[].memorySearch.remote.apiKey`
@@ -36,6 +37,7 @@ Scope intent:
 - `tools.web.search.kimi.apiKey`
 - `tools.web.search.perplexity.apiKey`
 - `gateway.auth.password`
+- `gateway.auth.token`
 - `gateway.remote.token`
 - `gateway.remote.password`
 - `cron.webhookToken`
@@ -82,31 +84,32 @@ Scope intent:
 - `channels.zalo.webhookSecret`
 - `channels.zalo.accounts.*.botToken`
 - `channels.zalo.accounts.*.webhookSecret`
-- `channels.googlechat.serviceAccount` via sibling `serviceAccountRef` (compatibility exception)
-- `channels.googlechat.accounts.*.serviceAccount` via sibling `serviceAccountRef` (compatibility exception)
+- `channels.googlechat.serviceAccount` 透過同層級的 `serviceAccountRef`（相容性例外）
+- `channels.googlechat.accounts.*.serviceAccount` 透過同層級的 `serviceAccountRef`（相容性例外）
 
-### `auth-profiles.json` targets (`secrets configure` + `secrets apply` + `secrets audit`)
+### `auth-profiles.json` 目標（`secrets configure` + `secrets apply` + `secrets audit`）
 
-- `profiles.*.keyRef` (`type: "api_key"`)
-- `profiles.*.tokenRef` (`type: "token"`)
-<!-- secretref-supported-list-end -->
+- `profiles.*.keyRef`（`type: "api_key"`）
+- `profiles.*.tokenRef`（`type: "token"`）
 
-Notes:
+[//]: # "secretref-supported-list-end"
 
-- Auth-profile plan targets require `agentId`.
-- Plan entries target `profiles.*.key` / `profiles.*.token` and write sibling refs (`keyRef` / `tokenRef`).
-- Auth-profile refs are included in runtime resolution and audit coverage.
-- For web search:
-  - In explicit provider mode (`tools.web.search.provider` set), only the selected provider key is active.
-  - In auto mode (`tools.web.search.provider` unset), `tools.web.search.apiKey` and provider-specific keys are active.
+注意事項：
 
-## Unsupported credentials
+- Auth profile 計畫目標需要 `agentId`。
+- 計畫條目目標為 `profiles.*.key` / `profiles.*.token`，並寫入同層級的 ref（`keyRef` / `tokenRef`）。
+- Auth profile ref 包含在執行階段解析與稽核覆蓋範圍中。
+- 對於 SecretRef 管理的模型提供商，生成的 `agents/*/agent/models.json` 條目會持久保存 `apiKey`／header 範圍的非機密標記（非已解析的機密值）。
+- 對於網路搜尋：
+  - 在明確提供商模式下（已設定 `tools.web.search.provider`），僅選定的提供商金鑰有效。
+  - 在自動模式下（未設定 `tools.web.search.provider`），`tools.web.search.apiKey` 與提供商專屬金鑰均有效。
 
-Out-of-scope credentials include:
+## 不支援的憑證
 
-<!-- secretref-unsupported-list-start -->
+超出範圍的憑證包括：
 
-- `gateway.auth.token`
+[//]: # "secretref-unsupported-list-start"
+
 - `commands.ownerDisplaySecret`
 - `channels.matrix.accessToken`
 - `channels.matrix.accounts.*.accessToken`
@@ -116,8 +119,9 @@ Out-of-scope credentials include:
 - `auth-profiles.oauth.*`
 - `discord.threadBindings.*.webhookToken`
 - `whatsapp.creds.json`
-<!-- secretref-unsupported-list-end -->
 
-Rationale:
+[//]: # "secretref-unsupported-list-end"
 
-- These credentials are minted, rotated, session-bearing, or OAuth-durable classes that do not fit read-only external SecretRef resolution.
+原因：
+
+- 這些憑證屬於自行建立、輪換、帶有 session 狀態或 OAuth 持久性等類型，不適合唯讀的外部 SecretRef 解析。

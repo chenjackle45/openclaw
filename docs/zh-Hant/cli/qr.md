@@ -1,14 +1,14 @@
 ---
-summary: "CLI 參考用於 `openclaw qr`（產生 iOS 配對 QR + 設定代碼）"
+summary: "`openclaw qr` CLI 參考（生成 iOS 配對 QR + 設定碼）"
 read_when:
-  - 您想快速將 iOS 應用程式與 Gateway 配對
-  - 您需要設定代碼輸出用於遠端/手動共享
-title: "qr"
+  - 想要快速將 iOS App 與 Gateway 配對時
+  - 需要設定碼輸出以供遠端/手動分享時
+title: "qr（iOS 配對 QR）"
 ---
 
 # `openclaw qr`
 
-從您當前的 Gateway 設定產生 iOS 配對 QR 和設定代碼。
+從您目前的 Gateway 配置生成 iOS 配對 QR 和設定碼。
 
 ## 使用方式
 
@@ -22,21 +22,24 @@ openclaw qr --url wss://gateway.example/ws --token '<token>'
 
 ## 選項
 
-- `--remote`：使用 `gateway.remote.url` 加上設定中的遠端 Token/密碼
-- `--url <url>`：覆蓋負載中使用的 Gateway URL
-- `--public-url <url>`：覆蓋負載中使用的公開 URL
-- `--token <token>`：覆蓋負載的 Gateway Token
-- `--password <password>`：覆蓋負載的 Gateway 密碼
-- `--setup-code-only`：僅列印設定代碼
+- `--remote`：使用 `gateway.remote.url` 加上 config 中的遠端 token/密碼
+- `--url <url>`：覆寫 payload 中使用的 Gateway URL
+- `--public-url <url>`：覆寫 payload 中使用的公開 URL
+- `--token <token>`：覆寫 payload 的 Gateway token
+- `--password <password>`：覆寫 payload 的 Gateway 密碼
+- `--setup-code-only`：僅列印設定碼
 - `--no-ascii`：跳過 ASCII QR 渲染
-- `--json`：發出 JSON（`setupCode`、`gatewayUrl`、`auth`、`urlSource`）
+- `--json`：輸出 JSON（`setupCode`、`gatewayUrl`、`auth`、`urlSource`）
 
-## 註
+## 注意事項
 
-- `--token` 和 `--password` 互相排斥。
-- 使用 `--remote`，如果有效的遠端認證配置為 SecretRef，且您不傳遞 `--token` 或 `--password`，命令從活動 Gateway 快照解析它們。如果 Gateway 不可用，命令快速失敗。
-- 沒有 `--remote`，本機 `gateway.auth.password` SecretRef 在密碼身份驗證可以贏時解析（明確 `gateway.auth.mode="password"` 或推斷密碼模式，沒有來自 auth/env 的獲勝 Token），且沒有 CLI 身份驗證覆蓋被通過。
-- Gateway 版本偏斜注：此命令路徑需要支援 `secrets.resolve` 的 Gateway；舊版 Gateway 返回未知方法錯誤。
-- 掃描後，批准裝置配對：
+- `--token` 和 `--password` 互斥。
+- 使用 `--remote` 時，若有效的遠端憑證被配置為 SecretRefs 且您未傳遞 `--token` 或 `--password`，指令會從目前的 gateway 快照解析它們。若 gateway 無法使用，指令會快速失敗。
+- 不使用 `--remote` 時，在未傳遞 CLI 認證覆寫的情況下，本地 gateway 認證 SecretRefs 會被解析：
+  - 當 token 認證可以優先時，`gateway.auth.token` 會被解析（明確的 `gateway.auth.mode="token"` 或推斷模式下無密碼來源優先）。
+  - 當密碼認證可以優先時，`gateway.auth.password` 會被解析（明確的 `gateway.auth.mode="password"` 或推斷模式下無認證/env 優先的 token）。
+- 若 `gateway.auth.token` 和 `gateway.auth.password` 均已配置（包含 SecretRefs）且 `gateway.auth.mode` 未設定，設定碼解析會失敗，直到明確設定 mode 為止。
+- Gateway 版本差異注意：此指令路徑需要支援 `secrets.resolve` 的 gateway；較舊的 gateway 會返回未知方法錯誤。
+- 掃描後，請透過以下方式核准裝置配對：
   - `openclaw devices list`
   - `openclaw devices approve <requestId>`

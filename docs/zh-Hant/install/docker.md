@@ -1,71 +1,216 @@
 ---
-summary: "選用 Docker 設定與 OpenClaw 上線"
+summary: "選用 Docker 設定與 OpenClaw 引導設定"
 read_when:
-  - 你想使用容器化的 gateway 而非本機安裝
-  - 你正在驗證 Docker 工作流程
-title: "Docker（Docker）"
+  - 您想使用容器化 gateway 而非本機安裝時
+  - 您正在驗證 Docker 工作流程時
+title: "Docker（選用）"
 ---
 
 # Docker（選用）
 
-Docker 是**選用的**。只有在你想要容器化的 gateway 或驗證 Docker 工作流程時才需要使用。
+Docker 是**選用**的。只有在您想要容器化 gateway 或驗證 Docker 工作流程時才使用它。
 
-## Is Docker right for me?
+## Docker 適合我嗎？
 
-- **Yes**: you want an isolated, throwaway gateway environment or to run OpenClaw on a host without local installs.
-- **No**: you’re running on your own machine and just want the fastest dev loop. Use the normal install flow instead.
-- **Sandboxing note**: agent sandboxing uses Docker too, but it does **not** require the full gateway to run in Docker. See [Sandboxing](/zh-Hant/gateway/sandboxing).
+- **適合**：您想要隔離、可拋棄的 gateway 環境，或在沒有本機安裝的主機上執行 OpenClaw。
+- **不適合**：您在自己的機器上執行，只想要最快的開發循環。改用一般安裝流程。
+- **沙箱注意事項**：Agent 沙箱也使用 Docker，但**不**要求完整的 gateway 在 Docker 中執行。見 [沙箱](/zh-Hant/gateway/sandboxing)。
 
-This guide covers:
+本指南涵蓋：
 
-- Containerized Gateway (full OpenClaw in Docker)
-- Per-session Agent Sandbox (host gateway + Docker-isolated agent tools)
+- 容器化 Gateway（Docker 中的完整 OpenClaw）
+- 每會話 Agent 沙箱（主機 gateway + Docker 隔離的 agent 工具）
 
-Sandboxing details: [Sandboxing](/zh-Hant/gateway/sandboxing)
+沙箱詳細資訊：[沙箱](/zh-Hant/gateway/sandboxing)
 
-## Requirements
+## 需求
 
-- Docker Desktop (or Docker Engine) + Docker Compose v2
-- Enough disk for images + logs
+- Docker Desktop（或 Docker Engine）+ Docker Compose v2
+- 至少 2 GB RAM 用於映像建置（`pnpm install` 在 1 GB 主機上可能因 exit 137 被 OOM 殺死）
+- 足夠的磁碟空間用於映像 + 日誌
+- 若在 VPS/公共主機上執行，請查閱
+  [網路曝露的安全強化](/zh-Hant/gateway/security#04-network-exposure-bind--port--firewall)，
+  尤其是 Docker `DOCKER-USER` 防火牆策略。
 
-## Containerized Gateway (Docker Compose)
+## 容器化 Gateway（Docker Compose）
 
-### Quick start (recommended)
+### 快速開始（建議）
 
-From repo root:
+<Note>
+此處的 Docker 預設假設使用綁定模式（`lan`/`loopback`），而非主機別名。在 `gateway.bind` 中使用綁定模式值（例如 `lan` 或 `loopback`），而非主機別名如
+`0.0.0.0` 或 `localhost`。
+</Note>
+
+從倉庫根目錄執行：
 
 ```bash
 ./docker-setup.sh
 ```
 
-This script:
+此腳本：
 
-- builds the gateway image
-- runs the onboarding wizard
-- prints optional provider setup hints
-- starts the gateway via Docker Compose
-- generates a gateway token and writes it to `.env`
+- 在本機建置 gateway 映像（若設定了 `OPENCLAW_IMAGE` 則拉取遠端映像）
+- 執行引導精靈
+- 列印選填的提供者設定提示
+- 透過 Docker Compose 啟動 gateway
+- 生成 gateway token 並寫入 `.env`
 
-Optional env vars:
+選填環境變數：
 
-- `OPENCLAW_DOCKER_APT_PACKAGES` — install extra apt packages during build
-- `OPENCLAW_EXTRA_MOUNTS` — add extra host bind mounts
-- `OPENCLAW_HOME_VOLUME` — persist `/home/node` in a named volume
+- `OPENCLAW_IMAGE` — 使用遠端映像而非本機建置（例如 `ghcr.io/openclaw/openclaw:latest`）
+- `OPENCLAW_DOCKER_APT_PACKAGES` — 建置期間安裝額外的 apt 套件
+- `OPENCLAW_EXTENSIONS` — 建置時預先安裝擴充套件依賴項（以空格分隔的擴充套件名稱，例如 `diagnostics-otel matrix`）
+- `OPENCLAW_EXTRA_MOUNTS` — 新增額外的主機綁定掛載
+- `OPENCLAW_HOME_VOLUME` — 以具名 volume 持久化 `/home/node`
+- `OPENCLAW_SANDBOX` — 選擇加入 Docker gateway 沙箱 bootstrap。只有明確的真值才會啟用：`1`、`true`、`yes`、`on`
+- `OPENCLAW_INSTALL_DOCKER_CLI` — 本機映像建置的建置參數傳遞（`1` 在映像中安裝 Docker CLI）。當 `OPENCLAW_SANDBOX=1` 用於本機建置時，`docker-setup.sh` 自動設定此項。
+- `OPENCLAW_DOCKER_SOCKET` — 覆寫 Docker socket 路徑（預設：`DOCKER_HOST=unix://...` 路徑，否則為 `/var/run/docker.sock`）
+- `OPENCLAW_ALLOW_INSECURE_PRIVATE_WS=1` — 緊急出口：允許受信任的私有網路 `ws://` 目標用於 CLI/引導客戶端路徑（預設僅限 loopback）
+- `OPENCLAW_BROWSER_DISABLE_GRAPHICS_FLAGS=0` — 停用容器瀏覽器強化旗標
+  `--disable-3d-apis`、`--disable-software-rasterizer`、`--disable-gpu`，當您需要
+  WebGL/3D 相容性時使用。
+- `OPENCLAW_BROWSER_DISABLE_EXTENSIONS=0` — 當瀏覽器流程需要擴充套件時保持擴充套件啟用（預設在沙箱瀏覽器中停用擴充套件）。
+- `OPENCLAW_BROWSER_RENDERER_PROCESS_LIMIT=<N>` — 設定 Chromium 渲染器程序
+  限制；設為 `0` 跳過此旗標並使用 Chromium 預設行為。
 
-After it finishes:
+完成後：
 
-- Open `http://127.0.0.1:18789/` in your browser.
-- Paste the token into the Control UI (Settings → token).
-- Need the URL again? Run `docker compose run --rm openclaw-cli dashboard --no-open`.
+- 在瀏覽器中開啟 `http://127.0.0.1:18789/`。
+- 將 token 貼入 Control UI（設定 → token）。
+- 再次需要 URL？執行 `docker compose run --rm openclaw-cli dashboard --no-open`。
 
-It writes config/workspace on the host:
+### 為 Docker gateway 啟用 Agent 沙箱（選擇加入）
+
+`docker-setup.sh` 也可以為 Docker 部署 bootstrap `agents.defaults.sandbox.*`。
+
+啟用方式：
+
+```bash
+export OPENCLAW_SANDBOX=1
+./docker-setup.sh
+```
+
+自訂 socket 路徑（例如 rootless Docker）：
+
+```bash
+export OPENCLAW_SANDBOX=1
+export OPENCLAW_DOCKER_SOCKET=/run/user/1000/docker.sock
+./docker-setup.sh
+```
+
+注意：
+
+- 腳本只有在沙箱前置條件通過後才掛載 `docker.sock`。
+- 若沙箱設定無法完成，腳本會重置
+  `agents.defaults.sandbox.mode` 為 `off`，以避免重新執行時留下過時/損壞的沙箱設定。
+- 若 `Dockerfile.sandbox` 不存在，腳本會列印警告並繼續；
+  必要時使用 `scripts/sandbox-setup.sh` 建置 `openclaw-sandbox:bookworm-slim`。
+- 對於非本機的 `OPENCLAW_IMAGE` 值，映像必須已包含 Docker
+  CLI 支援以執行沙箱。
+
+### 自動化/CI（非互動式，無 TTY 輸出）
+
+對於腳本和 CI，使用 `-T` 停用 Compose 偽 TTY 分配：
+
+```bash
+docker compose run -T --rm openclaw-cli gateway probe
+docker compose run -T --rm openclaw-cli devices list --json
+```
+
+若您的自動化未匯出 Claude 會話變數，在 `docker-compose.yml` 中保持它們未設定現在預設解析為空值，以避免重複的「variable is not set」警告。
+
+### 共享網路安全注意事項（CLI + gateway）
+
+`openclaw-cli` 使用 `network_mode: "service:openclaw-gateway"`，讓 CLI 指令可以
+在 Docker 中透過 `127.0.0.1` 可靠地連接 gateway。
+
+將此視為共享信任邊界：loopback 綁定在這兩個容器之間不是隔離。
+若您需要更強的隔離，從獨立的容器/主機網路路徑執行指令，而非使用捆綁的 `openclaw-cli` 服務。
+
+為降低 CLI 程序遭到入侵時的影響，compose 設定在 `openclaw-cli` 上
+放棄 `NET_RAW`/`NET_ADMIN` 並啟用 `no-new-privileges`。
+
+它在主機上寫入設定/工作區：
 
 - `~/.openclaw/`
 - `~/.openclaw/workspace`
 
-Running on a VPS? See [Hetzner (Docker VPS)](/zh-Hant/install/hetzner).
+在 VPS 上執行？見 [Hetzner（Docker VPS）](/zh-Hant/install/hetzner)。
 
-### Manual flow (compose)
+### 使用遠端映像（跳過本機建置）
+
+官方預建映像發布於：
+
+- [GitHub Container Registry 套件](https://github.com/openclaw/openclaw/pkgs/container/openclaw)
+
+使用映像名稱 `ghcr.io/openclaw/openclaw`（不是 Docker Hub 上名稱相似的映像）。
+
+常用 tag：
+
+- `main` — `main` 分支的最新建置
+- `<version>` — 發布 tag 建置（例如 `2026.2.26`）
+- `latest` — 最新穩定發布 tag
+
+### 基礎映像元資料
+
+主要 Docker 映像目前使用：
+
+- `node:22-bookworm`
+
+Docker 映像現在發布 OCI 基礎映像標注（sha256 為範例，
+指向該 tag 的固定多架構 manifest list）：
+
+- `org.opencontainers.image.base.name=docker.io/library/node:22-bookworm`
+- `org.opencontainers.image.base.digest=sha256:b501c082306a4f528bc4038cbf2fbb58095d583d0419a259b2114b5ac53d12e9`
+- `org.opencontainers.image.source=https://github.com/openclaw/openclaw`
+- `org.opencontainers.image.url=https://openclaw.ai`
+- `org.opencontainers.image.documentation=https://docs.openclaw.ai/install/docker`
+- `org.opencontainers.image.licenses=MIT`
+- `org.opencontainers.image.title=OpenClaw`
+- `org.opencontainers.image.description=OpenClaw gateway and CLI runtime container image`
+- `org.opencontainers.image.revision=<git-sha>`
+- `org.opencontainers.image.version=<tag-or-main>`
+- `org.opencontainers.image.created=<rfc3339 timestamp>`
+
+參考：[OCI 映像標注](https://github.com/opencontainers/image-spec/blob/main/annotations.md)
+
+發布上下文：此倉庫的 tag 歷史已在
+`v2026.2.22` 及更早的 2026 tag（例如 `v2026.2.21`、`v2026.2.9`）中使用 Bookworm。
+
+預設情況下，設定腳本從原始碼建置映像。若要拉取預建映像，在執行腳本前設定 `OPENCLAW_IMAGE`：
+
+```bash
+export OPENCLAW_IMAGE="ghcr.io/openclaw/openclaw:latest"
+./docker-setup.sh
+```
+
+腳本偵測到 `OPENCLAW_IMAGE` 不是預設的 `openclaw:local` 並
+執行 `docker pull` 而非 `docker build`。其他所有內容（引導、
+gateway 啟動、token 生成）以相同方式運作。
+
+`docker-setup.sh` 仍從倉庫根目錄執行，因為它使用本機的
+`docker-compose.yml` 和輔助檔案。`OPENCLAW_IMAGE` 跳過本機映像建置
+時間；它不替換 compose/設定工作流程。
+
+### Shell 輔助工具（選用）
+
+為便於日常 Docker 管理，安裝 `ClawDock`：
+
+```bash
+mkdir -p ~/.clawdock && curl -sL https://raw.githubusercontent.com/openclaw/openclaw/main/scripts/shell-helpers/clawdock-helpers.sh -o ~/.clawdock/clawdock-helpers.sh
+```
+
+**新增到您的 shell 設定（zsh）：**
+
+```bash
+echo 'source ~/.clawdock/clawdock-helpers.sh' >> ~/.zshrc && source ~/.zshrc
+```
+
+然後使用 `clawdock-start`、`clawdock-stop`、`clawdock-dashboard` 等。執行 `clawdock-help` 查看所有指令。
+
+見 [`ClawDock` 輔助工具 README](https://github.com/openclaw/openclaw/blob/main/scripts/shell-helpers/README.md) 取得詳情。
+
+### 手動流程（compose）
 
 ```bash
 docker build -t openclaw:local -f Dockerfile .
@@ -73,18 +218,18 @@ docker compose run --rm openclaw-cli onboard
 docker compose up -d openclaw-gateway
 ```
 
-Note: run `docker compose ...` from the repo root. If you enabled
-`OPENCLAW_EXTRA_MOUNTS` or `OPENCLAW_HOME_VOLUME`, the setup script writes
-`docker-compose.extra.yml`; include it when running Compose elsewhere:
+注意：從倉庫根目錄執行 `docker compose ...`。若您啟用了
+`OPENCLAW_EXTRA_MOUNTS` 或 `OPENCLAW_HOME_VOLUME`，設定腳本會寫入
+`docker-compose.extra.yml`；在其他地方執行 Compose 時請包含它：
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.extra.yml <command>
 ```
 
-### Control UI token + pairing (Docker)
+### Control UI token + 配對（Docker）
 
-If you see “unauthorized” or “disconnected (1008): pairing required”, fetch a
-fresh dashboard link and approve the browser device:
+若您看到「unauthorized」或「disconnected (1008): pairing required」，取得
+新的儀表板連結並核准瀏覽器裝置：
 
 ```bash
 docker compose run --rm openclaw-cli dashboard --no-open
@@ -92,45 +237,42 @@ docker compose run --rm openclaw-cli devices list
 docker compose run --rm openclaw-cli devices approve <requestId>
 ```
 
-More detail: [Dashboard](/zh-Hant/web/dashboard), [Devices](/zh-Hant/cli/devices).
+詳情：[儀表板](/zh-Hant/web/dashboard)、[裝置](/zh-Hant/cli/devices)。
 
-### Extra mounts (optional)
+### 額外掛載（選用）
 
-If you want to mount additional host directories into the containers, set
-`OPENCLAW_EXTRA_MOUNTS` before running `docker-setup.sh`. This accepts a
-comma-separated list of Docker bind mounts and applies them to both
-`openclaw-gateway` and `openclaw-cli` by generating `docker-compose.extra.yml`.
+若您想將額外的主機目錄掛載到容器中，在執行 `docker-setup.sh` 前設定
+`OPENCLAW_EXTRA_MOUNTS`。這接受逗號分隔的 Docker 綁定掛載清單，並透過生成 `docker-compose.extra.yml` 將它們套用到
+`openclaw-gateway` 和 `openclaw-cli`。
 
-Example:
+範例：
 
 ```bash
 export OPENCLAW_EXTRA_MOUNTS="$HOME/.codex:/home/node/.codex:ro,$HOME/github:/home/node/github:rw"
 ./docker-setup.sh
 ```
 
-Notes:
+注意：
 
-- Paths must be shared with Docker Desktop on macOS/Windows.
-- If you edit `OPENCLAW_EXTRA_MOUNTS`, rerun `docker-setup.sh` to regenerate the
-  extra compose file.
-- `docker-compose.extra.yml` is generated. Don’t hand-edit it.
+- 路徑必須在 macOS/Windows 上與 Docker Desktop 共享。
+- 每個項目必須為 `source:target[:options]`，不含空格、Tab 或換行。
+- 若您編輯 `OPENCLAW_EXTRA_MOUNTS`，重新執行 `docker-setup.sh` 以重新生成額外的 compose 檔案。
+- `docker-compose.extra.yml` 是生成的，請勿手動編輯。
 
-### Persist the entire container home (optional)
+### 持久化整個容器主目錄（選用）
 
-If you want `/home/node` to persist across container recreation, set a named
-volume via `OPENCLAW_HOME_VOLUME`. This creates a Docker volume and mounts it at
-`/home/node`, while keeping the standard config/workspace bind mounts. Use a
-named volume here (not a bind path); for bind mounts, use
-`OPENCLAW_EXTRA_MOUNTS`.
+若您想讓 `/home/node` 在容器重建後持續存在，透過 `OPENCLAW_HOME_VOLUME` 設定具名
+volume。這會建立一個 Docker volume 並將其掛載到 `/home/node`，同時保留標準的設定/工作區綁定掛載。在此使用具名 volume（而非綁定路徑）；對於綁定掛載，使用
+`OPENCLAW_EXTRA_MOUNTS`。
 
-Example:
+範例：
 
 ```bash
 export OPENCLAW_HOME_VOLUME="openclaw_home"
 ./docker-setup.sh
 ```
 
-You can combine this with extra mounts:
+您可以結合額外掛載使用：
 
 ```bash
 export OPENCLAW_HOME_VOLUME="openclaw_home"
@@ -138,91 +280,110 @@ export OPENCLAW_EXTRA_MOUNTS="$HOME/.codex:/home/node/.codex:ro,$HOME/github:/ho
 ./docker-setup.sh
 ```
 
-Notes:
+注意：
 
-- If you change `OPENCLAW_HOME_VOLUME`, rerun `docker-setup.sh` to regenerate the
-  extra compose file.
-- The named volume persists until removed with `docker volume rm <name>`.
+- 具名 volume 必須符合 `^[A-Za-z0-9][A-Za-z0-9_.-]*$`。
+- 若您更改 `OPENCLAW_HOME_VOLUME`，重新執行 `docker-setup.sh` 以重新生成額外的 compose 檔案。
+- 具名 volume 持久化直到使用 `docker volume rm <name>` 移除。
 
-### Install extra apt packages (optional)
+### 安裝額外的 apt 套件（選用）
 
-If you need system packages inside the image (for example, build tools or media
-libraries), set `OPENCLAW_DOCKER_APT_PACKAGES` before running `docker-setup.sh`.
-This installs the packages during the image build, so they persist even if the
-container is deleted.
+若您需要映像內的系統套件（例如建置工具或媒體程式庫），在執行 `docker-setup.sh` 前設定 `OPENCLAW_DOCKER_APT_PACKAGES`。
+這會在映像建置期間安裝套件，因此即使容器刪除後也會持續存在。
 
-Example:
+範例：
 
 ```bash
 export OPENCLAW_DOCKER_APT_PACKAGES="ffmpeg build-essential"
 ./docker-setup.sh
 ```
 
-Notes:
+注意：
 
-- This accepts a space-separated list of apt package names.
-- If you change `OPENCLAW_DOCKER_APT_PACKAGES`, rerun `docker-setup.sh` to rebuild
-  the image.
+- 這接受以空格分隔的 apt 套件名稱清單。
+- 若您更改 `OPENCLAW_DOCKER_APT_PACKAGES`，重新執行 `docker-setup.sh` 以重新建置映像。
 
-### Power-user / full-featured container (opt-in)
+### 預先安裝擴充套件依賴項（選用）
 
-The default Docker image is **security-first** and runs as the non-root `node`
-user. This keeps the attack surface small, but it means:
+有自己 `package.json` 的擴充套件（例如 `diagnostics-otel`、`matrix`、
+`msteams`）在首次載入時安裝其 npm 依賴項。若要改為將這些
+依賴項烘焙到映像中，在執行 `docker-setup.sh` 前設定 `OPENCLAW_EXTENSIONS`：
 
-- no system package installs at runtime
-- no Homebrew by default
-- no bundled Chromium/Playwright browsers
+```bash
+export OPENCLAW_EXTENSIONS="diagnostics-otel matrix"
+./docker-setup.sh
+```
 
-If you want a more full-featured container, use these opt-in knobs:
+或直接建置時：
 
-1. **Persist `/home/node`** so browser downloads and tool caches survive:
+```bash
+docker build --build-arg OPENCLAW_EXTENSIONS="diagnostics-otel matrix" .
+```
+
+注意：
+
+- 這接受以空格分隔的擴充套件目錄名稱清單（在 `extensions/` 下）。
+- 只有有 `package.json` 的擴充套件會受影響；沒有 `package.json` 的輕量插件會被忽略。
+- 若您更改 `OPENCLAW_EXTENSIONS`，重新執行 `docker-setup.sh` 以重新建置映像。
+
+### 進階使用者 / 功能完整容器（選擇加入）
+
+預設 Docker 映像以**安全性優先**設計，以非 root 的 `node`
+使用者執行。這使攻擊面小，但意味著：
+
+- 執行時無法安裝系統套件
+- 預設無 Homebrew
+- 無捆綁的 Chromium/Playwright 瀏覽器
+
+若您想要功能更完整的容器，使用這些選擇加入的設定：
+
+1. **持久化 `/home/node`** 讓瀏覽器下載和工具快取得以保存：
 
 ```bash
 export OPENCLAW_HOME_VOLUME="openclaw_home"
 ./docker-setup.sh
 ```
 
-2. **Bake system deps into the image** (repeatable + persistent):
+2. **將系統依賴項烘焙到映像中**（可重複 + 持久）：
 
 ```bash
 export OPENCLAW_DOCKER_APT_PACKAGES="git curl jq"
 ./docker-setup.sh
 ```
 
-3. **Install Playwright browsers without `npx`** (avoids npm override conflicts):
+3. **不使用 `npx` 安裝 Playwright 瀏覽器**（避免 npm 覆寫衝突）：
 
 ```bash
 docker compose run --rm openclaw-cli \
   node /app/node_modules/playwright-core/cli.js install chromium
 ```
 
-If you need Playwright to install system deps, rebuild the image with
-`OPENCLAW_DOCKER_APT_PACKAGES` instead of using `--with-deps` at runtime.
+若您需要 Playwright 安裝系統依賴項，使用
+`OPENCLAW_DOCKER_APT_PACKAGES` 重新建置映像，而非在執行時使用 `--with-deps`。
 
-4. **Persist Playwright browser downloads**:
+4. **持久化 Playwright 瀏覽器下載**：
 
-- Set `PLAYWRIGHT_BROWSERS_PATH=/home/node/.cache/ms-playwright` in
-  `docker-compose.yml`.
-- Ensure `/home/node` persists via `OPENCLAW_HOME_VOLUME`, or mount
-  `/home/node/.cache/ms-playwright` via `OPENCLAW_EXTRA_MOUNTS`.
+- 在 `docker-compose.yml` 中設定 `PLAYWRIGHT_BROWSERS_PATH=/home/node/.cache/ms-playwright`。
+- 透過 `OPENCLAW_HOME_VOLUME` 確保 `/home/node` 持久化，或
+  透過 `OPENCLAW_EXTRA_MOUNTS` 掛載 `/home/node/.cache/ms-playwright`。
 
-### Permissions + EACCES
+### 權限 + EACCES
 
-The image runs as `node` (uid 1000). If you see permission errors on
-`/home/node/.openclaw`, make sure your host bind mounts are owned by uid 1000.
+映像以 `node`（uid 1000）執行。若您在
+`/home/node/.openclaw` 上看到權限錯誤，確認您的主機綁定掛載由 uid 1000 擁有。
 
-Example (Linux host):
+範例（Linux 主機）：
 
 ```bash
 sudo chown -R 1000:1000 /path/to/openclaw-config /path/to/openclaw-workspace
 ```
 
-If you choose to run as root for convenience, you accept the security tradeoff.
+若您為了方便以 root 執行，您接受了安全性取捨。
 
-### Faster rebuilds (recommended)
+### 更快的重新建置（建議）
 
-To speed up rebuilds, order your Dockerfile so dependency layers are cached.
-This avoids re-running `pnpm install` unless lockfiles change:
+為加速重新建置，將 Dockerfile 中的依賴層排在前面進行快取。
+除非 lockfile 變更，否則避免重新執行 `pnpm install`：
 
 ```dockerfile
 FROM node:22-bookworm
@@ -252,115 +413,169 @@ ENV NODE_ENV=production
 CMD ["node","dist/index.js"]
 ```
 
-### Channel setup (optional)
+### 頻道設定（選用）
 
-Use the CLI container to configure channels, then restart the gateway if needed.
+使用 CLI 容器設定頻道，必要時重啟 gateway。
 
-WhatsApp (QR):
+WhatsApp（QR）：
 
 ```bash
 docker compose run --rm openclaw-cli channels login
 ```
 
-Telegram (bot token):
+Telegram（bot token）：
 
 ```bash
 docker compose run --rm openclaw-cli channels add --channel telegram --token "<token>"
 ```
 
-Discord (bot token):
+Discord（bot token）：
 
 ```bash
 docker compose run --rm openclaw-cli channels add --channel discord --token "<token>"
 ```
 
-Docs: [WhatsApp](/zh-Hant/channels/whatsapp), [Telegram](/zh-Hant/channels/telegram), [Discord](/zh-Hant/channels/discord)
+文件：[WhatsApp](/zh-Hant/channels/whatsapp)、[Telegram](/zh-Hant/channels/telegram)、[Discord](/zh-Hant/channels/discord)
 
-### OpenAI Codex OAuth (headless Docker)
+### OpenAI Codex OAuth（無頭 Docker）
 
-If you pick OpenAI Codex OAuth in the wizard, it opens a browser URL and tries
-to capture a callback on `http://127.0.0.1:1455/auth/callback`. In Docker or
-headless setups that callback can show a browser error. Copy the full redirect
-URL you land on and paste it back into the wizard to finish auth.
+若您在精靈中選擇 OpenAI Codex OAuth，它會開啟瀏覽器 URL 並嘗試
+在 `http://127.0.0.1:1455/auth/callback` 捕獲回呼。在 Docker 或
+無頭設定中，該回呼可能顯示瀏覽器錯誤。複製您到達的完整重定向
+URL 並貼回精靈以完成驗證。
 
-### Health check
+### 健康檢查
+
+容器探針端點（不需要驗證）：
+
+```bash
+curl -fsS http://127.0.0.1:18789/healthz
+curl -fsS http://127.0.0.1:18789/readyz
+```
+
+別名：`/health` 和 `/ready`。
+
+`/healthz` 是「gateway 程序已啟動」的淺層存活探針。
+`/readyz` 在啟動寬限期間保持就緒，然後只有在寬限後或之後所需
+的受管理頻道仍斷線時才變為 `503`。
+
+Docker 映像包含一個內建的 `HEALTHCHECK`，在背景 ping `/healthz`。
+簡單說：Docker 持續檢查 OpenClaw 是否仍有回應。若持續失敗，Docker 將容器標記為 `unhealthy`，
+協調系統（Docker Compose 重啟策略、Swarm、Kubernetes 等）可自動重啟或替換它。
+
+已驗證的深度健康快照（gateway + 頻道）：
 
 ```bash
 docker compose exec openclaw-gateway node dist/index.js health --token "$OPENCLAW_GATEWAY_TOKEN"
 ```
 
-### E2E smoke test (Docker)
+### E2E 煙霧測試（Docker）
 
 ```bash
 scripts/e2e/onboard-docker.sh
 ```
 
-### QR import smoke test (Docker)
+### QR 匯入煙霧測試（Docker）
 
 ```bash
 pnpm test:docker:qr
 ```
 
-### Notes
+### LAN vs loopback（Docker Compose）
 
-- Gateway bind defaults to `lan` for container use.
-- Dockerfile CMD uses `--allow-unconfigured`; mounted config with `gateway.mode` not `local` will still start. Override CMD to enforce the guard.
-- The gateway container is the source of truth for sessions (`~/.openclaw/agents/<agentId>/sessions/`).
+`docker-setup.sh` 預設 `OPENCLAW_GATEWAY_BIND=lan`，以便主機存取
+`http://127.0.0.1:18789` 能與 Docker 連接埠發布一起運作。
 
-## Agent Sandbox (host gateway + Docker tools)
+- `lan`（預設）：主機瀏覽器 + 主機 CLI 可以連接到已發布的 gateway 連接埠。
+- `loopback`：只有容器網路命名空間內的程序才能直接連接
+  gateway；主機發布的連接埠存取可能失敗。
 
-Deep dive: [Sandboxing](/zh-Hant/gateway/sandboxing)
+設定腳本也在引導後固定 `gateway.mode=local`，以便 Docker CLI
+指令預設使用本機 loopback 目標。
 
-### What it does
+舊版設定注意事項：在 `gateway.bind` 中使用綁定模式值（`lan` / `loopback` /
+`custom` / `tailnet` / `auto`），而非主機別名（`0.0.0.0`、`127.0.0.1`、
+`localhost`、`::`、`::1`）。
 
-When `agents.defaults.sandbox` is enabled, **non-main sessions** run tools inside a Docker
-container. The gateway stays on your host, but the tool execution is isolated:
+若您看到 `Gateway target: ws://172.x.x.x:18789` 或來自 Docker CLI 指令的重複 `pairing required`
+錯誤，執行：
 
-- scope: `"agent"` by default (one container + workspace per agent)
-- scope: `"session"` for per-session isolation
-- per-scope workspace folder mounted at `/workspace`
-- optional agent workspace access (`agents.defaults.sandbox.workspaceAccess`)
-- allow/deny tool policy (deny wins)
-- inbound media is copied into the active sandbox workspace (`media/inbound/*`) so tools can read it (with `workspaceAccess: "rw"`, this lands in the agent workspace)
+```bash
+docker compose run --rm openclaw-cli config set gateway.mode local
+docker compose run --rm openclaw-cli config set gateway.bind lan
+docker compose run --rm openclaw-cli devices list --url ws://127.0.0.1:18789
+```
 
-Warning: `scope: "shared"` disables cross-session isolation. All sessions share
-one container and one workspace.
+### 注意事項
 
-### Per-agent sandbox profiles (multi-agent)
+- Gateway 綁定預設為 `lan` 以供容器使用（`OPENCLAW_GATEWAY_BIND`）。
+- Dockerfile CMD 使用 `--allow-unconfigured`；設定了 `gateway.mode` 但不是 `local` 的掛載設定仍會啟動。覆寫 CMD 以強制套用防護。
+- Gateway 容器是會話的真相來源（`~/.openclaw/agents/<agentId>/sessions/`）。
 
-If you use multi-agent routing, each agent can override sandbox + tool settings:
-`agents.list[].sandbox` and `agents.list[].tools` (plus `agents.list[].tools.sandbox.tools`). This lets you run
-mixed access levels in one gateway:
+### 儲存模型
 
-- Full access (personal agent)
-- Read-only tools + read-only workspace (family/work agent)
-- No filesystem/shell tools (public agent)
+- **持久化主機資料：** Docker Compose 將 `OPENCLAW_CONFIG_DIR` 綁定掛載到 `/home/node/.openclaw`，將 `OPENCLAW_WORKSPACE_DIR` 綁定掛載到 `/home/node/.openclaw/workspace`，因此這些路徑在容器替換後仍能存活。
+- **臨時沙箱 tmpfs：** 當 `agents.defaults.sandbox` 啟用時，沙箱容器對 `/tmp`、`/var/tmp` 和 `/run` 使用 `tmpfs`。這些掛載與頂層 Compose 堆疊分開，沙箱容器消失時也會消失。
+- **磁碟增長熱點：** 監控 `media/`、`agents/<agentId>/sessions/sessions.json`、逐字稿 JSONL 檔案、`cron/runs/*.jsonl`，以及 `/tmp/openclaw/`（或您設定的 `logging.file`）下的滾動檔案日誌。若您也在 Docker 外執行 macOS app，其服務日誌是獨立的：`~/.openclaw/logs/gateway.log`、`~/.openclaw/logs/gateway.err.log` 和 `/tmp/openclaw/openclaw-gateway.log`。
 
-See [Multi-Agent Sandbox & Tools](/zh-Hant/tools/multi-agent-sandbox-tools) for examples,
-precedence, and troubleshooting.
+## Agent 沙箱（主機 gateway + Docker 工具）
 
-### Default behavior
+深入說明：[沙箱](/zh-Hant/gateway/sandboxing)
 
-- Image: `openclaw-sandbox:bookworm-slim`
-- One container per agent
-- Agent workspace access: `workspaceAccess: "none"` (default) uses `~/.openclaw/sandboxes`
-  - `"ro"` keeps the sandbox workspace at `/workspace` and mounts the agent workspace read-only at `/agent` (disables `write`/`edit`/`apply_patch`)
-  - `"rw"` mounts the agent workspace read/write at `/workspace`
-- Auto-prune: idle > 24h OR age > 7d
-- Network: `none` by default (explicitly opt-in if you need egress)
-- Default allow: `exec`, `process`, `read`, `write`, `edit`, `sessions_list`, `sessions_history`, `sessions_send`, `sessions_spawn`, `session_status`
-- Default deny: `browser`, `canvas`, `nodes`, `cron`, `discord`, `gateway`
+### 功能說明
 
-### Enable sandboxing
+當 `agents.defaults.sandbox` 啟用時，**非主會話**在 Docker
+容器內執行工具。Gateway 保留在您的主機上，但工具執行是隔離的：
 
-If you plan to install packages in `setupCommand`, note:
+- 範圍：預設 `"agent"`（每個 agent 一個容器 + 工作區）
+- 範圍：`"session"` 用於每會話隔離
+- 每範圍工作區資料夾掛載到 `/workspace`
+- 選填的 agent 工作區存取（`agents.defaults.sandbox.workspaceAccess`）
+- 允許/拒絕工具策略（拒絕優先）
+- 入站媒體複製到活躍的沙箱工作區（`media/inbound/*`），讓工具可以讀取（使用 `workspaceAccess: "rw"` 時，這會落在 agent 工作區）
 
-- Default `docker.network` is `"none"` (no egress).
-- `readOnlyRoot: true` blocks package installs.
-- `user` must be root for `apt-get` (omit `user` or set `user: "0:0"`).
-  OpenClaw auto-recreates containers when `setupCommand` (or docker config) changes
-  unless the container was **recently used** (within ~5 minutes). Hot containers
-  log a warning with the exact `openclaw sandbox recreate ...` command.
+警告：`scope: "shared"` 停用跨會話隔離。所有會話共享
+一個容器和一個工作區。
+
+### 每 Agent 沙箱設定檔（多 Agent）
+
+若您使用多 Agent 路由，每個 agent 可以覆寫沙箱 + 工具設定：
+`agents.list[].sandbox` 和 `agents.list[].tools`（加上 `agents.list[].tools.sandbox.tools`）。這讓您可以在一個 gateway 中執行
+混合存取層級：
+
+- 完整存取（個人 agent）
+- 唯讀工具 + 唯讀工作區（家庭/工作 agent）
+- 無檔案系統/Shell 工具（公開 agent）
+
+見 [多 Agent 沙箱與工具](/zh-Hant/tools/multi-agent-sandbox-tools) 取得範例、
+優先順序和疑難排解。
+
+### 預設行為
+
+- 映像：`openclaw-sandbox:bookworm-slim`
+- 每個 agent 一個容器
+- Agent 工作區存取：`workspaceAccess: "none"`（預設）使用 `~/.openclaw/sandboxes`
+  - `"ro"` 保持沙箱工作區在 `/workspace`，並以唯讀方式掛載 agent 工作區到 `/agent`（停用 `write`/`edit`/`apply_patch`）
+  - `"rw"` 以讀寫方式掛載 agent 工作區到 `/workspace`
+- 自動修剪：閒置 > 24h 或年齡 > 7d
+- 網路：預設 `none`（若需要出站連線請明確選擇加入）
+  - `host` 被阻擋。
+  - `container:<id>` 預設被阻擋（命名空間加入風險）。
+- 預設允許：`exec`、`process`、`read`、`write`、`edit`、`sessions_list`、`sessions_history`、`sessions_send`、`sessions_spawn`、`session_status`
+- 預設拒絕：`browser`、`canvas`、`nodes`、`cron`、`discord`、`gateway`
+
+### 啟用沙箱
+
+若您計劃在 `setupCommand` 中安裝套件，請注意：
+
+- 預設 `docker.network` 為 `"none"`（無出站連線）。
+- `docker.network: "host"` 被阻擋。
+- `docker.network: "container:<id>"` 預設被阻擋。
+- 緊急出口覆寫：`agents.defaults.sandbox.docker.dangerouslyAllowContainerNamespaceJoin: true`。
+- `readOnlyRoot: true` 阻擋套件安裝。
+- `user` 必須為 root 才能執行 `apt-get`（省略 `user` 或設定 `user: "0:0"`）。
+  OpenClaw 在 `setupCommand`（或 docker 設定）變更時自動重建容器，
+  除非容器是**最近使用**的（約 5 分鐘內）。熱容器會記錄警告並附上精確的 `openclaw sandbox recreate ...` 指令。
 
 ```json5
 {
@@ -368,7 +583,7 @@ If you plan to install packages in `setupCommand`, note:
     defaults: {
       sandbox: {
         mode: "non-main", // off | non-main | all
-        scope: "agent", // session | agent | shared (agent is default)
+        scope: "agent", // session | agent | shared（agent 為預設）
         workspaceAccess: "none", // none | ro | rw
         workspaceRoot: "~/.openclaw/sandboxes",
         docker: {
@@ -395,8 +610,8 @@ If you plan to install packages in `setupCommand`, note:
           extraHosts: ["internal.service:10.0.0.5"],
         },
         prune: {
-          idleHours: 24, // 0 disables idle pruning
-          maxAgeDays: 7, // 0 disables max-age pruning
+          idleHours: 24, // 0 停用閒置修剪
+          maxAgeDays: 7, // 0 停用最大年齡修剪
         },
       },
     },
@@ -423,30 +638,31 @@ If you plan to install packages in `setupCommand`, note:
 }
 ```
 
-Hardening knobs live under `agents.defaults.sandbox.docker`:
-`network`, `user`, `pidsLimit`, `memory`, `memorySwap`, `cpus`, `ulimits`,
-`seccompProfile`, `apparmorProfile`, `dns`, `extraHosts`.
+強化設定位於 `agents.defaults.sandbox.docker` 下：
+`network`、`user`、`pidsLimit`、`memory`、`memorySwap`、`cpus`、`ulimits`、
+`seccompProfile`、`apparmorProfile`、`dns`、`extraHosts`、
+`dangerouslyAllowContainerNamespaceJoin`（僅限緊急出口）。
 
-Multi-agent: override `agents.defaults.sandbox.{docker,browser,prune}.*` per agent via `agents.list[].sandbox.{docker,browser,prune}.*`
-(ignored when `agents.defaults.sandbox.scope` / `agents.list[].sandbox.scope` is `"shared"`).
+多 Agent：透過 `agents.list[].sandbox.{docker,browser,prune}.*` 覆寫每個 agent 的 `agents.defaults.sandbox.{docker,browser,prune}.*`
+（當 `agents.defaults.sandbox.scope` / `agents.list[].sandbox.scope` 為 `"shared"` 時忽略）。
 
-### Build the default sandbox image
+### 建置預設沙箱映像
 
 ```bash
 scripts/sandbox-setup.sh
 ```
 
-This builds `openclaw-sandbox:bookworm-slim` using `Dockerfile.sandbox`.
+這使用 `Dockerfile.sandbox` 建置 `openclaw-sandbox:bookworm-slim`。
 
-### Sandbox common image (optional)
+### 沙箱通用映像（選用）
 
-If you want a sandbox image with common build tooling (Node, Go, Rust, etc.), build the common image:
+若您想要含常見建置工具（Node、Go、Rust 等）的沙箱映像，建置通用映像：
 
 ```bash
 scripts/sandbox-common-setup.sh
 ```
 
-This builds `openclaw-sandbox-common:bookworm-slim`. To use it:
+這建置 `openclaw-sandbox-common:bookworm-slim`。若要使用它：
 
 ```json5
 {
@@ -458,25 +674,51 @@ This builds `openclaw-sandbox-common:bookworm-slim`. To use it:
 }
 ```
 
-### Sandbox browser image
+### 沙箱瀏覽器映像
 
-To run the browser tool inside the sandbox, build the browser image:
+若要在沙箱內執行瀏覽器工具，建置瀏覽器映像：
 
 ```bash
 scripts/sandbox-browser-setup.sh
 ```
 
-This builds `openclaw-sandbox-browser:bookworm-slim` using
-`Dockerfile.sandbox-browser`. The container runs Chromium with CDP enabled and
-an optional noVNC observer (headful via Xvfb).
+這使用 `Dockerfile.sandbox-browser` 建置 `openclaw-sandbox-browser:bookworm-slim`。容器以啟用 CDP 的 Chromium 執行，並帶有
+選填的 noVNC 觀察器（透過 Xvfb 的有頭模式）。
 
-Notes:
+注意：
 
-- Headful (Xvfb) reduces bot blocking vs headless.
-- Headless can still be used by setting `agents.defaults.sandbox.browser.headless=true`.
-- No full desktop environment (GNOME) is needed; Xvfb provides the display.
+- 有頭模式（Xvfb）比無頭模式減少機器人攔截。
+- 透過設定 `agents.defaults.sandbox.browser.headless=true` 仍可使用無頭模式。
+- 不需要完整的桌面環境（GNOME）；Xvfb 提供顯示。
+- 瀏覽器容器預設使用專用的 Docker 網路（`openclaw-sandbox-browser`）而非全局 `bridge`。
+- 選填的 `agents.defaults.sandbox.browser.cdpSourceRange` 透過 CIDR 限制容器邊緣的 CDP 入站（例如 `172.21.0.1/32`）。
+- noVNC 觀察器存取預設受密碼保護；OpenClaw 提供短期觀察器 Token URL，提供本機 bootstrap 頁面並在 URL 片段中保存密碼（而非 URL 查詢）。
+- 瀏覽器容器啟動預設對共享/容器工作負載採取保守設定，包含：
+  - `--remote-debugging-address=127.0.0.1`
+  - `--remote-debugging-port=<derived from OPENCLAW_BROWSER_CDP_PORT>`
+  - `--user-data-dir=${HOME}/.chrome`
+  - `--no-first-run`
+  - `--no-default-browser-check`
+  - `--disable-3d-apis`
+  - `--disable-software-rasterizer`
+  - `--disable-gpu`
+  - `--disable-dev-shm-usage`
+  - `--disable-background-networking`
+  - `--disable-features=TranslateUI`
+  - `--disable-breakpad`
+  - `--disable-crash-reporter`
+  - `--metrics-recording-only`
+  - `--renderer-process-limit=2`
+  - `--no-zygote`
+  - `--disable-extensions`
+  - 若設定了 `agents.defaults.sandbox.browser.noSandbox`，也會附加 `--no-sandbox` 和 `--disable-setuid-sandbox`。
+  - 上述三個圖形強化旗標是選填的。若您的工作負載需要 WebGL/3D，設定 `OPENCLAW_BROWSER_DISABLE_GRAPHICS_FLAGS=0` 以不使用 `--disable-3d-apis`、`--disable-software-rasterizer` 和 `--disable-gpu` 執行。
+  - 擴充套件行為由 `--disable-extensions` 控制，可透過 `OPENCLAW_BROWSER_DISABLE_EXTENSIONS=0` 停用（啟用擴充套件），適用於依賴擴充套件的頁面或擴充套件密集的工作流程。
+  - `--renderer-process-limit=2` 也可透過 `OPENCLAW_BROWSER_RENDERER_PROCESS_LIMIT` 設定；設為 `0` 讓 Chromium 在需要調整瀏覽器並發時選擇其預設程序限制。
 
-Use config:
+預設設定在捆綁的映像中預設套用。若您需要不同的 Chromium 旗標，使用自訂瀏覽器映像並提供自己的進入點。
+
+使用設定：
 
 ```json5
 {
@@ -490,7 +732,7 @@ Use config:
 }
 ```
 
-Custom browser image:
+自訂瀏覽器映像：
 
 ```json5
 {
@@ -502,18 +744,18 @@ Custom browser image:
 }
 ```
 
-When enabled, the agent receives:
+啟用後，agent 會收到：
 
-- a sandbox browser control URL (for the `browser` tool)
-- a noVNC URL (if enabled and headless=false)
+- 沙箱瀏覽器控制 URL（供 `browser` 工具使用）
+- noVNC URL（若已啟用且 headless=false）
 
-Remember: if you use an allowlist for tools, add `browser` (and remove it from
-deny) or the tool remains blocked.
-Prune rules (`agents.defaults.sandbox.prune`) apply to browser containers too.
+記住：若您使用工具的允許清單，新增 `browser`（並從
+拒絕中移除），否則工具仍會被阻擋。
+修剪規則（`agents.defaults.sandbox.prune`）也適用於瀏覽器容器。
 
-### Custom sandbox image
+### 自訂沙箱映像
 
-Build your own image and point config to it:
+建置您自己的映像並將設定指向它：
 
 ```bash
 docker build -t my-openclaw-sbx -f Dockerfile.sandbox .
@@ -529,39 +771,35 @@ docker build -t my-openclaw-sbx -f Dockerfile.sandbox .
 }
 ```
 
-### Tool policy (allow/deny)
+### 工具策略（允許/拒絕）
 
-- `deny` wins over `allow`.
-- If `allow` is empty: all tools (except deny) are available.
-- If `allow` is non-empty: only tools in `allow` are available (minus deny).
+- `deny` 優先於 `allow`。
+- 若 `allow` 為空：所有工具（除拒絕外）均可使用。
+- 若 `allow` 非空：只有 `allow` 中的工具可使用（減去拒絕）。
 
-### Pruning strategy
+### 修剪策略
 
-Two knobs:
+兩個設定：
 
-- `prune.idleHours`: remove containers not used in X hours (0 = disable)
-- `prune.maxAgeDays`: remove containers older than X days (0 = disable)
+- `prune.idleHours`：移除 X 小時內未使用的容器（0 = 停用）
+- `prune.maxAgeDays`：移除超過 X 天的容器（0 = 停用）
 
-Example:
+範例：
 
-- Keep busy sessions but cap lifetime:
-  `idleHours: 24`, `maxAgeDays: 7`
-- Never prune:
-  `idleHours: 0`, `maxAgeDays: 0`
+- 保留繁忙的會話但限制生命週期：
+  `idleHours: 24`、`maxAgeDays: 7`
+- 永不修剪：
+  `idleHours: 0`、`maxAgeDays: 0`
 
-### Security notes
+### 安全注意事項
 
-- Hard wall only applies to **tools** (exec/read/write/edit/apply_patch).
-- Host-only tools like browser/camera/canvas are blocked by default.
-- Allowing `browser` in sandbox **breaks isolation** (browser runs on host).
+- 硬性隔離只適用於**工具**（exec/read/write/edit/apply_patch）。
+- 主機專用工具如 browser/camera/canvas 預設被阻擋。
+- 在沙箱中允許 `browser` **破壞隔離**（瀏覽器在主機上執行）。
 
-## Troubleshooting
+## 疑難排解
 
-- Image missing: build with [`scripts/sandbox-setup.sh`](https://github.com/openclaw/openclaw/blob/main/scripts/sandbox-setup.sh) or set `agents.defaults.sandbox.docker.image`.
-- Container not running: it will auto-create per session on demand.
-- Permission errors in sandbox: set `docker.user` to a UID:GID that matches your
-  mounted workspace ownership (or chown the workspace folder).
-- Custom tools not found: OpenClaw runs commands with `sh -lc` (login shell), which
-  sources `/etc/profile` and may reset PATH. Set `docker.env.PATH` to prepend your
-  custom tool paths (e.g., `/custom/bin:/usr/local/share/npm-global/bin`), or add
-  a script under `/etc/profile.d/` in your Dockerfile.
+- 映像缺失：使用 [`scripts/sandbox-setup.sh`](https://github.com/openclaw/openclaw/blob/main/scripts/sandbox-setup.sh) 建置，或設定 `agents.defaults.sandbox.docker.image`。
+- 容器未執行：將按需每會話自動建立。
+- 沙箱中的權限錯誤：將 `docker.user` 設定為符合您掛載工作區擁有權的 UID:GID（或 chown 工作區資料夾）。
+- 找不到自訂工具：OpenClaw 使用 `sh -lc`（登入 shell）執行指令，這會來源 `/etc/profile` 並可能重置 PATH。設定 `docker.env.PATH` 以前置您的自訂工具路徑（例如 `/custom/bin:/usr/local/share/npm-global/bin`），或在您的 Dockerfile 中在 `/etc/profile.d/` 下新增腳本。

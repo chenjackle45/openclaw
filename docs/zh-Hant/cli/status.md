@@ -1,9 +1,9 @@
 ---
-title: "status（狀態盤查）"
-summary: "`openclaw status` CLI 參考（診斷、探針與使用量快照）"
+summary: "`openclaw status` CLI 參考（診斷、探測與使用量快照）"
 read_when:
   - 想要快速診斷頻道健康度與近期會話接收者時
-  - 需要一份可貼上的「完整」狀態報告以進行偵錯時
+  - 想要一份可貼上的「all」狀態以供偵錯時
+title: "status（狀態診斷）"
 ---
 
 # `openclaw status`
@@ -11,23 +11,18 @@ read_when:
 頻道與會話的診斷工具。
 
 ```bash
-# 基礎狀態顯示
 openclaw status
-
-# 顯示所有詳細資訊（適合用於貼上至問題回報）
 openclaw status --all
-
-# 執行深度探針（包含 WhatsApp, Telegram, Discord 等實時連線檢查）
 openclaw status --deep
-
-# 顯示模型供應商的使用量計量
 openclaw status --usage
 ```
 
-**注意事項**：
+注意事項：
 
-- `--deep` 旗標會觸發針對所有已配置頻道的實時連線探測。
-- 若配置了多代理系統，輸出將包含各個 Agent 的會話儲存狀態。
-- 總覽 (Overview) 資訊中會包含 Gateway 以及節點主機 (Node host) 服務的安裝與運行狀態。
-- 總覽資訊也會顯示目前的更新頻道 (Channel) 以及 Git SHA 版本（適用於從原始碼編譯的版本）。
-- 如果有可用更新，`status` 會在總覽中顯示提醒，指引用戶執行 `openclaw update`（詳見 [更新指南](/zh-Hant/install/updating)）。
+- `--deep` 執行實時探測（WhatsApp Web + Telegram + Discord + Google Chat + Slack + Signal）。
+- 當配置了多個 agents 時，輸出包含每個 agent 的會話儲存狀態。
+- 總覽包含 Gateway + 節點主機服務安裝/執行時狀態（若可用）。
+- 總覽包含更新頻道 + git SHA（適用於原始碼 checkout）。
+- 更新資訊顯示在總覽中；若有可用更新，status 會顯示提示以執行 `openclaw update`（請參閱 [Updating](/zh-Hant/install/updating)）。
+- 唯讀狀態介面（`status`、`status --json`、`status --all`）在可能時為其目標 config 路徑解析支援的 SecretRefs。
+- 若支援的頻道 SecretRef 已配置但在當前指令路徑中無法使用，status 保持唯讀並回報降級輸出而非崩潰。人類可讀輸出顯示警告如「configured token unavailable in this command path」，JSON 輸出包含 `secretDiagnostics`。
