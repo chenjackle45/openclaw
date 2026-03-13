@@ -124,6 +124,32 @@ Mattermost 自動回覆 DM。頻道行為由 `chatmode` 控制：
 - `onchar` 仍回覆明確的 @mention。
 - `channels.mattermost.requireMention` 在舊版設定中受尊重，但 `chatmode` 是建議方式。
 
+## Threading（討論串）和工作階段
+
+使用 `channels.mattermost.replyToMode` 控制頻道和群組回覆是保留在主頻道中還是在觸發文章下開始討論串。
+
+- `off`（預設）：只有在入站文章已在討論串中時才在討論串中回覆。
+- `first`：對頂層頻道/群組文章，在該文章下開始討論串，並將對話路由到串作用域的工作階段。
+- `all`：目前在 Mattermost 上與 `first` 行為相同。
+- 私訊忽略此設定，保持非串式。
+
+設定範例：
+
+```json5
+{
+  channels: {
+    mattermost: {
+      replyToMode: "all",
+    },
+  },
+}
+```
+
+注意：
+
+- 串作用域的工作階段使用觸發文章 ID 作為串根。
+- `first` 和 `all` 目前等效，因為一旦 Mattermost 有了串根，後續的分塊和媒體會繼續在同一討論串中。
+
 ## 存取控制（DM）
 
 - 預設：`channels.mattermost.dmPolicy = "pairing"`（未知發送者收到配對碼）。

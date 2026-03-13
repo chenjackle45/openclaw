@@ -1,5 +1,5 @@
 ---
-title: "Webhooks（Webhooks）"
+title: "Webhooks"
 summary: "Webhook 內進用於喚醒和隔離代理執行"
 read_when:
   - 新增或變更 Webhook 端點時

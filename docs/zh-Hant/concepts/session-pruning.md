@@ -1,5 +1,5 @@
 ---
-title: "Session pruning（會話修剪）"
+title: "Session Pruning（會話修剪）"
 summary: "會話修剪：修剪工具結果以減少上下文膨脹"
 read_when:
   - 您想要減少工具輸出的 LLM 上下文增長

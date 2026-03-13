@@ -29,6 +29,8 @@ title: "cron（排程管理）"
 - `cron.sessionRetention`（預設 `24h`）清理已完成的獨立執行會話。
 - `cron.runLog.maxBytes` + `cron.runLog.keepLines` 清理 `~/.openclaw/cron/runs/<jobId>.jsonl`。
 
+升級說明：如果您擁有來自目前遞送/儲存格式之前的舊排程任務，請執行 `openclaw doctor --fix`。Doctor 現在會正規化舊版排程欄位（`jobId`、`schedule.cron`、頂層遞送欄位、payload `provider` 遞送別名）並在設定了 `cron.webhook` 時將簡單的 `notify: true` webhook 回退任務遷移至明確的 webhook 遞送。
+
 ## 常見編輯操作
 
 在不變更訊息內容的情況下更新遞送設定：

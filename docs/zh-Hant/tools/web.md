@@ -1,83 +1,111 @@
 ---
-summary: "Web 搜尋 + 抓取工具（Brave、Gemini、Grok、Kimi 和 Perplexity 提供者）"
+summary: "網路搜尋與抓取工具（Brave、Gemini、Grok、Kimi 和 Perplexity 供應商）"
 read_when:
-  - 你想啟用 web_search 或 web_fetch
-  - 你需要設定 Brave 或 Perplexity Search API 金鑰
-  - 你想使用帶有 Google Search grounding 的 Gemini
-title: "Web Tools（Web 工具）"
+  - You want to enable web_search or web_fetch
+  - You need provider API key setup
+  - You want to use Gemini with Google Search grounding
+title: "Web Tools（網路工具）"
 ---
 
 # Web tools
 
-OpenClaw 附帶兩個輕量級 web 工具：
+OpenClaw ships two lightweight web tools:
 
-- `web_search` — 使用 Brave Search API、帶有 Google Search grounding 的 Gemini、Grok、Kimi 或 Perplexity Search API 搜尋 Web。
-- `web_fetch` — HTTP 抓取 + 可讀性萃取（HTML → markdown/text）。
+- `web_search` — Search the web using Brave Search API, Gemini with Google Search grounding, Grok, Kimi, or Perplexity Search API.
+- `web_fetch` — HTTP fetch + readable extraction (HTML → markdown/text).
 
-這些**不是**瀏覽器自動化。對於 JS 密集的網站或需要登入的網站，請使用 [Browser 工具](/zh-Hant/tools/browser)。
+These are **not** browser automation. For JS-heavy sites or logins, use the
+[Browser tool](/zh-Hant/tools/browser).
 
-## 運作方式
+## How it works
 
-- `web_search` 呼叫你設定的提供者並回傳結果。
-- 結果按查詢快取 15 分鐘（可設定）。
-- `web_fetch` 執行普通的 HTTP GET 並萃取可讀內容（HTML → markdown/text）。它**不**執行 JavaScript。
-- `web_fetch` 預設啟用（除非明確停用）。
+- `web_search` calls your configured provider and returns results.
+- Results are cached by query for 15 minutes (configurable).
+- `web_fetch` does a plain HTTP GET and extracts readable content
+  (HTML → markdown/text). It does **not** execute JavaScript.
+- `web_fetch` is enabled by default (unless explicitly disabled).
 
-請參閱 [Brave Search 設定](/zh-Hant/brave-search) 和 [Perplexity Search 設定](/zh-Hant/perplexity) 了解提供者特定詳細資訊。
+See [Brave Search setup](/zh-Hant/brave-search) and [Perplexity Search setup](/zh-Hant/perplexity) for provider-specific details.
 
-## 選擇搜尋提供者
+## Choosing a search provider
 
-| 提供者                    | 結果形狀             | 提供者特定篩選                               | 備注                                             | API 金鑰                                    |
-| ------------------------- | -------------------- | -------------------------------------------- | ------------------------------------------------ | ------------------------------------------- |
-| **Brave Search API**      | 帶有摘要的結構化結果 | `country`、`language`、`ui_lang`、時間       | 支援 Brave `llm-context` 模式                    | `BRAVE_API_KEY`                             |
-| **Gemini**                | AI 綜合答案 + 引用   | —                                            | 使用 Google Search grounding                     | `GEMINI_API_KEY`                            |
-| **Grok**                  | AI 綜合答案 + 引用   | —                                            | 使用 xAI web-grounded 回應                       | `XAI_API_KEY`                               |
-| **Kimi**                  | AI 綜合答案 + 引用   | —                                            | 使用 Moonshot web search                         | `KIMI_API_KEY` / `MOONSHOT_API_KEY`         |
-| **Perplexity Search API** | 帶有摘要的結構化結果 | `country`、`language`、時間、`domain_filter` | 支援內容萃取控制；OpenRouter 使用 Sonar 相容路徑 | `PERPLEXITY_API_KEY` / `OPENROUTER_API_KEY` |
+| Provider                  | Result shape                       | Provider-specific filters                    | Notes                                                                          | API key                                     |
+| ------------------------- | ---------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------- |
+| **Brave Search API**      | Structured results with snippets   | `country`, `language`, `ui_lang`, time       | Supports Brave `llm-context` mode                                              | `BRAVE_API_KEY`                             |
+| **Gemini**                | AI-synthesized answers + citations | —                                            | Uses Google Search grounding                                                   | `GEMINI_API_KEY`                            |
+| **Grok**                  | AI-synthesized answers + citations | —                                            | Uses xAI web-grounded responses                                                | `XAI_API_KEY`                               |
+| **Kimi**                  | AI-synthesized answers + citations | —                                            | Uses Moonshot web search                                                       | `KIMI_API_KEY` / `MOONSHOT_API_KEY`         |
+| **Perplexity Search API** | Structured results with snippets   | `country`, `language`, time, `domain_filter` | Supports content extraction controls; OpenRouter uses Sonar compatibility path | `PERPLEXITY_API_KEY` / `OPENROUTER_API_KEY` |
 
-### 自動偵測
+### Auto-detection
 
-上表按字母順序排列。若未明確設定 `provider`，執行期自動偵測按以下順序檢查提供者：
+The table above is alphabetical. If no `provider` is explicitly set, runtime auto-detection checks providers in this order:
 
-1. **Brave** — `BRAVE_API_KEY` env var 或 `tools.web.search.apiKey` 設定
-2. **Gemini** — `GEMINI_API_KEY` env var 或 `tools.web.search.gemini.apiKey` 設定
-3. **Grok** — `XAI_API_KEY` env var 或 `tools.web.search.grok.apiKey` 設定
-4. **Kimi** — `KIMI_API_KEY` / `MOONSHOT_API_KEY` env var 或 `tools.web.search.kimi.apiKey` 設定
-5. **Perplexity** — `PERPLEXITY_API_KEY`、`OPENROUTER_API_KEY` 或 `tools.web.search.perplexity.apiKey` 設定
+1. **Brave** — `BRAVE_API_KEY` env var or `tools.web.search.apiKey` config
+2. **Gemini** — `GEMINI_API_KEY` env var or `tools.web.search.gemini.apiKey` config
+3. **Grok** — `XAI_API_KEY` env var or `tools.web.search.grok.apiKey` config
+4. **Kimi** — `KIMI_API_KEY` / `MOONSHOT_API_KEY` env var or `tools.web.search.kimi.apiKey` config
+5. **Perplexity** — `PERPLEXITY_API_KEY`, `OPENROUTER_API_KEY`, or `tools.web.search.perplexity.apiKey` config
 
-若未找到任何金鑰，則退而使用 Brave（你會收到缺少金鑰的錯誤，提示你設定一個）。
+If no keys are found, it falls back to Brave (you'll get a missing-key error prompting you to configure one).
 
-## 設定 web search
+Runtime SecretRef behavior:
 
-使用 `openclaw configure --section web` 設定你的 API 金鑰並選擇提供者。
+- Web tool SecretRefs are resolved atomically at gateway startup/reload.
+- In auto-detect mode, OpenClaw resolves only the selected provider key. Non-selected provider SecretRefs stay inactive until selected.
+- If the selected provider SecretRef is unresolved and no provider env fallback exists, startup/reload fails fast.
+
+## Setting up web search
+
+Use `openclaw configure --section web` to set up your API key and choose a provider.
 
 ### Brave Search
 
-1. 在 [brave.com/search/api](https://brave.com/search/api/) 建立 Brave Search API 帳戶
-2. 在儀表板中，選擇 **Search** 方案並生成 API 金鑰。
-3. 執行 `openclaw configure --section web` 將金鑰儲存到設定中，或在你的環境中設定 `BRAVE_API_KEY`。
+1. Create a Brave Search API account at [brave.com/search/api](https://brave.com/search/api/)
+2. In the dashboard, choose the **Search** plan and generate an API key.
+3. Run `openclaw configure --section web` to store the key in config, or set `BRAVE_API_KEY` in your environment.
 
-每個 Brave 方案包含**每月 $5 的免費額度**（更新）。Search 方案每 1,000 個請求收費 $5，因此額度涵蓋每月 1,000 次查詢。在 Brave 儀表板中設定你的使用限制以避免意外費用。請參閱 [Brave API portal](https://brave.com/search/api/) 了解目前的方案和定價。
+Each Brave plan includes **$5/month in free credit** (renewing). The Search
+plan costs $5 per 1,000 requests, so the credit covers 1,000 queries/month. Set
+your usage limit in the Brave dashboard to avoid unexpected charges. See the
+[Brave API portal](https://brave.com/search/api/) for current plans and
+pricing.
 
 ### Perplexity Search
 
-1. 在 [perplexity.ai/settings/api](https://www.perplexity.ai/settings/api) 建立 Perplexity 帳戶
-2. 在儀表板中生成 API 金鑰
-3. 執行 `openclaw configure --section web` 將金鑰儲存到設定中，或在你的環境中設定 `PERPLEXITY_API_KEY`。
+1. Create a Perplexity account at [perplexity.ai/settings/api](https://www.perplexity.ai/settings/api)
+2. Generate an API key in the dashboard
+3. Run `openclaw configure --section web` to store the key in config, or set `PERPLEXITY_API_KEY` in your environment.
 
-對於舊版 Sonar/OpenRouter 相容性，請改為設定 `OPENROUTER_API_KEY`，或使用 `sk-or-...` 金鑰設定 `tools.web.search.perplexity.apiKey`。設定 `tools.web.search.perplexity.baseUrl` 或 `model` 也會讓 Perplexity 退回到 chat-completions 相容路徑。
+For legacy Sonar/OpenRouter compatibility, set `OPENROUTER_API_KEY` instead, or configure `tools.web.search.perplexity.apiKey` with an `sk-or-...` key. Setting `tools.web.search.perplexity.baseUrl` or `model` also opts Perplexity back into the chat-completions compatibility path.
 
-請參閱 [Perplexity Search API Docs](https://docs.perplexity.ai/guides/search-quickstart) 了解更多詳細資訊。
+See [Perplexity Search API Docs](https://docs.perplexity.ai/guides/search-quickstart) for more details.
 
-### 儲存金鑰的位置
+### Where to store the key
 
-**透過設定：** 執行 `openclaw configure --section web`。它根據提供者將金鑰儲存在 `tools.web.search.apiKey` 或 `tools.web.search.perplexity.apiKey` 下。
+**Via config:** run `openclaw configure --section web`. It stores the key under the provider-specific config path:
 
-**透過環境：** 在 Gateway 行程環境中設定 `PERPLEXITY_API_KEY`、`OPENROUTER_API_KEY` 或 `BRAVE_API_KEY`。對於 gateway 安裝，將其放在 `~/.openclaw/.env`（或你的服務環境）中。請參閱 [Env vars](/zh-Hant/help/faq#how-does-openclaw-load-environment-variables)。
+- Brave: `tools.web.search.apiKey`
+- Gemini: `tools.web.search.gemini.apiKey`
+- Grok: `tools.web.search.grok.apiKey`
+- Kimi: `tools.web.search.kimi.apiKey`
+- Perplexity: `tools.web.search.perplexity.apiKey`
 
-### 設定範例
+All of these fields also support SecretRef objects.
 
-**Brave Search：**
+**Via environment:** set provider env vars in the Gateway process environment:
+
+- Brave: `BRAVE_API_KEY`
+- Gemini: `GEMINI_API_KEY`
+- Grok: `XAI_API_KEY`
+- Kimi: `KIMI_API_KEY` or `MOONSHOT_API_KEY`
+- Perplexity: `PERPLEXITY_API_KEY` or `OPENROUTER_API_KEY`
+
+For a gateway install, put these in `~/.openclaw/.env` (or your service environment). See [Env vars](/zh-Hant/help/faq#how-does-openclaw-load-environment-variables).
+
+### Config examples
+
+**Brave Search:**
 
 ```json5
 {
@@ -93,7 +121,7 @@ OpenClaw 附帶兩個輕量級 web 工具：
 }
 ```
 
-**Brave LLM Context 模式：**
+**Brave LLM Context mode:**
 
 ```json5
 {
@@ -112,10 +140,11 @@ OpenClaw 附帶兩個輕量級 web 工具：
 }
 ```
 
-`llm-context` 回傳萃取的頁面片段用於 grounding，而非標準 Brave 摘要。
-在此模式下，`country` 和 `language` / `search_lang` 仍然有效，但 `ui_lang`、`freshness`、`date_after` 和 `date_before` 會被拒絕。
+`llm-context` returns extracted page chunks for grounding instead of standard Brave snippets.
+In this mode, `country` and `language` / `search_lang` still work, but `ui_lang`,
+`freshness`, `date_after`, and `date_before` are rejected.
 
-**Perplexity Search：**
+**Perplexity Search:**
 
 ```json5
 {
@@ -133,7 +162,7 @@ OpenClaw 附帶兩個輕量級 web 工具：
 }
 ```
 
-**Perplexity 透過 OpenRouter / Sonar 相容性：**
+**Perplexity via OpenRouter / Sonar compatibility:**
 
 ```json5
 {
@@ -153,17 +182,18 @@ OpenClaw 附帶兩個輕量級 web 工具：
 }
 ```
 
-## 使用 Gemini（Google Search grounding）
+## Using Gemini (Google Search grounding)
 
-Gemini 模型支援內建的 [Google Search grounding](https://ai.google.dev/gemini-api/docs/grounding)，回傳由即時 Google Search 結果支援的 AI 綜合答案和引用。
+Gemini models support built-in [Google Search grounding](https://ai.google.dev/gemini-api/docs/grounding),
+which returns AI-synthesized answers backed by live Google Search results with citations.
 
-### 取得 Gemini API 金鑰
+### Getting a Gemini API key
 
-1. 前往 [Google AI Studio](https://aistudio.google.com/apikey)
-2. 建立 API 金鑰
-3. 在 Gateway 環境中設定 `GEMINI_API_KEY`，或設定 `tools.web.search.gemini.apiKey`
+1. Go to [Google AI Studio](https://aistudio.google.com/apikey)
+2. Create an API key
+3. Set `GEMINI_API_KEY` in the Gateway environment, or configure `tools.web.search.gemini.apiKey`
 
-### 設定 Gemini search
+### Setting up Gemini search
 
 ```json5
 {
@@ -183,30 +213,34 @@ Gemini 模型支援內建的 [Google Search grounding](https://ai.google.dev/gem
 }
 ```
 
-**環境替代方案：** 在 Gateway 環境中設定 `GEMINI_API_KEY`。對於 gateway 安裝，將其放在 `~/.openclaw/.env` 中。
+**Environment alternative:** set `GEMINI_API_KEY` in the Gateway environment.
+For a gateway install, put it in `~/.openclaw/.env`.
 
-### 注意事項
+### Notes
 
-- Gemini grounding 的引用 URL 會自動從 Google 的重定向 URL 解析為直接 URL。
-- 重定向解析使用 SSRF 防護路徑（HEAD + 重定向檢查 + http/https 驗證）後再回傳最終引用 URL。
-- 重定向解析使用嚴格的 SSRF 預設值，因此重定向到私有/內部目標的請求會被封鎖。
-- 預設模型（`gemini-2.5-flash`）快速且具成本效益。任何支援 grounding 的 Gemini 模型都可以使用。
+- Citation URLs from Gemini grounding are automatically resolved from Google's
+  redirect URLs to direct URLs.
+- Redirect resolution uses the SSRF guard path (HEAD + redirect checks + http/https validation) before returning the final citation URL.
+- Redirect resolution uses strict SSRF defaults, so redirects to private/internal targets are blocked.
+- The default model (`gemini-2.5-flash`) is fast and cost-effective.
+  Any Gemini model that supports grounding can be used.
 
 ## web_search
 
-使用你設定的提供者搜尋 Web。
+Search the web using your configured provider.
 
-### 需求
+### Requirements
 
-- `tools.web.search.enabled` 不得為 `false`（預設：啟用）
-- 你選擇的提供者的 API 金鑰：
-  - **Brave**：`BRAVE_API_KEY` 或 `tools.web.search.apiKey`
-  - **Gemini**：`GEMINI_API_KEY` 或 `tools.web.search.gemini.apiKey`
-  - **Grok**：`XAI_API_KEY` 或 `tools.web.search.grok.apiKey`
-  - **Kimi**：`KIMI_API_KEY`、`MOONSHOT_API_KEY` 或 `tools.web.search.kimi.apiKey`
-  - **Perplexity**：`PERPLEXITY_API_KEY`、`OPENROUTER_API_KEY` 或 `tools.web.search.perplexity.apiKey`
+- `tools.web.search.enabled` must not be `false` (default: enabled)
+- API key for your chosen provider:
+  - **Brave**: `BRAVE_API_KEY` or `tools.web.search.apiKey`
+  - **Gemini**: `GEMINI_API_KEY` or `tools.web.search.gemini.apiKey`
+  - **Grok**: `XAI_API_KEY` or `tools.web.search.grok.apiKey`
+  - **Kimi**: `KIMI_API_KEY`, `MOONSHOT_API_KEY`, or `tools.web.search.kimi.apiKey`
+  - **Perplexity**: `PERPLEXITY_API_KEY`, `OPENROUTER_API_KEY`, or `tools.web.search.perplexity.apiKey`
+- All provider key fields above support SecretRef objects.
 
-### 設定
+### Config
 
 ```json5
 {
@@ -224,28 +258,28 @@ Gemini 模型支援內建的 [Google Search grounding](https://ai.google.dev/gem
 }
 ```
 
-### 工具參數
+### Tool parameters
 
-所有參數對 Brave 和原生 Perplexity Search API 均有效，除非另有說明。
+All parameters work for Brave and for native Perplexity Search API unless noted.
 
-Perplexity 的 OpenRouter / Sonar 相容路徑僅支援 `query` 和 `freshness`。
-若你設定 `tools.web.search.perplexity.baseUrl` / `model`、使用 `OPENROUTER_API_KEY` 或設定 `sk-or-...` 金鑰，Search API 專用篩選會回傳明確錯誤。
+Perplexity's OpenRouter / Sonar compatibility path supports only `query` and `freshness`.
+If you set `tools.web.search.perplexity.baseUrl` / `model`, use `OPENROUTER_API_KEY`, or configure an `sk-or-...` key, Search API-only filters return explicit errors.
 
-| 參數                  | 描述                                          |
-| --------------------- | --------------------------------------------- |
-| `query`               | 搜尋查詢（必填）                              |
-| `count`               | 回傳結果數量（1-10，預設：5）                 |
-| `country`             | 2 字母 ISO 國家代碼（例如，"US"、"DE"）       |
-| `language`            | ISO 639-1 語言代碼（例如，"en"、"de"）        |
-| `freshness`           | 時間篩選：`day`、`week`、`month` 或 `year`    |
-| `date_after`          | 此日期後的結果（YYYY-MM-DD）                  |
-| `date_before`         | 此日期前的結果（YYYY-MM-DD）                  |
-| `ui_lang`             | UI 語言代碼（僅限 Brave）                     |
-| `domain_filter`       | 域名允許清單/拒絕清單陣列（僅限 Perplexity）  |
-| `max_tokens`          | 總內容預算，預設 25000（僅限 Perplexity）     |
-| `max_tokens_per_page` | 每頁 token 限制，預設 2048（僅限 Perplexity） |
+| Parameter             | Description                                           |
+| --------------------- | ----------------------------------------------------- |
+| `query`               | Search query (required)                               |
+| `count`               | Results to return (1-10, default: 5)                  |
+| `country`             | 2-letter ISO country code (e.g., "US", "DE")          |
+| `language`            | ISO 639-1 language code (e.g., "en", "de")            |
+| `freshness`           | Time filter: `day`, `week`, `month`, or `year`        |
+| `date_after`          | Results after this date (YYYY-MM-DD)                  |
+| `date_before`         | Results before this date (YYYY-MM-DD)                 |
+| `ui_lang`             | UI language code (Brave only)                         |
+| `domain_filter`       | Domain allowlist/denylist array (Perplexity only)     |
+| `max_tokens`          | Total content budget, default 25000 (Perplexity only) |
+| `max_tokens_per_page` | Per-page token limit, default 2048 (Perplexity only)  |
 
-**範例：**
+**Examples:**
 
 ```javascript
 // German-specific search
@@ -288,18 +322,20 @@ await web_search({
 });
 ```
 
-啟用 Brave `llm-context` 模式時，不支援 `ui_lang`、`freshness`、`date_after` 和 `date_before`。請使用 Brave `web` 模式搭配這些篩選。
+When Brave `llm-context` mode is enabled, `ui_lang`, `freshness`, `date_after`, and
+`date_before` are not supported. Use Brave `web` mode for those filters.
 
 ## web_fetch
 
-抓取 URL 並萃取可讀內容。
+Fetch a URL and extract readable content.
 
-### web_fetch 需求
+### web_fetch requirements
 
-- `tools.web.fetch.enabled` 不得為 `false`（預設：啟用）
-- 可選的 Firecrawl 備用：設定 `tools.web.fetch.firecrawl.apiKey` 或 `FIRECRAWL_API_KEY`。
+- `tools.web.fetch.enabled` must not be `false` (default: enabled)
+- Optional Firecrawl fallback: set `tools.web.fetch.firecrawl.apiKey` or `FIRECRAWL_API_KEY`.
+- `tools.web.fetch.firecrawl.apiKey` supports SecretRef objects.
 
-### web_fetch 設定
+### web_fetch config
 
 ```json5
 {
@@ -329,22 +365,24 @@ await web_search({
 }
 ```
 
-### web_fetch 工具參數
+### web_fetch tool parameters
 
-- `url`（必填，僅限 http/https）
-- `extractMode`（`markdown` | `text`）
-- `maxChars`（截斷長頁面）
+- `url` (required, http/https only)
+- `extractMode` (`markdown` | `text`)
+- `maxChars` (truncate long pages)
 
-注意事項：
+Notes:
 
-- `web_fetch` 先使用 Readability（主要內容萃取），然後使用 Firecrawl（若已設定）。若兩者都失敗，工具回傳錯誤。
-- Firecrawl 請求使用機器人繞過模式並預設快取結果。
-- `web_fetch` 預設發送類 Chrome 的 User-Agent 和 `Accept-Language`；若需要請覆寫 `userAgent`。
-- `web_fetch` 封鎖私有/內部主機名，並重新檢查重定向（使用 `maxRedirects` 限制）。
-- `maxChars` 被限制為 `tools.web.fetch.maxCharsCap`。
-- `web_fetch` 在解析前將下載的回應主體大小限制為 `tools.web.fetch.maxResponseBytes`；超大回應會被截斷並包含警告。
-- `web_fetch` 是盡力萃取；某些網站將需要瀏覽器工具。
-- 請參閱 [Firecrawl](/zh-Hant/tools/firecrawl) 了解金鑰設定和服務詳細資訊。
-- 回應被快取（預設 15 分鐘）以減少重複抓取。
-- 若你使用工具設定檔/允許清單，請新增 `web_search`/`web_fetch` 或 `group:web`。
-- 若 API 金鑰缺失，`web_search` 回傳帶有文件連結的簡短設定提示。
+- `web_fetch` uses Readability (main-content extraction) first, then Firecrawl (if configured). If both fail, the tool returns an error.
+- Firecrawl requests use bot-circumvention mode and cache results by default.
+- Firecrawl SecretRefs are resolved only when Firecrawl is active (`tools.web.fetch.enabled !== false` and `tools.web.fetch.firecrawl.enabled !== false`).
+- If Firecrawl is active and its SecretRef is unresolved with no `FIRECRAWL_API_KEY` fallback, startup/reload fails fast.
+- `web_fetch` sends a Chrome-like User-Agent and `Accept-Language` by default; override `userAgent` if needed.
+- `web_fetch` blocks private/internal hostnames and re-checks redirects (limit with `maxRedirects`).
+- `maxChars` is clamped to `tools.web.fetch.maxCharsCap`.
+- `web_fetch` caps the downloaded response body size to `tools.web.fetch.maxResponseBytes` before parsing; oversized responses are truncated and include a warning.
+- `web_fetch` is best-effort extraction; some sites will need the browser tool.
+- See [Firecrawl](/zh-Hant/tools/firecrawl) for key setup and service details.
+- Responses are cached (default 15 minutes) to reduce repeated fetches.
+- If you use tool profiles/allowlists, add `web_search`/`web_fetch` or `group:web`.
+- If the API key is missing, `web_search` returns a short setup hint with a docs link.

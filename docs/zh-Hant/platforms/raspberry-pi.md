@@ -7,11 +7,11 @@ read_when:
 title: "Raspberry Pi"
 ---
 
-# Raspberry Pi 上的 OpenClaw
+# OpenClaw on Raspberry Pi
 
 ## 目標
 
-在 Raspberry Pi 上執行持續、全天候的 OpenClaw Gateway，一次性費用約 **$35-80**（無月費）。
+在 Raspberry Pi 上運行持久、全天候的 OpenClaw Gateway，一次性費用約 **$35-80**（無月費）。
 
 適合：
 
@@ -21,9 +21,9 @@ title: "Raspberry Pi"
 
 ## 硬體需求
 
-| Pi 型號         | RAM     | 是否適用？ | 備注                     |
+| Pi 型號         | RAM     | 是否適用？ | 備註                     |
 | --------------- | ------- | ---------- | ------------------------ |
-| **Pi 5**        | 4GB/8GB | ✅ 最佳    | 最快，推薦               |
+| **Pi 5**        | 4GB/8GB | ✅ 最佳    | 最快，建議首選           |
 | **Pi 4**        | 4GB     | ✅ 良好    | 大多數使用者的最佳選擇   |
 | **Pi 4**        | 2GB     | ✅ 可用    | 可用，需加 swap          |
 | **Pi 4**        | 1GB     | ⚠️ 較緊張  | 有 swap 可用，需最小設定 |
@@ -41,13 +41,13 @@ title: "Raspberry Pi"
 - 網路連線（乙太網路或 WiFi）
 - 約 30 分鐘
 
-## 1）燒錄 OS
+## 1) 燒錄 OS
 
 使用 **Raspberry Pi OS Lite（64 位元）**——無頭伺服器不需要桌面環境。
 
 1. 下載 [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
 2. 選擇 OS：**Raspberry Pi OS Lite（64 位元）**
-3. 點擊齒輪圖示（⚙️）進行預設定：
+3. 點選齒輪圖示（⚙️）進行預設定：
    - 設定主機名稱：`gateway-host`
    - 啟用 SSH
    - 設定使用者名稱/密碼
@@ -55,7 +55,7 @@ title: "Raspberry Pi"
 4. 燒錄至 SD 卡／USB 磁碟
 5. 插入並啟動 Pi
 
-## 2）透過 SSH 連線
+## 2) 透過 SSH 連線
 
 ```bash
 ssh user@gateway-host
@@ -63,7 +63,7 @@ ssh user@gateway-host
 ssh user@192.168.x.x
 ```
 
-## 3）系統設定
+## 3) 系統設定
 
 ```bash
 # 更新系統
@@ -76,19 +76,19 @@ sudo apt install -y git curl build-essential
 sudo timedatectl set-timezone America/Chicago  # 換成你的時區
 ```
 
-## 4）安裝 Node.js 22（ARM64）
+## 4) 安裝 Node.js 24（ARM64）
 
 ```bash
 # 透過 NodeSource 安裝 Node.js
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
 sudo apt install -y nodejs
 
-# 驗證
-node --version  # 應顯示 v22.x.x
+# 確認
+node --version  # 應顯示 v24.x.x
 npm --version
 ```
 
-## 5）新增 Swap（2GB 或以下必做）
+## 5) 新增 Swap（2GB 或以下必做）
 
 Swap 可防止記憶體不足崩潰：
 
@@ -107,7 +107,7 @@ echo 'vm.swappiness=10' | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
 ```
 
-## 6）安裝 OpenClaw
+## 6) 安裝 OpenClaw
 
 ### 選項 A：標準安裝（建議）
 
@@ -125,9 +125,9 @@ npm run build
 npm link
 ```
 
-可自訂安裝提供對記錄和程式碼的直接存取，適合除錯 ARM 特定問題。
+可自訂安裝提供對日誌和程式碼的直接存取，適合除錯 ARM 特定問題。
 
-## 7）執行入門精靈
+## 7) 執行引導設定
 
 ```bash
 openclaw onboard --install-daemon
@@ -135,12 +135,12 @@ openclaw onboard --install-daemon
 
 按照精靈操作：
 
-1. **Gateway 模式：** 本地
+1. **Gateway 模式：** Local
 2. **驗證：** 建議 API 金鑰（OAuth 在無頭 Pi 上可能不穩定）
 3. **頻道：** Telegram 最容易開始
 4. **Daemon：** 是（systemd）
 
-## 8）驗證安裝
+## 8) 確認安裝
 
 ```bash
 # 確認狀態
@@ -149,33 +149,33 @@ openclaw status
 # 確認服務
 sudo systemctl status openclaw
 
-# 查看記錄
+# 查看日誌
 journalctl -u openclaw -f
 ```
 
-## 9）存取儀表板
+## 9) 存取 OpenClaw 控制台
 
-由於 Pi 是無頭的，使用 SSH 隧道：
+將 `user@gateway-host` 替換成你的 Pi 使用者名稱與主機名稱或 IP 位址。
 
-```bash
-# 從你的筆記型電腦/桌機
-ssh -L 18789:localhost:18789 user@gateway-host
-
-# 然後在瀏覽器中開啟
-open http://localhost:18789
-```
-
-或使用 Tailscale 進行全天候存取：
+在你的電腦上，請 Pi 列印一個全新的控制台 URL：
 
 ```bash
-# 在 Pi 上
-curl -fsSL https://tailscale.com/install.sh | sh
-sudo tailscale up
-
-# 更新設定
-openclaw config set gateway.bind tailnet
-sudo systemctl restart openclaw
+ssh user@gateway-host 'openclaw dashboard --no-open'
 ```
+
+指令會列印 `Dashboard URL:`。根據 `gateway.auth.token` 的設定方式，URL 可能是純粹的 `http://127.0.0.1:18789/` 連結，或包含 `#token=...` 的連結。
+
+在你電腦的另一個終端機中，建立 SSH 通道：
+
+```bash
+ssh -N -L 18789:127.0.0.1:18789 user@gateway-host
+```
+
+然後在本機瀏覽器中開啟列印的控制台 URL。
+
+若介面要求驗證，請將 `gateway.auth.token`（或 `OPENCLAW_GATEWAY_TOKEN`）中的 token 貼入 Control UI 設定。
+
+如需全天候遠端存取，請參閱 [Tailscale](/zh-Hant/gateway/tailscale)。
 
 ---
 
@@ -205,7 +205,7 @@ EOF
 source ~/.bashrc
 ```
 
-注意事項：
+備註：
 
 - `NODE_COMPILE_CACHE` 加快後續執行（`status`、`health`、`--help`）。
 - `/var/tmp` 比 `/tmp` 更能在重啟後存活。
@@ -272,7 +272,7 @@ htop
 
 大多數 OpenClaw 功能在 ARM64 上可用，但部分外部二進位檔可能需要 ARM 版本：
 
-| 工具                | ARM64 狀態 | 備注                                |
+| 工具                | ARM64 狀態 | 備註                                |
 | ------------------- | ---------- | ----------------------------------- |
 | Node.js             | ✅         | 運作良好                            |
 | WhatsApp（Baileys） | ✅         | 純 JS，無問題                       |
@@ -284,7 +284,7 @@ htop
 
 ### 32 位元 vs 64 位元
 
-**務必使用 64 位元 OS。** Node.js 和許多現代工具都需要。確認方式：
+**務必使用 64 位元 OS。** Node.js 和許多現代工具都需要它。確認方式：
 
 ```bash
 uname -m
@@ -295,7 +295,7 @@ uname -m
 
 ## 建議的模型設定
 
-由於 Pi 只是 Gateway（模型在雲端執行），請使用基於 API 的模型：
+由於 Pi 只是 Gateway（模型在雲端執行），請使用 API 模型：
 
 ```json
 {
@@ -316,7 +316,7 @@ uname -m
 
 ## 開機時自動啟動
 
-入門精靈會設定此項，但若要驗證：
+引導設定精靈會設定此項，但若要驗證：
 
 ```bash
 # 確認服務是否已啟用
@@ -347,12 +347,12 @@ free -h
 
 - 使用 USB SSD 取代 SD 卡
 - 停用未使用的服務：`sudo systemctl disable cups bluetooth avahi-daemon`
-- 確認 CPU 節流：`vcgencmd get_throttled`（應返回 `0x0`）
+- 確認 CPU 節流：`vcgencmd get_throttled`（應回傳 `0x0`）
 
 ### 服務無法啟動
 
 ```bash
-# 查看記錄
+# 查看日誌
 journalctl -u openclaw --no-pager -n 100
 
 # 常見修復：重新建置
@@ -385,7 +385,7 @@ echo 'wireless-power off' | sudo tee -a /etc/network/interfaces
 
 ## 成本比較
 
-| 設定            | 一次性費用 | 月費     | 備注                 |
+| 設定            | 一次性費用 | 月費     | 備註                 |
 | --------------- | ---------- | -------- | -------------------- |
 | **Pi 4（2GB）** | ~$45       | $0       | + 電費（~$5/年）     |
 | **Pi 4（4GB）** | ~$55       | $0       | 建議                 |
@@ -398,10 +398,10 @@ echo 'wireless-power off' | sudo tee -a /etc/network/interfaces
 
 ---
 
-## 另請參閱
+## 參閱
 
-- [Linux 指南](/zh-Hant/platforms/linux)——一般 Linux 設定
-- [DigitalOcean 指南](/zh-Hant/platforms/digitalocean)——雲端替代方案
-- [Hetzner 指南](/zh-Hant/install/hetzner)——Docker 設定
-- [Tailscale](/zh-Hant/gateway/tailscale)——遠端存取
-- [節點](/zh-Hant/nodes)——將你的筆記型電腦/手機與 Pi gateway 配對
+- [Linux 指南](/zh-Hant/platforms/linux) — 一般 Linux 設定
+- [DigitalOcean 指南](/zh-Hant/platforms/digitalocean) — 雲端替代方案
+- [Hetzner 指南](/zh-Hant/install/hetzner) — Docker 設定
+- [Tailscale](/zh-Hant/gateway/tailscale) — 遠端存取
+- [Nodes](/zh-Hant/nodes) — 將你的筆記型電腦/手機與 Pi gateway 配對

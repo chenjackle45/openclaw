@@ -114,6 +114,8 @@ OpenClaw 將回覆**路由回訊息來源的頻道**。模型不選擇頻道；�
 
 可透過 `session.store` 和 `{agentId}` 範本化覆蓋儲存路徑。
 
+Gateway 和 ACP session 探索也會掃描預設 `agents/` 根目錄下及模板化 `session.store` 根目錄下的磁碟支援 Agent 儲存。已探索的儲存必須位於解析後的 Agent 根目錄內，並使用常規的 `sessions.json` 檔案。符號連結和超出根目錄的路徑會被忽略。
+
 ## WebChat 行為
 
 WebChat 附加到**選定的 agent** 並預設使用 agent 的主要工作階段。因此，WebChat 讓你在一個地方查看該 agent 的跨頻道上下文。

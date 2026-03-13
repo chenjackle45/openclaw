@@ -1,5 +1,5 @@
 ---
-title: "Gmail PubSub（Gmail PubSub）"
+title: "Gmail PubSub"
 summary: "Gmail Pub/Sub 推送透過 gogcli 連線到 OpenClaw Webhook"
 read_when:
   - 將 Gmail 收件匣觸發器接入 OpenClaw 時

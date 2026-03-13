@@ -288,7 +288,7 @@ openclaw [--dev] [--profile <name>] <command>
 - `openclaw plugins enable <id>` / `disable <id>` — 切換 `plugins.entries.<id>.enabled`。
 - `openclaw plugins doctor` — 回報外掛載入錯誤。
 
-大多數外掛變更需要重新啟動 gateway。參見 [/plugin](/zh-Hant/tools/plugin)。
+大多數外掛變更需要重新啟動 gateway。參見 [/tool/plugin](/zh-Hant/tools/plugin)。
 
 ## Memory（記憶體）
 
@@ -337,7 +337,7 @@ openclaw [--dev] [--profile <name>] <command>
 - `--non-interactive`
 - `--mode <local|remote>`
 - `--flow <quickstart|advanced|manual>`（manual 是 advanced 的別名）
-- `--auth-choice <setup-token|token|chutes|openai-codex|openai-api-key|openrouter-api-key|ai-gateway-api-key|moonshot-api-key|moonshot-api-key-cn|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|mistral-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|custom-api-key|skip>`
+- `--auth-choice <setup-token|token|chutes|openai-codex|openai-api-key|openrouter-api-key|ollama|ai-gateway-api-key|moonshot-api-key|moonshot-api-key-cn|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|mistral-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|opencode-go|custom-api-key|skip>`
 - `--token-provider <id>`（非互動式；與 `--auth-choice token` 搭配使用）
 - `--token <token>`（非互動式；與 `--auth-choice token` 搭配使用）
 - `--token-profile-id <id>`（非互動式；預設：`<provider>:manual`）
@@ -354,8 +354,9 @@ openclaw [--dev] [--profile <name>] <command>
 - `--zai-api-key <key>`
 - `--minimax-api-key <key>`
 - `--opencode-zen-api-key <key>`
-- `--custom-base-url <url>`（非互動式；與 `--auth-choice custom-api-key` 搭配使用）
-- `--custom-model-id <id>`（非互動式；與 `--auth-choice custom-api-key` 搭配使用）
+- `--opencode-go-api-key <key>`
+- `--custom-base-url <url>`（非互動式；與 `--auth-choice custom-api-key` 或 `--auth-choice ollama` 搭配使用）
+- `--custom-model-id <id>`（非互動式；與 `--auth-choice custom-api-key` 或 `--auth-choice ollama` 搭配使用）
 - `--custom-api-key <key>`（非互動式；選用；與 `--auth-choice custom-api-key` 搭配使用；省略時退回 `CUSTOM_API_KEY`）
 - `--custom-provider-id <id>`（非互動式；選用自訂供應商 ID）
 - `--custom-compatibility <openai|anthropic>`（非互動式；選用；預設 `openai`）
@@ -1000,8 +1001,7 @@ openclaw models status
 
 ## 節點主機
 
-`node` 執行**無頭節點主機**或將其作為背景服務管理。參見
-[`openclaw node`](/zh-Hant/cli/node)。
+`node` 執行**無頭節點主機**或將其作為背景服務管理。參見 [`openclaw node`](/zh-Hant/cli/node)。
 
 子指令：
 
@@ -1014,7 +1014,7 @@ openclaw models status
 
 認證說明：
 
-- `node` 從環境/組態解析 gateway 認證（無 `--token`/`--password` 旗標）：`OPENCLAW_GATEWAY_TOKEN` / `OPENCLAW_GATEWAY_PASSWORD`，然後是 `gateway.auth.*`，並支援透過 `gateway.remote.*` 的遠端模式。
+- `node` 從環境/組態解析 gateway 認證（無 `--token`/`--password` 旗標）：`OPENCLAW_GATEWAY_TOKEN` / `OPENCLAW_GATEWAY_PASSWORD`，然後是 `gateway.auth.*`。在本地模式下，node host 刻意忽略 `gateway.remote.*`；在 `gateway.mode=remote` 時，`gateway.remote.*` 按遠端優先規則參與。
 - 舊版 `CLAWDBOT_GATEWAY_*` 環境變數在節點主機認證解析中被刻意忽略。
 
 ## Nodes

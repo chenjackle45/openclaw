@@ -1,24 +1,22 @@
 ---
-summary: "Firecrawl fallback for web_fetch (anti-bot + cached extraction)"
+summary: "Firecrawl 為 web_fetch 提供的後備（反機器人 + 快取擷取）"
 read_when:
-  - You want Firecrawl-backed web extraction
-  - You need a Firecrawl API key
-  - You want anti-bot extraction for web_fetch
+  - 你想要 Firecrawl 支援的網路擷取
+  - 你需要 Firecrawl API 金鑰
+  - 你想要針對 web_fetch 的反機器人擷取
 title: "Firecrawl"
 ---
 
 # Firecrawl
 
-OpenClaw can use **Firecrawl** as a fallback extractor for `web_fetch`. It is a hosted
-content extraction service that supports bot circumvention and caching, which helps
-with JS-heavy sites or pages that block plain HTTP fetches.
+OpenClaw 可以使用 **Firecrawl** 作為 `web_fetch` 的後備提取器。它是一個託管 content 擷取服務，支援機器人規避和快取，這對 JS 密集網站或封鎖純 HTTP 擷取的頁面有幫助。
 
-## Get an API key
+## 取得 API 金鑰
 
-1. Create a Firecrawl account and generate an API key.
-2. Store it in config or set `FIRECRAWL_API_KEY` in the gateway environment.
+1. 建立 Firecrawl 帳戶並產生 API 金鑰。
+2. 在配置中儲存它或在 gateway environment 中設定 `FIRECRAWL_API_KEY`。
 
-## Configure Firecrawl
+## 配置 Firecrawl
 
 ```json5
 {
@@ -38,24 +36,24 @@ with JS-heavy sites or pages that block plain HTTP fetches.
 }
 ```
 
-Notes:
+注意：
 
-- `firecrawl.enabled` defaults to true when an API key is present.
-- `maxAgeMs` controls how old cached results can be (ms). Default is 2 days.
+- `firecrawl.enabled` 預設為 `true`，除非明確設定為 `false`。
+- Firecrawl 後備嘗試僅在 API 金鑰可用時執行（`tools.web.fetch.firecrawl.apiKey` 或 `FIRECRAWL_API_KEY`）。
+- `maxAgeMs` 控制快取結果可以多舊（毫秒）。預設為 2 天。
 
-## Stealth / bot circumvention
+## 隱身／機器人規避
 
-Firecrawl exposes a **proxy mode** parameter for bot circumvention (`basic`, `stealth`, or `auto`).
-OpenClaw always uses `proxy: "auto"` plus `storeInCache: true` for Firecrawl requests.
-If proxy is omitted, Firecrawl defaults to `auto`. `auto` retries with stealth proxies if a basic attempt fails, which may use more credits
-than basic-only scraping.
+Firecrawl 公開 **proxy mode** 參數用於機器人規避（`basic`、`stealth` 或 `auto`）。
+OpenClaw 始終對 Firecrawl 請求使用 `proxy: "auto"` 加上 `storeInCache: true`。
+如果 proxy 被省略，Firecrawl 預設為 `auto`。`auto` 在基本嘗試失敗時使用隱身代理重試，這可能比僅基本爬取使用更多信用。
 
-## How `web_fetch` uses Firecrawl
+## `web_fetch` 如何使用 Firecrawl
 
-`web_fetch` extraction order:
+`web_fetch` 擷取順序：
 
-1. Readability (local)
-2. Firecrawl (if configured)
-3. Basic HTML cleanup (last fallback)
+1. Readability（本機）
+2. Firecrawl（如果配置）
+3. 基本 HTML 清理（最後後備）
 
-See [Web tools](/zh-Hant/tools/web) for the full web tool setup.
+見 [Web tools](/zh-Hant/tools/web) 以了解完整的 web 工具設定。

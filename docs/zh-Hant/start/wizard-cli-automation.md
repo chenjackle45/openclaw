@@ -1,10 +1,10 @@
 ---
-summary: "OpenClaw CLI 的指令碼化入門和 agent 設定"
+summary: "OpenClaw CLI 的指令碼化入門和代理設定"
 read_when:
   - 在指令碼或 CI 中自動化入門
   - 需要特定提供者的非互動式範例
 title: "CLI Automation（CLI 自動化）"
-sidebarTitle: "CLI automation"
+sidebarTitle: "CLI 自動化"
 ---
 
 # CLI 自動化
@@ -30,6 +30,22 @@ openclaw onboard --non-interactive \
 ```
 
 加上 `--json` 以獲得機器可讀的摘要。
+
+使用 `--secret-input-mode ref` 在認證設定檔中儲存環境變數參考而非純文字值。
+互動式選擇環境參考和配置的提供者參考（`file` 或 `exec`）可在入門精靈流程中使用。
+
+在非互動式 `ref` 模式中，提供者環境變數必須在程序環境中設定。
+不使用匹配的環境變數傳遞內聯鍵旗標現在會快速失敗。
+
+範例：
+
+```bash
+openclaw onboard --non-interactive \
+  --mode local \
+  --auth-choice openai-api-key \
+  --secret-input-mode ref \
+  --accept-risk
+```
 
 ## 提供者特定範例
 
@@ -96,7 +112,7 @@ openclaw onboard --non-interactive \
       --gateway-bind loopback
     ```
   </Accordion>
-  <Accordion title="OpenCode Zen 範例">
+  <Accordion title="OpenCode 範例">
     ```bash
     openclaw onboard --non-interactive \
       --mode local \
@@ -105,12 +121,60 @@ openclaw onboard --non-interactive \
       --gateway-port 18789 \
       --gateway-bind loopback
     ```
+    改用 `--auth-choice opencode-go --opencode-go-api-key "$OPENCODE_API_KEY"` 切換至 Go 目錄。
+  </Accordion>
+  <Accordion title="Ollama 範例">
+    ```bash
+    openclaw onboard --non-interactive \
+      --mode local \
+      --auth-choice ollama \
+      --custom-model-id "qwen3.5:27b" \
+      --accept-risk \
+      --gateway-port 18789 \
+      --gateway-bind loopback
+    ```
+  </Accordion>
+  <Accordion title="自訂提供者範例">
+    ```bash
+    openclaw onboard --non-interactive \
+      --mode local \
+      --auth-choice custom-api-key \
+      --custom-base-url "https://llm.example.com/v1" \
+      --custom-model-id "foo-large" \
+      --custom-api-key "$CUSTOM_API_KEY" \
+      --custom-provider-id "my-custom" \
+      --custom-compatibility anthropic \
+      --gateway-port 18789 \
+      --gateway-bind loopback
+    ```
+
+    `--custom-api-key` 是可選的。如果省略，入門會檢查 `CUSTOM_API_KEY`。
+
+    Ref 模式變體：
+
+    ```bash
+    export CUSTOM_API_KEY="your-key"
+    openclaw onboard --non-interactive \
+      --mode local \
+      --auth-choice custom-api-key \
+      --custom-base-url "https://llm.example.com/v1" \
+      --custom-model-id "foo-large" \
+      --secret-input-mode ref \
+      --custom-provider-id "my-custom" \
+      --custom-compatibility anthropic \
+      --gateway-port 18789 \
+      --gateway-bind loopback
+    ```
+
+    在此模式中，入門在認證設定檔中儲存 `apiKey` 為 `{ source: "env", provider: "default", id: "CUSTOM_API_KEY" }`。
+
   </Accordion>
 </AccordionGroup>
 
-## 新增另一個 agent
+## 添加另一個代理
 
-使用 `openclaw agents add <name>` 建立具有自己工作區、會話和驗證設定檔的獨立 agent。不使用 `--workspace` 執行時會啟動精靈。
+使用 `openclaw agents add <name>` 建立具有自己的工作區、
+會話和認證設定檔的獨立代理。不帶 `--workspace` 執行會啟動精靈。
 
 ```bash
 openclaw agents add work \
@@ -121,16 +185,16 @@ openclaw agents add work \
   --json
 ```
 
-它設定什麼：
+它設定的內容：
 
 - `agents.list[].name`
 - `agents.list[].workspace`
 - `agents.list[].agentDir`
 
-注意事項：
+注意：
 
 - 預設工作區遵循 `~/.openclaw/workspace-<agentId>`。
-- 新增 `bindings` 來路由入站訊息（精靈可以做到這一點）。
+- 添加 `bindings` 以路由入站訊息（精靈可以執行此操作）。
 - 非互動式旗標：`--model`、`--agent-dir`、`--bind`、`--non-interactive`。
 
 ## 相關文件

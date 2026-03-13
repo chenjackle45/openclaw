@@ -1,40 +1,43 @@
 ---
-summary: "Exec approvals、allowlists 及沙箱逃脫提示"
+summary: "Exec 核准、允許列表和 sandbox 逃脫提示"
 read_when:
-  - 設定 exec approvals 或 allowlists
-  - 在 macOS app 中實作 exec approval UX
-  - 審查沙箱逃脫提示及其含義
-title: "Exec Approvals（執行審批）"
+  - 配置 exec 核准或允許列表
+  - 在 macOS app 中實現 exec 核准 UX
+  - 審視 sandbox 逃脫提示和含義
+title: "Exec Approvals（Exec 核准）"
 ---
 
 # Exec approvals
 
-Exec approvals 是**companion app / 節點主機護欄**，用於讓沙箱化 agent 在真實主機（`gateway` 或 `node`）上執行命令。把它想成一個安全互鎖：只有當政策 + allowlist + （選用）使用者審批全部同意時，命令才被允許。Exec approvals 是工具政策和提升閘控（除非提升設定為 `full`，這會跳過 approvals）的**補充**。有效政策是 `tools.exec.*` 和 approvals 預設值中**較嚴格**的那個；若省略 approvals 欄位，則使用 `tools.exec` 值。
+Exec 核准是 **companion app／node host guardrail**，用於讓沙箱化 agent 在真實主機上執行命令（`gateway` 或 `node`）。把它想像成一個安全互鎖：只有當原則 + 允許列表 +（選擇性）使用者核准都同意時，命令才被允許。Exec 核准是 **在工具原則和提升閘門之外**（除非提升設定為 `full`，這會跳過核准）。
+有效原則是 `tools.exec.*` 和核准預設值中**更嚴格**的；如果核准欄位被省略，則使用 `tools.exec` 值。
 
-若 companion app UI **不可用**，任何需要提示的請求都由 **ask fallback** 解決（預設：拒絕）。
+如果 companion app UI **不可用**，任何需要提示的請求都由 **ask fallback** 解決（預設：拒絕）。
 
-## 適用範圍
+## 它適用於哪些地方
 
-Exec approvals 在執行主機本地執行：
+Exec 核准在執行主機上本機強制：
 
-- **gateway 主機** → gateway 機器上的 `openclaw` 程序
-- **節點主機** → 節點執行器（macOS companion app 或 headless 節點主機）
+- **gateway host** → gateway machine 上的 `openclaw` 進程
+- **node host** → node runner（macOS companion app 或無頭 node host）
 
 信任模型注意：
 
-- Gateway 已驗證的呼叫者對該 Gateway 而言是受信任的操作者。
-- 已配對的節點將該受信任的操作者能力延伸至節點主機。
-- Exec approvals 降低意外執行風險，但不是每個使用者的驗證邊界。
-- 已審批的節點主機執行也會綁定正規執行 context：正規 cwd、在適用時固定的可執行路徑，以及 interpreter 式指令碼操作數。若已綁定的指令碼在審批後但執行前發生變更，執行被拒絕而非執行漂移的內容。
+- Gateway 認證的呼叫者是該 Gateway 的信任運營者。
+- 配對的 nodes 將該信任運營者能力擴展到 node host。
+- Exec 核准降低意外執行風險，但不是每個使用者的認證邊界。
+- 已核准的 node 主機執行繫結規範執行 context：規範 cwd、確切的 argv、env 繫結（如果存在）和 pinned executable path（如適用）。
+- 對於 shell 指令碼和直接解釋器／runtime 檔案呼叫，OpenClaw 也嘗試繫結一個具體的本機檔案運算元。如果該繫結檔案在核准後但在執行前改變，執行會被拒絕而不是執行漂移 content。
+- 此檔案繫結是有意最佳努力的，而不是每個解釋器／runtime 載入器路徑的完整語義模型。如果核准 mode 無法識別確切一個具體本機檔案來繫結，它會拒絕發行核准備份執行，而不是假裝完整覆蓋。
 
-macOS 分工：
+macOS 分割：
 
-- **節點主機服務**透過本地 IPC 將 `system.run` 轉發至 **macOS app**。
-- **macOS app** 在 UI context 中執行 approvals + 執行命令。
+- **node host service** 透過本機 IPC 轉發 `system.run` 到 **macOS app**。
+- **macOS app** 強制核准 + 在 UI context 中執行命令。
 
 ## 設定和儲存
 
-Approvals 儲存在執行主機的本地 JSON 檔案中：
+核准位於執行主機上的本機 JSON 檔案：
 
 `~/.openclaw/exec-approvals.json`
 
@@ -73,31 +76,33 @@ Approvals 儲存在執行主機的本地 JSON 檔案中：
 }
 ```
 
-## 政策設定
+## 原則旋鈕
 
-### Security（`exec.security`）
+### 安全性 (`exec.security`)
 
-- **deny**：封鎖所有 host exec 請求。
-- **allowlist**：僅允許 allowlisted 命令。
-- **full**：允許所有（等同於提升）。
+- **deny**: 阻止所有主機 exec 請求。
+- **allowlist**: 僅允許允許列表中的命令。
+- **full**: 允許一切（等同於提升）。
 
-### Ask（`exec.ask`）
+### 詢問 (`exec.ask`)
 
-- **off**：永不提示。
-- **on-miss**：僅在 allowlist 不符時提示。
-- **always**：每個命令都提示。
+- **off**: 永遠不提示。
+- **on-miss**: 僅當允許列表不匹配時提示。
+- **always**: 在每個命令上提示。
 
-### Ask fallback（`askFallback`）
+### 詢問回退 (`askFallback`)
 
-若需要提示但無 UI 可達，fallback 決定：
+如果需要提示但無法連接 UI，回退決定：
 
-- **deny**：封鎖。
-- **allowlist**：僅在 allowlist 符合時允許。
-- **full**：允許。
+- **deny**: 阻止。
+- **allowlist**: 僅在允許列表匹配時允許。
+- **full**: 允許。
 
-## Allowlist（每個 agent）
+## 允許列表（per agent）
 
-Allowlists 是**每個 agent** 的。若有多個 agent，在 macOS app 中切換你正在編輯的 agent。模式是**不區分大小寫的 glob 比對**。模式應解析為**二進位路徑**（僅基本名稱的項目被忽略）。舊版 `agents.default` 項目在載入時遷移至 `agents.main`。
+允許列表是 **per agent**。如果存在多個 agents，在 macOS app 中切換你正在編輯的 agent。模式是 **不區分大小寫的 glob 相符**。
+模式應解析為 **二進位路徑**（basename 項只是被忽略）。
+舊版 `agents.default` 項在載入時會遷移到 `agents.main`。
 
 範例：
 
@@ -105,61 +110,79 @@ Allowlists 是**每個 agent** 的。若有多個 agent，在 macOS app 中切�
 - `~/.local/bin/*`
 - `/opt/homebrew/bin/rg`
 
-每個 allowlist 項目追蹤：
+每個允許列表項目追蹤：
 
-- **id** 用於 UI 識別的穩定 UUID（選用）
-- **最後使用**時間戳記
-- **最後使用的命令**
-- **最後解析的路徑**
+- **id** 用於 UI 身份的穩定 UUID（選擇性）
+- **last used** 時間戳
+- **last used command**
+- **last resolved path**
 
-## 自動允許 skill CLI
+## 自動允許 skill CLIs
 
-啟用 **Auto-allow skill CLIs** 時，已知 skills 所引用的可執行檔在節點（macOS 節點或 headless 節點主機）上被視為 allowlisted。這使用 Gateway RPC 上的 `skills.bins` 獲取 skill bin 清單。若你需要嚴格的手動 allowlists，停用此功能。
+當 **Auto-allow skill CLIs** 啟用時，已知 skills 引用的可執行檔會在 nodes（macOS node 或無頭 node host）上被視為允許列表。這使用 `skills.bins`（透過 Gateway RPC）來擷取 skill bin 列表。如果你想要嚴格手動允許列表，則停用此功能。
 
 重要信任注意：
 
-- 這是一個**隱式便利 allowlist**，與手動路徑 allowlist 項目分開。
-- 它適用於 Gateway 和節點在同一信任邊界內的受信任操作者環境。
-- 若你需要嚴格的明確信任，保持 `autoAllowSkills: false` 並僅使用手動路徑 allowlist 項目。
+- 這是一個 **隱含便利允許列表**，與手動路徑允許列表項目分開。
+- 它適用於 Gateway 和 node 在同一信任邊界的信任運營者環境。
+- 如果需要嚴格明確信任，保持 `autoAllowSkills: false` 並僅使用手動路徑允許列表項目。
 
-## Safe bins（僅 stdin）
+## 安全 bins（stdin 僅限）
 
-`tools.exec.safeBins` 定義一小份**僅限 stdin** 的二進位清單（例如 `jq`），可在 allowlist 模式下**不需要**明確 allowlist 項目執行。Safe bins 拒絕位置檔案引數和路徑式 token，因此它們只能操作傳入串流。將其視為串流過濾器的狹窄快速路徑，而非通用信任清單。**不要**將 interpreter 或 runtime 二進位（例如 `python3`、`node`、`ruby`、`bash`、`sh`、`zsh`）新增至 `safeBins`。若命令可以評估程式碼、執行子命令或設計上讀取檔案，優先使用明確的 allowlist 項目並保持 approval 提示啟用。自訂 safe bins 必須在 `tools.exec.safeBinProfiles.<bin>` 中定義明確的 profile。驗證僅從 argv 形狀確定性地進行（不檢查主機檔案系統存在），這防止了 allow/deny 差異的檔案存在 oracle 行為。對預設 safe bins 拒絕以檔案為導向的選項（例如 `sort -o`、`sort --output`、`sort --files0-from`、`sort --compress-program`、`sort --random-source`、`sort --temporary-directory`/`-T`、`wc --files0-from`、`jq -f/--from-file`、`grep -f/--file`）。Safe bins 也為破壞僅 stdin 行為的選項執行明確的每個二進位旗標政策（例如 `sort -o/--output/--compress-program` 和 grep 遞迴旗標）。在 safe-bin 模式下，長選項以失敗關閉方式驗證：未知旗標和模糊縮寫被拒絕。Safe-bin profile 拒絕的旗標：
+`tools.exec.safeBins` 定義一個小型 **stdin 僅限** 二進位檔列表（例如 `jq`），這些可以在允許列表 mode 中執行，**無需**明確允許列表項目。安全 bins 拒絕位置檔案 args 和類路徑 tokens，因此它們只能在傳入串流上運作。
+將此視為串流過濾器的狹窄快速路徑，而不是通用信任列表。
+**不要**將解釋器或 runtime 二進位檔（例如 `python3`、`node`、`ruby`、`bash`、`sh`、`zsh`）新增到 `safeBins`。
+如果命令可以評估程式碼、執行子命令或按設計讀取檔案，則偏好明確允許列表項目並保持核准提示啟用。
+自訂安全 bins 必須在 `tools.exec.safeBinProfiles.<bin>` 中定義明確的 profile。
+驗證完全取決於 argv 形狀（無主機檔案系統存在檢查），這防止了允許／拒絕差異的檔案存在 oracle 行為。
+預設安全 bins 拒絕檔案導向選項（例如 `sort -o`、`sort --output`、`sort --files0-from`、`sort --compress-program`、`sort --random-source`、`sort --temporary-directory`／`-T`、`wc --files0-from`、`jq -f/--from-file`、`grep -f/--file`）。
+安全 bins 也為會破壞 stdin 僅限行為的選項強制明確每二進位旗標原則（例如 `sort -o/--output/--compress-program` 和 grep 遞迴旗標）。
+長選項在安全 bin mode 中驗證失敗關閉：未知旗標和模糊縮寫被拒絕。
+由安全 bin profile 拒絕的旗標：
 
 <!-- SAFE_BIN_DENIED_FLAGS:START -->
 
-- `grep`：`--dereference-recursive`、`--directories`、`--exclude-from`、`--file`、`--recursive`、`-R`、`-d`、`-f`、`-r`
-- `jq`：`--argfile`、`--from-file`、`--library-path`、`--rawfile`、`--slurpfile`、`-L`、`-f`
-- `sort`：`--compress-program`、`--files0-from`、`--output`、`--random-source`、`--temporary-directory`、`-T`、`-o`
-- `wc`：`--files0-from`
+- `grep`: `--dereference-recursive`, `--directories`, `--exclude-from`, `--file`, `--recursive`, `-R`, `-d`, `-f`, `-r`
+- `jq`: `--argfile`, `--from-file`, `--library-path`, `--rawfile`, `--slurpfile`, `-L`, `-f`
+- `sort`: `--compress-program`, `--files0-from`, `--output`, `--random-source`, `--temporary-directory`, `-T`, `-o`
+- `wc`: `--files0-from`
 <!-- SAFE_BIN_DENIED_FLAGS:END -->
 
-Safe bins 也在執行時將 argv token 強制視為**純文字**（不展開 glob，不展開 `$VARS`）用於僅 stdin 的區段，因此 `*` 或 `$HOME/...` 等模式無法用於暗中讀取檔案。Safe bins 也必須從受信任的二進位目錄解析（系統預設加上選用的 `tools.exec.safeBinTrustedDirs`）。`PATH` 項目從不自動受信任。預設受信任的 safe-bin 目錄刻意最小化：`/bin`、`/usr/bin`。若你的 safe-bin 可執行檔位於套件管理器/使用者路徑（例如 `/opt/homebrew/bin`、`/usr/local/bin`、`/opt/local/bin`、`/snap/bin`），明確新增它們至 `tools.exec.safeBinTrustedDirs`。Allowlist 模式不自動允許 shell 鏈和重新導向。
+安全 bins 也強制 argv tokens 在執行時被視為 **literal text**（stdin 僅限段落沒有 globbing 和沒有 `$VARS` 擴展），所以 `*` 或 `$HOME/...` 的模式無法被用來 smuggle 檔案讀取。
+安全 bins 也必須從信任二進位目錄解析（系統預設值加上選擇性 `tools.exec.safeBinTrustedDirs`）。`PATH` 項目永遠不會自動信任。
+預設信任安全 bin 目錄有意最小化：`/bin`, `/usr/bin`。
+如果安全 bin 可執行檔位於套件管理器／使用者路徑中（例如 `/opt/homebrew/bin`、`/usr/local/bin`、`/opt/local/bin`、`/snap/bin`），明確新增到 `tools.exec.safeBinTrustedDirs`。
+Shell 鏈接和重新導向在允許列表 mode 中不自動允許。
 
-Allowlist 模式中允許 shell 鏈（`&&`、`||`、`;`），當每個頂層區段都滿足 allowlist（包括 safe bins 或 skill 自動允許）時。Allowlist 模式下仍不支援重新導向。在 allowlist 解析期間拒絕命令替換（`$()` / 反引號），包括雙引號內；若需要純文字的 `$()` 文字，使用單引號。在 macOS companion-app approvals 中，包含 shell 控制或展開語法（`&&`、`||`、`;`、`|`、`` ` ``、`$`、`<`、`>`、`(`、`)`）的原始 shell 文字被視為 allowlist 未命中，除非 shell 二進位本身在 allowlist 中。對於 shell 包裝器（`bash|sh|zsh ... -c/-lc`），請求範疇的 env 覆寫縮減為少量明確的 allowlist（`TERM`、`LANG`、`LC_*`、`COLORTERM`、`NO_COLOR`、`FORCE_COLOR`）。對於 allowlist 模式中的始終允許決定，已知的 dispatch 包裝器（`env`、`nice`、`nohup`、`stdbuf`、`timeout`）保留內部可執行路徑而非包裝器路徑。Shell 多路器（`busybox`、`toybox`）對 shell applets（`sh`、`ash` 等）也會解包，因此保留內部可執行路徑而非多路器二進位。若包裝器或多路器無法安全解包，不自動保留任何 allowlist 項目。
+當每個頂層段滿足允許列表時允許 Shell 鏈接（`&&`、`||`、`;`）（包括安全 bins 或 skill 自動允許）。重新導向在允許列表 mode 中保持不支援。
+命令替換（`$()`／backticks）在允許列表解析期間被拒絕，包括在雙引號內；如果需要 literal `$()` 文字，使用單引號。
+在 macOS companion app 核准上，包含 shell 控制或擴展語法的原始 shell 文字（`&&`、`||`、`;`、`|`、`` ` ``、`$`、`<`、`>`、`(`、`)`）被視為允許列表遺漏，除非 shell 二進位檔本身被允許列表。
+對於 shell wrappers（`bash|sh|zsh ... -c/-lc`），request 範圍的 env 覆蓋被減少到小的明確允許列表（`TERM`、`LANG`、`LC_*`、`COLORTERM`、`NO_COLOR`、`FORCE_COLOR`）。
+對於允許始終決定在允許列表 mode 中，已知 dispatch wrappers（`env`、`nice`、`nohup`、`stdbuf`、`timeout`）持久化內部可執行路徑而不是 wrapper 路徑。Shell 多路分配器（`busybox`、`toybox`）也被展開以用於 shell applets（`sh`、`ash` 等），因此內部可執行檔被持久化而不是多路分配器二進位檔。如果 wrapper 或多路分配器無法安全展開，沒有允許列表項目被自動持久化。
 
-預設 safe bins：`jq`、`cut`、`uniq`、`head`、`tail`、`tr`、`wc`。
+預設安全 bins: `jq`, `cut`, `uniq`, `head`, `tail`, `tr`, `wc`。
 
-`grep` 和 `sort` 不在預設清單中。若你選擇加入，為其非 stdin 工作流程保留明確的 allowlist 項目。對於 safe-bin 模式中的 `grep`，以 `-e`/`--regexp` 提供模式；拒絕位置模式形式，以防止檔案操作數被當作模糊位置數混入。
+`grep` 和 `sort` 不在預設列表中。如果選擇加入，為其非 stdin 工作流保持明確允許列表項目。
+對於 safe bin mode 中的 `grep`，用 `-e`／`--regexp` 提供模式；位置模式形式被拒絕，因此檔案運算元無法被 smuggle 為模糊位置。
 
-### Safe bins 與 allowlist 比較
+### 安全 bins 與 allowlist
 
-| 主題     | `tools.exec.safeBins`                       | Allowlist（`exec-approvals.json`）    |
-| -------- | ------------------------------------------- | ------------------------------------- |
-| 目標     | 自動允許狹窄的 stdin 過濾器                 | 明確信任特定可執行檔                  |
-| 比對類型 | 可執行名稱 + safe-bin argv 政策             | 解析的可執行路徑 glob 模式            |
-| 引數範疇 | 受 safe-bin profile 和純文字 token 規則限制 | 僅路徑比對；引數是你的責任            |
-| 典型範例 | `jq`、`head`、`tail`、`wc`                  | `python3`、`node`、`ffmpeg`、自訂 CLI |
-| 最佳用途 | 管道中的低風險文字轉換                      | 任何具有更廣泛行為或副作用的工具      |
+| 主題     | `tools.exec.safeBins`                         | Allowlist（`exec-approvals.json`）       |
+| -------- | --------------------------------------------- | ---------------------------------------- |
+| 目標     | 自動允許狹窄 stdin 過濾器                     | 明確信任特定可執行檔                     |
+| 比對型態 | 可執行名稱 + safe bin argv 原則               | 已解析可執行路徑 glob 模式               |
+| 引數範圍 | 由 safe bin profile 和 literal token 規則限制 | 僅路徑相符；引數否則由你負責             |
+| 典型範例 | `jq`, `head`, `tail`, `wc`                    | `python3`, `node`, `ffmpeg`, custom CLIs |
+| 最佳使用 | 管道中的低風險文字轉換                        | 任何具有更廣泛行為或副作用的工具         |
 
-設定位置：
+配置位置：
 
-- `safeBins` 來自設定（`tools.exec.safeBins` 或每個 agent 的 `agents.list[].tools.exec.safeBins`）。
-- `safeBinTrustedDirs` 來自設定（`tools.exec.safeBinTrustedDirs` 或每個 agent 的 `agents.list[].tools.exec.safeBinTrustedDirs`）。
-- `safeBinProfiles` 來自設定（`tools.exec.safeBinProfiles` 或每個 agent 的 `agents.list[].tools.exec.safeBinProfiles`）。每個 agent 的 profile key 覆寫全域 key。
-- allowlist 項目儲存在主機本地的 `~/.openclaw/exec-approvals.json` 中的 `agents.<id>.allowlist` 下（或透過 Control UI / `openclaw approvals allowlist ...`）。
-- 當 interpreter/runtime bin 出現在 `safeBins` 且無明確 profiles 時，`openclaw security audit` 以 `tools.exec.safe_bins_interpreter_unprofiled` 警告。
-- `openclaw doctor --fix` 可以將遺失的自訂 `safeBinProfiles.<bin>` 項目建構為 `{}`（之後審查並收緊）。Interpreter/runtime bin 不會自動建構。
+- `safeBins` 來自配置（`tools.exec.safeBins` 或 per agent `agents.list[].tools.exec.safeBins`）。
+- `safeBinTrustedDirs` 來自配置（`tools.exec.safeBinTrustedDirs` 或 per agent `agents.list[].tools.exec.safeBinTrustedDirs`）。
+- `safeBinProfiles` 來自配置（`tools.exec.safeBinProfiles` 或 per agent `agents.list[].tools.exec.safeBinProfiles`）。Per agent profile 鍵覆蓋全域鍵。
+- allowlist 項目位於主機本機 `~/.openclaw/exec-approvals.json` 下的 `agents.<id>.allowlist` 下（或透過 Control UI／`openclaw approvals allowlist ...`）。
+- `openclaw security audit` 在解釋器／runtime bins 出現在 `safeBins` 中但沒有明確 profiles 時發出警告，帶有 `tools.exec.safe_bins_interpreter_unprofiled`。
+- `openclaw doctor --fix` 可以如 `{}`（審視並在之後收緊）scaffold 遺漏的自訂 `safeBinProfiles.<bin>` 項目。解釋器／runtime bins 不會自動 scaffold。
 
 自訂 profile 範例：
 
@@ -183,39 +206,49 @@ Allowlist 模式中允許 shell 鏈（`&&`、`||`、`;`），當每個頂層區�
 
 ## Control UI 編輯
 
-使用 **Control UI → Nodes → Exec approvals** 卡片來編輯預設值、每個 agent 的覆寫和 allowlists。選擇範疇（預設值或某個 agent），調整政策，新增/移除 allowlist 模式，然後**儲存**。UI 每個模式顯示**最後使用**元資料，讓你可以保持清單整潔。
+使用 **Control UI → Nodes → Exec approvals** 卡來編輯預設值、per agent 覆蓋和允許列表。選擇 scope（預設值或 agent），調整原則，新增／移除允許列表模式，然後 **Save**。UI 針對每個模式顯示 **last used** 元資料，以便你可以保持列表整潔。
 
-目標選擇器選擇 **Gateway**（本地 approvals）或**節點**。節點必須通告 `system.execApprovals.get/set`（macOS app 或 headless 節點主機）。若節點尚未通告 exec approvals，直接編輯其本地 `~/.openclaw/exec-approvals.json`。
+目標選擇器選擇 **Gateway**（本機核准）或 **Node**。Nodes 必須告知 `system.execApprovals.get/set`（macOS app 或無頭 node host）。
+如果 node 還未告知 exec 核准，直接編輯其本機 `~/.openclaw/exec-approvals.json`。
 
-CLI：`openclaw approvals` 支援 gateway 或節點編輯（見 [Approvals CLI](/zh-Hant/cli/approvals)）。
+CLI: `openclaw approvals` 支援 gateway 或 node 編輯（見 [Approvals CLI](/zh-Hant/cli/approvals)）。
 
-## Approval 流程
+## 核准流程
 
-當需要提示時，gateway 向操作者客戶端廣播 `exec.approval.requested`。Control UI 和 macOS app 透過 `exec.approval.resolve` 解決它，然後 gateway 將已批准的請求轉發至節點主機。
+當需要提示時，gateway 廣播 `exec.approval.requested` 到運營者用戶端。Control UI 和 macOS app 透過 `exec.approval.resolve` 解決它，然後 gateway 轉發已核准的請求到 node host。
 
-對於 `host=node`，approval 請求包含正規的 `systemRunPlan` payload。Gateway 使用該計劃作為轉發已批准 `system.run` 請求時的權威命令/cwd/session context。
+對於 `host=node`，核准請求包括規範的 `systemRunPlan` payload。Gateway 在轉發已核准的 `system.run` 請求時使用該計畫作為授權的命令／cwd／session context。
 
-當需要 approvals 時，exec 工具立即回傳一個 approval id。使用該 id 與後續系統事件（`Exec finished` / `Exec denied`）關聯。若在逾時前未做出決定，請求被視為 approval 逾時並作為拒絕原因呈現。
+## 解釋器／runtime 命令
 
-確認對話框包含：
+核准備份解釋器／runtime 執行有意是保守的：
 
-- 命令 + 引數
+- 確切的 argv／cwd／env context 總是被繫結。
+- 直接 shell 指令碼和直接 runtime 檔案形式是最佳努力繫結到一個具體本機檔案快照。
+- 如果 OpenClaw 無法為解釋器／runtime 命令識別確切一個具體本機檔案（例如套件指令碼、eval 形式、runtime 特定載入器鏈或模糊多檔案形式），核准備份執行被拒絕，而不是聲稱它沒有的語義覆蓋。
+- 對於那些工作流程，偏好沙箱化、單獨主機邊界或明確信任允許列表／full 工作流程，其中運營者接受更廣泛的 runtime 語義。
+
+當需要核准時，exec 工具立即傳回核准 id。使用該 id 關聯稍後的系統事件（`Exec finished`／`Exec denied`）。如果沒有決定在逾時前到達，請求被視為核准逾時並表示為拒絕理由。
+
+確認對話包括：
+
+- command + args
 - cwd
 - agent id
-- 解析的可執行路徑
-- 主機 + 政策元資料
+- resolved executable path
+- host + policy metadata
 
-動作：
+操作：
 
-- **Allow once** → 立即執行
-- **Always allow** → 新增至 allowlist + 執行
-- **Deny** → 封鎖
+- **Allow once** → 現在執行
+- **Always allow** → 新增到允許列表 + 執行
+- **Deny** → 阻止
 
-## Approval 轉發至聊天頻道
+## 向 chat 頻道轉發核准
 
-你可以將 exec approval 提示轉發至任何聊天頻道（包括 plugin 頻道），並以 `/approve` 批准它們。這使用正常的對外傳遞管道。
+你可以將 exec 核准提示轉發到任何 chat 頻道（包括 plugin 頻道）並使用 `/approve` 核准它們。這使用正常的出站傳遞管道。
 
-設定：
+配置：
 
 ```json5
 {
@@ -224,7 +257,7 @@ CLI：`openclaw approvals` 支援 gateway 或節點編輯（見 [Approvals CLI](
       enabled: true,
       mode: "session", // "session" | "targets" | "both"
       agentFilter: ["main"],
-      sessionFilter: ["discord"], // 子字串或正則表示式
+      sessionFilter: ["discord"], // substring or regex
       targets: [
         { channel: "slack", to: "U12345678" },
         { channel: "telegram", to: "123456789" },
@@ -234,13 +267,36 @@ CLI：`openclaw approvals` 支援 gateway 或節點編輯（見 [Approvals CLI](
 }
 ```
 
-在聊天中回覆：
+在 chat 中回覆：
 
 ```
 /approve <id> allow-once
 /approve <id> allow-always
 /approve <id> deny
 ```
+
+### 內建 chat 核准用戶端
+
+Discord 和 Telegram 也可以充當明確的 exec 核准用戶端，具有頻道特定配置。
+
+- Discord: `channels.discord.execApprovals.*`
+- Telegram: `channels.telegram.execApprovals.*`
+
+這些用戶端是選擇加入的。如果頻道未啟用 exec 核准，OpenClaw 不會僅因為 conversation 在那裡就將該頻道視為核准表面。
+
+共用行為：
+
+- 僅設定的核准者可以核准或拒絕
+- 請求者不需要是核准者
+- 當頻道傳遞啟用時，核准提示包括命令文字
+- 如果沒有運營者 UI 或設定的核准用戶端可以接受請求，提示回退到 `askFallback`
+
+Telegram 預設為核准者 DMs（`target: "dm"`）。當你想讓核准提示也出現在原始 Telegram chat／topic 中時，可以切換到 `channel` 或 `both`。對於 Telegram 論壇主題，OpenClaw 為核准提示和核准後的後續操作保留主題。
+
+見：
+
+- [Discord](/zh-Hant/channels/discord#exec-approvals-in-discord)
+- [Telegram](/zh-Hant/channels/telegram#exec-approvals-in-telegram)
 
 ### macOS IPC 流程
 
@@ -253,27 +309,30 @@ Gateway -> Node Service (WS)
 
 安全注意：
 
-- Unix socket 模式 `0600`，token 儲存在 `exec-approvals.json`。
+- Unix socket mode `0600`，token 儲存在 `exec-approvals.json`。
 - 相同 UID 對等檢查。
-- 挑戰/回應（nonce + HMAC token + 請求 hash）+ 短 TTL。
+- Challenge／response（nonce + HMAC token + request hash） + 短 TTL。
 
 ## 系統事件
 
-Exec 生命週期以系統訊息呈現：
+Exec 生命週期表示為系統訊息：
 
-- `Exec running`（僅在命令超過執行通知閾值時）
+- `Exec running`（僅當命令超過執行中通知閾值時）
 - `Exec finished`
 - `Exec denied`
 
-這些在節點回報事件後發佈至 agent 的 session。Gateway-host exec approvals 在命令完成時（以及選用地在執行時間超過閾值時）發出相同的生命週期事件。已審批閘控的 exec 在這些訊息中重用 approval id 作為 `runId`，便於關聯。
+這些在 node 報告事件後發佈到 agent 的 session。
+Gateway 主機 exec 核准在命令完成時發出相同的生命週期事件（以及可選地當執行長於閾值時）。
+核准閘門的 execs 重用核准 id 作為這些訊息中的 `runId`，以便輕鬆關聯。
 
 ## 含義
 
-- **full** 功能強大；盡可能優先使用 allowlists。
-- **ask** 讓你保持參與，同時仍允許快速審批。
-- 每個 agent 的 allowlists 防止一個 agent 的 approvals 洩露至其他 agent。
-- Approvals 僅適用於來自**已授權傳送者**的 host exec 請求。未授權的傳送者無法發出 `/exec`。
-- `/exec security=full` 是授權操作者的 session 層級便利設定，設計上跳過 approvals。若要強制封鎖 host exec，將 approvals security 設為 `deny` 或透過工具政策拒絕 `exec` 工具。
+- **full** 是強大的；在可能時偏好允許列表。
+- **ask** 保持你在循環中，同時仍然允許快速核准。
+- Per agent 允許列表防止一個 agent 的核准洩漏到其他人中。
+- 核准僅適用於來自 **授權寄件者** 的主機 exec 請求。未授權的寄件者無法發行 `/exec`。
+- `/exec security=full` 是授權運營者的 session 級便利，並按設計跳過核准。
+  要硬阻止主機 exec，設定核准安全為 `deny` 或透過工具原則拒絕 `exec` 工具。
 
 相關：
 

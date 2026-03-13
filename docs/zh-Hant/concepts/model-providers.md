@@ -1,15 +1,15 @@
 ---
-title: "Model Providers（模型供應商）"
-summary: "模型供應商概覽與設定範例 + CLI 流程"
+title: "Model Providers（模型提供商）"
+summary: "模型提供商概覽與組態範例 + CLI 流程"
 read_when:
-  - 您需要逐個供應商的模型設定參考
-  - 您想要模型供應商的設定範例或 CLI 引導指令
+  - 您需要逐個提供商的模型組態參考
+  - 您想要模型提供商的組態範例或 CLI 引導指令
 ---
 
-# 模型供應商
+# Model providers（模型提供商）
 
-此頁面涵蓋 **LLM/模型供應商**（非 WhatsApp/Telegram 等聊天頻道）。
-關於模型選擇規則，請見 [/concepts/models](/zh-Hant/concepts/models)。
+此頁面涵蓋 **LLM/模型提供商**（非 WhatsApp/Telegram 等聊天頻道）。
+如需模型選擇規則，見 [/concepts/models](/zh-Hant/concepts/models)。
 
 ## 快速規則
 

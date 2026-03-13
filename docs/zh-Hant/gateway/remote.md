@@ -1,7 +1,7 @@
 ---
-summary: "使用 SSH tunnels（Gateway WS）與 tailnets 進行遠端存取"
+summary: "使用 SSH 隧道 (Gateway WebSocket) 和 tailnet 進行遠端存取"
 read_when:
-  - 運行或疑難排解遠端 Gateway 設定時
+  - 執行或疑難排解遠端 Gateway 設定
 title: "Remote Access（遠端存取）"
 ---
 

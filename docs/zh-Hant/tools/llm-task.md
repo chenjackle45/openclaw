@@ -1,16 +1,16 @@
 ---
-summary: "工作流用 JSON-only LLM 任務（可選 plugin 工具）"
+summary: "用於工作流程的僅限 JSON LLM 任務（選擇性 plugin 工具）"
 read_when:
-  - 你想在工作流中加入一個 JSON-only LLM 步驟
-  - 你需要對自動化進行 schema 驗證的 LLM 輸出
-title: "LLM Task（LLM 任務）"
+  - 你想在工作流程中使用僅限 JSON 的 LLM 步驟
+  - 你需要針對自動化的 schema 驗證 LLM 輸出
+title: "LLM Task"
 ---
 
 # LLM Task
 
-`llm-task` 是一個**可選的 plugin 工具**，執行 JSON-only LLM 任務並回傳結構化輸出（可選擇對照 JSON Schema 驗證）。
+`llm-task` 是一個 **選擇性 plugin 工具**，執行僅限 JSON 的 LLM 任務並傳回結構化輸出（可選地針對 JSON Schema 驗證）。
 
-這非常適合 Lobster 等工作流引擎：你可以新增單一 LLM 步驟，而無需為每個工作流撰寫自訂的 OpenClaw 程式碼。
+這對於 Lobster 等工作流程引擎是理想的：你可以新增單個 LLM 步驟，而不用為每個工作流程撰寫自訂 OpenClaw 程式碼。
 
 ## 啟用 plugin
 
@@ -26,7 +26,7 @@ title: "LLM Task（LLM 任務）"
 }
 ```
 
-2. 將工具加入允許清單（已以 `optional: true` 註冊）：
+2. 允許列表工具（它以 `optional: true` 註冊）：
 
 ```json
 {
@@ -41,7 +41,7 @@ title: "LLM Task（LLM 任務）"
 }
 ```
 
-## 設定（可選）
+## 配置（選擇性）
 
 ```json
 {
@@ -63,29 +63,33 @@ title: "LLM Task（LLM 任務）"
 }
 ```
 
-`allowedModels` 是 `provider/model` 字串的允許清單。若設定後，清單外的任何請求都會被拒絕。
+`allowedModels` 是 `provider/model` 字串的允許列表。如果設定，任何列表外的請求都會被拒絕。
 
 ## 工具參數
 
-- `prompt`（string，必填）
-- `input`（any，可選）
-- `schema`（object，可選 JSON Schema）
-- `provider`（string，可選）
-- `model`（string，可選）
-- `authProfileId`（string，可選）
-- `temperature`（number，可選）
-- `maxTokens`（number，可選）
-- `timeoutMs`（number，可選）
+- `prompt`（字串，必需）
+- `input`（任何，選擇性）
+- `schema`（物件，選擇性 JSON Schema）
+- `provider`（字串，選擇性）
+- `model`（字串，選擇性）
+- `thinking`（字串，選擇性）
+- `authProfileId`（字串，選擇性）
+- `temperature`（數字，選擇性）
+- `maxTokens`（數字，選擇性）
+- `timeoutMs`（數字，選擇性）
+
+`thinking` 接受標準 OpenClaw 推理預設集，例如 `low` 或 `medium`。
 
 ## 輸出
 
-回傳包含解析後 JSON 的 `details.json`（提供 `schema` 時進行驗證）。
+傳回包含已解析 JSON 的 `details.json`（並在提供時針對 `schema` 驗證）。
 
-## 範例：Lobster 工作流步驟
+## 範例：Lobster 工作流程步驟
 
 ```lobster
 openclaw.invoke --tool llm-task --action json --args-json '{
   "prompt": "Given the input email, return intent and draft.",
+  "thinking": "low",
   "input": {
     "subject": "Hello",
     "body": "Can you help?"
@@ -104,7 +108,7 @@ openclaw.invoke --tool llm-task --action json --args-json '{
 
 ## 安全注意事項
 
-- 此工具**僅限 JSON**，並指示模型只輸出 JSON（無程式碼圍欄，無說明文字）。
-- 此執行不向模型公開任何工具。
-- 除非以 `schema` 驗證，否則將輸出視為不受信任。
-- 在任何有副作用的步驟（send、post、exec）之前加入審批。
+- 工具是 **僅限 JSON**，指示模型僅輸出 JSON（無程式碼柵欄，無評論）。
+- 沒有工具公開給此執行中的模型。
+- 除非使用 `schema` 驗證，否則將輸出視為不信任。
+- 在任何副作用步驟（傳送、發佈、exec）前放置核准。

@@ -8,8 +8,7 @@ title: "node（節點主機）"
 
 # `openclaw node`
 
-運行一個**無頭節點主機**，使其連接至 Gateway WebSocket 並在此機器上提供
-`system.run` / `system.which`。
+運行一個**無頭節點主機**，使其連接至 Gateway WebSocket 並在此機器上提供 `system.run` / `system.which`。
 
 ## 為什麼要使用節點主機？
 
@@ -58,11 +57,12 @@ openclaw node run --host <gateway-host> --port 18789
 
 `openclaw node run` 和 `openclaw node install` 從 config/env 解析 gateway 認證（node 指令沒有 `--token`/`--password` 旗標）：
 
-- 首先檢查 `OPENCLAW_GATEWAY_TOKEN` / `OPENCLAW_GATEWAY_PASSWORD`。
+- `OPENCLAW_GATEWAY_TOKEN` / `OPENCLAW_GATEWAY_PASSWORD` 首先被檢查。
 - 然後本地 config 回退：`gateway.auth.token` / `gateway.auth.password`。
-- 在本地模式下，當 `gateway.auth.*` 未設定時，`gateway.remote.token` / `gateway.remote.password` 也可作為回退。
-- 在 `gateway.mode=remote` 下，遠端客戶端欄位（`gateway.remote.token` / `gateway.remote.password`）也依遠端優先規則符合條件。
-- 傳統的 `CLAWDBOT_GATEWAY_*` env vars 在節點主機認證解析中被忽略。
+- 在本地模式下，node host 刻意不繼承 `gateway.remote.token` / `gateway.remote.password`。
+- 若 `gateway.auth.token` / `gateway.auth.password` 明確透過 SecretRef 配置且未解析，node 認證解析會失敗關閉（無遠端回退遮蔽）。
+- 在 `gateway.mode=remote` 時，遠端客戶端欄位（`gateway.remote.token` / `gateway.remote.password`）也依遠端優先規則符合條件。
+- 舊版 `CLAWDBOT_GATEWAY_*` env vars 在節點主機認證解析中被刻意忽略。
 
 ## 服務（背景）
 
@@ -106,8 +106,7 @@ openclaw devices list
 openclaw devices approve <requestId>
 ```
 
-節點主機將其節點 ID、token、顯示名稱及 gateway 連線資訊儲存於
-`~/.openclaw/node.json`。
+節點主機將其節點 ID、token、顯示名稱及 gateway 連線資訊儲存於 `~/.openclaw/node.json`。
 
 ## 執行核准
 

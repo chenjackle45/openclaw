@@ -11,14 +11,14 @@ title: "Getting Started（開始使用）"
 目標：從零開始到第一個能運作的聊天，最少設定。
 
 <Info>
-最快的聊天方式：開啟 Control UI（不需要頻道設定）。執行 `openclaw dashboard`，然後在瀏覽器中聊天，或在
-<Tooltip headline="Gateway host（Gateway 主機）" tip="執行 OpenClaw Gateway 服務的機器。">Gateway 主機</Tooltip>上開啟 `http://127.0.0.1:18789/`。
+最快的聊天方式：開啟 Control UI（不需要頻道設定）。執行 `openclaw dashboard` 並在瀏覽器中聊天，或開啟 `http://127.0.0.1:18789/` 在
+<Tooltip headline="Gateway host（Gateway 主機）" tip="執行 OpenClaw Gateway 服務的機器。">Gateway 主機</Tooltip>上。
 文件：[Dashboard](/zh-Hant/web/dashboard) 和 [Control UI](/zh-Hant/web/control-ui)。
 </Info>
 
 ## 先決條件
 
-- Node 22 或更新版本
+- 建議使用 Node 24（Node 22 LTS，目前 `22.16+`，仍支援相容性）
 
 <Tip>
 如果不確定，可以用 `node --version` 檢查 Node 版本。
@@ -33,6 +33,11 @@ title: "Getting Started（開始使用）"
         ```bash
         curl -fsSL https://openclaw.ai/install.sh | bash
         ```
+        <img
+  src="/assets/install-script.svg"
+  alt="Install Script Process"
+  className="rounded-lg"
+/>
       </Tab>
       <Tab title="Windows (PowerShell)">
         ```powershell
@@ -51,8 +56,8 @@ title: "Getting Started（開始使用）"
     openclaw onboard --install-daemon
     ```
 
-    精靈會設定驗證、Gateway 設定和可選的頻道。
-    詳見 [入門精靈](/zh-Hant/start/wizard)。
+    精靈會設定認證、Gateway 設定和可選的頻道。
+    詳見[入門精靈](/zh-Hant/start/wizard)。
 
   </Step>
   <Step title="檢查 Gateway">
@@ -119,11 +124,11 @@ title: "Getting Started（開始使用）"
 ## 你會獲得什麼
 
 - 一個執行中的 Gateway
-- 已設定的驗證
+- 已設定的認證
 - 對 Control UI 的存取或已連接的頻道
 
 ## 後續步驟
 
 - DM 安全和批准：[Pairing](/zh-Hant/channels/pairing)
-- 連接更多頻道：[頻道](/zh-Hant/channels)
-- 進階工作流和從來源開始：[設定](/zh-Hant/start/setup)
+- 連接更多頻道：[Channels](/zh-Hant/channels)
+- 進階工作流和從來源開始：[Setup](/zh-Hant/start/setup)

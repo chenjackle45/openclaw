@@ -1,19 +1,19 @@
 ---
-summary: "使用 Ansible 進行自動化、強化的 OpenClaw 安裝，配合 Tailscale VPN 和防火牆隔離"
+summary: "使用 Ansible、Tailscale VPN 和防火牆隔離進行自動化、安全加固的 OpenClaw 安裝"
 read_when:
-  - 你想要以自動化方式部署伺服器並進行安全強化
-  - 你需要設定防火牆隔離且透過 VPN 存取
-  - 你要部署到遠端 Debian/Ubuntu 伺服器
-title: "Ansible（使用 Ansible 安裝）"
+  - 您想要自動化伺服器部署並進行安全加固
+  - 您需要防火牆隔離設定與 VPN 存取
+  - 您正在部署到遠端 Debian/Ubuntu 伺服器
+title: "Ansible"
 ---
 
 # Ansible 安裝
 
-將 OpenClaw 部署到生產伺服器的推薦方法是使用 **[openclaw-ansible](https://github.com/openclaw/openclaw-ansible)** — 一個以安全為中心的自動化安裝程式。
+將 OpenClaw 部署到生產伺服器的推薦方式是通過 **[openclaw-ansible](https://github.com/openclaw/openclaw-ansible)** — 一個具有安全優先架構的自動化安裝程式。
 
 ## 快速開始
 
-一行指令安裝：
+一行命令安裝：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/openclaw/openclaw-ansible/main/install.sh | bash
@@ -21,9 +21,9 @@ curl -fsSL https://raw.githubusercontent.com/openclaw/openclaw-ansible/main/inst
 
 > **📦 完整指南：[github.com/openclaw/openclaw-ansible](https://github.com/openclaw/openclaw-ansible)**
 >
-> openclaw-ansible repo 是 Ansible 部署的唯一權威來源。本頁面只是快速概覽。
+> openclaw-ansible 儲存庫是 Ansible 部署的唯一來源。此頁面是一個快速概述。
 
-## 功能特性
+## 您將獲得什麼
 
 - 🔒 **防火牆優先安全**：UFW + Docker 隔離（僅 SSH + Tailscale 可存取）
 - 🔐 **Tailscale VPN**：安全的遠端存取，無需公開暴露服務
@@ -32,40 +32,40 @@ curl -fsSL https://raw.githubusercontent.com/openclaw/openclaw-ansible/main/inst
 - 🚀 **一鍵設定**：幾分鐘內完成部署
 - 🔧 **Systemd 整合**：開機時自動啟動並進行強化
 
-## 需求
+## 要求
 
-- **OS**：Debian 11+ 或 Ubuntu 20.04+
-- **存取權限**：root 或 sudo 權限
-- **網路**：網際網路連線用於套件安裝
+- **作業系統**：Debian 11+ 或 Ubuntu 20.04+
+- **存取**：根目錄或 sudo 權限
+- **網路**：網際網路連接以安裝套件
 - **Ansible**：2.14+ （快速開始指令會自動安裝）
 
 ## 安裝內容
 
 Ansible playbook 會安裝並配置：
 
-1. **Tailscale**（用於安全遠端存取的網狀 VPN）
-2. **UFW 防火牆**（僅允許 SSH + Tailscale 連接埠）
-3. **Docker CE + Compose V2**（用於代理沙箱）
-4. **Node.js 22.x + pnpm**（執行時依賴）
-5. **OpenClaw**（主機型，非容器化）
-6. **Systemd 服務**（自動啟動並進行安全強化）
+1. **Tailscale**（安全遠端存取的網狀 VPN）
+2. **UFW 防火牆**（僅 SSH + Tailscale 連接埠）
+3. **Docker CE + Compose V2**（代理沙箱）
+4. **Node.js 24 + pnpm**（執行時依賴；Node 22 LTS 目前 `22.16+` 仍受支援以相容）
+5. **OpenClaw**（主機型，不容器化）
+6. **Systemd 服務**（開機自動啟動且加固）
 
-注意：Gateway 執行於 **主機直接**（不在 Docker 中），但代理沙箱使用 Docker 進行隔離。詳見 [沙箱化](/zh-Hant/gateway/sandboxing)。
+注意：Gateway 直接在主機上執行（不在 Docker 中），但代理沙箱使用 Docker 進行隔離。詳見 [沙箱](/zh-Hant/gateway/sandboxing)。
 
 ## 安裝後設定
 
-安裝完成後，切換到 openclaw 使用者：
+安裝完成後，切換至 openclaw 使用者：
 
 ```bash
 sudo -i -u openclaw
 ```
 
-安裝後指令會引導你完成以下步驟：
+安裝後指令會引導您完成：
 
 1. **上線精靈**：配置 OpenClaw 設定
-2. **Provider 登入**：連接 WhatsApp/Telegram/Discord/Signal
+2. **提供者登入**：連接 WhatsApp/Telegram/Discord/Signal
 3. **Gateway 測試**：驗證安裝
-4. **Tailscale 設定**：連接到你的 VPN 網狀網路
+4. **Tailscale 設定**：連接到您的 VPN 網狀網路
 
 ### 快速指令
 
@@ -76,10 +76,10 @@ sudo systemctl status openclaw
 # 查看實時日誌
 sudo journalctl -u openclaw -f
 
-# 重啟 gateway
+# 重啟 Gateway
 sudo systemctl restart openclaw
 
-# Provider 登入（以 openclaw 使用者執行）
+# 提供者登入（以 openclaw 使用者執行）
 sudo -i -u openclaw
 openclaw channels login
 ```
@@ -88,10 +88,10 @@ openclaw channels login
 
 ### 4 層防禦
 
-1. **防火牆 (UFW)**：僅 SSH (22) + Tailscale (41641/udp) 公開暴露
-2. **VPN (Tailscale)**：Gateway 僅透過 VPN 網狀網路存取
-3. **Docker 隔離**：DOCKER-USER iptables 鏈防止外部連接埠暴露
-4. **Systemd 強化**：NoNewPrivileges、PrivateTmp、非特權使用者
+1. **防火牆 (UFW)**：僅公開 SSH (22) + Tailscale (41641/udp)
+2. **VPN (Tailscale)**：Gateway 只能通過 VPN 網狀網路存取
+3. **Docker 隔離**：DOCKER-USER iptables 鏈防止外部埠暴露
+4. **Systemd 加固**：NoNewPrivileges、PrivateTmp、非特權使用者
 
 ### 驗證
 

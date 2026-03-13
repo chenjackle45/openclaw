@@ -26,8 +26,7 @@ openclaw onboard --flow manual
 openclaw onboard --mode remote --remote-url wss://gateway-host:18789
 ```
 
-若要連線至私有網路的純文字 `ws://` 目標（僅限受信任網路），請在新手導覽進程環境中設定
-`OPENCLAW_ALLOW_INSECURE_PRIVATE_WS=1`。
+若要連線至私有網路的純文字 `ws://` 目標（僅限受信任網路），請在新手導覽進程環境中設定 `OPENCLAW_ALLOW_INSECURE_PRIVATE_WS=1`。
 
 非互動式自訂供應商：
 
@@ -41,7 +40,19 @@ openclaw onboard --non-interactive \
   --custom-compatibility openai
 ```
 
-在非互動模式中，`--custom-api-key` 為選用。若省略，新手導覽會檢查 `CUSTOM_API_KEY`。
+`--custom-api-key` 在非互動模式中為選用。若省略，新手導覽會檢查 `CUSTOM_API_KEY`。
+
+非互動式 Ollama：
+
+```bash
+openclaw onboard --non-interactive \
+  --auth-choice ollama \
+  --custom-base-url "http://ollama-host:11434" \
+  --custom-model-id "qwen3.5:27b" \
+  --accept-risk
+```
+
+`--custom-base-url` 預設為 `http://127.0.0.1:11434`。`--custom-model-id` 為選用；若省略，新手導覽使用 Ollama 的建議預設值。雲端模型 ID 如 `kimi-k2.5:cloud` 也適用於此。
 
 以 refs 而非明文儲存供應商金鑰：
 
@@ -55,7 +66,7 @@ openclaw onboard --non-interactive \
 使用 `--secret-input-mode ref` 時，新手導覽會寫入 env 支援的 refs 而非明文金鑰值。
 對於認證設定檔支援的供應商，這會寫入 `keyRef` 條目；對於自訂供應商，這會將 `models.providers.<id>.apiKey` 寫入為 env ref（例如 `{ source: "env", provider: "default", id: "CUSTOM_API_KEY" }`）。
 
-非互動 `ref` 模式規範：
+非互動式 `ref` 模式規範：
 
 - 在新手導覽進程環境中設定供應商 env var（例如 `OPENAI_API_KEY`）。
 - 除非該 env var 也已設定，否則不要傳遞內聯金鑰旗標（例如 `--openai-api-key`）。
@@ -83,10 +94,17 @@ openclaw onboard --non-interactive \
   --accept-risk
 ```
 
+非互動式本地 gateway 健康狀態：
+
+- 除非您傳遞 `--skip-health`，否則新手導覽會在成功退出前等待本地 gateway 可達。
+- `--install-daemon` 會先啟動受管理 gateway 安裝路徑。不使用它時，您必須已有本地 gateway 執行中，例如 `openclaw gateway run`。
+- 若您只想在自動化中進行 config/workspace/bootstrap 寫入，請使用 `--skip-health`。
+- 在原生 Windows 上，`--install-daemon` 會先嘗試 Scheduled Tasks，若任務建立遭拒則回退至每個使用者的啟動資料夾登入項目。
+
 使用 reference 模式的互動式新手導覽行為：
 
 - 在提示時選擇 **Use secret reference**。
-- 然後選擇：
+- 然後選擇下列其中一項：
   - 環境變數
   - 已配置的 secret 供應商（`file` 或 `exec`）
 - 新手導覽在儲存 ref 前執行快速預檢驗證。
@@ -123,8 +141,7 @@ openclaw onboard --non-interactive \
 - `manual`：完整的連接埠/綁定/認證提示（`advanced` 的別名）。
 - 本地新手導覽 DM 範圍行為：[CLI Onboarding Reference](/zh-Hant/start/wizard-cli-reference#outputs-and-internals)。
 - 最快首聊：`openclaw dashboard`（控制 UI，無需頻道設定）。
-- 自訂供應商：連接任何 OpenAI 或 Anthropic 相容的端點，
-  包括未列出的託管供應商。使用 Unknown 自動偵測。
+- 自訂供應商：連接任何 OpenAI 或 Anthropic 相容的端點，包括未列出的託管供應商。使用 Unknown 自動偵測。
 
 ## 常見後續指令
 
@@ -133,6 +150,4 @@ openclaw configure
 openclaw agents add <name>
 ```
 
-<Note>
-`--json` 並不隱含非互動模式。請使用 `--non-interactive` 供腳本使用。
-</Note>
+Note: `--json` 並不隱含非互動模式。請使用 `--non-interactive` 供腳本使用。

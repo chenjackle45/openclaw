@@ -4,24 +4,26 @@ read_when:
   - 執行或設定入門精靈時
   - 設定新機器時
 title: "Onboarding Wizard (CLI)（CLI 入門精靈）"
-sidebarTitle: "Onboarding: CLI"
+sidebarTitle: "入門：CLI"
 ---
 
 # 入門精靈（CLI）
 
-入門精靈是在 macOS、Linux 或 Windows（透過 WSL2；強烈推薦）上設定 OpenClaw 的**推薦**方式。
-它在一個引導流程中設定本地 Gateway 或遠端 Gateway 連線，加上頻道、技能和工作區預設值。
+入門精靈是在 macOS、
+Linux 或 Windows（透過 WSL2；強烈推薦）上設定 OpenClaw 的**推薦**方式。
+它在一個引導流程中設定本地 Gateway 或遠端 Gateway 連線，加上頻道、技能和
+工作區預設值。
 
 ```bash
 openclaw onboard
 ```
 
 <Info>
-最快的第一次聊天：開啟控制 UI（無需設定頻道）。執行
+最快的第一次聊天：開啟 Control UI（不需要頻道設定）。執行
 `openclaw dashboard` 並在瀏覽器中聊天。文件：[Dashboard](/zh-Hant/web/dashboard)。
 </Info>
 
-之後重新設定：
+稍後重新設定：
 
 ```bash
 openclaw configure
@@ -29,14 +31,14 @@ openclaw agents add <name>
 ```
 
 <Note>
-`--json` 不代表非互動式模式。對於腳本，請使用 `--non-interactive`。
+`--json` 不代表非互動式模式。對於指令碼，請使用 `--non-interactive`。
 </Note>
 
 <Tip>
-入門精靈包含一個網路搜尋步驟，您可以選擇提供者
-（Perplexity、Brave、Gemini、Grok 或 Kimi）並貼上您的 API key，讓代理程式
-可以使用 `web_search`。您也可以稍後透過
-`openclaw configure --section web` 設定。文件：[Web 工具](/zh-Hant/tools/web)。
+入門精靈包含一個網路搜尋步驟，其中你可以選擇一個提供者
+（Perplexity、Brave、Gemini、Grok 或 Kimi）並貼上你的 API key，以便代理
+可以使用 `web_search`。你也可以稍後透過
+`openclaw configure --section web` 設定。文件：[Web tools](/zh-Hant/tools/web)。
 </Tip>
 
 ## QuickStart vs Advanced（進階）

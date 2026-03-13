@@ -1,77 +1,170 @@
 ---
-summary: "OpenClaw plugins/extensions：探索、設定和安全"
+summary: "OpenClaw 外掛程式／擴充功能：發現、設定與安全性"
 read_when:
-  - 新增或修改 plugins/extensions
-  - 記錄 plugin 安裝或載入規則
-title: "Plugins（外掛）"
+  - Adding or modifying plugins/extensions
+  - Documenting plugin install or load rules
+title: "Plugins（外掛程式）"
 ---
 
 # Plugins (Extensions)
 
-## 快速上手（不熟悉 plugins？）
+## Quick start (new to plugins?)
 
-Plugin 就是一個**小型程式碼模組**，為 OpenClaw 擴充額外功能（命令、工具和 Gateway RPC）。
+A plugin is just a **small code module** that extends OpenClaw with extra
+features (commands, tools, and Gateway RPC).
 
-大多數情況下，當你想要一個尚未內建於核心 OpenClaw 的功能時（或想將可選功能排除在主要安裝之外）才會使用 plugins。
+Most of the time, you’ll use plugins when you want a feature that’s not built
+into core OpenClaw yet (or you want to keep optional features out of your main
+install).
 
-快速路徑：
+Fast path:
 
-1. 查看已載入的項目：
+1. See what’s already loaded:
 
 ```bash
 openclaw plugins list
 ```
 
-2. 安裝官方 plugin（範例：Voice Call）：
+2. Install an official plugin (example: Voice Call):
 
 ```bash
 openclaw plugins install @openclaw/voice-call
 ```
 
-Npm 規格僅限**登錄中心**（套件名稱 + 可選的**確切版本**或 **dist-tag**）。Git/URL/檔案規格和 semver 範圍會被拒絕。
+Npm specs are **registry-only** (package name + optional **exact version** or
+**dist-tag**). Git/URL/file specs and semver ranges are rejected.
 
-裸規格和 `@latest` 保持在穩定版本軌道。若 npm 將兩者解析為預先發布版本，OpenClaw 會停止並要求你以預先發布 tag（例如 `@beta`/`@rc`）或確切的預先發布版本明確選擇加入。
+Bare specs and `@latest` stay on the stable track. If npm resolves either of
+those to a prerelease, OpenClaw stops and asks you to opt in explicitly with a
+prerelease tag such as `@beta`/`@rc` or an exact prerelease version.
 
-3. 重啟 Gateway，然後在 `plugins.entries.<id>.config` 下設定。
+3. Restart the Gateway, then configure under `plugins.entries.<id>.config`.
 
-請參閱 [Voice Call](/zh-Hant/plugins/voice-call) 了解具體的範例 plugin。
-尋找第三方列表？請參閱 [Community plugins](/zh-Hant/plugins/community)。
+See [Voice Call](/zh-Hant/plugins/voice-call) for a concrete example plugin.
+Looking for third-party listings? See [Community plugins](/zh-Hant/plugins/community).
 
-## 可用 plugins（官方）
+## Architecture
 
-- Microsoft Teams 自 2026.1.15 起僅作為 plugin；若你使用 Teams，請安裝 `@openclaw/msteams`。
-- Memory（Core）— 附帶的記憶體搜尋 plugin（透過 `plugins.slots.memory` 預設啟用）
-- Memory（LanceDB）— 附帶的長期記憶體 plugin（自動回憶/擷取；設定 `plugins.slots.memory = "memory-lancedb"`）
+OpenClaw's plugin system has four layers:
+
+1. **Manifest + discovery**
+   OpenClaw finds candidate plugins from configured paths, workspace roots,
+   global extension roots, and bundled extensions. Discovery reads
+   `openclaw.plugin.json` plus package metadata first.
+2. **Enablement + validation**
+   Core decides whether a discovered plugin is enabled, disabled, blocked, or
+   selected for an exclusive slot such as memory.
+3. **Runtime loading**
+   Enabled plugins are loaded in-process via jiti and register capabilities into
+   a central registry.
+4. **Surface consumption**
+   The rest of OpenClaw reads the registry to expose tools, channels, provider
+   setup, hooks, HTTP routes, CLI commands, and services.
+
+The important design boundary:
+
+- discovery + config validation should work from **manifest/schema metadata**
+  without executing plugin code
+- runtime behavior comes from the plugin module's `register(api)` path
+
+That split lets OpenClaw validate config, explain missing/disabled plugins, and
+build UI/schema hints before the full runtime is active.
+
+## Execution model
+
+Plugins run **in-process** with the Gateway. They are not sandboxed. A loaded
+plugin has the same process-level trust boundary as core code.
+
+Implications:
+
+- a plugin can register tools, network handlers, hooks, and services
+- a plugin bug can crash or destabilize the gateway
+- a malicious plugin is equivalent to arbitrary code execution inside the
+  OpenClaw process
+
+Use allowlists and explicit install/load paths for non-bundled plugins. Treat
+workspace plugins as development-time code, not production defaults.
+
+## Available plugins (official)
+
+- Microsoft Teams is plugin-only as of 2026.1.15; install `@openclaw/msteams` if you use Teams.
+- Memory (Core) — bundled memory search plugin (enabled by default via `plugins.slots.memory`)
+- Memory (LanceDB) — bundled long-term memory plugin (auto-recall/capture; set `plugins.slots.memory = "memory-lancedb"`)
 - [Voice Call](/zh-Hant/plugins/voice-call) — `@openclaw/voice-call`
 - [Zalo Personal](/zh-Hant/plugins/zalouser) — `@openclaw/zalouser`
 - [Matrix](/zh-Hant/channels/matrix) — `@openclaw/matrix`
 - [Nostr](/zh-Hant/channels/nostr) — `@openclaw/nostr`
 - [Zalo](/zh-Hant/channels/zalo) — `@openclaw/zalo`
 - [Microsoft Teams](/zh-Hant/channels/msteams) — `@openclaw/msteams`
-- Google Antigravity OAuth（提供者認證）— 作為 `google-antigravity-auth` 附帶（預設停用）
-- Gemini CLI OAuth（提供者認證）— 作為 `google-gemini-cli-auth` 附帶（預設停用）
-- Qwen OAuth（提供者認證）— 作為 `qwen-portal-auth` 附帶（預設停用）
-- Copilot Proxy（提供者認證）— 本地 VS Code Copilot Proxy bridge；與內建的 `github-copilot` 裝置登入不同（附帶，預設停用）
+- Google Antigravity OAuth (provider auth) — bundled as `google-antigravity-auth` (disabled by default)
+- Gemini CLI OAuth (provider auth) — bundled as `google-gemini-cli-auth` (disabled by default)
+- Qwen OAuth (provider auth) — bundled as `qwen-portal-auth` (disabled by default)
+- Copilot Proxy (provider auth) — local VS Code Copilot Proxy bridge; distinct from built-in `github-copilot` device login (bundled, disabled by default)
 
-OpenClaw plugins 是透過 jiti 在執行期載入的 **TypeScript 模組**。**設定驗證不執行 plugin 程式碼**；它使用 plugin manifest 和 JSON Schema。請參閱 [Plugin manifest](/zh-Hant/plugins/manifest)。
+OpenClaw plugins are **TypeScript modules** loaded at runtime via jiti. **Config
+validation does not execute plugin code**; it uses the plugin manifest and JSON
+Schema instead. See [Plugin manifest](/zh-Hant/plugins/manifest).
 
-Plugins 可以註冊：
+Plugins can register:
 
-- Gateway RPC 方法
-- Gateway HTTP 路由
-- Agent 工具
-- CLI 命令
-- 背景服務
-- Context 引擎
-- 可選的設定驗證
-- **Skills**（在 plugin manifest 中列出 `skills` 目錄）
-- **自動回覆命令**（無需呼叫 AI agent 即可執行）
+- Gateway RPC methods
+- Gateway HTTP routes
+- Agent tools
+- CLI commands
+- Background services
+- Context engines
+- Optional config validation
+- **Skills** (by listing `skills` directories in the plugin manifest)
+- **Auto-reply commands** (execute without invoking the AI agent)
 
-Plugins 與 Gateway **在同一行程中**執行，因此將其視為受信任的程式碼。工具撰寫指南：[Plugin agent tools](/zh-Hant/plugins/agent-tools)。
+Plugins run **in‑process** with the Gateway, so treat them as trusted code.
+Tool authoring guide: [Plugin agent tools](/zh-Hant/plugins/agent-tools).
 
-## 執行期輔助工具
+## Load pipeline
 
-Plugins 可以透過 `api.runtime` 存取部分核心輔助工具。對於電話語音 TTS：
+At startup, OpenClaw does roughly this:
+
+1. discover candidate plugin roots
+2. read `openclaw.plugin.json` and package metadata
+3. reject unsafe candidates
+4. normalize plugin config (`plugins.enabled`, `allow`, `deny`, `entries`,
+   `slots`, `load.paths`)
+5. decide enablement for each candidate
+6. load enabled modules via jiti
+7. call `register(api)` and collect registrations into the plugin registry
+8. expose the registry to commands/runtime surfaces
+
+The safety gates happen **before** runtime execution. Candidates are blocked
+when the entry escapes the plugin root, the path is world-writable, or path
+ownership looks suspicious for non-bundled plugins.
+
+### Manifest-first behavior
+
+The manifest is the control-plane source of truth. OpenClaw uses it to:
+
+- identify the plugin
+- discover declared channels/skills/config schema
+- validate `plugins.entries.<id>.config`
+- augment Control UI labels/placeholders
+- show install/catalog metadata
+
+The runtime module is the data-plane part. It registers actual behavior such as
+hooks, tools, commands, or provider flows.
+
+### What the loader caches
+
+OpenClaw keeps short in-process caches for:
+
+- discovery results
+- manifest registry data
+- loaded plugin registries
+
+These caches reduce bursty startup and repeated command overhead. They are safe
+to think of as short-lived performance caches, not persistence.
+
+## Runtime helpers
+
+Plugins can access selected core helpers via `api.runtime`. For telephony TTS:
 
 ```ts
 const result = await api.runtime.tts.textToSpeechTelephony({
@@ -80,13 +173,13 @@ const result = await api.runtime.tts.textToSpeechTelephony({
 });
 ```
 
-注意事項：
+Notes:
 
-- 使用核心 `messages.tts` 設定（OpenAI 或 ElevenLabs）。
-- 回傳 PCM 音訊緩衝區 + 取樣率。Plugins 必須為提供者重新取樣/編碼。
-- 電話不支援 Edge TTS。
+- Uses core `messages.tts` configuration (OpenAI or ElevenLabs).
+- Returns PCM audio buffer + sample rate. Plugins must resample/encode for providers.
+- Edge TTS is not supported for telephony.
 
-對於 STT/轉錄，plugins 可以呼叫：
+For STT/transcription, plugins can call:
 
 ```ts
 const { text } = await api.runtime.stt.transcribeAudioFile({
@@ -97,14 +190,14 @@ const { text } = await api.runtime.stt.transcribeAudioFile({
 });
 ```
 
-注意事項：
+Notes:
 
-- 使用核心媒體理解音訊設定（`tools.media.audio`）和提供者備用順序。
-- 當未產生轉錄輸出時回傳 `{ text: undefined }`（例如跳過/不支援的輸入）。
+- Uses core media-understanding audio configuration (`tools.media.audio`) and provider fallback order.
+- Returns `{ text: undefined }` when no transcription output is produced (for example skipped/unsupported input).
 
-## Gateway HTTP 路由
+## Gateway HTTP routes
 
-Plugins 可以使用 `api.registerHttpRoute(...)` 公開 HTTP 端點。
+Plugins can expose HTTP endpoints with `api.registerHttpRoute(...)`.
 
 ```ts
 api.registerHttpRoute({
@@ -119,137 +212,179 @@ api.registerHttpRoute({
 });
 ```
 
-路由欄位：
+Route fields:
 
-- `path`：gateway HTTP 伺服器下的路由路徑。
-- `auth`：必填。使用 `"gateway"` 要求正常的 gateway 認證，或使用 `"plugin"` 用於 plugin 管理的認證/webhook 驗證。
-- `match`：可選。`"exact"`（預設）或 `"prefix"`。
-- `replaceExisting`：可選。允許同一 plugin 替換其自己的現有路由註冊。
-- `handler`：當路由處理了請求時回傳 `true`。
+- `path`: route path under the gateway HTTP server.
+- `auth`: required. Use `"gateway"` to require normal gateway auth, or `"plugin"` for plugin-managed auth/webhook verification.
+- `match`: optional. `"exact"` (default) or `"prefix"`.
+- `replaceExisting`: optional. Allows the same plugin to replace its own existing route registration.
+- `handler`: return `true` when the route handled the request.
 
-注意事項：
+Notes:
 
-- `api.registerHttpHandler(...)` 已棄用。請使用 `api.registerHttpRoute(...)`。
-- Plugin 路由必須明確宣告 `auth`。
-- 確切的 `path + match` 衝突會被拒絕，除非 `replaceExisting: true`，且一個 plugin 無法替換另一個 plugin 的路由。
-- 具有不同 `auth` 等級的重疊路由會被拒絕。僅在相同的 auth 等級上保持 `exact`/`prefix` 備用鏈。
+- `api.registerHttpHandler(...)` is obsolete. Use `api.registerHttpRoute(...)`.
+- Plugin routes must declare `auth` explicitly.
+- Exact `path + match` conflicts are rejected unless `replaceExisting: true`, and one plugin cannot replace another plugin's route.
+- Overlapping routes with different `auth` levels are rejected. Keep `exact`/`prefix` fallthrough chains on the same auth level only.
 
-## Plugin SDK 匯入路徑
+## Plugin SDK import paths
 
-撰寫 plugins 時請使用 SDK 子路徑而非整體的 `openclaw/plugin-sdk` 匯入：
+Use SDK subpaths instead of the monolithic `openclaw/plugin-sdk` import when
+authoring plugins:
 
-- `openclaw/plugin-sdk/core` 用於通用 plugin API、提供者認證類型和共用輔助工具。
-- `openclaw/plugin-sdk/compat` 用於需要比 `core` 更廣泛共用執行期輔助工具的附帶/內部 plugin 程式碼。
-- `openclaw/plugin-sdk/telegram` 用於 Telegram 頻道 plugins。
-- `openclaw/plugin-sdk/discord` 用於 Discord 頻道 plugins。
-- `openclaw/plugin-sdk/slack` 用於 Slack 頻道 plugins。
-- `openclaw/plugin-sdk/signal` 用於 Signal 頻道 plugins。
-- `openclaw/plugin-sdk/imessage` 用於 iMessage 頻道 plugins。
-- `openclaw/plugin-sdk/whatsapp` 用於 WhatsApp 頻道 plugins。
-- `openclaw/plugin-sdk/line` 用於 LINE 頻道 plugins。
-- `openclaw/plugin-sdk/msteams` 用於附帶的 Microsoft Teams plugin 介面。
-- 附帶的 extension 特定子路徑也可用：
-  `openclaw/plugin-sdk/acpx`、`openclaw/plugin-sdk/bluebubbles`、
-  `openclaw/plugin-sdk/copilot-proxy`、`openclaw/plugin-sdk/device-pair`、
-  `openclaw/plugin-sdk/diagnostics-otel`、`openclaw/plugin-sdk/diffs`、
-  `openclaw/plugin-sdk/feishu`、
-  `openclaw/plugin-sdk/google-gemini-cli-auth`、`openclaw/plugin-sdk/googlechat`、
-  `openclaw/plugin-sdk/irc`、`openclaw/plugin-sdk/llm-task`、
-  `openclaw/plugin-sdk/lobster`、`openclaw/plugin-sdk/matrix`、
-  `openclaw/plugin-sdk/mattermost`、`openclaw/plugin-sdk/memory-core`、
-  `openclaw/plugin-sdk/memory-lancedb`、
-  `openclaw/plugin-sdk/minimax-portal-auth`、
-  `openclaw/plugin-sdk/nextcloud-talk`、`openclaw/plugin-sdk/nostr`、
-  `openclaw/plugin-sdk/open-prose`、`openclaw/plugin-sdk/phone-control`、
-  `openclaw/plugin-sdk/qwen-portal-auth`、`openclaw/plugin-sdk/synology-chat`、
-  `openclaw/plugin-sdk/talk-voice`、`openclaw/plugin-sdk/test-utils`、
-  `openclaw/plugin-sdk/thread-ownership`、`openclaw/plugin-sdk/tlon`、
-  `openclaw/plugin-sdk/twitch`、`openclaw/plugin-sdk/voice-call`、
-  `openclaw/plugin-sdk/zalo` 和 `openclaw/plugin-sdk/zalouser`。
+- `openclaw/plugin-sdk/core` for generic plugin APIs, provider auth types, and shared helpers.
+- `openclaw/plugin-sdk/compat` for bundled/internal plugin code that needs broader shared runtime helpers than `core`.
+- `openclaw/plugin-sdk/telegram` for Telegram channel plugins.
+- `openclaw/plugin-sdk/discord` for Discord channel plugins.
+- `openclaw/plugin-sdk/slack` for Slack channel plugins.
+- `openclaw/plugin-sdk/signal` for Signal channel plugins.
+- `openclaw/plugin-sdk/imessage` for iMessage channel plugins.
+- `openclaw/plugin-sdk/whatsapp` for WhatsApp channel plugins.
+- `openclaw/plugin-sdk/line` for LINE channel plugins.
+- `openclaw/plugin-sdk/msteams` for the bundled Microsoft Teams plugin surface.
+- Bundled extension-specific subpaths are also available:
+  `openclaw/plugin-sdk/acpx`, `openclaw/plugin-sdk/bluebubbles`,
+  `openclaw/plugin-sdk/copilot-proxy`, `openclaw/plugin-sdk/device-pair`,
+  `openclaw/plugin-sdk/diagnostics-otel`, `openclaw/plugin-sdk/diffs`,
+  `openclaw/plugin-sdk/feishu`,
+  `openclaw/plugin-sdk/google-gemini-cli-auth`, `openclaw/plugin-sdk/googlechat`,
+  `openclaw/plugin-sdk/irc`, `openclaw/plugin-sdk/llm-task`,
+  `openclaw/plugin-sdk/lobster`, `openclaw/plugin-sdk/matrix`,
+  `openclaw/plugin-sdk/mattermost`, `openclaw/plugin-sdk/memory-core`,
+  `openclaw/plugin-sdk/memory-lancedb`,
+  `openclaw/plugin-sdk/minimax-portal-auth`,
+  `openclaw/plugin-sdk/nextcloud-talk`, `openclaw/plugin-sdk/nostr`,
+  `openclaw/plugin-sdk/open-prose`, `openclaw/plugin-sdk/phone-control`,
+  `openclaw/plugin-sdk/qwen-portal-auth`, `openclaw/plugin-sdk/synology-chat`,
+  `openclaw/plugin-sdk/talk-voice`, `openclaw/plugin-sdk/test-utils`,
+  `openclaw/plugin-sdk/thread-ownership`, `openclaw/plugin-sdk/tlon`,
+  `openclaw/plugin-sdk/twitch`, `openclaw/plugin-sdk/voice-call`,
+  `openclaw/plugin-sdk/zalo`, and `openclaw/plugin-sdk/zalouser`.
 
-相容性注意事項：
+Compatibility note:
 
-- `openclaw/plugin-sdk` 對現有外部 plugins 仍然受支援。
-- 新的和已遷移的附帶 plugins 應使用頻道或 extension 特定的子路徑；對通用介面使用 `core`，僅在需要更廣泛的共用輔助工具時使用 `compat`。
+- `openclaw/plugin-sdk` remains supported for existing external plugins.
+- New and migrated bundled plugins should use channel or extension-specific
+  subpaths; use `core` for generic surfaces and `compat` only when broader
+  shared helpers are required.
 
-## 唯讀頻道檢查
+## Read-only channel inspection
 
-若你的 plugin 註冊了頻道，建議在 `resolveAccount(...)` 旁邊實作 `plugin.config.inspectAccount(cfg, accountId)`。
+If your plugin registers a channel, prefer implementing
+`plugin.config.inspectAccount(cfg, accountId)` alongside `resolveAccount(...)`.
 
-原因：
+Why:
 
-- `resolveAccount(...)` 是執行期路徑。允許假設憑證已完全實體化，並且在缺少必要密鑰時可以快速失敗。
-- 唯讀命令路徑（例如 `openclaw status`、`openclaw status --all`、`openclaw channels status`、`openclaw channels resolve` 以及 doctor/config 修復流程）不應需要實體化執行期憑證才能描述設定。
+- `resolveAccount(...)` is the runtime path. It is allowed to assume credentials
+  are fully materialized and can fail fast when required secrets are missing.
+- Read-only command paths such as `openclaw status`, `openclaw status --all`,
+  `openclaw channels status`, `openclaw channels resolve`, and doctor/config
+  repair flows should not need to materialize runtime credentials just to
+  describe configuration.
 
-推薦的 `inspectAccount(...)` 行為：
+Recommended `inspectAccount(...)` behavior:
 
-- 僅回傳描述性帳戶狀態。
-- 保留 `enabled` 和 `configured`。
-- 在相關時包含憑證來源/狀態欄位，例如：
-  - `tokenSource`、`tokenStatus`
-  - `botTokenSource`、`botTokenStatus`
-  - `appTokenSource`、`appTokenStatus`
-  - `signingSecretSource`、`signingSecretStatus`
-- 你不需要回傳原始 token 值只是為了回報唯讀可用性。回傳 `tokenStatus: "available"`（和相符的來源欄位）對於狀態類命令已足夠。
-- 當憑證透過 SecretRef 設定但在目前的命令路徑中不可用時，使用 `configured_unavailable`。
+- Return descriptive account state only.
+- Preserve `enabled` and `configured`.
+- Include credential source/status fields when relevant, such as:
+  - `tokenSource`, `tokenStatus`
+  - `botTokenSource`, `botTokenStatus`
+  - `appTokenSource`, `appTokenStatus`
+  - `signingSecretSource`, `signingSecretStatus`
+- You do not need to return raw token values just to report read-only
+  availability. Returning `tokenStatus: "available"` (and the matching source
+  field) is enough for status-style commands.
+- Use `configured_unavailable` when a credential is configured via SecretRef but
+  unavailable in the current command path.
 
-這讓唯讀命令可以回報「已設定但在此命令路徑中不可用」，而非崩潰或錯誤回報帳戶未設定。
+This lets read-only commands report “configured but unavailable in this command
+path” instead of crashing or misreporting the account as not configured.
 
-效能注意事項：
+Performance note:
 
-- Plugin 探索和 manifest 元資料使用短暫的行程內快取，以減少突發的啟動/重新載入工作。
-- 設定 `OPENCLAW_DISABLE_PLUGIN_DISCOVERY_CACHE=1` 或 `OPENCLAW_DISABLE_PLUGIN_MANIFEST_CACHE=1` 可停用這些快取。
-- 使用 `OPENCLAW_PLUGIN_DISCOVERY_CACHE_MS` 和 `OPENCLAW_PLUGIN_MANIFEST_CACHE_MS` 調整快取視窗。
+- Plugin discovery and manifest metadata use short in-process caches to reduce
+  bursty startup/reload work.
+- Set `OPENCLAW_DISABLE_PLUGIN_DISCOVERY_CACHE=1` or
+  `OPENCLAW_DISABLE_PLUGIN_MANIFEST_CACHE=1` to disable these caches.
+- Tune cache windows with `OPENCLAW_PLUGIN_DISCOVERY_CACHE_MS` and
+  `OPENCLAW_PLUGIN_MANIFEST_CACHE_MS`.
 
-## 探索與優先順序
+## Discovery & precedence
 
-OpenClaw 按順序掃描：
+OpenClaw scans, in order:
 
-1. 設定路徑
+1. Config paths
 
-- `plugins.load.paths`（檔案或目錄）
+- `plugins.load.paths` (file or directory)
 
-2. 工作區 extensions
+2. Workspace extensions
 
 - `<workspace>/.openclaw/extensions/*.ts`
 - `<workspace>/.openclaw/extensions/*/index.ts`
 
-3. 全域 extensions
+3. Global extensions
 
 - `~/.openclaw/extensions/*.ts`
 - `~/.openclaw/extensions/*/index.ts`
 
-4. 附帶的 extensions（隨 OpenClaw 附帶，大多數預設停用）
+4. Bundled extensions (shipped with OpenClaw, mostly disabled by default)
 
 - `<openclaw>/extensions/*`
 
-大多數附帶的 plugins 必須透過 `plugins.entries.<id>.enabled` 或 `openclaw plugins enable <id>` 明確啟用。
+Most bundled plugins must be enabled explicitly via
+`plugins.entries.<id>.enabled` or `openclaw plugins enable <id>`.
 
-預設啟用的附帶 plugin 例外：
+Default-on bundled plugin exceptions:
 
 - `device-pair`
 - `phone-control`
 - `talk-voice`
-- 活躍的記憶體插槽 plugin（預設插槽：`memory-core`）
+- active memory slot plugin (default slot: `memory-core`)
 
-已安裝的 plugins 預設啟用，但可以以相同方式停用。
+Installed plugins are enabled by default, but can be disabled the same way.
 
-加固注意事項：
+Workspace plugins are **disabled by default** unless you explicitly enable them
+or allowlist them. This is intentional: a checked-out repo should not silently
+become production gateway code.
 
-- 若 `plugins.allow` 為空且非附帶的 plugins 可被探索，OpenClaw 會在啟動時發出帶有 plugin id 和來源的警告。
-- 候選路徑在探索准入前會進行安全性檢查。OpenClaw 在以下情況封鎖候選路徑：
-  - extension 條目解析到 plugin 根目錄之外（包含符號連結/路徑遍歷逃脫），
-  - plugin 根/來源路徑是全域可寫入的，
-  - 非附帶 plugins 的路徑所有權可疑（POSIX 所有者既非當前 uid 也非 root）。
-- 沒有安裝/載入路徑來源的已載入非附帶 plugins 會發出警告，讓你可以固定信任（`plugins.allow`）或安裝追蹤（`plugins.installs`）。
+Hardening notes:
 
-每個 plugin 必須在其根目錄中包含一個 `openclaw.plugin.json` 檔案。若路徑指向檔案，plugin 根目錄是該檔案的目錄，且必須包含 manifest。
+- If `plugins.allow` is empty and non-bundled plugins are discoverable, OpenClaw logs a startup warning with plugin ids and sources.
+- Candidate paths are safety-checked before discovery admission. OpenClaw blocks candidates when:
+  - extension entry resolves outside plugin root (including symlink/path traversal escapes),
+  - plugin root/source path is world-writable,
+  - path ownership is suspicious for non-bundled plugins (POSIX owner is neither current uid nor root).
+- Loaded non-bundled plugins without install/load-path provenance emit a warning so you can pin trust (`plugins.allow`) or install tracking (`plugins.installs`).
 
-若多個 plugins 解析到相同的 id，上述順序中的第一個匹配優先，較低優先順序的副本會被忽略。
+Each plugin must include a `openclaw.plugin.json` file in its root. If a path
+points at a file, the plugin root is the file's directory and must contain the
+manifest.
 
-### 套件包
+If multiple plugins resolve to the same id, the first match in the order above
+wins and lower-precedence copies are ignored.
 
-Plugin 目錄可以包含帶有 `openclaw.extensions` 的 `package.json`：
+### Enablement rules
+
+Enablement is resolved after discovery:
+
+- `plugins.enabled: false` disables all plugins
+- `plugins.deny` always wins
+- `plugins.entries.<id>.enabled: false` disables that plugin
+- workspace-origin plugins are disabled by default
+- allowlists restrict the active set when `plugins.allow` is non-empty
+- bundled plugins are disabled by default unless:
+  - the bundled id is in the built-in default-on set, or
+  - you explicitly enable it, or
+  - channel config implicitly enables the bundled channel plugin
+- exclusive slots can force-enable the selected plugin for that slot
+
+In current core, bundled default-on ids include local/provider helpers such as
+`ollama`, `sglang`, `vllm`, plus `device-pair`, `phone-control`, and
+`talk-voice`.
+
+### Package packs
+
+A plugin directory may include a `package.json` with `openclaw.extensions`:
 
 ```json
 {
@@ -260,19 +395,26 @@ Plugin 目錄可以包含帶有 `openclaw.extensions` 的 `package.json`：
 }
 ```
 
-每個條目成為一個 plugin。若包含多個 extensions，plugin id 變為 `name/<fileBase>`。
+Each entry becomes a plugin. If the pack lists multiple extensions, the plugin id
+becomes `name/<fileBase>`.
 
-若你的 plugin 匯入 npm 相依套件，請在該目錄中安裝它們，使 `node_modules` 可用（`npm install` / `pnpm install`）。
+If your plugin imports npm deps, install them in that directory so
+`node_modules` is available (`npm install` / `pnpm install`).
 
-安全護欄：每個 `openclaw.extensions` 條目在符號連結解析後必須保持在 plugin 目錄內。逃脫套件目錄的條目會被拒絕。
+Security guardrail: every `openclaw.extensions` entry must stay inside the plugin
+directory after symlink resolution. Entries that escape the package directory are
+rejected.
 
-安全注意事項：`openclaw plugins install` 以 `npm install --ignore-scripts`（無生命週期腳本）安裝 plugin 相依套件。保持 plugin 相依樹「純 JS/TS」，避免需要 `postinstall` 建構的套件。
+Security note: `openclaw plugins install` installs plugin dependencies with
+`npm install --ignore-scripts` (no lifecycle scripts). Keep plugin dependency
+trees "pure JS/TS" and avoid packages that require `postinstall` builds.
 
-### 頻道目錄元資料
+### Channel catalog metadata
 
-頻道 plugins 可以透過 `openclaw.channel` 宣告 onboarding 元資料，透過 `openclaw.install` 宣告安裝提示。這讓核心目錄保持無資料。
+Channel plugins can advertise onboarding metadata via `openclaw.channel` and
+install hints via `openclaw.install`. This keeps the core catalog data-free.
 
-範例：
+Example:
 
 ```json
 {
@@ -298,24 +440,56 @@ Plugin 目錄可以包含帶有 `openclaw.extensions` 的 `package.json`：
 }
 ```
 
-OpenClaw 也可以合併**外部頻道目錄**（例如 MPM 登錄中心匯出）。將 JSON 檔案放置在以下其中一個位置：
+OpenClaw can also merge **external channel catalogs** (for example, an MPM
+registry export). Drop a JSON file at one of:
 
 - `~/.openclaw/mpm/plugins.json`
 - `~/.openclaw/mpm/catalog.json`
 - `~/.openclaw/plugins/catalog.json`
 
-或將 `OPENCLAW_PLUGIN_CATALOG_PATHS`（或 `OPENCLAW_MPM_CATALOG_PATHS`）指向一個或多個 JSON 檔案（以逗號/分號/`PATH` 分隔）。每個檔案應包含 `{ "entries": [ { "name": "@scope/pkg", "openclaw": { "channel": {...}, "install": {...} } } ] }`。
+Or point `OPENCLAW_PLUGIN_CATALOG_PATHS` (or `OPENCLAW_MPM_CATALOG_PATHS`) at
+one or more JSON files (comma/semicolon/`PATH`-delimited). Each file should
+contain `{ "entries": [ { "name": "@scope/pkg", "openclaw": { "channel": {...}, "install": {...} } } ] }`.
 
-## Plugin ID
+## Plugin IDs
 
-預設的 plugin id：
+Default plugin ids:
 
-- 套件包：`package.json` `name`
-- 獨立檔案：檔案基本名稱（`~/.../voice-call.ts` → `voice-call`）
+- Package packs: `package.json` `name`
+- Standalone file: file base name (`~/.../voice-call.ts` → `voice-call`)
 
-若 plugin 匯出 `id`，OpenClaw 使用它，但當它與設定的 id 不符時會發出警告。
+If a plugin exports `id`, OpenClaw uses it but warns when it doesn’t match the
+configured id.
 
-## 設定
+## Registry model
+
+Loaded plugins do not directly mutate random core globals. They register into a
+central plugin registry.
+
+The registry tracks:
+
+- plugin records (identity, source, origin, status, diagnostics)
+- tools
+- legacy hooks and typed hooks
+- channels
+- providers
+- gateway RPC handlers
+- HTTP routes
+- CLI registrars
+- background services
+- plugin-owned commands
+
+Core features then read from that registry instead of talking to plugin modules
+directly. This keeps loading one-way:
+
+- plugin module -> registry registration
+- core runtime -> registry consumption
+
+That separation matters for maintainability. It means most core surfaces only
+need one integration point: "read the registry", not "special-case every plugin
+module".
+
+## Config
 
 ```json5
 {
@@ -331,27 +505,41 @@ OpenClaw 也可以合併**外部頻道目錄**（例如 MPM 登錄中心匯出�
 }
 ```
 
-欄位：
+Fields:
 
-- `enabled`：主要切換（預設：true）
-- `allow`：允許清單（可選）
-- `deny`：拒絕清單（可選；拒絕優先）
-- `load.paths`：額外的 plugin 檔案/目錄
-- `slots`：獨佔插槽選擇器，例如 `memory` 和 `contextEngine`
-- `entries.<id>`：每個 plugin 的切換 + 設定
+- `enabled`: master toggle (default: true)
+- `allow`: allowlist (optional)
+- `deny`: denylist (optional; deny wins)
+- `load.paths`: extra plugin files/dirs
+- `slots`: exclusive slot selectors such as `memory` and `contextEngine`
+- `entries.<id>`: per‑plugin toggles + config
 
-設定變更**需要 gateway 重啟**。
+Config changes **require a gateway restart**.
 
-驗證規則（嚴格）：
+Validation rules (strict):
 
-- `entries`、`allow`、`deny` 或 `slots` 中未知的 plugin id 是**錯誤**。
-- 未知的 `channels.<id>` 鍵是**錯誤**，除非 plugin manifest 宣告頻道 id。
-- Plugin 設定使用嵌入在 `openclaw.plugin.json` 中的 JSON Schema（`configSchema`）進行驗證。
-- 若 plugin 被停用，其設定會被保留，並發出**警告**。
+- Unknown plugin ids in `entries`, `allow`, `deny`, or `slots` are **errors**.
+- Unknown `channels.<id>` keys are **errors** unless a plugin manifest declares
+  the channel id.
+- Plugin config is validated using the JSON Schema embedded in
+  `openclaw.plugin.json` (`configSchema`).
+- If a plugin is disabled, its config is preserved and a **warning** is emitted.
 
-## Plugin 插槽（獨佔類別）
+### Disabled vs missing vs invalid
 
-某些 plugin 類別是**獨佔的**（一次只能有一個活躍）。使用 `plugins.slots` 選擇哪個 plugin 擁有插槽：
+These states are intentionally different:
+
+- **disabled**: plugin exists, but enablement rules turned it off
+- **missing**: config references a plugin id that discovery did not find
+- **invalid**: plugin exists, but its config does not match the declared schema
+
+OpenClaw preserves config for disabled plugins so toggling them back on is not
+destructive.
+
+## Plugin slots (exclusive categories)
+
+Some plugin categories are **exclusive** (only one active at a time). Use
+`plugins.slots` to select which plugin owns the slot:
 
 ```json5
 {
@@ -364,32 +552,38 @@ OpenClaw 也可以合併**外部頻道目錄**（例如 MPM 登錄中心匯出�
 }
 ```
 
-支援的獨佔插槽：
+Supported exclusive slots:
 
-- `memory`：活躍的記憶體 plugin（`"none"` 停用記憶體 plugins）
-- `contextEngine`：活躍的 context 引擎 plugin（`"legacy"` 是內建的預設值）
+- `memory`: active memory plugin (`"none"` disables memory plugins)
+- `contextEngine`: active context engine plugin (`"legacy"` is the built-in default)
 
-若多個 plugins 宣告 `kind: "memory"` 或 `kind: "context-engine"`，只有選定的 plugin 載入該插槽。其他的以診斷方式停用。
+If multiple plugins declare `kind: "memory"` or `kind: "context-engine"`, only
+the selected plugin loads for that slot. Others are disabled with diagnostics.
 
-### Context 引擎 plugins
+### Context engine plugins
 
-Context 引擎 plugins 擁有 session context 協調，用於攝取、組裝和壓縮。從你的 plugin 以 `api.registerContextEngine(id, factory)` 註冊它們，然後以 `plugins.slots.contextEngine` 選擇活躍的引擎。
+Context engine plugins own session context orchestration for ingest, assembly,
+and compaction. Register them from your plugin with
+`api.registerContextEngine(id, factory)`, then select the active engine with
+`plugins.slots.contextEngine`.
 
-當你的 plugin 需要替換或擴充預設 context 管道而不僅僅是新增記憶體搜尋或 hooks 時，請使用此功能。
+Use this when your plugin needs to replace or extend the default context
+pipeline rather than just add memory search or hooks.
 
-## 控制 UI（schema + 標籤）
+## Control UI (schema + labels)
 
-控制 UI 使用 `config.schema`（JSON Schema + `uiHints`）來渲染更好的表單。
+The Control UI uses `config.schema` (JSON Schema + `uiHints`) to render better forms.
 
-OpenClaw 在執行期根據探索到的 plugins 擴充 `uiHints`：
+OpenClaw augments `uiHints` at runtime based on discovered plugins:
 
-- 為 `plugins.entries.<id>` / `.enabled` / `.config` 新增每個 plugin 的標籤
-- 在以下位置合併可選的 plugin 提供的設定欄位提示：
+- Adds per-plugin labels for `plugins.entries.<id>` / `.enabled` / `.config`
+- Merges optional plugin-provided config field hints under:
   `plugins.entries.<id>.config.<field>`
 
-若你想要你的 plugin 設定欄位顯示良好的標籤/佔位符（並將密鑰標記為敏感），請在 plugin manifest 中的 JSON Schema 旁邊提供 `uiHints`。
+If you want your plugin config fields to show good labels/placeholders (and mark secrets as sensitive),
+provide `uiHints` alongside your JSON Schema in the plugin manifest.
 
-範例：
+Example:
 
 ```json
 {
@@ -428,19 +622,32 @@ openclaw plugins disable <id>
 openclaw plugins doctor
 ```
 
-`plugins update` 僅適用於在 `plugins.installs` 下追蹤的 npm 安裝。
-若儲存的完整性元資料在更新之間發生變化，OpenClaw 會警告並要求確認（使用全域 `--yes` 略過提示）。
+`plugins update` only works for npm installs tracked under `plugins.installs`.
+If stored integrity metadata changes between updates, OpenClaw warns and asks for confirmation (use global `--yes` to bypass prompts).
 
-Plugins 也可以註冊自己的頂層命令（範例：`openclaw voicecall`）。
+Plugins may also register their own top‑level commands (example: `openclaw voicecall`).
 
-## Plugin API（概覽）
+## Plugin API (overview)
 
-Plugins 匯出以下其中一種：
+Plugins export either:
 
-- 函式：`(api) => { ... }`
-- 物件：`{ id, name, configSchema, register(api) { ... } }`
+- A function: `(api) => { ... }`
+- An object: `{ id, name, configSchema, register(api) { ... } }`
 
-Context 引擎 plugins 也可以註冊執行期擁有的 context 管理器：
+`register(api)` is where plugins attach behavior. Common registrations include:
+
+- `registerTool`
+- `registerHook`
+- `on(...)` for typed lifecycle hooks
+- `registerChannel`
+- `registerProvider`
+- `registerHttpRoute`
+- `registerCommand`
+- `registerCli`
+- `registerContextEngine`
+- `registerService`
+
+Context engine plugins can also register a runtime-owned context manager:
 
 ```ts
 export default function (api) {
@@ -459,7 +666,7 @@ export default function (api) {
 }
 ```
 
-然後在設定中啟用它：
+Then enable it in config:
 
 ```json5
 {
@@ -473,9 +680,10 @@ export default function (api) {
 
 ## Plugin hooks
 
-Plugins 可以在執行期註冊 hooks。這讓 plugin 可以附帶事件驅動的自動化，而無需單獨的 hook 套件安裝。
+Plugins can register hooks at runtime. This lets a plugin bundle event-driven
+automation without a separate hook pack install.
 
-### 範例
+### Example
 
 ```ts
 export default function register(api) {
@@ -492,16 +700,16 @@ export default function register(api) {
 }
 ```
 
-注意事項：
+Notes:
 
-- 透過 `api.registerHook(...)` 明確註冊 hooks。
-- Hook 資格規則仍然適用（OS/bins/env/config 需求）。
-- Plugin 管理的 hooks 在 `openclaw hooks list` 中以 `plugin:<id>` 顯示。
-- 你無法透過 `openclaw hooks` 啟用/停用 plugin 管理的 hooks；請改為啟用/停用 plugin。
+- Register hooks explicitly via `api.registerHook(...)`.
+- Hook eligibility rules still apply (OS/bins/env/config requirements).
+- Plugin-managed hooks show up in `openclaw hooks list` with `plugin:<id>`.
+- You cannot enable/disable plugin-managed hooks via `openclaw hooks`; enable/disable the plugin instead.
 
-### Agent 生命週期 hooks（`api.on`）
+### Agent lifecycle hooks (`api.on`)
 
-對於類型化的執行期生命週期 hooks，請使用 `api.on(...)`：
+For typed runtime lifecycle hooks, use `api.on(...)`:
 
 ```ts
 export default function register(api) {
@@ -517,50 +725,227 @@ export default function register(api) {
 }
 ```
 
-用於 prompt 建構的重要 hooks：
+Important hooks for prompt construction:
 
-- `before_model_resolve`：在 session 載入前執行（`messages` 不可用）。使用此 hook 確定性地覆寫 `modelOverride` 或 `providerOverride`。
-- `before_prompt_build`：在 session 載入後執行（`messages` 可用）。使用此 hook 塑造 prompt 輸入。
-- `before_agent_start`：舊版相容性 hook。建議使用以上兩個明確的 hooks。
+- `before_model_resolve`: runs before session load (`messages` are not available). Use this to deterministically override `modelOverride` or `providerOverride`.
+- `before_prompt_build`: runs after session load (`messages` are available). Use this to shape prompt input.
+- `before_agent_start`: legacy compatibility hook. Prefer the two explicit hooks above.
 
-核心強制的 hook 政策：
+Core-enforced hook policy:
 
-- 操作者可以透過 `plugins.entries.<id>.hooks.allowPromptInjection: false` 按 plugin 停用 prompt 修改 hooks。
-- 停用後，OpenClaw 封鎖 `before_prompt_build`，並忽略從舊版 `before_agent_start` 回傳的 prompt 修改欄位，同時保留舊版 `modelOverride` 和 `providerOverride`。
+- Operators can disable prompt mutation hooks per plugin via `plugins.entries.<id>.hooks.allowPromptInjection: false`.
+- When disabled, OpenClaw blocks `before_prompt_build` and ignores prompt-mutating fields returned from legacy `before_agent_start` while preserving legacy `modelOverride` and `providerOverride`.
 
-`before_prompt_build` 結果欄位：
+`before_prompt_build` result fields:
 
-- `prependContext`：在此次執行的使用者提示前添加文字。最適合用於輪次特定或動態內容。
-- `systemPrompt`：完整的 system prompt 覆寫。
-- `prependSystemContext`：在目前 system prompt 前添加文字。
-- `appendSystemContext`：在目前 system prompt 後附加文字。
+- `prependContext`: prepends text to the user prompt for this run. Best for turn-specific or dynamic content.
+- `systemPrompt`: full system prompt override.
+- `prependSystemContext`: prepends text to the current system prompt.
+- `appendSystemContext`: appends text to the current system prompt.
 
-嵌入式執行期中的 prompt 建構順序：
+Prompt build order in embedded runtime:
 
-1. 將 `prependContext` 套用至使用者提示。
-2. 提供時套用 `systemPrompt` 覆寫。
-3. 套用 `prependSystemContext + 目前 system prompt + appendSystemContext`。
+1. Apply `prependContext` to the user prompt.
+2. Apply `systemPrompt` override when provided.
+3. Apply `prependSystemContext + current system prompt + appendSystemContext`.
 
-合併和優先順序注意事項：
+Merge and precedence notes:
 
-- Hook 處理器按優先順序執行（較高的先執行）。
-- 對於合併的 context 欄位，值按執行順序串聯。
-- `before_prompt_build` 值在舊版 `before_agent_start` 備用值之前套用。
+- Hook handlers run by priority (higher first).
+- For merged context fields, values are concatenated in execution order.
+- `before_prompt_build` values are applied before legacy `before_agent_start` fallback values.
 
-遷移指南：
+Migration guidance:
 
-- 將靜態指南從 `prependContext` 移至 `prependSystemContext`（或 `appendSystemContext`），使提供者可以快取穩定的 system-prefix 內容。
-- 對於應與使用者訊息綁定的每輪動態 context，保持使用 `prependContext`。
+- Move static guidance from `prependContext` to `prependSystemContext` (or `appendSystemContext`) so providers can cache stable system-prefix content.
+- Keep `prependContext` for per-turn dynamic context that should stay tied to the user message.
 
-## 提供者 plugins（模型認證）
+## Provider plugins (model auth)
 
-Plugins 可以註冊**模型提供者認證**流程，使使用者可以在 OpenClaw 內執行 OAuth 或 API 金鑰設定（無需外部腳本）。
+Plugins can register **model providers** so users can run OAuth or API-key
+setup inside OpenClaw, surface provider setup in onboarding/model-pickers, and
+contribute implicit provider discovery.
 
-透過 `api.registerProvider(...)` 註冊提供者。每個提供者公開一種或多種認證方法（OAuth、API 金鑰、裝置代碼等）。這些方法支援：
+Provider plugins are the modular extension seam for model-provider setup. They
+are not just "OAuth helpers" anymore.
+
+### Provider plugin lifecycle
+
+A provider plugin can participate in five distinct phases:
+
+1. **Auth**
+   `auth[].run(ctx)` performs OAuth, API-key capture, device code, or custom
+   setup and returns auth profiles plus optional config patches.
+2. **Non-interactive setup**
+   `auth[].runNonInteractive(ctx)` handles `openclaw onboard --non-interactive`
+   without prompts. Use this when the provider needs custom headless setup
+   beyond the built-in simple API-key paths.
+3. **Wizard integration**
+   `wizard.onboarding` adds an entry to `openclaw onboard`.
+   `wizard.modelPicker` adds a setup entry to the model picker.
+4. **Implicit discovery**
+   `discovery.run(ctx)` can contribute provider config automatically during
+   model resolution/listing.
+5. **Post-selection follow-up**
+   `onModelSelected(ctx)` runs after a model is chosen. Use this for provider-
+   specific work such as downloading a local model.
+
+This is the recommended split because these phases have different lifecycle
+requirements:
+
+- auth is interactive and writes credentials/config
+- non-interactive setup is flag/env-driven and must not prompt
+- wizard metadata is static and UI-facing
+- discovery should be safe, quick, and failure-tolerant
+- post-select hooks are side effects tied to the chosen model
+
+### Provider auth contract
+
+`auth[].run(ctx)` returns:
+
+- `profiles`: auth profiles to write
+- `configPatch`: optional `openclaw.json` changes
+- `defaultModel`: optional `provider/model` ref
+- `notes`: optional user-facing notes
+
+Core then:
+
+1. writes the returned auth profiles
+2. applies auth-profile config wiring
+3. merges the config patch
+4. optionally applies the default model
+5. runs the provider's `onModelSelected` hook when appropriate
+
+That means a provider plugin owns the provider-specific setup logic, while core
+owns the generic persistence and config-merge path.
+
+### Provider non-interactive contract
+
+`auth[].runNonInteractive(ctx)` is optional. Implement it when the provider
+needs headless setup that cannot be expressed through the built-in generic
+API-key flows.
+
+The non-interactive context includes:
+
+- the current and base config
+- parsed onboarding CLI options
+- runtime logging/error helpers
+- agent/workspace dirs
+- `resolveApiKey(...)` to read provider keys from flags, env, or existing auth
+  profiles while honoring `--secret-input-mode`
+- `toApiKeyCredential(...)` to convert a resolved key into an auth-profile
+  credential with the right plaintext vs secret-ref storage
+
+Use this surface for providers such as:
+
+- self-hosted OpenAI-compatible runtimes that need `--custom-base-url` +
+  `--custom-model-id`
+- provider-specific non-interactive verification or config synthesis
+
+Do not prompt from `runNonInteractive`. Reject missing inputs with actionable
+errors instead.
+
+### Provider wizard metadata
+
+`wizard.onboarding` controls how the provider appears in grouped onboarding:
+
+- `choiceId`: auth-choice value
+- `choiceLabel`: option label
+- `choiceHint`: short hint
+- `groupId`: group bucket id
+- `groupLabel`: group label
+- `groupHint`: group hint
+- `methodId`: auth method to run
+
+`wizard.modelPicker` controls how a provider appears as a "set this up now"
+entry in model selection:
+
+- `label`
+- `hint`
+- `methodId`
+
+When a provider has multiple auth methods, the wizard can either point at one
+explicit method or let OpenClaw synthesize per-method choices.
+
+OpenClaw validates provider wizard metadata when the plugin registers:
+
+- duplicate or blank auth-method ids are rejected
+- wizard metadata is ignored when the provider has no auth methods
+- invalid `methodId` bindings are downgraded to warnings and fall back to the
+  provider's remaining auth methods
+
+### Provider discovery contract
+
+`discovery.run(ctx)` returns one of:
+
+- `{ provider }`
+- `{ providers }`
+- `null`
+
+Use `{ provider }` for the common case where the plugin owns one provider id.
+Use `{ providers }` when a plugin discovers multiple provider entries.
+
+The discovery context includes:
+
+- the current config
+- agent/workspace dirs
+- process env
+- a helper to resolve the provider API key and a discovery-safe API key value
+
+Discovery should be:
+
+- fast
+- best-effort
+- safe to skip on failure
+- careful about side effects
+
+It should not depend on prompts or long-running setup.
+
+### Discovery ordering
+
+Provider discovery runs in ordered phases:
+
+- `simple`
+- `profile`
+- `paired`
+- `late`
+
+Use:
+
+- `simple` for cheap environment-only discovery
+- `profile` when discovery depends on auth profiles
+- `paired` for providers that need to coordinate with another discovery step
+- `late` for expensive or local-network probing
+
+Most self-hosted providers should use `late`.
+
+### Good provider-plugin boundaries
+
+Good fit for provider plugins:
+
+- local/self-hosted providers with custom setup flows
+- provider-specific OAuth/device-code login
+- implicit discovery of local model servers
+- post-selection side effects such as model pulls
+
+Less compelling fit:
+
+- trivial API-key-only providers that differ only by env var, base URL, and one
+  default model
+
+Those can still become plugins, but the main modularity payoff comes from
+extracting behavior-rich providers first.
+
+Register a provider via `api.registerProvider(...)`. Each provider exposes one
+or more auth methods (OAuth, API key, device code, etc.). Those methods can
+power:
 
 - `openclaw models auth login --provider <id> [--method <id>]`
+- `openclaw onboard`
+- model-picker “custom provider” setup entries
+- implicit provider discovery during model resolution/listing
 
-範例：
+Example:
 
 ```ts
 api.registerProvider({
@@ -591,18 +976,57 @@ api.registerProvider({
       },
     },
   ],
+  wizard: {
+    onboarding: {
+      choiceId: "acme",
+      choiceLabel: "AcmeAI",
+      groupId: "acme",
+      groupLabel: "AcmeAI",
+      methodId: "oauth",
+    },
+    modelPicker: {
+      label: "AcmeAI (custom)",
+      hint: "Connect a self-hosted AcmeAI endpoint",
+      methodId: "oauth",
+    },
+  },
+  discovery: {
+    order: "late",
+    run: async () => ({
+      provider: {
+        baseUrl: "https://acme.example/v1",
+        api: "openai-completions",
+        apiKey: "${ACME_API_KEY}",
+        models: [],
+      },
+    }),
+  },
 });
 ```
 
-注意事項：
+Notes:
 
-- `run` 接收帶有 `prompter`、`runtime`、`openUrl` 和 `oauth.createVpsAwareHandlers` 輔助工具的 `ProviderAuthContext`。
-- 當你需要新增預設模型或提供者設定時回傳 `configPatch`。
-- 回傳 `defaultModel` 使 `--set-default` 可以更新 agent 預設值。
+- `run` receives a `ProviderAuthContext` with `prompter`, `runtime`,
+  `openUrl`, and `oauth.createVpsAwareHandlers` helpers.
+- `runNonInteractive` receives a `ProviderAuthMethodNonInteractiveContext`
+  with `opts`, `resolveApiKey`, and `toApiKeyCredential` helpers for
+  headless onboarding.
+- Return `configPatch` when you need to add default models or provider config.
+- Return `defaultModel` so `--set-default` can update agent defaults.
+- `wizard.onboarding` adds a provider choice to `openclaw onboard`.
+- `wizard.modelPicker` adds a “setup this provider” entry to the model picker.
+- `discovery.run` returns either `{ provider }` for the plugin’s own provider id
+  or `{ providers }` for multi-provider discovery.
+- `discovery.order` controls when the provider runs relative to built-in
+  discovery phases: `simple`, `profile`, `paired`, or `late`.
+- `onModelSelected` is the post-selection hook for provider-specific follow-up
+  work such as pulling a local model.
 
-### 註冊訊息頻道
+### Register a messaging channel
 
-Plugins 可以註冊**頻道 plugins**，其行為類似內建頻道（WhatsApp、Telegram 等）。頻道設定位於 `channels.<id>` 下，並由你的頻道 plugin 程式碼驗證。
+Plugins can register **channel plugins** that behave like built‑in channels
+(WhatsApp, Telegram, etc.). Channel config lives under `channels.<id>` and is
+validated by your channel plugin code.
 
 ```ts
 const myChannel = {
@@ -634,71 +1058,71 @@ export default function (api) {
 }
 ```
 
-注意事項：
+Notes:
 
-- 將設定放在 `channels.<id>` 下（而非 `plugins.entries`）。
-- `meta.label` 用於 CLI/UI 列表中的標籤。
-- `meta.aliases` 為正規化和 CLI 輸入新增替代 id。
-- `meta.preferOver` 列出在兩者都設定時跳過自動啟用的頻道 id。
-- `meta.detailLabel` 和 `meta.systemImage` 讓 UI 顯示更豐富的頻道標籤/圖示。
+- Put config under `channels.<id>` (not `plugins.entries`).
+- `meta.label` is used for labels in CLI/UI lists.
+- `meta.aliases` adds alternate ids for normalization and CLI inputs.
+- `meta.preferOver` lists channel ids to skip auto-enable when both are configured.
+- `meta.detailLabel` and `meta.systemImage` let UIs show richer channel labels/icons.
 
-### 頻道 onboarding hooks
+### Channel onboarding hooks
 
-頻道 plugins 可以在 `plugin.onboarding` 上定義可選的 onboarding hooks：
+Channel plugins can define optional onboarding hooks on `plugin.onboarding`:
 
-- `configure(ctx)` 是基準設定流程。
-- `configureInteractive(ctx)` 可以完全擁有已設定和未設定狀態的互動設定。
-- `configureWhenConfigured(ctx)` 只能覆寫已設定頻道的行為。
+- `configure(ctx)` is the baseline setup flow.
+- `configureInteractive(ctx)` can fully own interactive setup for both configured and unconfigured states.
+- `configureWhenConfigured(ctx)` can override behavior only for already configured channels.
 
-精靈中的 hook 優先順序：
+Hook precedence in the wizard:
 
-1. `configureInteractive`（若存在）
-2. `configureWhenConfigured`（僅當頻道狀態已設定時）
-3. 備用至 `configure`
+1. `configureInteractive` (if present)
+2. `configureWhenConfigured` (only when channel status is already configured)
+3. fallback to `configure`
 
-Context 詳細資訊：
+Context details:
 
-- `configureInteractive` 和 `configureWhenConfigured` 接收：
-  - `configured`（`true` 或 `false`）
-  - `label`（提示使用的面向使用者的頻道名稱）
-  - 加上共用的 config/runtime/prompter/options 欄位
-- 回傳 `"skip"` 保持選擇和帳戶追蹤不變。
-- 回傳 `{ cfg, accountId? }` 套用設定更新並記錄帳戶選擇。
+- `configureInteractive` and `configureWhenConfigured` receive:
+  - `configured` (`true` or `false`)
+  - `label` (user-facing channel name used by prompts)
+  - plus the shared config/runtime/prompter/options fields
+- Returning `"skip"` leaves selection and account tracking unchanged.
+- Returning `{ cfg, accountId? }` applies config updates and records account selection.
 
-### 撰寫新的訊息頻道（逐步）
+### Write a new messaging channel (step‑by‑step)
 
-當你想要一個**新的聊天介面**（「訊息頻道」）而非模型提供者時使用此方法。
-模型提供者文件位於 `/providers/*` 下。
+Use this when you want a **new chat surface** (a "messaging channel"), not a model provider.
+Model provider docs live under `/providers/*`.
 
-1. 選擇 id + 設定形狀
+1. Pick an id + config shape
 
-- 所有頻道設定位於 `channels.<id>` 下。
-- 對於多帳戶設定，建議使用 `channels.<id>.accounts.<accountId>`。
+- All channel config lives under `channels.<id>`.
+- Prefer `channels.<id>.accounts.<accountId>` for multi‑account setups.
 
-2. 定義頻道元資料
+2. Define the channel metadata
 
-- `meta.label`、`meta.selectionLabel`、`meta.docsPath`、`meta.blurb` 控制 CLI/UI 列表。
-- `meta.docsPath` 應指向 `/channels/<id>` 等文件頁面。
-- `meta.preferOver` 讓 plugin 替換另一個頻道（自動啟用建議它）。
-- `meta.detailLabel` 和 `meta.systemImage` 由 UI 用於詳細文字/圖示。
+- `meta.label`, `meta.selectionLabel`, `meta.docsPath`, `meta.blurb` control CLI/UI lists.
+- `meta.docsPath` should point at a docs page like `/channels/<id>`.
+- `meta.preferOver` lets a plugin replace another channel (auto-enable prefers it).
+- `meta.detailLabel` and `meta.systemImage` are used by UIs for detail text/icons.
 
-3. 實作必要的適配器
+3. Implement the required adapters
 
 - `config.listAccountIds` + `config.resolveAccount`
-- `capabilities`（聊天類型、媒體、執行緒等）
-- `outbound.deliveryMode` + `outbound.sendText`（用於基本發送）
+- `capabilities` (chat types, media, threads, etc.)
+- `outbound.deliveryMode` + `outbound.sendText` (for basic send)
 
-4. 根據需要新增可選適配器
+4. Add optional adapters as needed
 
-- `setup`（精靈）、`security`（DM 政策）、`status`（健康/診斷）
-- `gateway`（啟動/停止/登入）、`mentions`、`threading`、`streaming`
-- `actions`（訊息動作）、`commands`（原生命令行為）
+- `setup` (wizard), `security` (DM policy), `status` (health/diagnostics)
+- `gateway` (start/stop/login), `mentions`, `threading`, `streaming`
+- `actions` (message actions), `commands` (native command behavior)
 
-5. 在你的 plugin 中註冊頻道
+5. Register the channel in your plugin
 
 - `api.registerChannel({ plugin })`
 
-最小設定範例：
+Minimal config example:
 
 ```json5
 {
@@ -712,7 +1136,7 @@ Context 詳細資訊：
 }
 ```
 
-最小頻道 plugin（僅輸出）：
+Minimal channel plugin (outbound‑only):
 
 ```ts
 const plugin = {
@@ -747,13 +1171,14 @@ export default function (api) {
 }
 ```
 
-載入 plugin（extensions 目錄或 `plugins.load.paths`），重啟 gateway，然後在你的設定中設定 `channels.<id>`。
+Load the plugin (extensions dir or `plugins.load.paths`), restart the gateway,
+then configure `channels.<id>` in your config.
 
-### Agent 工具
+### Agent tools
 
-請參閱專用指南：[Plugin agent tools](/zh-Hant/plugins/agent-tools)。
+See the dedicated guide: [Plugin agent tools](/zh-Hant/plugins/agent-tools).
 
-### 註冊 gateway RPC 方法
+### Register a gateway RPC method
 
 ```ts
 export default function (api) {
@@ -763,7 +1188,7 @@ export default function (api) {
 }
 ```
 
-### 註冊 CLI 命令
+### Register CLI commands
 
 ```ts
 export default function (api) {
@@ -778,9 +1203,11 @@ export default function (api) {
 }
 ```
 
-### 註冊自動回覆命令
+### Register auto-reply commands
 
-Plugins 可以註冊**無需呼叫 AI agent** 即可執行的自訂斜線命令。這對於切換命令、狀態檢查或不需要 LLM 處理的快速動作非常有用。
+Plugins can register custom slash commands that execute **without invoking the
+AI agent**. This is useful for toggle commands, status checks, or quick actions
+that don't need LLM processing.
 
 ```ts
 export default function (api) {
@@ -794,25 +1221,25 @@ export default function (api) {
 }
 ```
 
-命令處理器 context：
+Command handler context:
 
-- `senderId`：發送者的 ID（若可用）
-- `channel`：發送命令的頻道
-- `isAuthorizedSender`：發送者是否為已授權的使用者
-- `args`：命令後傳遞的參數（若 `acceptsArgs: true`）
-- `commandBody`：完整的命令文字
-- `config`：目前的 OpenClaw 設定
+- `senderId`: The sender's ID (if available)
+- `channel`: The channel where the command was sent
+- `isAuthorizedSender`: Whether the sender is an authorized user
+- `args`: Arguments passed after the command (if `acceptsArgs: true`)
+- `commandBody`: The full command text
+- `config`: The current OpenClaw config
 
-命令選項：
+Command options:
 
-- `name`：命令名稱（不含前導 `/`）
-- `nativeNames`：斜線/選單介面的可選原生命令別名。使用 `default` 用於所有原生提供者，或使用提供者特定鍵，例如 `discord`
-- `description`：在命令列表中顯示的說明文字
-- `acceptsArgs`：命令是否接受參數（預設：false）。若為 false 且提供了參數，命令不會匹配，訊息會傳遞給其他處理器
-- `requireAuth`：是否需要已授權的發送者（預設：true）
-- `handler`：回傳 `{ text: string }` 的函式（可以是 async）
+- `name`: Command name (without the leading `/`)
+- `nativeNames`: Optional native-command aliases for slash/menu surfaces. Use `default` for all native providers, or provider-specific keys like `discord`
+- `description`: Help text shown in command lists
+- `acceptsArgs`: Whether the command accepts arguments (default: false). If false and arguments are provided, the command won't match and the message falls through to other handlers
+- `requireAuth`: Whether to require authorized sender (default: true)
+- `handler`: Function that returns `{ text: string }` (can be async)
 
-帶有授權和參數的範例：
+Example with authorization and arguments:
 
 ```ts
 api.registerCommand({
@@ -828,16 +1255,16 @@ api.registerCommand({
 });
 ```
 
-注意事項：
+Notes:
 
-- Plugin 命令在**內建命令和 AI agent 之前**處理
-- 命令全域註冊，在所有頻道中有效
-- 命令名稱不區分大小寫（`/MyStatus` 匹配 `/mystatus`）
-- 命令名稱必須以字母開頭，且只包含字母、數字、連字號和底線
-- 保留的命令名稱（例如 `help`、`status`、`reset` 等）無法被 plugins 覆寫
-- 跨 plugins 的重複命令註冊會失敗並產生診斷錯誤
+- Plugin commands are processed **before** built-in commands and the AI agent
+- Commands are registered globally and work across all channels
+- Command names are case-insensitive (`/MyStatus` matches `/mystatus`)
+- Command names must start with a letter and contain only letters, numbers, hyphens, and underscores
+- Reserved command names (like `help`, `status`, `reset`, etc.) cannot be overridden by plugins
+- Duplicate command registration across plugins will fail with a diagnostic error
 
-### 註冊背景服務
+### Register background services
 
 ```ts
 export default function (api) {
@@ -849,56 +1276,57 @@ export default function (api) {
 }
 ```
 
-## 命名慣例
+## Naming conventions
 
-- Gateway 方法：`pluginId.action`（範例：`voicecall.status`）
-- 工具：`snake_case`（範例：`voice_call`）
-- CLI 命令：kebab 或 camel，但避免與核心命令衝突
+- Gateway methods: `pluginId.action` (example: `voicecall.status`)
+- Tools: `snake_case` (example: `voice_call`)
+- CLI commands: kebab or camel, but avoid clashing with core commands
 
 ## Skills
 
-Plugins 可以在 repo 中附帶 skill（`skills/<name>/SKILL.md`）。
-以 `plugins.entries.<id>.enabled`（或其他設定閘控）啟用它，並確保它存在於你的工作區/受管 skills 位置。
+Plugins can ship a skill in the repo (`skills/<name>/SKILL.md`).
+Enable it with `plugins.entries.<id>.enabled` (or other config gates) and ensure
+it’s present in your workspace/managed skills locations.
 
-## 發布（npm）
+## Distribution (npm)
 
-推薦的套件方式：
+Recommended packaging:
 
-- 主套件：`openclaw`（此 repo）
-- Plugins：在 `@openclaw/*` 下的獨立 npm 套件（範例：`@openclaw/voice-call`）
+- Main package: `openclaw` (this repo)
+- Plugins: separate npm packages under `@openclaw/*` (example: `@openclaw/voice-call`)
 
-發布契約：
+Publishing contract:
 
-- Plugin `package.json` 必須包含帶有一個或多個入口檔案的 `openclaw.extensions`。
-- 入口檔案可以是 `.js` 或 `.ts`（jiti 在執行期載入 TS）。
-- `openclaw plugins install <npm-spec>` 使用 `npm pack`，解壓縮至 `~/.openclaw/extensions/<id>/`，並在設定中啟用它。
-- 設定鍵穩定性：帶作用域的套件被標準化為 **unscoped** id 用於 `plugins.entries.*`。
+- Plugin `package.json` must include `openclaw.extensions` with one or more entry files.
+- Entry files can be `.js` or `.ts` (jiti loads TS at runtime).
+- `openclaw plugins install <npm-spec>` uses `npm pack`, extracts into `~/.openclaw/extensions/<id>/`, and enables it in config.
+- Config key stability: scoped packages are normalized to the **unscoped** id for `plugins.entries.*`.
 
-## 範例 plugin：Voice Call
+## Example plugin: Voice Call
 
-此 repo 包含一個語音呼叫 plugin（Twilio 或 log 備用）：
+This repo includes a voice‑call plugin (Twilio or log fallback):
 
-- 來源：`extensions/voice-call`
-- Skill：`skills/voice-call`
-- CLI：`openclaw voicecall start|status`
-- 工具：`voice_call`
-- RPC：`voicecall.start`、`voicecall.status`
-- 設定（twilio）：`provider: "twilio"` + `twilio.accountSid/authToken/from`（可選 `statusCallbackUrl`、`twimlUrl`）
-- 設定（dev）：`provider: "log"`（無網路）
+- Source: `extensions/voice-call`
+- Skill: `skills/voice-call`
+- CLI: `openclaw voicecall start|status`
+- Tool: `voice_call`
+- RPC: `voicecall.start`, `voicecall.status`
+- Config (twilio): `provider: "twilio"` + `twilio.accountSid/authToken/from` (optional `statusCallbackUrl`, `twimlUrl`)
+- Config (dev): `provider: "log"` (no network)
 
-請參閱 [Voice Call](/zh-Hant/plugins/voice-call) 和 `extensions/voice-call/README.md` 了解設定和使用方式。
+See [Voice Call](/zh-Hant/plugins/voice-call) and `extensions/voice-call/README.md` for setup and usage.
 
-## 安全注意事項
+## Safety notes
 
-Plugins 與 Gateway 在同一行程中執行。將其視為受信任的程式碼：
+Plugins run in-process with the Gateway. Treat them as trusted code:
 
-- 只安裝你信任的 plugins。
-- 建議使用 `plugins.allow` 允許清單。
-- 變更後重啟 Gateway。
+- Only install plugins you trust.
+- Prefer `plugins.allow` allowlists.
+- Restart the Gateway after changes.
 
-## 測試 plugins
+## Testing plugins
 
-Plugins 可以（也應該）附帶測試：
+Plugins can (and should) ship tests:
 
-- repo 內的 plugins 可以在 `src/**` 下保留 Vitest 測試（範例：`src/plugins/voice-call.plugin.test.ts`）。
-- 單獨發布的 plugins 應執行自己的 CI（lint/build/test）並驗證 `openclaw.extensions` 指向已建構的入口點（`dist/index.js`）。
+- In-repo plugins can keep Vitest tests under `src/**` (example: `src/plugins/voice-call.plugin.test.ts`).
+- Separately published plugins should run their own CI (lint/build/test) and validate `openclaw.extensions` points at the built entrypoint (`dist/index.js`).

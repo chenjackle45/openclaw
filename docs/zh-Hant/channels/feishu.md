@@ -191,16 +191,18 @@ openclaw channels add
 }
 ```
 
-若你使用 `connectionMode: "webhook"`，請設定 `verificationToken`。Feishu webhook server 預設綁定至 `127.0.0.1`；僅在你確實需要不同綁定位址時才設定 `webhookHost`。
+若你使用 `connectionMode: "webhook"`，請同時設定 `verificationToken` 和 `encryptKey`。Feishu webhook server 預設綁定至 `127.0.0.1`；僅在你確實需要不同綁定位址時才設定 `webhookHost`。
 
-#### Verification Token（webhook 模式）
+#### Verification Token 和 Encrypt Key（webhook 模式）
 
-使用 webhook 模式時，在設定中設定 `channels.feishu.verificationToken`。取得該值：
+使用 webhook 模式時，在設定中設定 `channels.feishu.verificationToken` 和 `channels.feishu.encryptKey`。取得該值：
 
 1. 在 Feishu 開放平台，開啟你的應用程式
 2. 前往**開發配置** → **事件與回調**
 3. 開啟**加密策略**標籤
-4. 複製 **Verification Token**
+4. 複製 **Verification Token** 和 **Encrypt Key**
+
+下方的截圖顯示 **Verification Token** 的位置。**Encrypt Key** 列在相同的**加密策略**區段。
 
 ![Verification Token 位置](../images/feishu-verification-token.png)
 

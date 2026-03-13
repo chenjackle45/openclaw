@@ -17,7 +17,7 @@ openclaw qr
 openclaw qr --setup-code-only
 openclaw qr --json
 openclaw qr --remote
-openclaw qr --url wss://gateway.example/ws --token '<token>'
+openclaw qr --url wss://gateway.example/ws
 ```
 
 ## 選項
@@ -25,8 +25,8 @@ openclaw qr --url wss://gateway.example/ws --token '<token>'
 - `--remote`：使用 `gateway.remote.url` 加上 config 中的遠端 token/密碼
 - `--url <url>`：覆寫 payload 中使用的 Gateway URL
 - `--public-url <url>`：覆寫 payload 中使用的公開 URL
-- `--token <token>`：覆寫 payload 的 Gateway token
-- `--password <password>`：覆寫 payload 的 Gateway 密碼
+- `--token <token>`：覆寫 bootstrap 流程認證的 gateway token
+- `--password <password>`：覆寫 bootstrap 流程認證的 gateway 密碼
 - `--setup-code-only`：僅列印設定碼
 - `--no-ascii`：跳過 ASCII QR 渲染
 - `--json`：輸出 JSON（`setupCode`、`gatewayUrl`、`auth`、`urlSource`）
@@ -34,6 +34,7 @@ openclaw qr --url wss://gateway.example/ws --token '<token>'
 ## 注意事項
 
 - `--token` 和 `--password` 互斥。
+- 設定碼本身現在使用不透明的短期 `bootstrapToken`，而非共用的 gateway token/密碼。
 - 使用 `--remote` 時，若有效的遠端憑證被配置為 SecretRefs 且您未傳遞 `--token` 或 `--password`，指令會從目前的 gateway 快照解析它們。若 gateway 無法使用，指令會快速失敗。
 - 不使用 `--remote` 時，在未傳遞 CLI 認證覆寫的情況下，本地 gateway 認證 SecretRefs 會被解析：
   - 當 token 認證可以優先時，`gateway.auth.token` 會被解析（明確的 `gateway.auth.mode="token"` 或推斷模式下無密碼來源優先）。

@@ -1,44 +1,46 @@
 ---
-title: "Local Models（本機模型）"
-summary: “在本地 LLMs (LM Studio, vLLM, LiteLLM、自訂 OpenAI 端點) 上執行 OpenClaw”
+summary: "在本地 LLM 上執行 OpenClaw（LM Studio、vLLM、LiteLLM、自訂 OpenAI 端點）"
 read_when:
-  - 想要從自己的 GPU 機器提供模型時
-  - 正在設定 LM Studio 或 OpenAI 相容的 Proxy 時
-  - 需要最安全的本地模型指引時
+  - You want to serve models from your own GPU box
+  - You are wiring LM Studio or an OpenAI-compatible proxy
+  - You need the safest local model guidance
+title: "Local Models（本地模型）"
 ---
 
 # 本地模型
 
-本地執行是可行的，但 OpenClaw 預期大型 Context 和對 Prompt Injection 的強大防禦。小型 GPU 卡會截斷 Context 並降低安全性。目標訂高一點：**≥2 台 maxed-out Mac Studios 或同等級的 GPU Rig (~$30k+)**。單張 **24 GB** GPU 僅適用於較輕的 Prompts 且延遲較高。請使用**您能執行的最大／完整尺寸模型變體**；過度量化或「小型」Checkpoints 會增加 Prompt Injection 風險（參閱 [Security](/zh-Hant/gateway/security)）。
+本地可行，但 OpenClaw 預期大型上下文 + 強大的提示注入防禦。小型卡片會截斷上下文並洩露安全性。目標高：**≥2 台最大化 Mac Studio 或等效 GPU 設備（~$30k+）**。單個 **24 GB** GPU 僅適用於較輕提示且較高延遲。使用 **最大/完整大小模型變體** 你能執行的；主動量化或「小」檢查點提高提示注入風險（見 [Security](/zh-Hant/gateway/security)）。
 
-## 推薦：LM Studio + MiniMax M2.5 (Responses API，完整尺寸)
+如果想最低阻力本地設定，從 [Ollama](/zh-Hant/providers/ollama) 和 `openclaw onboard` 開始。此頁面是較高端本地堆疊和自訂 OpenAI 相容本地伺服器的有見解指南。
 
-目前最佳的本地堆疊。在 LM Studio 中載入 MiniMax M2.5，啟用本地伺服器（預設 `http://127.0.0.1:1234`），並使用 Responses API 將推理與最終文字分開。
+## 推薦：LM Studio + MiniMax M2.5（Responses API、完整大小）
+
+目前最佳本地堆疊。在 LM Studio 中載入 MiniMax M2.5、啟用本地伺服器（預設 `http://127.0.0.1:1234`），並使用 Responses API 以保持推理與最終文字分離。
 
 ```json5
 {
   agents: {
     defaults: {
-      model: { primary: “lmstudio/minimax-m2.5-gs32” },
+      model: { primary: "lmstudio/minimax-m2.5-gs32" },
       models: {
-        “anthropic/claude-opus-4-6”: { alias: “Opus” },
-        “lmstudio/minimax-m2.5-gs32”: { alias: “Minimax” },
+        "anthropic/claude-opus-4-6": { alias: "Opus" },
+        "lmstudio/minimax-m2.5-gs32": { alias: "Minimax" },
       },
     },
   },
   models: {
-    mode: “merge”,
+    mode: "merge",
     providers: {
       lmstudio: {
-        baseUrl: “http://127.0.0.1:1234/v1”,
-        apiKey: “lmstudio”,
-        api: “openai-responses”,
+        baseUrl: "http://127.0.0.1:1234/v1",
+        apiKey: "lmstudio",
+        api: "openai-responses",
         models: [
           {
-            id: “minimax-m2.5-gs32”,
-            name: “MiniMax M2.5 GS32”,
+            id: "minimax-m2.5-gs32",
+            name: "MiniMax M2.5 GS32",
             reasoning: false,
-            input: [“text”],
+            input: ["text"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
             contextWindow: 196608,
             maxTokens: 8192,
@@ -53,43 +55,43 @@ read_when:
 **設定檢查清單**
 
 - 安裝 LM Studio：[https://lmstudio.ai](https://lmstudio.ai)
-- 在 LM Studio 中下載**可用的最大 MiniMax M2.5 build**（避免「small」／重度量化變體），啟動伺服器，確認 `http://127.0.0.1:1234/v1/models` 有列出它。
-- 保持模型載入；冷啟動會增加啟動延遲。
-- 若您的 LM Studio build 不同，調整 `contextWindow`／`maxTokens`。
-- 對於 WhatsApp，堅持使用 Responses API 以便只發送最終文字。
+- 在 LM Studio 中，下載 **最大的 MiniMax M2.5 建置** 可用（避免「小」/重量量化變體），啟動伺服器，確認 `http://127.0.0.1:1234/v1/models` 列出它。
+- 保持模型載入；冷載加入啟動延遲。
+- 如果你的 LM Studio 建置不同，調整 `contextWindow`/`maxTokens`。
+- 對於 WhatsApp，堅持 Responses API，只有最終文字被發送。
 
-即使在本地執行，仍要保持託管模型設定；使用 `models.mode: “merge”` 讓 Fallbacks 保持可用。
+即使執行本地時也保持已設定託管模型；使用 `models.mode: "merge"` 以讓回退保持可用。
 
-### 混合設定：託管為主要，本地為備援
+### 混合設定：託管主要、本地回退
 
 ```json5
 {
   agents: {
     defaults: {
       model: {
-        primary: “anthropic/claude-sonnet-4-5”,
-        fallbacks: [“lmstudio/minimax-m2.5-gs32”, “anthropic/claude-opus-4-6”],
+        primary: "anthropic/claude-sonnet-4-5",
+        fallbacks: ["lmstudio/minimax-m2.5-gs32", "anthropic/claude-opus-4-6"],
       },
       models: {
-        “anthropic/claude-sonnet-4-5”: { alias: “Sonnet” },
-        “lmstudio/minimax-m2.5-gs32”: { alias: “MiniMax Local” },
-        “anthropic/claude-opus-4-6”: { alias: “Opus” },
+        "anthropic/claude-sonnet-4-5": { alias: "Sonnet" },
+        "lmstudio/minimax-m2.5-gs32": { alias: "MiniMax Local" },
+        "anthropic/claude-opus-4-6": { alias: "Opus" },
       },
     },
   },
   models: {
-    mode: “merge”,
+    mode: "merge",
     providers: {
       lmstudio: {
-        baseUrl: “http://127.0.0.1:1234/v1”,
-        apiKey: “lmstudio”,
-        api: “openai-responses”,
+        baseUrl: "http://127.0.0.1:1234/v1",
+        apiKey: "lmstudio",
+        api: "openai-responses",
         models: [
           {
-            id: “minimax-m2.5-gs32”,
-            name: “MiniMax M2.5 GS32”,
+            id: "minimax-m2.5-gs32",
+            name: "MiniMax M2.5 GS32",
             reasoning: false,
-            input: [“text”],
+            input: ["text"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
             contextWindow: 196608,
             maxTokens: 8192,
@@ -101,34 +103,34 @@ read_when:
 }
 ```
 
-### 本地優先搭配託管安全網
+### 本地優先與託管安全網路
 
-交換主要和備援的順序；保持相同的 providers 區塊和 `models.mode: “merge”`，以便在本地機器當機時可以回落至 Sonnet 或 Opus。
+交換主要和回退順序；保持相同提供者區塊和 `models.mode: "merge"` 當本地箱宕機時可回退到 Sonnet 或 Opus。
 
-### 區域託管／資料路由
+### 區域主機 / 資料路由
 
-- OpenRouter 上也有託管的 MiniMax／Kimi／GLM 變體，附帶區域鎖定的端點（例如 US 託管）。選擇該區域的變體以在您選擇的管轄區內保持流量，同時仍使用 `models.mode: “merge”` 進行 Anthropic／OpenAI 備援。
-- 本地限定仍是最強的隱私路徑；當您需要提供商功能但想要控制資料流時，託管區域路由是折衷方案。
+- 託管 MiniMax/Kimi/GLM 變體也存在於 OpenRouter，具有區域固定端點（例如美國主機）。在那裡挑選區域變體以在使用 `models.mode: "merge"` 進行 Anthropic/OpenAI 回退時將流量保持在你選擇的司法管轄區中。
+- 本地專用保持最強隱私路徑；託管區域路由是中間路徑，當你需要提供者功能但想控制資料流時。
 
-## 其他 OpenAI 相容的本地 Proxies
+## 其他 OpenAI 相容本地代理
 
-vLLM、LiteLLM、OAI-proxy 或自訂閘道只要暴露 OpenAI 風格的 `/v1` 端點就能運作。將上述 provider 區塊替換為您的端點和模型 ID：
+vLLM、LiteLLM、OAI-proxy 或自訂閘道工作，如果它們暴露 OpenAI 風格的 `/v1` 端點。使用你的端點和模型 ID 取代上方提供者區塊：
 
 ```json5
 {
   models: {
-    mode: “merge”,
+    mode: "merge",
     providers: {
       local: {
-        baseUrl: “http://127.0.0.1:8000/v1”,
-        apiKey: “sk-local”,
-        api: “openai-responses”,
+        baseUrl: "http://127.0.0.1:8000/v1",
+        apiKey: "sk-local",
+        api: "openai-responses",
         models: [
           {
-            id: “my-local-model”,
-            name: “Local Model”,
+            id: "my-local-model",
+            name: "Local Model",
             reasoning: false,
-            input: [“text”],
+            input: ["text"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
             contextWindow: 120000,
             maxTokens: 8192,
@@ -140,11 +142,11 @@ vLLM、LiteLLM、OAI-proxy 或自訂閘道只要暴露 OpenAI 風格的 `/v1` �
 }
 ```
 
-保持 `models.mode: “merge”` 以便託管模型作為備援保持可用。
+保持 `models.mode: "merge"` 以讓託管模型保持作為回退可用。
 
-## 故障排除
+## 疑難排解
 
-- Gateway 能連線到 proxy 嗎？`curl http://127.0.0.1:1234/v1/models`。
-- LM Studio 模型已卸載？重新載入；冷啟動是常見的「卡住」原因。
-- Context 錯誤？降低 `contextWindow` 或提高伺服器限制。
-- 安全性：本地模型略過提供商端的篩選；保持 Agents 範圍狹窄並開啟 Compaction 以限制 Prompt Injection 的爆炸半徑。
+- Gateway 可到達代理？`curl http://127.0.0.1:1234/v1/models`。
+- LM Studio 模型卸載？重新載入；冷啟動是常見「懸掛」原因。
+- 上下文錯誤？降低 `contextWindow` 或提高伺服器限制。
+- 安全：本地模型跳過提供者端過濾；保持代理窄縮且壓縮開啟以限制提示注入爆炸半徑。

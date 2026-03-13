@@ -155,7 +155,7 @@ sudo loginctl enable-linger $USER
 
 ## 相關文件
 
-- [Gateway 操作手冊](/zh-Hant/gateway)（標誌、監督、連接埠）
+- [Gateway 操作手冊](/zh-Hant/gateway)（旗標、監督、連接埠）
 - [Gateway 設定](/zh-Hant/gateway/configuration)（設定架構 + 範例）
 - [Discord](/zh-Hant/channels/discord) 和 [Telegram](/zh-Hant/channels/telegram)（回覆標籤 + replyToMode 設定）
 - [OpenClaw 助理設定](/zh-Hant/start/openclaw)

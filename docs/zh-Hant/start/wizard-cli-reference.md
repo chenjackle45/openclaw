@@ -4,7 +4,7 @@ read_when:
   - 需要 openclaw onboard 詳細行為時
   - 正在偵錯入門結果或整合入門客戶端時
 title: "CLI Onboarding Reference（CLI 入門參考）"
-sidebarTitle: "CLI reference"
+sidebarTitle: "CLI 參考"
 ---
 
 # CLI 入門參考
@@ -16,7 +16,7 @@ sidebarTitle: "CLI reference"
 
 本地模式（預設）會引導您完成：
 
-- 模型和認證設定（OpenAI Code 訂閱 OAuth、Anthropic API key 或 setup token，以及 MiniMax、GLM、Moonshot 和 AI Gateway 選項）
+- 模型和認證設定（OpenAI Code 訂閱 OAuth、Anthropic API key 或 setup token，以及 MiniMax、GLM、Ollama、Moonshot 和 AI Gateway 選項）
 - 工作區位置和引導檔案
 - Gateway 設定（連接埠、綁定、認證、tailscale）
 - 頻道和提供者（Telegram、WhatsApp、Discord、Google Chat、Mattermost 外掛、Signal）
@@ -46,7 +46,7 @@ sidebarTitle: "CLI reference"
   <Step title="工作區">
     - 預設 `~/.openclaw/workspace`（可設定）。
     - 植入首次執行引導儀式所需的工作區檔案。
-    - 工作區佈局：[代理程式工作區](/zh-Hant/concepts/agent-workspace)。
+    - 工作區佈局：[Agent workspace](/zh-Hant/concepts/agent-workspace)。
   </Step>
   <Step title="Gateway">
     - 提示輸入連接埠、綁定、認證模式和 tailscale 曝露。
