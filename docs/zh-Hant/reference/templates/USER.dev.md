@@ -1,5 +1,5 @@
 ---
-title: "USER.dev（Dev Agent 使用者檔案）"
+title: "USER.dev Template（Dev Agent 使用者檔案）"
 summary: "Dev Agent 使用者個人資料（C-3PO）"
 read_when:
   - 使用 Dev Gateway 模板

@@ -1,5 +1,5 @@
 ---
-title: "Plugin Agent Tools（Plugin Agent 工具）"
+title: "Registering Tools（Plugin Agent 工具）"
 summary: "在 Plugin 中撰寫 Agent Tools（Schemas、Optional Tools、Allowlists）"
 read_when:
   - 您想在 Plugin 中新增新的 Agent Tool

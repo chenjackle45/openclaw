@@ -4,7 +4,7 @@ read_when:
   - 啟用回覆的文字轉語音功能
   - 設定 TTS 提供商或限制
   - 使用 /tts 指令
-title: "Text-to-Speech（文字轉語音）"
+title: "Text-to-Speech (legacy path)（文字轉語音）"
 ---
 
 # Text-to-speech（文字轉語音）

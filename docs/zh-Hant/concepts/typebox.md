@@ -1,5 +1,5 @@
 ---
-title: "TypeBox（TypeBox 型別）"
+title: "TypeBox"
 summary: "TypeBox 架構作為 Gateway 通訊協議的單一事實來源"
 read_when:
   - 更新協議架構或程式碼生成 (codegen)

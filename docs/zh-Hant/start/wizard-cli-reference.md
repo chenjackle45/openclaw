@@ -3,7 +3,7 @@ summary: "CLI 入門流程、認證/模型設定、輸出和內部機制的完�
 read_when:
   - 需要 openclaw onboard 詳細行為時
   - 正在偵錯入門結果或整合入門客戶端時
-title: "CLI Onboarding Reference（CLI 入門參考）"
+title: "CLI Setup Reference（CLI 入門參考）"
 sidebarTitle: "CLI 參考"
 ---
 

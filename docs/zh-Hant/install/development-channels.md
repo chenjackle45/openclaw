@@ -3,7 +3,7 @@ summary: "穩定版、Beta 版和開發版頻道：語義、切換方式和標�
 read_when:
   - You want to switch between stable/beta/dev
   - You are tagging or publishing prereleases
-title: "Development Channels（開發頻道）"
+title: "Release Channels（開發頻道）"
 ---
 
 # 開發頻道

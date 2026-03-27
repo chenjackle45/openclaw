@@ -1,5 +1,5 @@
 ---
-title: "AGENTS.dev（Dev Agent 模板）"
+title: "AGENTS.dev Template（Dev Agent 模板）"
 summary: "Dev Agent AGENTS.md（C-3PO）"
 read_when:
   - 使用 Dev Gateway 模板

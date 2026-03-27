@@ -1,7 +1,7 @@
 ---
-summary: "Agent 迴圈生命週期、串流和等待語義"
+summary: "Agent loop 生命週期、串流和等待語義"
 read_when:
-  - 您需要了解 Agent 迴圈或生命週期事件的確切流程
+  - 您需要了解 Agent loop 或生命週期事件的確切流程
 title: "Agent Loop（Agent 迴圈）"
 ---
 

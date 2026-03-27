@@ -2,7 +2,7 @@
 summary: "Discord Bot 支援狀態、功能說明與設定方式"
 read_when:
   - Working on Discord channel features
-title: "Discord（Discord Bot API）"
+title: "Discord"
 ---
 
 # Discord (Bot API)

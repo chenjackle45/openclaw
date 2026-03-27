@@ -1,79 +1,81 @@
 ---
-summary: "配對概述：核准誰可以傳私訊給你 + 哪些節點可以加入 Gateway 網路"
+summary: "配對概述：核准誰可以傳 DM 給你 + 哪些節點可加入"
 read_when:
-  - 設定私訊存取控制
-  - 配對新的 iOS/Android 節點
-  - 檢視 OpenClaw 安全設定
-title: "配對（Pairing）"
+  - 設置 DM 存取控制
+  - 配對新的 iOS／Android 節點
+  - 檢查 OpenClaw 安全狀態
+title: "Pairing（配對）"
+sidebarTitle: "配對"
 ---
 
-# Pairing
+# 配對
 
 「配對」是 OpenClaw 的明確**擁有者核准**步驟。
-它用在兩個地方：
+它用於兩個地方：
 
-1. **私訊配對**（哪些人可以與 Bot 對話）
-2. **節點配對**（哪些裝置/節點可以加入 Gateway 網路）
+1. **DM 配對**（誰可允許與 bot 交談）
+2. **節點配對**（哪些裝置／節點可允許加入 gateway 網路）
 
-安全情境說明：[安全性](/zh-Hant/gateway/security)
+安全上下文：[安全](/zh-Hant/gateway/security)
 
-## 1) 私訊配對（收入聊天存取）
+## 1) DM 配對（傳入聊天存取）
 
-當頻道設定私訊政策為 `pairing` 時，未知發送者會收到一組短碼，其訊息**不會被處理**，直到你核准為止。
+當頻道配置為 DM 原則 `pairing` 時，未知寄件者取得簡短代碼，其訊息**不會被處理**直到你核准。
 
-預設私訊政策說明請見：[安全性](/zh-Hant/gateway/security)
+預設 DM 原則記錄在：[安全](/zh-Hant/gateway/security)
 
-配對碼規格：
+配對碼：
 
-- 8 個字元，大寫，無易混淆字元（`0O1I`）。
-- **1 小時後過期**。Bot 只在建立新請求時傳送配對訊息（大約每位發送者每小時一次）。
-- 等待核准的私訊配對請求每頻道預設上限為 **3 個**；超過的請求會被忽略，直到其中一個過期或被核准。
+- 8 個字元、大寫、無模稜兩可的字元（`0O1I`）。
+- **在 1 小時後過期**。Bot 僅在建立新請求時傳送配對訊息（大約每小時每個寄件者一次）。
+- 待決 DM 配對請求預設上限為**每個頻道 3 個**；額外請求被忽略，直到一個過期或被核准。
 
-### 核准發送者
+### 核准寄件者
 
 ```bash
 openclaw pairing list telegram
 openclaw pairing approve telegram <CODE>
 ```
 
-支援的頻道：`telegram`、`whatsapp`、`signal`、`imessage`、`discord`、`slack`、`feishu`。
+支援的頻道：`bluebubbles`、`discord`、`feishu`、`googlechat`、`imessage`、`irc`、`line`、`matrix`、`mattermost`、`msteams`、`nextcloud-talk`、`nostr`、`signal`、`slack`、`synology-chat`、`telegram`、`twitch`、`whatsapp`、`zalo`、`zalouser`。
 
 ### 狀態儲存位置
 
-儲存於 `~/.openclaw/credentials/`：
+儲存在 `~/.openclaw/credentials/` 下：
 
-- 等待核准的請求：`<channel>-pairing.json`
-- 已核准的白名單儲存：
-  - 預設帳號：`<channel>-allowFrom.json`
-  - 非預設帳號：`<channel>-<accountId>-allowFrom.json`
+- 待決請求：`<channel>-pairing.json`
+- 已核准允許清單存儲：
+  - 預設帳戶：`<channel>-allowFrom.json`
+  - 非預設帳戶：`<channel>-<accountId>-allowFrom.json`
 
-帳號範圍行為：
+帳戶範圍行為：
 
-- 非預設帳號只讀寫其自己範圍的白名單檔案。
-- 預設帳號使用未附帳號 ID 的頻道範圍白名單檔案。
+- 非預設帳戶僅讀寫其範圍內的允許清單檔案。
+- 預設帳戶使用頻道範圍的無範圍允許清單檔案。
 
-請將這些檔案視為敏感資料（它們控制對你的 AI 助理的存取）。
+將這些視為敏感（它們控制對你助手的存取）。
 
-## 2) 節點裝置配對（iOS/Android/macOS/無頭節點）
+## 2) 節點裝置配對（iOS／Android／macOS／無頭節點）
 
-節點以 `role: node` 的**裝置**身份連接至 Gateway。Gateway 會建立一個裝置配對請求，必須由擁有者核准。
+節點以**裝置**的身份連接到 Gateway，具有 `role: node`。Gateway
+建立必須被核准的裝置配對請求。
 
-### 透過 Telegram 配對（iOS 推薦方式）
+### 透過 Telegram 配對（iOS 推薦）
 
-如果你安裝了 `device-pair` 插件，可以完全透過 Telegram 完成首次裝置配對：
+如果你使用 `device-pair` 外掛程式，你可以完全從 Telegram 進行首次裝置配對：
 
-1. 在 Telegram 中傳訊息給你的 Bot：`/pair`
-2. Bot 會回覆兩則訊息：一則說明訊息和一則獨立的**設定碼**訊息（在 Telegram 中容易複製貼上）。
-3. 在你的手機上，開啟 OpenClaw iOS 應用程式 → 設定 → Gateway。
-4. 貼上設定碼並連接。
-5. 回到 Telegram：`/pair approve`
+1. 在 Telegram 中，訊息你的 bot：`/pair`
+2. Bot 回覆兩條訊息：指示訊息和單獨的**設置代碼**訊息（易於在 Telegram 中複製／貼上）。
+3. 在你的手機上，開啟 OpenClaw iOS 應用 → 設定 → Gateway。
+4. 貼上設置代碼並連接。
+5. 回到 Telegram：`/pair pending`（檢查請求 ID、角色和範圍），然後核准。
 
-設定碼是 base64 編碼的 JSON 載荷，包含：
+設置代碼是一個 base64 編碼的 JSON 酬載，包含：
 
 - `url`：Gateway WebSocket URL（`ws://...` 或 `wss://...`）
-- `bootstrapToken`：用於初始配對握手的短期單次裝置 Bootstrap Token
+- `bootstrapToken`：用於初始配對握手的短暫單裝置引導令杖
 
-在有效期間，請將設定碼視同密碼處理。
+在有效期間將設置代碼視為密碼。
 
 ### 核准節點裝置
 
@@ -83,20 +85,24 @@ openclaw devices approve <requestId>
 openclaw devices reject <requestId>
 ```
 
+如果相同裝置以不同的驗證詳情重試（例如不同的角色／範圍／公鑰），前一個待決請求被取代，並建立新的
+`requestId`。
+
 ### 節點配對狀態儲存
 
-儲存於 `~/.openclaw/devices/`：
+儲存在 `~/.openclaw/devices/` 下：
 
-- `pending.json`（短期存在；等待請求會過期）
-- `paired.json`（已配對的裝置與 Token）
+- `pending.json`（短暫的；待決請求過期）
+- `paired.json`（配對的裝置 + 令杖）
 
-### 注意事項
+### 備註
 
-- 舊版 `node.pair.*` API（CLI：`openclaw nodes pending/approve`）是獨立的 Gateway 管理配對儲存。WS 節點仍需要裝置配對。
+- 舊版 `node.pair.*` API（CLI：`openclaw nodes pending/approve`）是
+  單獨的 gateway 擁有的配對存儲。WS 節點仍需要裝置配對。
 
 ## 相關文件
 
-- 安全模型與提示注入：[安全性](/zh-Hant/gateway/security)
+- 安全模型 + 提示注入：[安全](/zh-Hant/gateway/security)
 - 安全更新（執行 doctor）：[更新](/zh-Hant/install/updating)
 - 頻道設定：
   - Telegram：[Telegram](/zh-Hant/channels/telegram)

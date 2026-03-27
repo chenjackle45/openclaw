@@ -2,7 +2,7 @@
 summary: "在無根 Podman 容器中執行 OpenClaw"
 read_when:
   - 您想使用 Podman 而非 Docker 的容器化 gateway 時
-title: "Podman（無根容器部署）"
+title: "Podman"
 ---
 
 # Podman

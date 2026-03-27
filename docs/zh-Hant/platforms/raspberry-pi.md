@@ -4,7 +4,7 @@ read_when:
   - 在 Raspberry Pi 上設定 OpenClaw
   - 在 ARM 裝置上執行 OpenClaw
   - 建立低成本的全天候個人 AI
-title: "Raspberry Pi"
+title: "Raspberry Pi (Platform)"
 ---
 
 # OpenClaw on Raspberry Pi

@@ -4,7 +4,7 @@ read_when:
   - You want to enable web_search or web_fetch
   - You need provider API key setup
   - You want to use Gemini with Google Search grounding
-title: "Web Tools（網路工具）"
+title: "Web Search（網路工具）"
 ---
 
 # Web tools

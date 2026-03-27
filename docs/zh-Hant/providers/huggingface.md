@@ -3,7 +3,7 @@ summary: "Hugging Face 推理設定（認證 + 模型選擇）"
 read_when:
   - You want to use Hugging Face Inference with OpenClaw
   - You need the HF token env var or CLI auth choice
-title: "Hugging Face (Inference)"
+title: "Hugging Face (Inference)（Inference）"
 ---
 
 # Hugging Face（推理）

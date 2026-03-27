@@ -2,7 +2,7 @@
 summary: "Nextcloud Talk 支援狀態、功能說明與設定方式"
 read_when:
   - Working on Nextcloud Talk channel features
-title: "Nextcloud Talk（Nextcloud Talk 插件）"
+title: "Nextcloud Talk"
 ---
 
 # Nextcloud Talk (plugin)

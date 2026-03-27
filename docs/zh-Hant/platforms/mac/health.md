@@ -2,7 +2,7 @@
 summary: "macOS 應用程式如何回報 Gateway/Baileys 健康狀態"
 read_when:
   - 除錯 macOS 應用程式健康指標時
-title: "Health Checks（macOS 健康檢查）"
+title: "Health Checks (macOS)（macOS 健康檢查）"
 ---
 
 # macOS 上的健康檢查

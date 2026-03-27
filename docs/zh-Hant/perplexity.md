@@ -1,5 +1,5 @@
 ---
-title: "Perplexity Search（Perplexity 搜尋）"
+title: "Perplexity Search (legacy path)（Perplexity 搜尋）"
 summary: "Perplexity Search API 和 Sonar/OpenRouter 相容於 web_search"
 read_when:
   - 您想要使用 Perplexity Search 進行 web 搜尋

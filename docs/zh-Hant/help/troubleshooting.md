@@ -3,7 +3,7 @@ summary: "OpenClaw 的症狀優先疑難排解中心"
 read_when:
   - OpenClaw 無法運作且需要最快修復路徑時
   - 在深入查閱操作手冊前需要分類流程時
-title: "Troubleshooting（疑難排解）"
+title: "General Troubleshooting（疑難排解）"
 ---
 
 # 疑難排解

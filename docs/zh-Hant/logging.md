@@ -4,7 +4,7 @@ read_when:
   - 您需要初學者友善的日誌概述
   - 您想配置日誌級別或格式
   - 您正在進行故障排除並需要快速找到日誌
-title: "Logging（日誌）"
+title: "Logging Overview（日誌）"
 ---
 
 # Logging（日誌）

@@ -2,7 +2,7 @@
 summary: "Slack 設定與執行時行為（Socket Mode + HTTP Events API）"
 read_when:
   - 設定 Slack 或除錯 Slack socket/HTTP 模式
-title: "Slack（Slack 整合設定）"
+title: "Slack"
 ---
 
 # Slack

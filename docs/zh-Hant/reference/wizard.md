@@ -1,5 +1,5 @@
 ---
-title: "Onboarding Wizard Reference（登機精靈參考）"
+title: "Onboarding Reference（登機精靈參考）"
 summary: "完整的 CLI 登機精靈參考：每個步驟、標誌和設定欄位"
 read_when:
   - 查詢特定精靈步驟或標誌

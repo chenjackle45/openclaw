@@ -3,7 +3,7 @@ summary: "Community plugins: quality bar, hosting requirements, and PR submissio
 read_when:
   - You want to publish a third-party OpenClaw plugin
   - You want to propose a plugin for docs listing
-title: "Community plugins（社區外掛程式）"
+title: "Community Plugins（社區外掛程式）"
 ---
 
 # 社群外掛

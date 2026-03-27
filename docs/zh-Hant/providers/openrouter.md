@@ -3,7 +3,7 @@ summary: "在 OpenClaw 中使用 OpenRouter 統一 API 存取多種模型"
 read_when:
   - 想要使用單一 API 金鑰存取多個 LLM 時
   - 想要在 OpenClaw 中透過 OpenRouter 運行模型時
-title: "OpenRouter（OpenRouter 路由）"
+title: "OpenRouter"
 ---
 
 # OpenRouter

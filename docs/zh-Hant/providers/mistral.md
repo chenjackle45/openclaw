@@ -3,7 +3,7 @@ summary: "在 OpenClaw 中使用 Mistral 模型和 Voxtral 轉錄"
 read_when:
   - You want to use Mistral models in OpenClaw
   - You need Mistral API key onboarding and model refs
-title: "Mistral（Mistral）"
+title: "Mistral"
 ---
 
 # Mistral

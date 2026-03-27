@@ -3,7 +3,7 @@ summary: "OpenClaw 支援的模型提供者（LLM）"
 read_when:
   - 你想選擇一個模型提供者
   - 你需要支援的 LLM 後端的快速概覽
-title: "Model Providers（模型提供者）"
+title: "Provider Directory（模型提供者）"
 ---
 
 # 模型提供者

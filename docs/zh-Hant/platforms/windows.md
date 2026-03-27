@@ -3,7 +3,7 @@ summary: "Windows（WSL2）支援 + 伴隨應用程式狀態"
 read_when:
   - 在 Windows 上安裝 OpenClaw
   - 尋找 Windows 伴隨應用程式狀態
-title: "Windows (WSL2)（Windows WSL2 支援）"
+title: "Windows（Windows WSL2 支援）"
 ---
 
 # Windows（WSL2）

@@ -1,5 +1,5 @@
 ---
-title: "Release Checklist（發佈檢查清單）"
+title: "Release Policy（發佈檢查清單）"
 summary: "npm + macOS app 的逐步發行檢查清單"
 read_when:
   - 剪下新的 npm 版本時

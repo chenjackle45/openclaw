@@ -3,7 +3,7 @@ summary: "CLI 入門精靈：Gateway、工作區、頻道和技能的引導式�
 read_when:
   - 執行或設定入門精靈時
   - 設定新機器時
-title: "Onboarding Wizard (CLI)（CLI 入門精靈）"
+title: "Onboarding (CLI)（CLI 入門精靈）"
 sidebarTitle: "入門：CLI"
 ---
 

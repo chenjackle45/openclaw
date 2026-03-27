@@ -3,7 +3,7 @@ summary: "透過 LiteLLM Proxy 執行 OpenClaw 以實現統一模型存取和成
 read_when:
   - You want to route OpenClaw through a LiteLLM proxy
   - You need cost tracking, logging, or model routing through LiteLLM
-title: "LiteLLM（LiteLLM）"
+title: "LiteLLM"
 ---
 
 # LiteLLM

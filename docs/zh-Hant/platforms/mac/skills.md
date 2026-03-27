@@ -3,7 +3,7 @@ summary: "macOS Skills 設定 UI 與 Gateway 支援的狀態"
 read_when:
   - 更新 macOS Skills 設定 UI 時
   - 變更技能 Gating 或安裝行為時
-title: "Skills（Skills 技能）"
+title: "Skills (macOS)（Skills 技能）"
 ---
 
 # Skills (macOS)

@@ -2,7 +2,7 @@
 summary: “macOS app 如何嵌入 Gateway WebChat 以及如何除錯”
 read_when:
   - 除錯 macOS WebChat 檢視或迴路埠
-title: "WebChat"
+title: "WebChat (macOS)"
 ---
 
 # WebChat (macOS app)

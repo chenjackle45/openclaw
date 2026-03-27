@@ -3,7 +3,7 @@ summary: "在 OpenClaw 中使用 NVIDIA 的 OpenAI 相容 API"
 read_when:
   - You want to use NVIDIA models in OpenClaw
   - You need NVIDIA_API_KEY setup
-title: "NVIDIA（NVIDIA）"
+title: "NVIDIA"
 ---
 
 # NVIDIA

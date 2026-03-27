@@ -3,7 +3,7 @@ summary: "OpenClaw 部署在 DigitalOcean 上（簡單的付費 VPS 選項）"
 read_when:
   - 在 DigitalOcean 上設定 OpenClaw
   - 尋找便宜的 VPS 主機來運行 OpenClaw
-title: "DigitalOcean"
+title: "DigitalOcean (Platform)"
 ---
 
 # OpenClaw on DigitalOcean

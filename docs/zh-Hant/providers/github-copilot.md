@@ -49,7 +49,7 @@ openclaw models set github-copilot/gpt-4o
 
 ```json5
 {
-  agents: { defaults: { model: { primary: "github-copilot/gpt-4o" } } }
+  agents: { defaults: { model: { primary: "github-copilot/gpt-4o" } } },
 }
 ```
 

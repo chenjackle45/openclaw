@@ -4,7 +4,7 @@ read_when:
   - 你想要可重現、可回滾的安裝
   - 你已在使用 Nix/NixOS/Home Manager
   - 你想要所有內容都被固定並以宣告方式管理
-title: "Nix（使用 Nix 安裝）"
+title: "Nix"
 ---
 
 # Nix 安裝

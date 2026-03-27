@@ -3,7 +3,7 @@ summary: "Brave Search API 設定用於 web_search"
 read_when:
   - 想使用 Brave Search 進行 web_search
   - 需要 BRAVE_API_KEY 或方案詳情
-title: "Brave Search（Brave 搜尋）"
+title: "Brave Search (legacy path)（Brave 搜尋）"
 ---
 
 # Brave Search API

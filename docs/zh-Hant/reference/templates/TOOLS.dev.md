@@ -1,5 +1,5 @@
 ---
-title: "TOOLS.dev（Dev Agent 工具筆記）"
+title: "TOOLS.dev Template（Dev Agent 工具筆記）"
 summary: "Dev Agent 工具筆記（C-3PO）"
 read_when:
   - 使用 Dev Gateway 模板

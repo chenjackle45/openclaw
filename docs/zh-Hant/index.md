@@ -34,7 +34,7 @@ title: "OpenClaw"
 
 這個中文網站是由 **[陳泰呈（Jackle）](https://www.facebook.com/jackle45/)** 因為自己要研究而順手翻譯的。未來不一定會即時更新，也不保證翻譯內容的正確性，純粹就是分享。如需最新且正確的資訊，請參考 [官方英文文件](https://docs.openclaw.ai)。
 
-**對應版本：`v2026.3.12`** · 翻譯更新日期：2026-03-13
+**對應版本：`v2026.3.23-2`** · 翻譯更新日期：2026-03-27
 
 <CardGroup cols={3}>
   <Card title="Jackle 部落格" href="https://jackle.pro/about" icon="globe">
@@ -74,7 +74,7 @@ OpenClaw 是一個**自我託管的 Gateway**，將你最喜歡的聊天應用�
 - **Agent 原生**：為編碼 Agent 設計，具有工具使用、會話、記憶和多 Agent 路由
 - **開源**：MIT 授權，社群驅動
 
-**你需要什麼？** Node 22+、你選擇的提供者 API 金鑰和 5 分鐘。為了最佳品質和安全性，請使用可用的最強最新一代模型。
+**你需要什麼？** Node 24（建議），或 Node 22 LTS（`22.16+`）以確保相容性、你選擇的提供者 API 金鑰和 5 分鐘。為了最佳品質和安全性，請使用可用的最強最新一代模型。
 
 ## 它的運作方式
 
@@ -109,7 +109,7 @@ Gateway 是會話、路由和頻道連接的單一事實來源。
     用於聊天、設定、會話和節點的瀏覽器儀表板。
   </Card>
   <Card title="行動節點" icon="smartphone">
-    配對 iOS 和 Android 節點，支援 Canvas、相機/螢幕和語音工作流程。
+    配對 iOS 和 Android 節點，支援 Canvas、相機和語音工作流程。
   </Card>
 </Columns>
 
@@ -126,15 +126,19 @@ Gateway 是會話、路由和頻道連接的單一事實來源。
     openclaw onboard --install-daemon
     ```
   </Step>
-  <Step title="配對 WhatsApp 並啟動 Gateway">
+  <Step title="開始聊天">
+    在瀏覽器中開啟 Control UI 並傳送訊息：
+
     ```bash
-    openclaw channels login
-    openclaw gateway --port 18789
+    openclaw dashboard
     ```
+
+    或連接頻道（[Telegram](/zh-Hant/channels/telegram) 最快）並從手機聊天。
+
   </Step>
 </Steps>
 
-需要完整的安裝和開發設定？詳見[快速開始](/zh-Hant/start/quickstart)。
+需要完整的安裝和開發設定？詳見[快速開始](/zh-Hant/start/getting-started)。
 
 ## 儀表板
 
@@ -144,7 +148,7 @@ Gateway 啟動後開啟瀏覽器 Control UI。
 - 遠端存取：[Web 介面](/zh-Hant/web)和 [Tailscale](/zh-Hant/gateway/tailscale)
 
 <p align="center">
-  <img src="whatsapp-openclaw.jpg" alt="OpenClaw" width="420" />
+  <img src="/whatsapp-openclaw.jpg" alt="OpenClaw" width="420" />
 </p>
 
 ## 設定（選擇性）

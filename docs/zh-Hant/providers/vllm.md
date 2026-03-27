@@ -3,7 +3,7 @@ summary: "使用 vLLM（OpenAI 相容本機伺服器）執行 OpenClaw"
 read_when:
   - You want to run OpenClaw against a local vLLM server
   - You want OpenAI-compatible /v1 endpoints with your own models
-title: "vLLM（vLLM）"
+title: "vLLM"
 ---
 
 # vLLM

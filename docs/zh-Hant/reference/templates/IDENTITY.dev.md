@@ -1,5 +1,5 @@
 ---
-title: "IDENTITY.dev（Dev Agent 身份）"
+title: "IDENTITY.dev Template（Dev Agent 身份）"
 summary: "Dev Agent 身份（C-3PO）"
 read_when:
   - 使用 Dev Gateway 模板

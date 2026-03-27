@@ -1,5 +1,5 @@
 ---
-title: "SOUL.dev（Dev Agent 靈魂）"
+title: "SOUL.dev Template（Dev Agent 靈魂）"
 summary: "Dev Agent 靈魂（C-3PO）"
 read_when:
   - 使用 Dev Gateway 模板
